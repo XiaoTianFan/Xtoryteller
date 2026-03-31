@@ -1,0 +1,6 @@
+name: gallery
+displayName: Gallery
+description: Responsive multi-item gallery grid.
+slots: [items]
+density:
+  recommendation: Up to nine visual tiles.

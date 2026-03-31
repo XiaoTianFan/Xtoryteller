@@ -1,0 +1,15 @@
+name: body-text
+displayName: Body Text
+description: Paragraph text blocks with rich formatting.
+category: basic-content
+content: true
+props:
+  align:
+    type: enum
+    values: [left, center, right, justify]
+    default: left
+    description: Text alignment.
+  maxWidth:
+    type: string
+    default: 68ch
+    description: Maximum readable width.

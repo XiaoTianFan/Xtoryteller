@@ -1,0 +1,14 @@
+name: mind-map
+displayName: Mind Map
+description: Radial mind map with central root and branches.
+category: diagram
+content: false
+props:
+  root:
+    type: object
+    required: true
+    description: Central node.
+  branches:
+    type: array
+    required: true
+    description: Branch structure.

@@ -1,0 +1,6 @@
+.divider {
+  width: 100%;
+  border: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-primary) 45%, transparent 55%), transparent);
+}

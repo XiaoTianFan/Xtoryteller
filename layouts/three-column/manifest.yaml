@@ -1,0 +1,6 @@
+name: three-column
+displayName: Three Column
+description: Three equal-width columns.
+slots: [left, center, right]
+density:
+  recommendation: One compact component per column.

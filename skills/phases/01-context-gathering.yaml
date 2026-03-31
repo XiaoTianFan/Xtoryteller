@@ -1,0 +1,9 @@
+phase: 1
+name: Context Gathering
+steps:
+  - Scan component registry
+  - Scan layout registry
+  - Scan transition registry
+  - Scan theme registry
+  - Check existing presentation slugs
+  - If editing, inspect presentation-scoped assets and custom components

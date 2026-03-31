@@ -1,0 +1,6 @@
+# Anti-patterns
+
+- Hardcoding colors instead of using theme variables.
+- Overloading a layout beyond its readable density.
+- Creating custom primitives before checking the registry.
+- Mixing unrelated transition styles without intent.

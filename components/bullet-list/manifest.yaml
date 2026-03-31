@@ -1,0 +1,14 @@
+name: bullet-list
+displayName: Bullet List
+description: Ordered or unordered list with sequential build support.
+category: basic-content
+content: false
+props:
+  items:
+    type: string[]
+    required: true
+    description: List items.
+  ordered:
+    type: boolean
+    default: false
+    description: Render as ordered list.

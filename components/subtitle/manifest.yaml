@@ -1,0 +1,11 @@
+name: subtitle
+displayName: Subtitle
+description: Secondary text below a headline.
+category: basic-content
+content: true
+props:
+  align:
+    type: enum
+    values: [left, center, right]
+    default: left
+    description: Text alignment.

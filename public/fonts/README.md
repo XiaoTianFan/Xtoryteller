@@ -1,0 +1,1 @@
+This directory is ready for self-hosted font binaries such as Playfair Display, Inter, and JetBrains Mono. The default theme currently falls back to system stacks so the runtime works immediately before font files are added.

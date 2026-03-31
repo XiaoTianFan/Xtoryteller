@@ -1,0 +1,6 @@
+name: scattered
+displayName: Scattered
+description: Organic positioned layout for map clusters.
+slots: [items]
+density:
+  recommendation: Avoid overlap; use for exploratory map clusters.

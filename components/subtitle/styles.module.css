@@ -1,0 +1,18 @@
+.subtitle {
+  margin: 0;
+  font-size: var(--text-lead);
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--color-foreground) 72%, white 28%);
+}
+
+.left {
+  text-align: left;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}

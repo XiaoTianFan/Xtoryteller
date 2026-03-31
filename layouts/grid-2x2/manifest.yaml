@@ -1,0 +1,6 @@
+name: grid-2x2
+displayName: Grid 2x2
+description: Two-by-two card grid.
+slots: [a, b, c, d]
+density:
+  recommendation: One card per cell.

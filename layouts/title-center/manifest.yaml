@@ -1,0 +1,6 @@
+name: title-center
+displayName: Title Center
+description: Centered title layout.
+slots: [primary, secondary, tertiary]
+density:
+  recommendation: 1 headline, 1 subtitle, 1 optional label.

@@ -1,0 +1,14 @@
+name: flowchart
+displayName: Flowchart
+description: Process flow with action and decision nodes.
+category: diagram
+content: false
+props:
+  nodes:
+    type: array
+    required: true
+    description: Flow nodes.
+  edges:
+    type: array
+    required: true
+    description: Flow connections.

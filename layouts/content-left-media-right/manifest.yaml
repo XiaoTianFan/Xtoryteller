@@ -1,0 +1,6 @@
+name: content-left-media-right
+displayName: Content Left Media Right
+description: Text-first split layout.
+slots: [content, media]
+density:
+  recommendation: Text on the left, visual on the right.

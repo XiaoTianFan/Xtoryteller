@@ -1,0 +1,10 @@
+name: xtoryteller
+description: Create, customize, and manage Stage and Map presentations with the Xtoryteller infrastructure.
+
+workflow:
+  - Read skills/references/component-registry.json
+  - Read skills/references/layout-registry.json
+  - Read skills/references/transition-registry.json
+  - Read skills/references/theme-registry.json
+  - Read skills/docs/architecture-overview.md
+  - Follow phases 00 through 05 depending on user intent

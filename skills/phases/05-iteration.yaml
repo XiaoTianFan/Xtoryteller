@@ -1,0 +1,6 @@
+phase: 5
+name: Iteration
+steps:
+  - Make targeted YAML edits from user feedback
+  - Re-validate after each change
+  - Prefer theme-level changes for global style feedback

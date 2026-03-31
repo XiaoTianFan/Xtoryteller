@@ -1,0 +1,14 @@
+name: iceberg-diagram
+displayName: Iceberg Diagram
+description: Layered depth metaphor for hidden structures beneath surface observations.
+category: diagram
+content: false
+props:
+  layers:
+    type: array
+    required: true
+    description: Layers from top to bottom.
+  waterlinePosition:
+    type: number
+    default: 0.25
+    description: Waterline fraction.

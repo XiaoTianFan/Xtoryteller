@@ -1,0 +1,6 @@
+name: stack
+displayName: Stack
+description: Vertical stack with consistent spacing.
+slots: [stack]
+density:
+  recommendation: Up to five stacked components.

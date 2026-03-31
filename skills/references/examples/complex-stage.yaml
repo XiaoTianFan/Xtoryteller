@@ -1,0 +1,110 @@
+meta:
+  title: Complex Stage Example
+  slug: complex-stage
+  description: A richer Stage presentation showing cards, code, diagrams, and build choreography.
+  author: Xtoryteller
+  tags: [stage, demo, complex]
+  createdAt: 2026-03-31
+  updatedAt: 2026-03-31
+mode: stage
+theme: default
+themeOverrides:
+  colors:
+    primary: '#7a3f63'
+    secondary: '#1f6a7a'
+background:
+  type: paper
+  colorStops:
+    - 'rgba(252, 247, 243, 0.96)'
+    - 'rgba(122, 63, 99, 0.18)'
+    - 'rgba(31, 106, 122, 0.16)'
+backgroundSections:
+  - match:
+      stepRange: [2, 3]
+    shader:
+      type: paper
+      colorStops:
+        - 'rgba(247, 242, 234, 0.96)'
+        - 'rgba(216, 154, 79, 0.22)'
+        - 'rgba(42, 108, 100, 0.2)'
+steps:
+  - id: title
+    title: Title
+    layout: title-center
+    transition: fade
+    components:
+      - type: headline
+        content: Building an Agent-First Presentation Runtime
+        props: { level: 1, align: center }
+      - type: subtitle
+        content: Stage foundations, reusable primitives, and map-ready storytelling.
+        props: { align: center }
+  - id: pillars
+    title: Pillars
+    layout: three-column
+    transition: slide-up
+    components:
+      - type: card
+        content: Stable components and layouts become the design substrate.
+        props: { header: Infrastructure }
+      - type: card
+        content: YAML orchestration keeps AI output structured and inspectable.
+        props: { header: Declarative data }
+      - type: card
+        content: Humans direct; agents compose; the browser renders the result.
+        props: { header: Runtime loop }
+  - id: build-steps
+    title: Build choreography
+    layout: two-column
+    transition: slide-left
+    components:
+      - type: bullet-list
+        build: sequential
+        props:
+          items:
+            - Start with registries and examples.
+            - Generate or edit presentation YAML.
+            - Validate against schema and registry names.
+            - Review instantly in the browser.
+      - type: code-block
+        props:
+          filename: workflow.yaml
+          language: yaml
+        content: |
+          mode: stage
+          theme: default
+          steps:
+            - layout: single-content
+              components:
+                - type: headline
+                  content: Hello runtime
+  - id: diagrams
+    title: Structured meaning
+    layout: content-left-media-right
+    transition: blur
+    components:
+      - type: body-text
+        content: |
+          Diagram components are the first major differentiator in Phase 2.
+          They let presentations express **relationships**, **tradeoffs**, and
+          **systems** directly rather than flattening everything into bullets.
+      - type: quadrant-chart
+        props:
+          xAxis: { label: Adoption, low: Low, high: High }
+          yAxis: { label: Impact, low: Low, high: High }
+          items:
+            - { label: Registry scan, x: 0.25, y: 0.35 }
+            - { label: Stage runtime, x: 0.58, y: 0.62 }
+            - { label: Map navigation, x: 0.76, y: 0.72 }
+            - { label: Portability, x: 0.46, y: 0.55 }
+  - id: finish
+    title: Finish
+    layout: stack
+    transition: scale-out
+    components:
+      - type: divider
+      - type: callout
+        content: Next layers can expand the component suite, portability, and advanced polish without replacing the core architecture.
+        props:
+          variant: tip
+          title: Roadmap

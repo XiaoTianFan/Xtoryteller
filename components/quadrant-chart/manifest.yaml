@@ -1,0 +1,18 @@
+name: quadrant-chart
+displayName: Quadrant Chart
+description: 2x2 matrix with labeled axes and positioned items.
+category: diagram
+content: false
+props:
+  xAxis:
+    type: object
+    required: true
+    description: Horizontal axis.
+  yAxis:
+    type: object
+    required: true
+    description: Vertical axis.
+  items:
+    type: array
+    required: true
+    description: Positioned items in normalized coordinates.

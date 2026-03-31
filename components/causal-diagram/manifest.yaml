@@ -1,0 +1,14 @@
+name: causal-diagram
+displayName: Causal Diagram
+description: Directed graph showing causal relationships with polarity labels.
+category: diagram
+content: false
+props:
+  variables:
+    type: array
+    required: true
+    description: Diagram nodes.
+  edges:
+    type: array
+    required: true
+    description: Directed edges with polarity.

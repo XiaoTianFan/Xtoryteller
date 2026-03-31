@@ -1,0 +1,13 @@
+name: code-block
+displayName: Code Block
+description: Syntax-like code display with optional filename.
+category: media
+content: true
+props:
+  language:
+    type: string
+    default: text
+    description: Code language label.
+  filename:
+    type: string
+    description: Optional filename shown in header.

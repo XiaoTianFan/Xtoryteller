@@ -1,0 +1,14 @@
+name: callout
+displayName: Callout
+description: Highlighted note box for key insights, tips, and warnings.
+category: basic-content
+content: true
+props:
+  variant:
+    type: enum
+    values: [info, warning, tip, note, important]
+    default: note
+    description: Visual tone.
+  title:
+    type: string
+    description: Optional callout heading.

@@ -1,0 +1,6 @@
+name: sidebar-main
+displayName: Sidebar Main
+description: Narrow sidebar with wide main area.
+slots: [sidebar, main]
+density:
+  recommendation: Small contextual block plus one main component.

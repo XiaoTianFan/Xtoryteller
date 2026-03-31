@@ -1,0 +1,12 @@
+name: two-column
+displayName: Two Column
+description: Side-by-side columns with responsive stack.
+slots: [left, right]
+props:
+  ratio:
+    type: enum
+    values: [50-50, 60-40, 40-60, 70-30, 30-70]
+    default: 50-50
+    description: Column ratio.
+density:
+  recommendation: One primary component per column.

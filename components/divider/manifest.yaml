@@ -1,0 +1,11 @@
+name: divider
+displayName: Divider
+description: Visual separator between content sections.
+category: basic-content
+content: false
+props:
+  variant:
+    type: enum
+    values: [line, dots, ornamental, gradient]
+    default: gradient
+    description: Visual style.

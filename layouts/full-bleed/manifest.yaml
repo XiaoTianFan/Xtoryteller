@@ -1,0 +1,6 @@
+name: full-bleed
+displayName: Full Bleed
+description: One component fills the viewport.
+slots: [main]
+density:
+  recommendation: Use for hero visuals and large diagrams.

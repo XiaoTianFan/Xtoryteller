@@ -1,0 +1,17 @@
+name: card
+displayName: Card
+description: General-purpose content card with optional header and footer.
+category: card-container
+content: true
+props:
+  header:
+    type: string
+    description: Optional card header.
+  footer:
+    type: string
+    description: Optional card footer.
+  variant:
+    type: enum
+    values: [default, elevated, outlined, filled]
+    default: default
+    description: Visual variant.

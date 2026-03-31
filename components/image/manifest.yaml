@@ -1,0 +1,22 @@
+name: image
+displayName: Image
+description: Responsive image with optional caption.
+category: media
+content: false
+props:
+  src:
+    type: string
+    required: true
+    description: Relative asset path or external URL.
+  alt:
+    type: string
+    required: true
+    description: Accessible alt text.
+  caption:
+    type: string
+    description: Optional caption.
+  fit:
+    type: enum
+    values: [contain, cover, fill]
+    default: contain
+    description: Object-fit mode.

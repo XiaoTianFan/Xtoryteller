@@ -1,0 +1,20 @@
+.list {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.7rem;
+  color: var(--color-foreground);
+  font-size: var(--text-body);
+  line-height: 1.45;
+}
+
+.item {
+  opacity: 0.35;
+  transition: opacity var(--motion-normal) var(--motion-easing), transform var(--motion-normal) var(--motion-easing);
+  transform: translateY(6px);
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

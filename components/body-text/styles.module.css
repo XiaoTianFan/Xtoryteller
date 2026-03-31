@@ -1,0 +1,32 @@
+.body {
+  max-width: 68ch;
+  color: var(--color-foreground);
+  font-size: var(--text-body);
+  line-height: 1.7;
+}
+
+.body p {
+  margin: 0 0 0.85rem;
+}
+
+.body a {
+  color: var(--color-secondary);
+}
+
+.left {
+  text-align: left;
+}
+
+.center {
+  text-align: center;
+  margin-inline: auto;
+}
+
+.right {
+  text-align: right;
+  margin-inline-start: auto;
+}
+
+.justify {
+  text-align: justify;
+}

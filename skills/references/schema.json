@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xtoryteller.dev/schema/presentation.json",
+  "type": "object",
+  "required": ["meta", "mode", "theme"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["title", "slug"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "description": { "type": "string" },
+        "author": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "thumbnail": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "mode": { "enum": ["stage", "map"] },
+    "theme": { "type": "string", "minLength": 1 },
+    "themeOverrides": { "type": "object" },
+    "data": { "type": "object" },
+    "background": { "$ref": "#/$defs/background" },
+    "backgroundSections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["match", "shader"],
+        "properties": {
+          "match": { "type": "object", "additionalProperties": true },
+          "shader": { "$ref": "#/$defs/background" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/step" }
+    },
+    "clusters": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/cluster" }
+    },
+    "canvas": {
+      "type": "object",
+      "properties": {
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "spacing": { "type": "number" },
+        "minZoom": { "type": "number" },
+        "maxZoom": { "type": "number" },
+        "initialZoom": { "type": "number" }
+      },
+      "additionalProperties": true
+    },
+    "navigation": {
+      "type": "object",
+      "properties": {
+        "sequence": { "type": "array", "items": { "type": "string" } },
+        "transition": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "mode": { "const": "stage" } } },
+      "then": { "required": ["steps"] }
+    },
+    {
+      "if": { "properties": { "mode": { "const": "map" } } },
+      "then": { "required": ["clusters"] }
+    }
+  ],
+  "$defs": {
+    "background": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string" },
+        "variant": { "type": "string" },
+        "colorStops": { "type": "array", "items": { "type": "string" } },
+        "intensity": { "type": "number" },
+        "grain": { "type": "number" },
+        "contrast": { "type": "number" },
+        "speed": { "type": "number" },
+        "opacity": { "type": "number" }
+      },
+      "additionalProperties": true
+    },
+    "component": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string" },
+        "slot": { "type": "string" },
+        "content": { "type": "string" },
+        "props": { "type": "object" },
+        "style": { "type": "object" },
+        "build": {
+          "oneOf": [
+            { "type": "integer", "minimum": 0 },
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "with": { "type": "integer", "minimum": 0 }
+              },
+              "required": ["with"],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "enter": { "type": "string" },
+        "exit": { "type": "string" },
+        "annotations": { "type": "object", "additionalProperties": { "type": "string" } },
+        "position": {
+          "type": "object",
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          },
+          "required": ["x", "y"],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "step": {
+      "type": "object",
+      "required": ["layout", "components"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "layout": { "type": "string" },
+        "layoutProps": { "type": "object" },
+        "transition": { "type": "string" },
+        "background": { "$ref": "#/$defs/background" },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/component" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "cluster": {
+      "type": "object",
+      "required": ["id", "layout", "components"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "group": { "type": "string" },
+        "layout": { "type": "string" },
+        "layoutProps": { "type": "object" },
+        "transition": { "type": "string" },
+        "background": { "$ref": "#/$defs/background" },
+        "anchor": { "type": "object", "additionalProperties": true },
+        "arrangement": { "type": "object", "additionalProperties": true },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/component" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

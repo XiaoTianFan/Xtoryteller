@@ -1,0 +1,14 @@
+name: blockquote
+displayName: Blockquote
+description: Styled quotation with optional attribution.
+category: basic-content
+content: true
+props:
+  attribution:
+    type: string
+    description: Quote author or source.
+  variant:
+    type: enum
+    values: [default, large, minimal]
+    default: default
+    description: Visual style.

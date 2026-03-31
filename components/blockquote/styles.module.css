@@ -1,0 +1,20 @@
+.quote {
+  margin: 0;
+  padding: clamp(1rem, 2vw, 1.6rem);
+  border-radius: var(--radius-large);
+  background: color-mix(in srgb, var(--color-surface) 88%, white 12%);
+  border: var(--border-subtle);
+  box-shadow: var(--shadow-soft);
+}
+
+.quote blockquote {
+  margin: 0;
+  font-size: var(--text-lead);
+  line-height: 1.55;
+}
+
+.quote figcaption {
+  margin-top: 1rem;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}

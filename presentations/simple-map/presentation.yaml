@@ -1,0 +1,76 @@
+meta:
+  title: Simple Map Example
+  slug: simple-map
+  description: A minimal Map-mode presentation showing spatial clusters and guided navigation.
+  author: Xtoryteller
+  tags: [map, demo, diagrams]
+  createdAt: 2026-03-31
+  updatedAt: 2026-03-31
+mode: map
+theme: default
+background:
+  type: paper
+  colorStops:
+    - 'rgba(247, 242, 234, 0.94)'
+    - 'rgba(42, 108, 100, 0.16)'
+    - 'rgba(141, 79, 45, 0.16)'
+canvas:
+  spacing: 360
+  initialZoom: 0.9
+navigation:
+  sequence: [overview, systems, synthesis]
+clusters:
+  - id: overview
+    title: Overview
+    description: A broad framing cluster.
+    group: intro
+    layout: title-center
+    anchor: { x: 0, y: 0 }
+    components:
+      - type: headline
+        content: Map mode
+        props: { align: center }
+      - type: subtitle
+        content: Explore related clusters non-linearly or through a guided path.
+        props: { align: center }
+  - id: systems
+    title: Systems view
+    description: Diagram-rich content lives naturally in spatial mode.
+    group: analysis
+    layout: single-content
+    anchor:
+      relativeTo: overview
+      direction: right
+      distance: 620
+    components:
+      - type: causal-diagram
+        props:
+          variables:
+            - { id: registry, label: Registry depth }
+            - { id: agent, label: Agent confidence }
+            - { id: quality, label: Presentation quality }
+          edges:
+            - { from: registry, to: agent, polarity: '+' }
+            - { from: agent, to: quality, polarity: '+' }
+            - { from: quality, to: registry, polarity: '+' }
+  - id: synthesis
+    title: Synthesis
+    description: Pull ideas back into a composable frame.
+    group: synthesis
+    layout: sidebar-main
+    anchor:
+      relativeTo: systems
+      direction: below
+      distance: 460
+    components:
+      - type: callout
+        content: Guided mode makes the map readable for an audience; free roam keeps it exploratory for workshops.
+        props:
+          title: Why both?
+          variant: info
+      - type: bullet-list
+        props:
+          items:
+            - Spatial memory improves orientation.
+            - Clusters can hold dense visual structures.
+            - Camera motion can explain relationships, not just sequence.
