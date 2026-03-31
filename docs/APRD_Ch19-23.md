@@ -1964,9 +1964,9 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 - [ ] Touch/swipe navigation for mobile
 - [ ] Iframe embedding detection and UI adjustment
 - [ ] Font download script (`scripts/download-font.js`)
-- [ ] Auto-thumbnail generation via Playwright
+- [ ] Auto-thumbnail generation
 - [ ] `npm run export` static site export mode
-- [ ] Production deployment documentation for Vercel
+- [ ] Production deployment documentation and sh and skill workflow using vercel for Vercel
 
 **Component Enhancements:**
 - [ ] Hover annotations on all diagram components
@@ -2004,9 +2004,8 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 - `accordion` — expandable sections
 - `code-runner` — executable code blocks with output display
 - `live-counter` — animated counting numbers
-- `progress-bar` — visual progress indicators
 
-**Presenter Mode**
+**Presenter Mode** (Ignore for now)
 - Split view: presenter sees current step + next step + speaker notes
 - Timer and clock display
 - Private notes field in presentation YAML (not rendered in viewer mode)
