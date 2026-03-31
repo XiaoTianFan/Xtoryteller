@@ -1117,7 +1117,7 @@ Full keyboard support in both navigation modes:
 | `←` | Previous cluster in sequence |
 | `Escape` | Exit guided mode to free roam |
 
-All interactive elements (navigation controls, clickable clusters, hover annotations) are focusable and operable via keyboard.
+All interactive elements (including the revealable bottom control dock, navigation controls, clickable clusters, and hover annotations) are focusable and operable via keyboard.
 
 ### 15.4 ARIA Attributes
 
@@ -1996,3 +1996,4 @@ When deployed to Vercel:
 - The SPA shell is cached aggressively; only data changes trigger refetches
 
 ---
+

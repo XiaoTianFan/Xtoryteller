@@ -6,6 +6,7 @@ await syncPresentationAssets();
 const nextConfig = {
   typedRoutes: true,
   output: process.env.STATIC_EXPORT ? 'export' : undefined,
+  serverExternalPackages: ['yaml'],
   images: {
     unoptimized: Boolean(process.env.STATIC_EXPORT)
   },

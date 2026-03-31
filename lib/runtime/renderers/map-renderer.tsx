@@ -57,6 +57,7 @@ export function MapRenderer() {
   const activeIndexInDisplay = displaySequence.indexOf(activeClusterId ?? '');
   const currentPosition = activeIndexInDisplay >= 0 ? activeIndexInDisplay + 1 : Math.max(1, allClusterIds.indexOf(activeClusterId ?? '') + 1);
   const totalPositions = displaySequence.length || allClusterIds.length;
+  const mapStatus = machine.state.context.guided ? 'Guided sequence active' : 'Free roam enabled';
 
   const handleClusterKeyDown = (event: KeyboardEvent<HTMLElement>, clusterId: string) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -68,15 +69,6 @@ export function MapRenderer() {
   return (
     <div className="viewerShell mapViewer">
       <BackgroundLayer />
-      <button type="button" className="backLink" onClick={() => router.push('/')}>
-        Back
-      </button>
-      <div className="mapToolbar">
-        <button type="button" className="ghostButton" onClick={machine.state.context.guided ? machine.exitGuided : machine.enterGuided}>
-          {machine.state.context.guided ? 'Free roam' : 'Guided'}
-        </button>
-        <span className="mapMeta">{machine.state.context.guided ? 'Guided sequence active' : 'Drag to pan, wheel to zoom'}</span>
-      </div>
       <div ref={viewportRef} className="mapViewport" {...bind()}>
         <motion.div
           className="mapCanvas"
@@ -123,19 +115,40 @@ export function MapRenderer() {
           })}
         </motion.div>
       </div>
-      <div className="mapSequence">
-        {guidedSequence.map((clusterId, index) => (
-          <button
-            key={clusterId}
-            type="button"
-            className={`sequenceChip ${clusterId === activeClusterId ? 'active' : ''}`}
-            onClick={() => machine.goToCluster(clusterId)}
-          >
-            {index + 1}. {clusterId}
-          </button>
-        ))}
-      </div>
-      <PresentationControls total={totalPositions} current={currentPosition} mapMode />
+      <PresentationControls
+        total={totalPositions}
+        current={currentPosition}
+        mapMode
+        sequence={
+          <div className="mapSequence">
+            {displaySequence.map((clusterId, index) => (
+              <button
+                key={clusterId}
+                type="button"
+                className={`sequenceChip ${clusterId === activeClusterId ? 'active' : ''}`}
+                onClick={() => machine.goToCluster(clusterId)}
+              >
+                {index + 1}. {clusterId}
+              </button>
+            ))}
+          </div>
+        }
+        rightActions={
+          <>
+            <span className="mapMeta">{mapStatus}</span>
+            <button
+              type="button"
+              className="ghostButton"
+              onClick={machine.state.context.guided ? machine.exitGuided : machine.enterGuided}
+            >
+              {machine.state.context.guided ? 'Free roam' : 'Guided'}
+            </button>
+            <button type="button" className="ghostButton" onClick={() => router.push('/')}>
+              Back
+            </button>
+          </>
+        }
+      />
       <LiveRegion message={`Map cluster ${activeClusterId ?? 'overview'}`} />
     </div>
   );

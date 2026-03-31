@@ -1975,8 +1975,8 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 - [ ] Animated number counting for stat-card
 
 **Map Mode Enhancements:**
-- [ ] Mid-flight zoom-out during camera transitions
-- [ ] Minimap overlay showing canvas overview
+- [ ] Mid-flight zoom-out during camera transitions (Optional)
+- [ ] Minimap overlay showing canvas overview (Hover-rendered with fade in animation)
 - [ ] Cluster proximity loading (lazy-mount distant clusters)
 
 **Performance:**

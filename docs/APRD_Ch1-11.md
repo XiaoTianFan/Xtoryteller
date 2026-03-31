@@ -564,7 +564,8 @@ yaml
 - Space bar (next)
 - Click/tap (next)
 - Touch swipe (next/previous)
-- Navigation progress indicator (optional, configurable)
+- Persistent bottom progress rail that stays visible at the viewport edge when the dock is hidden, then shifts upward to sit directly above the dock when the dock slides in, with smooth forward and backward interpolation as navigation changes
+- Bottom control dock that fully exits the screen when inactive and reappears from a dedicated hover/focus strip to reveal Previous / Next, step metadata, and the dashboard back action
 - Keyboard shortcut to jump to specific step number
 
 ### 4.3 The Map
@@ -595,14 +596,16 @@ Supported directions: `right`, `left`, `above`, `below`, `above-right`, `above-l
 - Right arrow / space / click advances to the next cluster
 - The camera smoothly pans and zooms to frame the next cluster
 - Transition parameters (duration, easing) are configurable
-- A progress indicator shows position in the sequence
+- A progress indicator shows position in the sequence and animates smoothly as the viewer advances or moves backward
 
 **Free roam.** When `navigation.freeRoam: true` (default), the user can:
 - Pan by dragging
 - Zoom with scroll wheel or pinch gesture
 - Click on any visible cluster to navigate to it
-- Enter/exit guided mode at any time via a UI toggle
+- Enter/exit guided mode at any time via a UI toggle housed in the bottom control dock
 - The guided sequence serves as the "presentation mode"; free roam is the "exploration mode"
+
+**Shared viewer dock.** Stage and Map modes share a common bottom-edge control system: a thin progress rail remains visible at the viewport edge while the dock is hidden, then gets pushed upward by the dock as the control surface slides in from below. The dock itself is rectangular and edge-aligned so it visually reads as a panel sitting directly beneath the rail. A dedicated hover/focus strip just above the rail calls the dock back into view. In Map mode, this dock also contains the guided/free-roam toggle, cluster sequence chips, and the back-to-dashboard action aligned on the right.
 
 **Cluster spacing and visual separation.** Clusters are visually separated by default. The `canvas.spacing` parameter defines the minimum gap. Automatic arrangement algorithms enforce spacing. Users can customize spacing per-cluster via the `distance` property in manual-relative mode.
 
@@ -2109,7 +2112,7 @@ json
 
 **Entering:** Clicking a presentation card in the dashboard navigates to `/[slug]`. The transition is a client-side route change (no page reload). The presentation viewer takes over the full viewport.
 
-**Exiting:** A subtle, always-accessible back button (e.g., small icon in the top-left corner, appearing on hover) returns to the dashboard. Keyboard shortcut: `Escape` when at the first step/cluster.
+**Exiting:** A subtle, always-accessible back action lives inside the bottom viewer dock, aligned to the right of the navigation controls. The progress rail remains visible at the bottom edge while the dock is hidden, then rides upward with the rest of the control stack as the dock opens. A dedicated hover/focus strip reveals the full control surface when needed. Keyboard shortcut: `Escape` when at the first step/cluster.
 
 **Deep linking into steps:** URLs can include step/cluster anchors:
 - Stage mode: `/causal-systems#step-3` (jumps to step 3)
@@ -2120,3 +2123,8 @@ json
 The dashboard itself uses the project's default theme. Its design should be clean and minimal — the presentations are the stars, not the dashboard. The dashboard is a built-in view that is always present; it is not customizable in the same way presentations are (though it respects the project-level theme colors and fonts).
 
 ---
+
+
+
+
+

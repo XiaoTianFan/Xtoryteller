@@ -26,9 +26,6 @@ export function StageRenderer() {
   return (
     <div className="viewerShell">
       <BackgroundLayer />
-      <button type="button" className="backLink" onClick={() => router.push('/')}>
-        Back
-      </button>
       <AnimatePresence mode="wait">
         <motion.section
           key={`${presentation.meta.slug}-${machine.state.context.currentStepIndex}`}
@@ -48,7 +45,15 @@ export function StageRenderer() {
           />
         </motion.section>
       </AnimatePresence>
-      <PresentationControls total={presentation.steps?.length ?? 0} current={machine.state.context.currentStepIndex + 1} />
+      <PresentationControls
+        total={presentation.steps?.length ?? 0}
+        current={machine.state.context.currentStepIndex + 1}
+        rightActions={
+          <button type="button" className="ghostButton" onClick={() => router.push('/')}>
+            Back
+          </button>
+        }
+      />
       <LiveRegion
         message={`Step ${machine.state.context.currentStepIndex + 1} of ${presentation.steps?.length ?? 0}: ${step.title ?? presentation.meta.title}`}
       />

@@ -175,8 +175,9 @@ button {
 
 .cardMetaLine,
 .tagRow,
-.controlRow,
-.mapSequence {
+.mapSequence,
+.viewerDockPrimary,
+.viewerDockActions {
   display: flex;
   gap: 0.7rem;
   flex-wrap: wrap;
@@ -228,14 +229,12 @@ button {
   min-height: 100vh;
 }
 
-.backLink,
 .ghostButton,
 .sequenceChip,
 .clusterCard {
-  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
-.backLink,
 .ghostButton {
   display: inline-flex;
   align-items: center;
@@ -248,51 +247,120 @@ button {
   cursor: pointer;
 }
 
-.backLink {
+.viewerHud {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 12;
+  --dock-progress-height: 0.45rem;
+  --dock-hover-zone: 1.1rem;
+  --dock-open-height: 28rem;
 }
 
-.mapToolbar,
-.viewerHud {
+.viewerDockTrigger {
   position: absolute;
-  left: 1rem;
-  right: 1rem;
-  z-index: 10;
+  left: 0;
+  right: 0;
+  bottom: var(--dock-progress-height);
+  height: var(--dock-hover-zone);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
 }
 
-.mapToolbar {
-  top: 1rem;
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.8rem;
-  align-items: center;
+.viewerDockTrigger:focus-visible {
+  outline: none;
 }
 
-.viewerHud {
-  bottom: 1rem;
+.viewerHud:focus-within .progressWrap {
+  box-shadow: 0 0 0 2px rgba(42, 108, 100, 0.18);
+}
+
+.viewerDock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: grid;
-  gap: 0.65rem;
+  grid-template-rows: auto auto;
+}
+
+.viewerDockPanelShell {
+  overflow: hidden;
+  max-height: 0;
+  pointer-events: none;
+  transition: max-height 240ms ease;
+}
+
+.viewerHud:hover .viewerDockPanelShell,
+.viewerHud:focus-within .viewerDockPanelShell {
+  max-height: var(--dock-open-height);
+  pointer-events: auto;
+}
+
+.viewerDockPanel {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0.95rem 1rem max(1rem, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(96, 88, 79, 0.15);
+  border-left: 1px solid rgba(96, 88, 79, 0.15);
+  border-right: 1px solid rgba(96, 88, 79, 0.15);
+  background: rgba(255, 249, 240, 0.92);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 -18px 56px rgba(52, 38, 23, 0.12);
+  opacity: 0;
+  transform: translateY(0.8rem);
+  transition: opacity 180ms ease, transform 220ms ease;
+}
+
+.viewerHud:hover .viewerDockPanel,
+.viewerHud:focus-within .viewerDockPanel {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.viewerRail {
+  position: relative;
+  z-index: 1;
+}
+
+.viewerDockRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem 1rem;
+}
+
+.viewerDockActions {
+  margin-left: auto;
+  justify-content: flex-end;
 }
 
 .progressWrap {
-  height: 0.45rem;
-  border-radius: 999px;
+  height: var(--dock-progress-height);
+  border-radius: 0;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.46);
 }
 
 .progressBar {
   height: 100%;
   background: linear-gradient(90deg, #2a6c64, #8d4f2d);
+  transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: width;
 }
 
 .progressMeta,
 .mapMeta {
   color: #60584f;
   font-size: 0.92rem;
+}
+
+.mapMeta {
+  white-space: nowrap;
 }
 
 .mapViewport {
@@ -326,7 +394,7 @@ button {
 }
 
 .clusterCard.active {
-  z-index: 2;
+  z-index: 3;
   background: transparent;
 }
 
@@ -342,12 +410,13 @@ button {
 
 .clusterCardHeader {
   position: absolute;
-  z-index: 1;
+  z-index: 3;
   top: -2.8rem;
   left: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  max-width: calc(100% - 0.5rem);
   padding: 0.4rem 0.65rem;
   border-radius: 999px;
   border: 1px solid rgba(96, 88, 79, 0.16);
@@ -364,16 +433,14 @@ button {
 
 .clusterCard.active .clusterCardHeader,
 .clusterCard:focus-visible .clusterCardHeader {
+  z-index: 4;
   border-color: rgba(141, 79, 45, 0.38);
   background: rgba(255, 243, 232, 0.95);
 }
 
 .mapSequence {
-  position: absolute;
-  bottom: 5rem;
-  left: 1rem;
-  right: 1rem;
-  z-index: 4;
+  position: static;
+  z-index: auto;
 }
 
 .emptyStatePage {
@@ -420,9 +487,13 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .mapToolbar {
-    top: auto;
-    bottom: 8rem;
+  .viewerDockRow {
+    align-items: flex-start;
+  }
+
+  .viewerDockActions {
+    width: 100%;
+    margin-left: 0;
     justify-content: flex-start;
   }
 
@@ -437,3 +508,30 @@ button {
 
 
 
+
+@media (hover: none), (pointer: coarse) {
+  .viewerDockTrigger {
+    display: none;
+  }
+
+  .viewerDockPanelShell {
+    max-height: none;
+    pointer-events: auto;
+    transition: none;
+  }
+
+  .viewerDockPanel {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+
+
+
+@media (prefers-reduced-motion: reduce) {
+  .progressBar {
+    transition-duration: 120ms;
+  }
+}
