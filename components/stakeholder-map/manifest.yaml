@@ -1,0 +1,11 @@
+﻿name: stakeholder-map
+displayName: Stakeholder Map
+description: Concentric stakeholder proximity map with labeled rings and positioned participants.
+category: diagram
+props:
+  center:
+    type: string
+    required: true
+  rings:
+    type: array
+    required: true

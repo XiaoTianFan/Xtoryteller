@@ -672,9 +672,12 @@ Alias for `bullet-list` with `ordered: true`. Same props and behavior.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `name` | `string` | Required | Icon identifier from the icon set |
+| `name` | `string` | Required | Lucide icon name in kebab-case (for example `sparkles` or `arrow-right`) |
+| `customSvg` | `string` | `undefined` | Optional raw SVG markup for an explicitly requested custom icon. Overrides `name` when present. |
 | `size` | `'small' \| 'medium' \| 'large' \| 'xlarge'` | `'medium'` | Icon size |
 | `color` | `string` | `'var(--color-primary)'` | Icon color |
+
+Built-in presets use Lucide by default. Custom SVG should be treated as an advanced opt-in path for bespoke marks, not the default authoring workflow.
 
 ---
 
@@ -751,7 +754,7 @@ Alias for `bullet-list` with `ordered: true`. Same props and behavior.
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `title` | `string` | Required | Feature name |
-| `icon` | `string` | `undefined` | Icon reference |
+| `icon` | `string` | `undefined` | Lucide icon name |
 
 ---
 
@@ -790,7 +793,7 @@ Alias for `bullet-list` with `ordered: true`. Same props and behavior.
 | `date` | `string` | Required | Date or time label |
 | `title` | `string` | Required | Event title |
 | `marker` | `'dot' \| 'icon' \| 'number'` | `'dot'` | Timeline marker style |
-| `markerValue` | `string` | `undefined` | Value for icon or number marker |
+| `markerValue` | `string` | `undefined` | Lucide icon name when `marker: icon`, or literal text when `marker: number` |
 
 ---
 
@@ -1146,7 +1149,7 @@ root:
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `stages` | `array<{ label: string, detail?: string, icon?: string }>` | Required | Stages arranged in a circle |
+| `stages` | `array<{ label: string, detail?: string, icon?: string }>` | Required | Stages arranged in a circle. When provided, `icon` should be a Lucide icon name. |
 | `direction` | `'clockwise' \| 'counterclockwise'` | `'clockwise'` | Flow direction |
 | `style.stageColors` | `string[]` | Theme-derived | Color per stage |
 | `style.arrowColor` | `string` | `'var(--color-text-secondary)'` | Arrow/connector color |

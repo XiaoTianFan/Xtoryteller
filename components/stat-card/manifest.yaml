@@ -1,13 +1,22 @@
-name: stat-card
+﻿name: stat-card
 displayName: Stat Card
 description: Highlight a metric with supporting detail.
 category: content-card
 props:
-  label:
-    type: string
   value:
     type: string
-  detail:
+    required: true
+  label:
     type: string
+    required: true
   trend:
+    type: enum
+    values: [up, down, neutral]
+  trendValue:
+    type: string
+  prefix:
+    type: string
+  suffix:
+    type: string
+  detail:
     type: string

@@ -1,4 +1,4 @@
-name: timeline-item
+﻿name: timeline-item
 displayName: Timeline Item
 description: Event card intended for timeline-layout.
 category: content-card
@@ -6,7 +6,14 @@ content: true
 props:
   date:
     type: string
+    required: true
   title:
     type: string
+    required: true
   marker:
+    type: enum
+    values: [dot, icon, number]
+    default: dot
+  markerValue:
     type: string
+    description: Lucide icon name when marker is icon, or literal number text when marker is number.

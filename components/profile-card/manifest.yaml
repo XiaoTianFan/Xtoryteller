@@ -1,0 +1,13 @@
+﻿name: profile-card
+displayName: Profile Card
+description: Person or entity card with avatar, name, role, and optional bio copy.
+category: content-card
+content: true
+props:
+  name:
+    type: string
+    required: true
+  role:
+    type: string
+  avatar:
+    type: string

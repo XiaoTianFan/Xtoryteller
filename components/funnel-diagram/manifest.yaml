@@ -1,0 +1,15 @@
+﻿name: funnel-diagram
+displayName: Funnel Diagram
+description: Trapezoid funnel showing narrowing stages or conversion steps.
+category: diagram
+props:
+  stages:
+    type: array
+    required: true
+  orientation:
+    type: enum
+    values: [vertical, horizontal]
+    default: vertical
+  showValues:
+    type: boolean
+    default: true

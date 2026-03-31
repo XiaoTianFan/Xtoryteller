@@ -1,0 +1,22 @@
+﻿name: icon
+displayName: Icon
+description: Decorative or semantic icon element powered by Lucide icons by default.
+category: media
+props:
+  name:
+    type: string
+    required: true
+    description: Lucide icon name in kebab-case, for example sparkles or arrow-right.
+  customSvg:
+    type: string
+    description: Optional raw SVG markup for an explicitly requested custom icon. Overrides name when provided.
+  label:
+    type: string
+  size:
+    type: enum
+    values: [small, medium, large, xlarge]
+    default: medium
+  color:
+    type: string
+  strokeWidth:
+    type: number

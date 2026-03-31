@@ -1,0 +1,12 @@
+﻿name: org-chart
+displayName: Org Chart
+description: Hierarchical tree of roles, entities, or concepts.
+category: diagram
+props:
+  root:
+    type: object
+    required: true
+  direction:
+    type: enum
+    values: [top-bottom, left-right]
+    default: top-bottom

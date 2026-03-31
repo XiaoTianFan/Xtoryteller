@@ -838,6 +838,8 @@ The following components ship with Xtoryteller as built-in presets. Each follows
 **Media Components:**
 `image`, `video`, `svg-graphic`, `iframe-embed`, `code-block`, `icon`
 
+The built-in `icon` preset resolves [Lucide](https://lucide.dev/icons/) icons by name by default. Custom SVG icons are supported only through an explicit override when bespoke artwork is specifically required.
+
 **Card & Container Components:**
 `card`, `stat-card`, `profile-card`, `feature-card`, `comparison-card`, `timeline-item`
 

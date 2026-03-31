@@ -1,0 +1,20 @@
+﻿name: spectrum-bar
+displayName: Spectrum Bar
+description: Linear spectrum with positioned markers and labels.
+category: diagram
+props:
+  leftLabel:
+    type: string
+    required: true
+  rightLabel:
+    type: string
+    required: true
+  markers:
+    type: array
+    required: true
+  gradient:
+    type: array
+  orientation:
+    type: enum
+    values: [horizontal, vertical]
+    default: horizontal

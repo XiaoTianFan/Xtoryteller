@@ -1,0 +1,25 @@
+﻿name: coordinate-plot
+displayName: Coordinate Plot
+description: XY scatter plot with labeled points and optional variable radius.
+category: diagram
+props:
+  xAxis:
+    type: object
+    required: true
+  yAxis:
+    type: object
+    required: true
+  points:
+    type: array
+    required: true
+  showGrid:
+    type: boolean
+    default: true
+  showLabels:
+    type: boolean
+    default: true
+  defaultRadius:
+    type: number
+    default: 20
+  defaultColor:
+    type: string

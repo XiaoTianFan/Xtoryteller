@@ -1,9 +1,5 @@
-import { Markdown } from '@/components/_shared/markdown';
+﻿import { Markdown } from '@/components/_shared/markdown';
 import styles from './styles.module.css';
-
-function listItems(value: unknown) {
-  return Array.isArray(value) ? (value as string[]) : [];
-}
 
 export default function ComparisonCard({
   content,
@@ -14,8 +10,10 @@ export default function ComparisonCard({
   props?: Record<string, unknown>;
   style?: React.CSSProperties;
 }) {
-  const leftItems = listItems(props?.leftItems);
-  const rightItems = listItems(props?.rightItems);
+  const leftItems = Array.isArray(props?.leftItems) ? (props.leftItems as string[]) : [];
+  const rightItems = Array.isArray(props?.rightItems) ? (props.rightItems as string[]) : [];
+  const leftContent = typeof props?.leftContent === 'string' ? props.leftContent : leftItems.map((item) => `- ${item}`).join('\n');
+  const rightContent = typeof props?.rightContent === 'string' ? props.rightContent : rightItems.map((item) => `- ${item}`).join('\n');
 
   return (
     <article className={styles.card} style={style}>
@@ -24,11 +22,11 @@ export default function ComparisonCard({
       <div className={styles.columns}>
         <section>
           {props?.leftTitle ? <h4>{String(props.leftTitle)}</h4> : null}
-          <ul>{leftItems.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>
+          <div className={styles.markdownColumn}><Markdown content={leftContent} /></div>
         </section>
         <section>
           {props?.rightTitle ? <h4>{String(props.rightTitle)}</h4> : null}
-          <ul>{rightItems.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>
+          <div className={styles.markdownColumn}><Markdown content={rightContent} /></div>
         </section>
       </div>
     </article>

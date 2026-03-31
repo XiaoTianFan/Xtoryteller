@@ -1,4 +1,4 @@
-name: feature-card
+﻿name: feature-card
 displayName: Feature Card
 description: Card for a named feature, capability, or pillar.
 category: content-card
@@ -8,5 +8,9 @@ props:
     type: string
   title:
     type: string
+    required: true
+  icon:
+    type: string
+    description: Lucide icon name.
   items:
     type: array

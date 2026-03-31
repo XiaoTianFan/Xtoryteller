@@ -1,0 +1,18 @@
+﻿name: sankey-diagram
+displayName: Sankey Diagram
+description: Flow diagram showing quantity distribution between staged nodes.
+category: diagram
+props:
+  nodes:
+    type: array
+    required: true
+  links:
+    type: array
+    required: true
+  alignment:
+    type: enum
+    values: [left, right, center, justify]
+    default: justify
+  opacity:
+    type: number
+    default: 0.5

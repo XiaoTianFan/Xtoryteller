@@ -1,0 +1,13 @@
+﻿name: cycle-diagram
+displayName: Cycle Diagram
+description: Circular process diagram with connected stages.
+category: diagram
+props:
+  stages:
+    type: array
+    required: true
+    description: Stage objects may include an optional Lucide icon name in their icon field.
+  direction:
+    type: enum
+    values: [clockwise, counterclockwise]
+    default: clockwise

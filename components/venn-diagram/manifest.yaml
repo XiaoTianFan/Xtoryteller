@@ -1,0 +1,13 @@
+﻿name: venn-diagram
+displayName: Venn Diagram
+description: Two or three overlapping sets with optional labeled intersections.
+category: diagram
+props:
+  sets:
+    type: array
+    required: true
+  intersections:
+    type: array
+  opacity:
+    type: number
+    default: 0.3

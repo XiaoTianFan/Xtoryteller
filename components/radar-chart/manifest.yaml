@@ -1,0 +1,20 @@
+﻿name: radar-chart
+displayName: Radar Chart
+description: Spider chart for comparing datasets across multiple axes.
+category: diagram
+props:
+  axes:
+    type: array
+    required: true
+  datasets:
+    type: array
+    required: true
+  showGrid:
+    type: boolean
+    default: true
+  showValues:
+    type: boolean
+    default: false
+  fillOpacity:
+    type: number
+    default: 0.2

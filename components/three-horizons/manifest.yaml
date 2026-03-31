@@ -1,0 +1,16 @@
+﻿name: three-horizons
+displayName: Three Horizons
+description: Three-curve futures framework showing present, transition, and emerging system states.
+category: diagram
+props:
+  horizon1:
+    type: object
+    required: true
+  horizon2:
+    type: object
+    required: true
+  horizon3:
+    type: object
+    required: true
+  timeLabels:
+    type: object

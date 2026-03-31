@@ -1,7 +1,9 @@
-phase: 3
+﻿phase: 3
 name: Orchestration
 rules:
   - Read schema references before writing YAML
   - Use registered component and layout names only
   - Include meaningful metadata and transitions
   - Prefer build steps for dense content
+  - For Map mode, define cluster ids, navigation sequence, and either anchors or an arrangement algorithm
+  - When portability matters, prefer built-in components or note which custom dependencies must ship with the presentation package
