@@ -1,0 +1,8 @@
+name: numbered-list
+displayName: Numbered List
+description: Ordered sequence of points.
+category: basic-content
+props:
+  items:
+    type: array
+    description: Ordered list items.

@@ -1,0 +1,33 @@
+.card {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1.2rem;
+  border-radius: var(--radius-medium);
+  border: var(--border-subtle);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-secondary);
+  font-size: var(--text-small);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+}
+
+.body {
+  color: var(--color-foreground);
+}
+
+.list {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.45rem;
+  color: var(--color-muted);
+}

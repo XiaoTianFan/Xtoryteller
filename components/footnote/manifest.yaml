@@ -1,0 +1,9 @@
+name: footnote
+displayName: Footnote
+description: Small supporting note for source or caveat text.
+category: basic-content
+content: true
+props:
+  label:
+    type: string
+    description: Optional prefix label.

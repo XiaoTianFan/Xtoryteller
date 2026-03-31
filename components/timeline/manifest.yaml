@@ -1,0 +1,11 @@
+name: timeline
+displayName: Timeline
+description: Connected sequence of dated events.
+category: diagram
+props:
+  events:
+    type: array
+  orientation:
+    type: enum
+    values: [horizontal, vertical]
+    default: horizontal

@@ -1,0 +1,133 @@
+meta:
+  title: Phase 3 Showcase
+  slug: phase3-showcase
+  description: A stage-mode walkthrough of the first Phase 3 expansion work.
+  author: Xtoryteller
+  tags: [phase-3, showcase, stage]
+  createdAt: 2026-03-31
+  updatedAt: 2026-03-31
+mode: stage
+theme: default
+background:
+  type: paper
+  colorStops:
+    - 'rgba(249, 244, 238, 0.96)'
+    - 'rgba(31, 106, 122, 0.16)'
+    - 'rgba(141, 79, 45, 0.18)'
+steps:
+  - id: opening
+    title: Opening
+    layout: title-left
+    components:
+      - type: label
+        content: Phase 3
+        props: { tone: primary }
+      - type: headline
+        content: A broader storytelling kit, built on the existing runtime.
+      - type: svg-graphic
+        props:
+          src: assets/phase3.svg
+          alt: Phase 3 showcase artwork
+  - id: section
+    title: Section
+    layout: section-header
+    components:
+      - type: label
+        content: What changed
+        props: { tone: secondary }
+      - type: headline
+        content: New dashboard controls, richer layouts, and more presentational primitives.
+        props: { level: 2 }
+  - id: library
+    title: Library
+    layout: grid-3x2
+    components:
+      - type: stat-card
+        props: { label: New layouts, value: '7', detail: 'title-left, section-header, top-bottom, grid-3x2, timeline-layout, comparison-layout, pyramid-layout' }
+      - type: stat-card
+        props: { label: Tree arrangement, value: '1', detail: 'Phase 3 map algorithm now available in arrangement config' }
+      - type: stat-card
+        props: { label: Dashboard views, value: '2', detail: 'Grid and list toggles for faster browsing' }
+      - type: feature-card
+        content: Search and filter now work across title, tags, descriptions, and extracted component content.
+        props:
+          eyebrow: Dashboard
+          title: Discovery gets faster
+      - type: feature-card
+        content: Theme validation now checks font roles and core contrast pairs before a broken palette ships.
+        props:
+          eyebrow: Tooling
+          title: Safer iteration
+      - type: feature-card
+        content: Local presentation assets are served through a Next route, so media-driven slides actually resolve at runtime.
+        props:
+          eyebrow: Runtime
+          title: Media is first-class
+  - id: timeline
+    title: Timeline
+    layout: timeline-layout
+    layoutProps:
+      orientation: horizontal
+    components:
+      - type: timeline-item
+        content: Runtime foundation and validation landed.
+        props: { date: 'Phase 1', title: 'Stage core', marker: '1' }
+      - type: timeline-item
+        content: Map mode and diagrams introduced spatial storytelling.
+        props: { date: 'Phase 2', title: 'Maps', marker: '2' }
+      - type: timeline-item
+        content: Layout expansion, dashboard controls, and richer cards improve authoring range.
+        props: { date: 'Phase 3', title: 'Library expansion', marker: '3' }
+      - type: timeline-item
+        content: Portability and the remaining diagram suite can build on this base next.
+        props: { date: 'Next', title: 'Carry forward', marker: '4' }
+  - id: compare
+    title: Compare
+    layout: comparison-layout
+    layoutProps:
+      divider: vs
+    components:
+      - type: comparison-card
+        content: Compose from a narrow set of primitives.
+        props:
+          title: Before
+          leftTitle: Constraints
+          leftItems: ['Core components only', 'Basic dashboard', 'Placeholder media paths']
+          rightTitle: Outcome
+          rightItems: ['Works, but feels early', 'Harder to browse at scale', 'Media previews are unreliable']
+      - type: comparison-card
+        content: Extend the system without replacing the runtime model.
+        props:
+          title: After
+          leftTitle: Additions
+          leftItems: ['Expanded layouts', 'Search, sort, list/grid', 'Served assets + theme checks']
+          rightTitle: Outcome
+          rightItems: ['Better authoring range', 'Faster navigation', 'Safer visual iteration']
+  - id: stack
+    title: Stack
+    layout: top-bottom
+    layoutProps:
+      ratio: 60-40
+    components:
+      - type: numbered-list
+        props:
+          items:
+            - Keep the YAML-first orchestration model.
+            - Grow the component and layout libraries incrementally.
+            - Exercise new primitives with real example presentations.
+      - type: footnote
+        content: Portability scripts and the remaining advanced diagrams are the most natural next slice.
+        props:
+          label: Next focus
+  - id: close
+    title: Close
+    layout: pyramid-layout
+    components:
+      - type: feature-card
+        props: { eyebrow: Base, title: 'Runtime', items: ['Loader', 'Themes', 'State machine'] }
+      - type: feature-card
+        props: { eyebrow: Layer, title: 'Library', items: ['Layouts', 'Cards', 'Timeline elements'] }
+      - type: feature-card
+        props: { eyebrow: Surface, title: 'Dashboard', items: ['Search', 'Filtering', 'Sorting'] }
+      - type: feature-card
+        props: { eyebrow: Guardrail, title: 'Validation', items: ['Schema', 'Registries', 'Theme contrast'] }

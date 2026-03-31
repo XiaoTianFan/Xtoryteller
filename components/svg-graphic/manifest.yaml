@@ -1,0 +1,10 @@
+name: svg-graphic
+displayName: SVG Graphic
+description: Render an SVG asset or inline SVG markup.
+category: media
+content: true
+props:
+  src:
+    type: string
+  alt:
+    type: string

@@ -1,0 +1,12 @@
+name: feature-card
+displayName: Feature Card
+description: Card for a named feature, capability, or pillar.
+category: content-card
+content: true
+props:
+  eyebrow:
+    type: string
+  title:
+    type: string
+  items:
+    type: array

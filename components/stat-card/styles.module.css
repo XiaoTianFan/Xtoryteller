@@ -1,0 +1,35 @@
+.card {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1.2rem;
+  border-radius: var(--radius-medium);
+  border: var(--border-subtle);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+.label {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.value {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 600;
+  line-height: 0.95;
+}
+
+.detail,
+.trend {
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+.trend {
+  color: var(--color-secondary);
+}

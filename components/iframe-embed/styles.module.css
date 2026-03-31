@@ -1,0 +1,12 @@
+.shell {
+  width: 100%;
+}
+
+.frame {
+  width: 100%;
+  min-height: 320px;
+  border: 0;
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-soft);
+  background: color-mix(in srgb, var(--color-panel) 82%, white 18%);
+}

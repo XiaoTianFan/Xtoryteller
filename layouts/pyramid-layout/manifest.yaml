@@ -1,0 +1,6 @@
+name: pyramid-layout
+displayName: Pyramid Layout
+description: Triangular stacked composition for tiered ideas.
+slots: [tier-1, tier-2, tier-3, tier-4, tier-5]
+density:
+  recommendation: 3-5 compact rows.

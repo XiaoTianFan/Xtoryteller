@@ -93,7 +93,7 @@ export interface ClusterDefinition {
   background?: BackgroundShaderConfig;
   anchor?: ClusterAnchor;
   arrangement?: {
-    algorithm?: 'flow' | 'radial' | 'grid';
+    algorithm?: 'flow' | 'radial' | 'grid' | 'tree';
     columns?: number;
     radius?: number;
     spacing?: number;
@@ -145,4 +145,6 @@ export interface PresentationIndexEntry {
   updatedAt?: string;
   createdAt?: string;
   thumbnail?: string;
+  previewAsset?: string;
+  searchText?: string;
 }

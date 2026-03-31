@@ -1,0 +1,6 @@
+name: comparison-layout
+displayName: Comparison Layout
+description: Side-by-side comparison with divider treatment.
+slots: [left, right]
+density:
+  recommendation: 1 compact panel per side.

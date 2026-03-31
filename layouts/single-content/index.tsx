@@ -1,6 +1,10 @@
 import styles from '@/layouts/_shared/layout.module.css';
-import { LayoutProps, wrapPanels } from '@/layouts/_shared/layout-helpers';
+import { getLayoutStyle, joinLayoutClasses, LayoutProps, wrapPanels } from '@/layouts/_shared/layout-helpers';
 
-export default function SingleContentLayout({ items, compact }: LayoutProps) {
-  return <div className={`${styles.frame} ${styles.singleContent} ${compact ? styles.compact : ''}`}>{wrapPanels(items)}</div>;
+export default function SingleContentLayout({ items, compact, layoutProps }: LayoutProps) {
+  return (
+    <div className={joinLayoutClasses(styles.frame, styles.singleContent, compact && styles.compact)} style={getLayoutStyle(layoutProps)}>
+      {wrapPanels(items)}
+    </div>
+  );
 }

@@ -1,0 +1,6 @@
+name: title-left
+displayName: Title Left
+description: Left-aligned title layout with optional accent element.
+slots: [primary, secondary, accent]
+density:
+  recommendation: 1 headline, 1 subtitle, 1 optional accent.

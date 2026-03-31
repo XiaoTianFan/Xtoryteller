@@ -1,0 +1,6 @@
+name: timeline-layout
+displayName: Timeline Layout
+description: Timeline scaffold for timeline items or event cards.
+slots: [events]
+density:
+  recommendation: 4-8 events depending on orientation.

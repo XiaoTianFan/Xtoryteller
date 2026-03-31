@@ -1,0 +1,12 @@
+name: timeline-item
+displayName: Timeline Item
+description: Event card intended for timeline-layout.
+category: content-card
+content: true
+props:
+  date:
+    type: string
+  title:
+    type: string
+  marker:
+    type: string

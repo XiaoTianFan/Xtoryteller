@@ -1,0 +1,6 @@
+name: section-header
+displayName: Section Header
+description: Large section break layout with label and title.
+slots: [label, primary]
+density:
+  recommendation: 1 section identifier, 1 title.

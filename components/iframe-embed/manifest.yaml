@@ -1,0 +1,11 @@
+name: iframe-embed
+displayName: Iframe Embed
+description: Responsive iframe wrapper for embeds.
+category: media
+props:
+  src:
+    type: string
+  title:
+    type: string
+  height:
+    type: string

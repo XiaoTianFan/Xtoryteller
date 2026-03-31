@@ -1,0 +1,13 @@
+name: stat-card
+displayName: Stat Card
+description: Highlight a metric with supporting detail.
+category: content-card
+props:
+  label:
+    type: string
+  value:
+    type: string
+  detail:
+    type: string
+  trend:
+    type: string

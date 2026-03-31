@@ -1,0 +1,17 @@
+.figure {
+  margin: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.video {
+  width: 100%;
+  border-radius: var(--radius-medium);
+  border: var(--border-subtle);
+  background: color-mix(in srgb, var(--color-panel) 70%, black 30%);
+}
+
+.caption {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}

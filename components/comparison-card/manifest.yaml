@@ -1,0 +1,16 @@
+name: comparison-card
+displayName: Comparison Card
+description: Two-sided card for tradeoff or before/after framing.
+category: content-card
+content: true
+props:
+  title:
+    type: string
+  leftTitle:
+    type: string
+  rightTitle:
+    type: string
+  leftItems:
+    type: array
+  rightItems:
+    type: array

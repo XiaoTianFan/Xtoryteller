@@ -1,0 +1,11 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="36" fill="#F6F1E8"/>
+  <circle cx="248" cy="188" r="112" fill="#2A6C64" fill-opacity="0.18"/>
+  <circle cx="932" cy="184" r="128" fill="#8D4F2D" fill-opacity="0.18"/>
+  <circle cx="610" cy="518" r="156" fill="#D89A4F" fill-opacity="0.16"/>
+  <rect x="170" y="152" width="860" height="420" rx="28" fill="#FFF9F0" stroke="#D9CCB8"/>
+  <text x="226" y="274" fill="#8D4F2D" font-family="Georgia, serif" font-size="34" letter-spacing="8">PHASE 3</text>
+  <text x="224" y="352" fill="#1D1B19" font-family="Georgia, serif" font-size="74">Broader Layouts</text>
+  <text x="224" y="438" fill="#1D1B19" font-family="Georgia, serif" font-size="74">Stronger Tooling</text>
+  <text x="228" y="504" fill="#60584F" font-family="Arial, sans-serif" font-size="28">Dashboard controls, served assets, and a richer storytelling kit.</text>
+</svg>

@@ -25,6 +25,17 @@ function estimateClusterSize(cluster: ClusterDefinition): { width: number; heigh
   return { width, height };
 }
 
+function getArrangementConfig(clusters: ClusterDefinition[], canvas: MapCanvasConfig) {
+  const configured = clusters.find((cluster) => cluster.arrangement)?.arrangement;
+
+  return {
+    algorithm: configured?.algorithm,
+    columns: Number(configured?.columns ?? 0) || undefined,
+    radius: Number(configured?.radius ?? 0) || undefined,
+    spacing: Number(configured?.spacing ?? canvas.spacing ?? 320) || 320
+  };
+}
+
 function resolveManualPositions(clusters: ClusterDefinition[], spacing: number): PositionedCluster[] {
   const positioned = new Map<string, PositionedCluster>();
 
@@ -73,10 +84,10 @@ function resolveManualPositions(clusters: ClusterDefinition[], spacing: number):
   return clusters.map(resolve);
 }
 
-function flowArrangement(clusters: ClusterDefinition[], spacing: number): PositionedCluster[] {
+function flowArrangement(clusters: ClusterDefinition[], spacing: number, columns = 3): PositionedCluster[] {
   return clusters.map((cluster, index) => {
-    const row = Math.floor(index / 3);
-    const column = index % 3;
+    const row = Math.floor(index / columns);
+    const column = index % columns;
     const { width, height } = estimateClusterSize(cluster);
     return {
       id: cluster.id,
@@ -118,23 +129,86 @@ function gridArrangement(clusters: ClusterDefinition[], spacing: number): Positi
   });
 }
 
+function treeArrangement(clusters: ClusterDefinition[], spacing: number): PositionedCluster[] {
+  if (!clusters.length) {
+    return [];
+  }
+
+  const children = new Map<string | null, string[]>();
+  const byId = new Map(clusters.map((cluster) => [cluster.id, cluster]));
+
+  for (const cluster of clusters) {
+    const parentId = cluster.anchor?.relativeTo ?? null;
+    const bucket = children.get(parentId) ?? [];
+    bucket.push(cluster.id);
+    children.set(parentId, bucket);
+  }
+
+  const roots = children.get(null)?.filter((id) => byId.has(id)) ?? [clusters[0].id];
+  const positioned = new Map<string, PositionedCluster>();
+  let cursorX = 0;
+
+  const averageHeight =
+    clusters.reduce((total, cluster) => total + estimateClusterSize(cluster).height, 0) / Math.max(clusters.length, 1);
+
+  const layoutNode = (clusterId: string, depth: number): { center: number } => {
+    const cluster = byId.get(clusterId);
+    if (!cluster) {
+      return { center: cursorX };
+    }
+
+    const descendants = children.get(clusterId) ?? [];
+    const { width, height } = estimateClusterSize(cluster);
+    let center = cursorX + width / 2;
+
+    if (descendants.length) {
+      const spans = descendants.map((childId) => layoutNode(childId, depth + 1));
+      center = (spans[0].center + spans[spans.length - 1].center) / 2;
+    } else {
+      cursorX += width + spacing;
+    }
+
+    positioned.set(clusterId, {
+      id: clusterId,
+      x: center - width / 2,
+      y: depth * (averageHeight + spacing),
+      width,
+      height
+    });
+
+    return { center };
+  };
+
+  for (const rootId of roots) {
+    layoutNode(rootId, 0);
+    cursorX += spacing * 0.5;
+  }
+
+  return clusters
+    .map((cluster) => positioned.get(cluster.id))
+    .filter((cluster): cluster is PositionedCluster => Boolean(cluster));
+}
+
 export function resolveClusterPositions(
   clusters: ClusterDefinition[],
   canvas: MapCanvasConfig = {}
 ): PositionedCluster[] {
-  const spacing = canvas.spacing ?? 320;
-  const arrangement = clusters[0]?.arrangement?.algorithm;
+  const { algorithm, columns, radius, spacing } = getArrangementConfig(clusters, canvas);
 
-  if (arrangement === 'radial') {
-    return radialArrangement(clusters, clusters[0]?.arrangement?.radius ?? spacing * 1.2);
+  if (algorithm === 'radial') {
+    return radialArrangement(clusters, radius ?? spacing * 1.2);
   }
 
-  if (arrangement === 'grid') {
+  if (algorithm === 'grid') {
     return gridArrangement(clusters, spacing);
   }
 
-  if (arrangement === 'flow') {
-    return flowArrangement(clusters, spacing);
+  if (algorithm === 'flow') {
+    return flowArrangement(clusters, spacing, columns ?? 3);
+  }
+
+  if (algorithm === 'tree') {
+    return treeArrangement(clusters, spacing);
   }
 
   return resolveManualPositions(clusters, spacing);

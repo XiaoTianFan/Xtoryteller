@@ -1,0 +1,40 @@
+.item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+  padding: 1rem;
+  border-radius: var(--radius-medium);
+  border: var(--border-subtle);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+}
+
+.marker {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: white;
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+
+.body {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.date,
+.title,
+.copy :global(p) {
+  margin: 0;
+}
+
+.date {
+  color: var(--color-secondary);
+  font-size: var(--text-small);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

@@ -1,0 +1,22 @@
+.label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-pill);
+  border: var(--border-subtle);
+  background: color-mix(in srgb, var(--color-surface) 86%, transparent);
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.primary {
+  color: var(--color-primary);
+}
+
+.secondary {
+  color: var(--color-secondary);
+}

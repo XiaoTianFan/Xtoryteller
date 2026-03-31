@@ -1,0 +1,9 @@
+name: video
+displayName: Video
+description: Embedded local or remote video with caption.
+category: media
+props:
+  src:
+    type: string
+  caption:
+    type: string

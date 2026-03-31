@@ -1,0 +1,10 @@
+.figure {
+  margin: 0;
+}
+
+.image,
+.inlineGraphic :global(svg) {
+  width: 100%;
+  height: auto;
+  display: block;
+}

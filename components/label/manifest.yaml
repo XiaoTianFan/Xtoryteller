@@ -1,0 +1,10 @@
+name: label
+displayName: Label
+description: Small metadata pill or section label.
+category: basic-content
+content: true
+props:
+  tone:
+    type: enum
+    values: [default, primary, secondary]
+    default: default

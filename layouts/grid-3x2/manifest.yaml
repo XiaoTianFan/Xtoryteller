@@ -1,0 +1,6 @@
+name: grid-3x2
+displayName: Grid 3x2
+description: Six-cell grid for compact cards or stats.
+slots: [cell-1, cell-2, cell-3, cell-4, cell-5, cell-6]
+density:
+  recommendation: Up to 6 compact cards.

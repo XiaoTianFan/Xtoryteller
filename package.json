@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "eslint .",
     "validate": "node scripts/validate.mjs",
+    "validate:theme": "node scripts/validate-theme.mjs",
     "validate:all": "node scripts/validate-all.mjs",
     "registries": "node scripts/generate-registries.mjs",
     "watch": "node scripts/watch.mjs"

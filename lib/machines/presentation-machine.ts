@@ -131,7 +131,10 @@ export const presentationMachine = setup({
         ? {
             camera: {
               ...context.camera,
-              zoom: Math.min(2.5, Math.max(0.35, event.zoom))
+              zoom: Math.min(
+                context.presentation.canvas?.maxZoom ?? 2.5,
+                Math.max(context.presentation.canvas?.minZoom ?? 0.35, event.zoom)
+              )
             }
           }
         : {}
@@ -309,3 +312,4 @@ export const presentationMachine = setup({
 export function getActiveCluster(context: RuntimeContext): ClusterDefinition | undefined {
   return getClusterById(context.presentation, context.currentClusterId);
 }
+

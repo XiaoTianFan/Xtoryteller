@@ -1,0 +1,18 @@
+.list {
+  margin: 0;
+  padding-left: 1.4rem;
+  display: grid;
+  gap: 0.7rem;
+  color: var(--color-foreground);
+}
+
+.item {
+  opacity: 0.2;
+  transform: translateY(0.35rem);
+  transition: opacity var(--motion-fast), transform var(--motion-fast);
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

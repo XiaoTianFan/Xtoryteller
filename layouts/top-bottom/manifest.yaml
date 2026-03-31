@@ -1,0 +1,6 @@
+name: top-bottom
+displayName: Top Bottom
+description: Two-region vertical stack with ratio control.
+slots: [top, bottom]
+density:
+  recommendation: 1 component per region.
