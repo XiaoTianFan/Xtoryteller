@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 import { createBuildPlan, getSequentialRevealCount, isComponentVisible } from '@/lib/runtime/build-plan';
@@ -11,6 +11,7 @@ import { LiveRegion } from '@/lib/runtime/ui/live-region';
 import { PresentationControls } from '@/lib/runtime/ui/presentation-controls';
 
 export function StageRenderer() {
+  const router = useRouter();
   const { presentation, machine } = usePresentationRuntime();
   const prefersReducedMotion = useReducedMotion();
   const step = presentation.steps?.[machine.state.context.currentStepIndex];
@@ -25,9 +26,9 @@ export function StageRenderer() {
   return (
     <div className="viewerShell">
       <BackgroundLayer />
-      <Link href="/" className="backLink">
+      <button type="button" className="backLink" onClick={() => router.push('/')}>
         Back
-      </Link>
+      </button>
       <AnimatePresence mode="wait">
         <motion.section
           key={`${presentation.meta.slug}-${machine.state.context.currentStepIndex}`}

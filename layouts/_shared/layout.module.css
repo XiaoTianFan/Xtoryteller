@@ -34,7 +34,8 @@
 }
 
 .sectionHeader {
-  align-content: space-between;
+  align-content: center;
+  gap: var(--spacing-section);
   padding: var(--spacing-page);
 }
 
@@ -82,6 +83,7 @@
 
 .threeColumn {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: center;
   align-items: start;
   padding: var(--spacing-page);
 }
@@ -90,6 +92,11 @@
   grid-template-rows: 1fr 1fr;
   align-items: stretch;
   padding: var(--spacing-page);
+}
+
+.topBottom > .panel {
+  display: grid;
+  align-content: center;
 }
 
 .grid2x2 {
@@ -130,6 +137,7 @@
 
 .timelineLayout {
   position: relative;
+  align-content: center;
   gap: var(--spacing-section);
   padding: var(--spacing-page);
 }
@@ -174,8 +182,14 @@
 
 .comparisonLayout {
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-content: center;
   align-items: stretch;
   padding: var(--spacing-page);
+}
+
+.comparisonLayout > .panel {
+  display: grid;
+  align-content: center;
 }
 
 .comparisonDivider {
@@ -230,9 +244,36 @@
   width: min(38rem, 100%);
 }
 
+.compact {
+  min-height: 100%;
+  height: 100%;
+  padding: clamp(0.85rem, 1.4vw, 1.15rem);
+  gap: clamp(0.5rem, 1vw, 0.85rem);
+}
+
 .compact .panel {
-  transform: scale(0.92);
-  transform-origin: top left;
+  transform: none;
+}
+
+.compact.singleContent,
+.compact.titleCenter,
+.compact.titleLeft,
+.compact.sectionHeader,
+.compact.twoColumn,
+.compact.contentLeftMediaRight,
+.compact.mediaLeftContentRight,
+.compact.stack,
+.compact.threeColumn,
+.compact.topBottom,
+.compact.grid2x2,
+.compact.grid3x2,
+.compact.sidebarMain,
+.compact.gallery,
+.compact.timelineLayout,
+.compact.comparisonLayout,
+.compact.pyramidLayout {
+  max-width: 100%;
+  margin: 0;
 }
 
 @media (max-width: 900px) {

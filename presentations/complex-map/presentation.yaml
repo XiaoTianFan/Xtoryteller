@@ -27,7 +27,7 @@ canvas:
   spacing: 420
   initialZoom: 0.8
 navigation:
-  sequence: [north-star, system-map, opportunity-space, transformation-flow]
+  sequence: [north-star, system-map, opportunity-space, transformation-flow, hidden-depth]
 clusters:
   - id: north-star
     title: North Star
@@ -119,3 +119,4 @@ clusters:
             - { depth: patterns, label: Patterns, items: ['Themes', 'Layouts'] }
             - { depth: structures, label: Structures, items: ['Schema', 'Registries'] }
             - { depth: mental-models, label: Mental models, items: ['Infrastructure over generation'] }
+

@@ -1,3 +1,7 @@
+import { syncPresentationAssets } from './scripts/presentation-assets.mjs';
+
+await syncPresentationAssets();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typedRoutes: true,

@@ -33,11 +33,12 @@ function getClusterById(presentation: PresentationConfig, clusterId: string | nu
 export const presentationMachine = setup({
   types: {
     context: {} as RuntimeContext,
-    input: {} as { presentation: PresentationConfig; initialHash?: string },
+    input: {} as { presentation: PresentationConfig; initialCamera?: CameraState; initialHash?: string },
     events: {} as
       | { type: 'NEXT' }
       | { type: 'PREV' }
       | { type: 'GO_TO_STEP'; stepIndex: number }
+      | { type: 'SET_CAMERA'; camera: CameraState }
       | { type: 'PAN'; deltaX: number; deltaY: number }
       | { type: 'ZOOM'; zoom: number }
       | { type: 'GO_TO_CLUSTER'; clusterId: string }
@@ -138,6 +139,13 @@ export const presentationMachine = setup({
             }
           }
         : {}
+    ),
+    setCamera: assign(({ event }) =>
+      'camera' in event
+        ? {
+            camera: event.camera
+          }
+        : {}
     )
   }
 }).createMachine({
@@ -151,13 +159,13 @@ export const presentationMachine = setup({
     currentClusterId: input.presentation.clusters?.[0]?.id ?? null,
     guidedIndex: 0,
     guided: false,
-    camera: {
+    camera: input.initialCamera ?? {
       x: 0,
       y: 0,
       zoom: input.presentation.canvas?.initialZoom ?? 1
     },
     targetStepIndex: null,
-    targetClusterId: input.presentation.clusters?.[0]?.id ?? null
+    targetClusterId: null
   }),
   states: {
     navigation: {
@@ -232,6 +240,7 @@ export const presentationMachine = setup({
           states: {
             freeRoam: {
               on: {
+                SET_CAMERA: { actions: 'setCamera' },
                 PAN: { actions: 'panCamera' },
                 ZOOM: { actions: 'zoomCamera' },
                 GO_TO_CLUSTER: {
@@ -245,6 +254,9 @@ export const presentationMachine = setup({
               }
             },
             flying: {
+              on: {
+                SET_CAMERA: { actions: 'setCamera' }
+              },
               after: {
                 700: [
                   {
@@ -261,6 +273,7 @@ export const presentationMachine = setup({
             },
             guided: {
               on: {
+                SET_CAMERA: { actions: 'setCamera' },
                 NEXT: {
                   guard: 'hasNextCluster',
                   target: 'flying',
@@ -312,4 +325,3 @@ export const presentationMachine = setup({
 export function getActiveCluster(context: RuntimeContext): ClusterDefinition | undefined {
   return getClusterById(context.presentation, context.currentClusterId);
 }
-

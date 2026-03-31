@@ -8,6 +8,10 @@ export interface PositionedCluster {
   height: number;
 }
 
+function clampZoom(zoom: number, canvas: MapCanvasConfig): number {
+  return Math.min(canvas.maxZoom ?? 2.5, Math.max(canvas.minZoom ?? 0.35, zoom));
+}
+
 const DIRECTION_VECTORS = {
   left: { x: -1, y: 0 },
   right: { x: 1, y: 0 },
@@ -214,7 +218,10 @@ export function resolveClusterPositions(
   return resolveManualPositions(clusters, spacing);
 }
 
-export function frameClusters(clusters: PositionedCluster[]): { x: number; y: number; zoom: number } {
+export function frameClusters(
+  clusters: PositionedCluster[],
+  canvas: MapCanvasConfig = {}
+): { x: number; y: number; zoom: number } {
   if (!clusters.length) {
     return { x: 0, y: 0, zoom: 1 };
   }
@@ -228,7 +235,22 @@ export function frameClusters(clusters: PositionedCluster[]): { x: number; y: nu
   const centerY = (minY + maxY) / 2;
   const spanX = maxX - minX;
   const spanY = maxY - minY;
-  const zoom = Math.max(0.35, Math.min(1, 1100 / Math.max(spanX, spanY, 1)));
+  const zoom = clampZoom(Math.min(1, 1100 / Math.max(spanX, spanY, 1)), canvas);
 
   return { x: centerX, y: centerY, zoom };
+}
+
+export function frameCluster(
+  cluster: PositionedCluster,
+  canvas: MapCanvasConfig = {}
+): { x: number; y: number; zoom: number } {
+  const padding = Math.max(Number(canvas.spacing ?? 320) * 0.5, 160);
+  const spanX = cluster.width + padding;
+  const spanY = cluster.height + padding;
+
+  return {
+    x: cluster.x + cluster.width / 2,
+    y: cluster.y + cluster.height / 2,
+    zoom: clampZoom(Math.min(1.6, 1100 / Math.max(spanX, spanY, 1)), canvas)
+  };
 }

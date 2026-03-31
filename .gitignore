@@ -23,3 +23,6 @@ pnpm-debug.log*
 skills/references/*.json
 !skills/references/schema.json
 presentations-index.json
+
+# generated presentation assets
+public/presentations/
