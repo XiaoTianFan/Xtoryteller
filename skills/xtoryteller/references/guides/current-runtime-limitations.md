@@ -13,6 +13,8 @@ Read this file before promising behavior that sounds broader than what the shipp
 
 - Transition names, background switching, Paper shader backgrounds, CSS backgrounds, and reduced-motion behavior are shipped, but the APRD still describes richer motion semantics than the current viewer guarantees.
 
+- Shared background presets are shipped for Paper Shader backgrounds through `presetRef`, but they do not auto-generate an authored CSS equivalent. Keep CSS backgrounds inline when a dedicated CSS surface is required.
+
 - The APRD is broader than the shipped runtime. Use the nearest supported path instead of promising an aspirational feature.
 
 ## Practical Alternatives

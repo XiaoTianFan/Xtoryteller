@@ -34,6 +34,7 @@ shared:
     stringValue: css background string | none | paper shader name
     object:
       type: paper-shader | css | none | legacy paper?
+      presetRef: string?
       shader: string?
       preset: string?
       params: object?
@@ -54,10 +55,12 @@ shared:
         easing: string?
       stages:
         - steps: [number, number]
+          presetRef: string?
           type: paper-shader | css | none | legacy paper?
       regions:
         - clusters: string[]?
           group: string?
+          presetRef: string?
           type: paper-shader | css | none | legacy paper?
   backgroundSections:
     - match:

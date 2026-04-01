@@ -1,0 +1,13 @@
+name: Focus Grain
+description: Darker grain gradient for emphasis beats and focused sections.
+tags: [grain, focus, dramatic]
+shader: grain-gradient
+preset: wave
+colorStops:
+  - '#101820'
+  - '#3a506b'
+  - '#f4d35e'
+intensity: 0.42
+grain: 0.18
+contrast: 0.66
+speed: 1.1

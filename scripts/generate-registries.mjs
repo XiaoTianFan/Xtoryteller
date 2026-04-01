@@ -53,6 +53,30 @@ async function scanThemes() {
   return themes.sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
+async function scanBackgroundPresets() {
+  const presetPaths = await fg('*.yaml', {
+    cwd: path.join(root, 'backgrounds'),
+    absolute: true,
+    onlyFiles: true,
+  });
+
+  const presets = await Promise.all(
+    presetPaths.map(async (presetPath) => {
+      const preset = await parseYaml(presetPath);
+      return {
+        slug: path.basename(presetPath, '.yaml'),
+        name: preset.name,
+        description: preset.description,
+        tags: preset.tags ?? [],
+        shader: preset.shader,
+        preset: preset.preset,
+      };
+    })
+  );
+
+  return presets.sort((a, b) => a.slug.localeCompare(b.slug));
+}
+
 async function writeJson(fileName, data) {
   await fs.mkdir(XTORYTELLER_REGISTRIES_DIR, { recursive: true });
   await fs.writeFile(
@@ -62,11 +86,12 @@ async function writeJson(fileName, data) {
 }
 
 export async function generateRegistries() {
-  const [components, layouts, transitions, themes] = await Promise.all([
+  const [components, layouts, transitions, themes, backgrounds] = await Promise.all([
     scanManifests('components'),
     scanManifests('layouts'),
     scanManifests('transitions'),
     scanThemes(),
+    scanBackgroundPresets(),
   ]);
 
   await Promise.all([
@@ -80,6 +105,7 @@ export async function generateRegistries() {
       transitions,
     }),
     writeJson('theme-registry.json', { count: themes.length, themes }),
+    writeJson('background-registry.json', { count: backgrounds.length, backgrounds }),
   ]);
 
   return {
@@ -87,6 +113,7 @@ export async function generateRegistries() {
     layouts: layouts.length,
     transitions: transitions.length,
     themes: themes.length,
+    backgrounds: backgrounds.length,
   };
 }
 
@@ -100,6 +127,6 @@ function isCliEntry() {
 if (isCliEntry()) {
   const counts = await generateRegistries();
   console.log(
-    `Generated ${counts.components} components, ${counts.layouts} layouts, ${counts.transitions} transitions, ${counts.themes} themes at ${new Date().toISOString()}.`
+    `Generated ${counts.components} components, ${counts.layouts} layouts, ${counts.transitions} transitions, ${counts.themes} themes, and ${counts.backgrounds} backgrounds at ${new Date().toISOString()}.`
   );
 }

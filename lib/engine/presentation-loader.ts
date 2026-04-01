@@ -1,6 +1,8 @@
 import path from 'node:path';
 
 import { resolveAssetPath } from '@/lib/engine/asset-resolver';
+import { loadBackgroundPresetMap } from '@/lib/engine/background-preset-registry';
+import { resolvePresentationBackgroundPresetRefs } from '@/lib/engine/background-preset-resolver';
 import { PRESENTATIONS_DIR } from '@/lib/engine/constants';
 import { readDirectoryNames } from '@/lib/engine/fs';
 import { applyTemplateExpressions } from '@/lib/engine/template-engine';
@@ -114,12 +116,12 @@ function findPreviewAsset(config: PresentationConfig): string | undefined {
 export async function loadPresentationBySlug(slug: string): Promise<PresentationConfig> {
   const filePath = path.join(PRESENTATIONS_DIR, slug, 'presentation.yaml');
   const config = await parseYamlFile<PresentationConfig>(filePath);
+  const presetMap = await loadBackgroundPresetMap();
+  const hydratedConfig = config.data
+    ? (applyTemplateExpressions(config, config.data) as PresentationConfig)
+    : config;
 
-  if (config.data) {
-    return applyTemplateExpressions(config, config.data) as PresentationConfig;
-  }
-
-  return config;
+  return resolvePresentationBackgroundPresetRefs(hydratedConfig, presetMap);
 }
 
 export async function loadPresentationIndex(): Promise<PresentationIndexEntry[]> {

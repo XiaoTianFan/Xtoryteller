@@ -6,6 +6,7 @@ Xtoryteller is a file-system-first presentation runtime with an agent-facing orc
 
 - Presentation content lives in `presentations/<slug>/presentation.yaml`.
 - Components, layouts, and transitions are real code with manifest files that feed the agent registries.
+- Shared background presets live in `backgrounds/*.yaml` and feed the background registry.
 - Themes live in YAML and are resolved into CSS custom properties at runtime.
 - The viewer has two modes:
   - Stage mode for sequential step/build storytelling.
@@ -14,15 +15,16 @@ Xtoryteller is a file-system-first presentation runtime with an agent-facing orc
 - Validation and registry generation live in `scripts/`.
 - Markdown hover annotations are available inside markdown-rendered content through `{{hover:key|Label}}` plus `component.annotations`.
 - Presentation-scoped `components/`, `layouts/`, and `transitions/` can override the global libraries for the active presentation.
-- Backgrounds support both CSS and `@paper-design/shaders-react`.
+- Backgrounds support both CSS and `@paper-design/shaders-react`, plus shared Paper Shader presets referenced through `presetRef`.
 
 ## Working Model For Agents
 
 1. Read the registries and supporting docs.
 2. Decide whether the task is presentation work, style exploration, primitive/theme creation, or product/runtime work.
-3. Generate or edit YAML first.
-4. Touch code only when the registry truly lacks the needed primitive.
-5. Validate before asking the user to review.
+3. For reusable Paper Shader backgrounds, check the background registry before hand-authoring a new shader config.
+4. Generate or edit YAML first.
+5. Touch code only when the registry truly lacks the needed primitive.
+6. Validate before asking the user to review.
 
 ## Current Runtime Boundaries
 
@@ -35,6 +37,7 @@ These boundaries matter because the APRD is broader than the currently shipped r
 ## File Ownership
 
 - `presentations/`: primary authoring surface for agents
+- `backgrounds/`: shared Paper Shader preset library
 - `themes/`: safe to extend when theme work is requested
 - `components/`, `layouts/`, `transitions/`: extend only through the relevant sub-pipelines
 - `lib/`, `app/`, `scripts/`: infrastructure work, validation, runtime behavior, and tooling
@@ -43,6 +46,7 @@ These boundaries matter because the APRD is broader than the currently shipped r
 ## Practical Guidance
 
 - Prefer built-in primitives over new code.
+- Prefer `presetRef` for reusable Paper Shader looks and inline background objects for one-off variations.
 - Prefer theme tokens over per-component styling.
 - When styling work is reusable, start in `themes/*.yaml` rather than scattering literals through CSS modules.
 - Keep folder names, slugs, and asset paths aligned.

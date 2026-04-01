@@ -1,0 +1,15 @@
+meta:
+  title: Preset Ref Override Param
+  slug: preset-ref-override-param
+mode: stage
+theme: xinimalist-paper
+background:
+  type: paper-shader
+  presetRef: tidal-waves
+  params:
+    image: https://example.com/background.webp
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Invalid preset override

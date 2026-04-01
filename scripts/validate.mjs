@@ -74,6 +74,23 @@ async function themeNames() {
   return new Set(themePaths.map((themePath) => path.basename(themePath, '.yaml')));
 }
 
+async function backgroundPresetPaths() {
+  return fg('*.yaml', {
+    cwd: path.join(root, 'backgrounds'),
+    absolute: true,
+    onlyFiles: true
+  });
+}
+
+async function loadBackgroundPresetMap() {
+  const presetPaths = await backgroundPresetPaths();
+  const entries = await Promise.all(
+    presetPaths.map(async (presetPath) => [path.basename(presetPath, '.yaml'), await parseYaml(presetPath)])
+  );
+
+  return new Map(entries);
+}
+
 async function extractObjectKeys(filePath, objectName) {
   const content = await fs.readFile(filePath, 'utf8');
   const objectMatch = content.match(new RegExp(objectName + ' = \\{([\\s\\S]*?)\\}\\s*(?:as const|satisfies)'));
@@ -220,7 +237,97 @@ function validatePaperShaderConfig(value, label, issues, shaderName) {
   }
 }
 
-function validateBackgroundConfig(background, label, config, issues) {
+function resolvePresetBackedBackground(value, backgroundPresetMap) {
+  const presetRef = typeof value.presetRef === 'string' && value.presetRef.trim() ? value.presetRef.trim() : null;
+  const preset = presetRef ? backgroundPresetMap.get(presetRef) ?? null : null;
+
+  if (!preset) {
+    return { presetRef, preset: null, effectiveValue: value };
+  }
+
+  return {
+    presetRef,
+    preset,
+    effectiveValue: {
+      ...preset,
+      ...value,
+      type: value.type ?? 'paper-shader',
+      shader: value.shader ?? preset.shader,
+      preset: value.preset ?? preset.preset,
+      params: {
+        ...(asObject(preset.params) ?? {}),
+        ...(asObject(value.params) ?? {})
+      },
+      colorStops: value.colorStops ?? preset.colorStops,
+      intensity: value.intensity ?? preset.intensity,
+      grain: value.grain ?? preset.grain,
+      contrast: value.contrast ?? preset.contrast,
+      speed: value.speed ?? preset.speed,
+      opacity: value.opacity ?? preset.opacity
+    }
+  };
+}
+
+function validateBackgroundPresetDefinition(value, label, issues) {
+  const preset = asObject(value);
+  if (!preset) {
+    issues.push(createIssue('error', `${label} must be an object.`));
+    return;
+  }
+
+  const allowedKeys = new Set([
+    'name',
+    'description',
+    'tags',
+    'shader',
+    'preset',
+    'params',
+    'colorStops',
+    'intensity',
+    'grain',
+    'contrast',
+    'speed',
+    'opacity'
+  ]);
+
+  for (const key of Object.keys(preset)) {
+    if (!allowedKeys.has(key)) {
+      issues.push(createIssue('error', `${label}.${key} is not supported for background presets.`));
+    }
+  }
+
+  if (typeof preset.name !== 'string' || !preset.name.trim()) {
+    issues.push(createIssue('error', `${label}.name must be a non-empty string.`));
+  }
+
+  if (preset.description != null && typeof preset.description !== 'string') {
+    issues.push(createIssue('error', `${label}.description must be a string.`));
+  }
+
+  if (preset.tags != null) {
+    if (!Array.isArray(preset.tags) || !preset.tags.every((tag) => typeof tag === 'string' && tag.trim())) {
+      issues.push(createIssue('error', `${label}.tags must be an array of non-empty strings.`));
+    }
+  }
+
+  const shaderName = normalizePaperShaderName(preset.shader);
+  if (!shaderName) {
+    issues.push(createIssue('error', `${label}.shader must reference a supported Paper shader.`));
+    return;
+  }
+
+  validatePaperShaderConfig(
+    {
+      ...preset,
+      type: 'paper-shader'
+    },
+    label,
+    issues,
+    shaderName
+  );
+}
+
+function validateBackgroundConfig(background, label, config, issues, backgroundPresetMap = new Map()) {
   if (background == null) {
     return;
   }
@@ -241,13 +348,30 @@ function validateBackgroundConfig(background, label, config, issues) {
     return;
   }
 
-  const normalizedType = normalizeKey(value.type ?? '');
+  const { presetRef, preset, effectiveValue } = resolvePresetBackedBackground(value, backgroundPresetMap);
+  const normalizedType = normalizeKey(effectiveValue.type ?? '');
   const explicitCss = normalizedType === 'css';
   const explicitNone = normalizedType === 'none';
   const shaderName =
-    normalizePaperShaderName(value.shader) ??
+    normalizePaperShaderName(effectiveValue.shader) ??
     (normalizedType === 'paper-shader' ? 'paper-texture' : null) ??
     (normalizedType && !['css', 'none', 'paper', 'paper-shader'].includes(normalizedType) ? normalizePaperShaderName(value.type) : null);
+
+  if (value.presetRef != null && !presetRef) {
+    issues.push(createIssue('error', `${label}.presetRef must be a non-empty string.`));
+  }
+
+  if (presetRef && !preset) {
+    issues.push(createIssue('error', `${label}.presetRef references unknown background preset "${presetRef}".`));
+  }
+
+  if (presetRef && (value.value != null || value.gradient != null)) {
+    issues.push(createIssue('error', `${label}.presetRef cannot be combined with CSS-only fields like value or gradient.`));
+  }
+
+  if (presetRef && (explicitCss || explicitNone)) {
+    issues.push(createIssue('error', `${label}.presetRef implies a Paper shader background and cannot be combined with type "${value.type}".`));
+  }
 
   if (!explicitCss && !explicitNone && value.type != null && shaderName == null && normalizedType !== 'paper') {
     issues.push(createIssue('error', `${label}.type must be "css", "paper-shader", "none", legacy "paper", or a supported Paper shader alias.`));
@@ -258,9 +382,9 @@ function validateBackgroundConfig(background, label, config, issues) {
     !explicitNone &&
     normalizedType !== 'paper' &&
     shaderName == null &&
-    value.value == null &&
-    value.gradient == null &&
-    value.colorStops == null
+    effectiveValue.value == null &&
+    effectiveValue.gradient == null &&
+    effectiveValue.colorStops == null
   ) {
     issues.push(
       createIssue(
@@ -270,46 +394,46 @@ function validateBackgroundConfig(background, label, config, issues) {
     );
   }
 
-  if (!explicitNone && (explicitCss || normalizedType === 'paper' || (!shaderName && (value.value != null || value.gradient != null || value.colorStops != null)))) {
-    if (value.value != null && typeof value.value !== 'string') {
+  if (!explicitNone && (explicitCss || normalizedType === 'paper' || (!shaderName && (effectiveValue.value != null || effectiveValue.gradient != null || effectiveValue.colorStops != null)))) {
+    if (effectiveValue.value != null && typeof effectiveValue.value !== 'string') {
       issues.push(createIssue('error', `${label}.value must be a string.`));
     }
 
-    if (value.colorStops != null) {
-      if (!Array.isArray(value.colorStops) || value.colorStops.length < 3 || !value.colorStops.every((entry) => typeof entry === 'string')) {
+    if (effectiveValue.colorStops != null) {
+      if (!Array.isArray(effectiveValue.colorStops) || effectiveValue.colorStops.length < 3 || !effectiveValue.colorStops.every((entry) => typeof entry === 'string')) {
         issues.push(createIssue('error', `${label}.colorStops must contain at least three color strings for CSS backgrounds.`));
       }
     }
 
-    validateCssGradient(value.gradient, `${label}.gradient`, issues);
+    validateCssGradient(effectiveValue.gradient, `${label}.gradient`, issues);
   } else if (!explicitNone) {
-    validatePaperShaderConfig(value, label, issues, shaderName);
+    validatePaperShaderConfig(effectiveValue, label, issues, shaderName);
   }
 
-  if (Array.isArray(value.stages)) {
+  if (Array.isArray(effectiveValue.stages)) {
     if (config.mode !== 'stage') {
       issues.push(createIssue('warning', `${label}.stages is only used in stage presentations.`));
     }
 
-    for (const [index, stage] of value.stages.entries()) {
+    for (const [index, stage] of effectiveValue.stages.entries()) {
       const stepCount = config.steps?.length ?? 0;
       const steps = Array.isArray(stage?.steps) ? stage.steps : null;
       if (!steps || steps.length !== 2 || !Number.isInteger(steps[0]) || !Number.isInteger(steps[1]) || steps[0] < 0 || steps[1] < steps[0] || steps[1] >= stepCount) {
         issues.push(createIssue('error', `${label}.stages[${index}].steps must stay within 0..${Math.max(stepCount - 1, 0)}.`));
       }
 
-      validateBackgroundConfig(stage, `${label}.stages[${index}]`, config, issues);
+      validateBackgroundConfig(stage, `${label}.stages[${index}]`, config, issues, backgroundPresetMap);
     }
   }
 
-  if (Array.isArray(value.regions)) {
+  if (Array.isArray(effectiveValue.regions)) {
     if (config.mode !== 'map') {
       issues.push(createIssue('warning', `${label}.regions is only used in map presentations.`));
     }
 
     const clusterIds = new Set((config.clusters ?? []).map((cluster) => cluster.id));
     const clusterGroups = new Set((config.clusters ?? []).map((cluster) => cluster.group).filter(Boolean));
-    for (const [index, region] of value.regions.entries()) {
+    for (const [index, region] of effectiveValue.regions.entries()) {
       for (const clusterId of region?.clusters ?? []) {
         if (!clusterIds.has(clusterId)) {
           issues.push(createIssue('error', `${label}.regions[${index}].clusters references unknown cluster "${clusterId}".`));
@@ -320,12 +444,12 @@ function validateBackgroundConfig(background, label, config, issues) {
         issues.push(createIssue('warning', `${label}.regions[${index}].group references unknown group "${region.group}".`));
       }
 
-      validateBackgroundConfig(region, `${label}.regions[${index}]`, config, issues);
+      validateBackgroundConfig(region, `${label}.regions[${index}]`, config, issues, backgroundPresetMap);
     }
   }
 
-  if (value.transition) {
-    const duration = value.transition.duration;
+  if (effectiveValue.transition) {
+    const duration = effectiveValue.transition.duration;
     if (duration != null && (!Number.isFinite(duration) || duration < 0)) {
       issues.push(createIssue('error', `${label}.transition.duration must be a non-negative number.`));
     }
@@ -568,8 +692,8 @@ async function pushMissingAssetIssues(config, presentationPath, issues) {
   }
 }
 
-function validateBackgroundSections(config, issues) {
-  validateBackgroundConfig(config.background, 'background', config, issues);
+function validateBackgroundSections(config, issues, backgroundPresetMap) {
+  validateBackgroundConfig(config.background, 'background', config, issues, backgroundPresetMap);
 
   for (const [index, section] of (config.backgroundSections ?? []).entries()) {
     const label = `backgroundSections[${index}]`;
@@ -606,11 +730,11 @@ function validateBackgroundSections(config, issues) {
       }
     }
 
-    validateBackgroundConfig(section.shader, `${label}.shader`, config, issues);
+    validateBackgroundConfig(section.shader, `${label}.shader`, config, issues, backgroundPresetMap);
   }
 }
 
-function validateStage(config, layoutMap, componentSet, transitionSet, issues) {
+function validateStage(config, layoutMap, componentSet, transitionSet, issues, backgroundPresetMap) {
   const seenIds = new Set();
 
   for (const [index, step] of (config.steps ?? []).entries()) {
@@ -629,7 +753,7 @@ function validateStage(config, layoutMap, componentSet, transitionSet, issues) {
       issues.push(createIssue('error', `Unknown transition "${step.transition}" in ${getUnitLabel('Step', index, step.title)}.`));
     }
 
-    validateBackgroundConfig(step.background, `${getUnitLabel('Step', index, step.title)}.background`, config, issues);
+    validateBackgroundConfig(step.background, `${getUnitLabel('Step', index, step.title)}.background`, config, issues, backgroundPresetMap);
 
     for (const component of step.components ?? []) {
       if (!componentSet.has(component.type)) {
@@ -659,7 +783,7 @@ function validateStage(config, layoutMap, componentSet, transitionSet, issues) {
   }
 }
 
-function validateMap(config, layoutMap, componentSet, transitionSet, issues) {
+function validateMap(config, layoutMap, componentSet, transitionSet, issues, backgroundPresetMap) {
   const clusters = config.clusters ?? [];
   const clusterIds = new Set();
   const clusterMap = new Map();
@@ -679,7 +803,7 @@ function validateMap(config, layoutMap, componentSet, transitionSet, issues) {
       issues.push(createIssue('error', `Unknown transition "${cluster.transition}" in cluster "${cluster.id}".`));
     }
 
-    validateBackgroundConfig(cluster.background, `Cluster "${cluster.id}".background`, config, issues);
+    validateBackgroundConfig(cluster.background, `Cluster "${cluster.id}".background`, config, issues, backgroundPresetMap);
 
     for (const component of cluster.components ?? []) {
       if (!componentSet.has(component.type)) {
@@ -776,7 +900,7 @@ export async function validatePresentation(targetPath, options = {}) {
   const { throwOnError = true, report = true } = options;
   const config = await parseYaml(targetPath);
   const presentationDir = path.dirname(targetPath);
-  const [schema, componentMap, layoutMap, transitionMap, localComponentMap, localLayoutMap, localTransitionMap, themeSet, runtimeRegistry] = await Promise.all([
+  const [schema, componentMap, layoutMap, transitionMap, localComponentMap, localLayoutMap, localTransitionMap, themeSet, runtimeRegistry, backgroundPresetMap] = await Promise.all([
     JSON.parse(await fs.readFile(path.join(XTORYTELLER_SCHEMA_DIR, 'schema.json'), 'utf8')),
     scanManifestEntries('components'),
     scanManifestEntries('layouts'),
@@ -785,7 +909,8 @@ export async function validatePresentation(targetPath, options = {}) {
     scanManifestEntriesAt(path.join(presentationDir, 'layouts')),
     scanManifestEntriesAt(path.join(presentationDir, 'transitions')),
     themeNames(),
-    runtimeRegistryKeys()
+    runtimeRegistryKeys(),
+    loadBackgroundPresetMap()
   ]);
 
   const ajv = new Ajv2020({ allErrors: true, strict: false });
@@ -821,14 +946,14 @@ export async function validatePresentation(targetPath, options = {}) {
     );
   }
 
-  validateBackgroundSections(config, issues);
+  validateBackgroundSections(config, issues, backgroundPresetMap);
 
   if (config.mode === 'stage') {
-    validateStage(config, mergedLayoutMap, new Set(mergedComponentMap.keys()), new Set(mergedTransitionMap.keys()), issues);
+    validateStage(config, mergedLayoutMap, new Set(mergedComponentMap.keys()), new Set(mergedTransitionMap.keys()), issues, backgroundPresetMap);
   }
 
   if (config.mode === 'map') {
-    validateMap(config, mergedLayoutMap, new Set(mergedComponentMap.keys()), new Set(mergedTransitionMap.keys()), issues);
+    validateMap(config, mergedLayoutMap, new Set(mergedComponentMap.keys()), new Set(mergedTransitionMap.keys()), issues, backgroundPresetMap);
   }
 
   await pushMissingAssetIssues(config, targetPath, issues);
@@ -851,6 +976,37 @@ export async function validatePresentation(targetPath, options = {}) {
 
   if (!result.valid && throwOnError) {
     throw new Error(`Validation failed for ${targetPath}`);
+  }
+
+  return result;
+}
+
+export async function validateBackgroundPreset(filePath, options = {}) {
+  const { throwOnError = true, report = true } = options;
+  const preset = await parseYaml(filePath);
+  const issues = [];
+
+  validateBackgroundPresetDefinition(preset, 'background preset', issues);
+
+  if (report && issues.length) {
+    console.error(`Validation failed for ${filePath}:`);
+    for (const issue of issues) {
+      console.error(`- ${issue.severity.toUpperCase()}: ${issue.message}`);
+    }
+  }
+
+  if (report && !issues.length) {
+    console.log(`OK ${filePath} (background preset, 0 warnings)`);
+  }
+
+  const result = {
+    preset,
+    issues,
+    valid: !issues.some((issue) => issue.severity === 'error')
+  };
+
+  if (!result.valid && throwOnError) {
+    throw new Error(`Validation failed for ${filePath}`);
   }
 
   return result;

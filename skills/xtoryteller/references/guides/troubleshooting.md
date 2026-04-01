@@ -1,10 +1,18 @@
 # Troubleshooting
 
-## Unknown component, layout, transition, or theme
+## Unknown component, layout, transition, theme, or background preset
 
 - Regenerate registries with `node scripts/generate-registries.mjs`.
 - Re-run `node scripts/validate.mjs presentations/<slug>/presentation.yaml`.
-- Check for typos and confirm the manifest exists in the expected global library directory.
+- Check for typos and confirm the manifest or YAML file exists in the expected global library directory.
+
+## Background preset issues
+
+- Confirm the preset exists in `backgrounds/<slug>.yaml`.
+- Confirm object-form backgrounds use `presetRef`, not `preset`, for the shared Xtoryteller preset name.
+- Remember `preset` still means the upstream Paper Shader preset such as `groovy` or `wave`.
+- Re-run `node scripts/validate-all.mjs` after adding or renaming shared background presets.
+- If a deck only needs a one-off look, use an inline background object instead of creating a shared preset.
 
 ## YAML parse or schema errors
 

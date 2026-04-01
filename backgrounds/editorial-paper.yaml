@@ -1,0 +1,17 @@
+name: Editorial Paper
+description: Warm paper texture for editorial or product storytelling.
+tags: [paper, warm, editorial]
+shader: paper-texture
+preset: abstract
+colorStops:
+  - 'rgba(247, 242, 234, 0.96)'
+  - 'rgba(42, 108, 100, 0.18)'
+  - 'rgba(141, 79, 45, 0.18)'
+intensity: 0.42
+grain: 0.18
+contrast: 0.58
+speed: 0.85
+params:
+  fiberSize: 0.85
+  folds: 0.22
+  roughness: 0.2

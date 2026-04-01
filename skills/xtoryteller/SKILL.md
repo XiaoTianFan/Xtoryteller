@@ -24,17 +24,18 @@ Use this skill for work inside the Xtoryteller presentation system, not for one-
 ## Core Workflow
 
 1. Read the generated registries before deciding what to compose:
-   [component registry](references/registries/component-registry.json), [layout registry](references/registries/layout-registry.json), [transition registry](references/registries/transition-registry.json), [theme registry](references/registries/theme-registry.json).
+   [component registry](references/registries/component-registry.json), [layout registry](references/registries/layout-registry.json), [transition registry](references/registries/transition-registry.json), [theme registry](references/registries/theme-registry.json), [background registry](references/registries/background-registry.json).
 2. Read the human-readable schema before writing or restructuring YAML:
    [schema guide](references/schema/schema.yaml) and [JSON schema](references/schema/schema.json).
 3. Prefer built-in primitives and theme tokens before inventing new code.
-4. Keep work YAML-first: author or edit `presentations/<slug>/presentation.yaml`, then validate.
-5. Run validation before handoff:
+4. Prefer shared background presets from `references/registries/background-registry.json` via `presetRef` before inventing a new reusable Paper Shader look.
+5. Keep work YAML-first: author or edit `presentations/<slug>/presentation.yaml`, then validate.
+6. Run validation before handoff:
    `node scripts/validate.mjs presentations/<slug>/presentation.yaml`
-6. When shared manifests or themes changed, refresh and validate broadly:
+7. When shared manifests, themes, or background presets changed, refresh and validate broadly:
    `node scripts/validate-all.mjs`
-7. When the task changes runtime behavior instead of only content, run the appropriate test layer from [guides/qa-workflows.md](references/guides/qa-workflows.md).
-8. For Stage mode, manually verify viewport fit after meaningful edits at both `1280x720` and `1920x1080`. The page height must stay locked to the viewport, with no vertical growth or rescue scrolling.
+8. When the task changes runtime behavior instead of only content, run the appropriate test layer from [guides/qa-workflows.md](references/guides/qa-workflows.md).
+9. For Stage mode, manually verify viewport fit after meaningful edits at both `1280x720` and `1920x1080`. The page height must stay locked to the viewport, with no vertical growth or rescue scrolling.
 
 ## Theme-System Route
 
@@ -77,6 +78,7 @@ Use these when repeated scaffolding would otherwise become manual and fragile.
 - Never cram content into a layout; split steps or clusters instead.
 - Never rely on page growth, overflow, or scrolling to save a crowded Stage step.
 - Never solve repeated visual drift with scattered hardcoded CSS values when the design belongs in the theme token system.
+- Never use `preset` when you mean the shared Xtoryteller background preset name; use `presetRef` for the shared preset and keep `preset` for the upstream Paper Shader preset.
 - Never turn intrinsic layout mechanics like `100vh`, `100%`, SVG geometry, or arrangement outputs into theme tokens unless they are clearly intended as reusable visual language.
 - Keep `stat-card` values short and metric-like. If the value reads like a sentence fragment, use `card`, `feature-card`, or `callout` instead.
 - Use `build: sequential` on bullet or numbered lists when the story expects one item per advance.

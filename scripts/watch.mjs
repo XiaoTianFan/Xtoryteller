@@ -38,6 +38,7 @@ const watcher = chokidar.watch([
   'presentations/**/components/*/manifest.yaml',
   'presentations/**/layouts/*/manifest.yaml',
   'presentations/**/transitions/*/manifest.yaml',
+  'backgrounds/*.yaml',
   'themes/*.yaml',
   'components/*/manifest.yaml',
   'layouts/*/manifest.yaml',
@@ -52,6 +53,7 @@ watcher.on('all', (_eventName, filePath) => {
   }
 
   if (
+    /^backgrounds[/\\].+\.yaml$/i.test(filePath) ||
     /^themes[/\\].+\.yaml$/i.test(filePath) ||
     /^(components|layouts|transitions)[/\\][^/\\]+[/\\]manifest\.yaml$/i.test(filePath) ||
     /^presentations[/\\][^/\\]+[/\\](components|layouts|transitions)[/\\][^/\\]+[/\\]manifest\.yaml$/i.test(filePath)

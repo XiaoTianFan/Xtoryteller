@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { validatePresentation } from '@/scripts/validate.mjs';
+import { validateBackgroundPreset, validatePresentation } from '@/scripts/validate.mjs';
 import { validateTheme } from '@/scripts/validate-theme.mjs';
 import { vi } from 'vitest';
 
@@ -81,6 +81,45 @@ describe('validation fixtures', () => {
         ),
         message: 'unsupported preset',
       },
+      {
+        name: 'unknown background preset ref',
+        file: path.join(
+          process.cwd(),
+          'tests',
+          'fixtures',
+          'presentations',
+          'invalid',
+          'unknown-background-preset-ref',
+          'presentation.yaml'
+        ),
+        message: 'unknown background preset',
+      },
+      {
+        name: 'css and preset ref conflict',
+        file: path.join(
+          process.cwd(),
+          'tests',
+          'fixtures',
+          'presentations',
+          'invalid',
+          'css-preset-ref-conflict',
+          'presentation.yaml'
+        ),
+        message: 'cannot be combined with CSS-only fields',
+      },
+      {
+        name: 'preset ref override param',
+        file: path.join(
+          process.cwd(),
+          'tests',
+          'fixtures',
+          'presentations',
+          'invalid',
+          'preset-ref-override-param',
+          'presentation.yaml'
+        ),
+        message: 'params.image is not supported',
+      },
     ] as const;
 
     for (const fixture of fixtures) {
@@ -158,5 +197,14 @@ describe('validation fixtures', () => {
         )
       )
     ).rejects.toThrow('Theme validation failed');
+  });
+
+  it('accepts shared background preset files', async () => {
+    await expect(
+      validateBackgroundPreset(
+        path.join(process.cwd(), 'backgrounds', 'editorial-paper.yaml'),
+        { report: false }
+      )
+    ).resolves.toMatchObject({ valid: true });
   });
 });

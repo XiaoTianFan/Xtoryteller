@@ -53,6 +53,7 @@ Polished in this pass:
 - Skill guidance now treats Map mode as a first-class orchestration path instead of a footnote.
 - Map keyboard support now covers guided navigation, free-roam pan/zoom controls, shortcuts help, and consistent Escape behavior.
 - Background resolution now supports APRD `background.stages` and `background.regions` plus legacy `backgroundSections`.
+- Shared background presets now live in `backgrounds/*.yaml`, generate an agent-facing background registry, and resolve through `presetRef` anywhere object-form backgrounds are supported.
 - Diagram fit behavior was tightened so wide `org-chart` and `sankey-diagram` content expands its SVG viewBox instead of clipping against fixed bounds.
 
 ## Phase 3
@@ -74,6 +75,7 @@ Polished in this pass:
 - Human-facing docs now include this progress snapshot and a presentation-authoring guide.
 - Runtime primitive resolution now honors presentation-scoped `components/`, `layouts/`, and `transitions/` ahead of the global libraries for the active presentation.
 - The background system now supports both CSS backgrounds and `@paper-design/shaders-react` through a curated adapter layer, with explicit supported shaders, presets, param validation, and CSS gradient normalization.
+- The shared preset layer now gives agents a reusable Paper Shader background library without replacing direct CSS or inline shader authoring.
 - Validation and portability helpers now understand background assets, background stage/region switching, component enter/exit transition dependencies, and presentation-scoped primitive folders.
 - Shared grid, gallery, timeline, and pyramid rendering now stretches card-like components consistently so rows align visually without author-side spacing hacks.
 

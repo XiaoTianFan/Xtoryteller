@@ -35,6 +35,7 @@ The system combines:
 - **Map mode** for spatial storytelling with clusters, guided sequences, and free-roam navigation
 - **Reusable primitives** in `components/`, `layouts/`, `transitions/`, and `themes/`
 - **Agent-readable registries** generated from manifests and theme files
+- **Shared background preset library** under `backgrounds/*.yaml`
 - **Markdown-rich content** including markdown-scoped hover annotations via `{{hover:key|Label}}` plus `component.annotations`
 - **Validation tooling** for presentations, themes, runtime parity, density guidance, and asset references
 - **Portability tooling** for export, import, and promotion of presentation-scoped components
@@ -66,6 +67,7 @@ xtoryteller/
 ├── components/                 # Global presentation primitives with manifests
 ├── layouts/                    # Layout primitives with manifests
 ├── transitions/                # Transition definitions with manifests
+├── backgrounds/                # Shared Paper Shader background presets
 ├── themes/                     # Theme YAML files
 ├── presentations/              # File-backed presentations and local assets
 ├── lib/                        # Runtime, renderers, engine logic, shared types
@@ -140,6 +142,7 @@ node scripts/validate-all.mjs
 - Markdown-rendered content supports hover annotations through `{{hover:key|Label}}` plus `component.annotations`.
 - Presentation-scoped `components/`, `layouts/`, and `transitions/` are valid runtime inputs for that presentation and override global libraries when names collide.
 - Backgrounds support both simple CSS values and Paper shaders. The runtime accepts object configs, APRD-style `background.stages` / `background.regions`, legacy `backgroundSections`, and short string forms such as `background: none` or `background: mesh-gradient`.
+- Reusable Paper Shader presets live in `backgrounds/*.yaml` and can be referenced from any object background with `presetRef`.
 - Component-level animation hints are shipped and validated, but motion-heavy changes should still be reviewed in the browser.
 
 ## Extending The System

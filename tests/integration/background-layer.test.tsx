@@ -38,6 +38,8 @@ vi.mock('@paper-design/shaders-react', () => {
   };
 });
 
+import { loadBackgroundPresetMap } from '@/lib/engine/background-preset-registry';
+import { resolvePresentationBackgroundPresetRefs } from '@/lib/engine/background-preset-resolver';
 import { parseYamlFile } from '@/lib/engine/yaml';
 import { loadThemeBySlug } from '@/lib/engine/theme-registry';
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
@@ -56,15 +58,19 @@ describe('background layer integration', () => {
   let paperTheme: Awaited<ReturnType<typeof loadThemeBySlug>>;
 
   beforeAll(async () => {
-    [stagePresentation, mapPresentation, paperTheme] = await Promise.all([
+    const [rawStagePresentation, rawMapPresentation, paperThemeValue, presetMap] = await Promise.all([
       parseYamlFile<PresentationConfig>(
         path.join(process.cwd(), 'tests', 'fixtures', 'presentations', 'valid', 'background-stage-switch', 'presentation.yaml')
       ),
       parseYamlFile<PresentationConfig>(
         path.join(process.cwd(), 'tests', 'fixtures', 'presentations', 'valid', 'background-map-switch', 'presentation.yaml')
       ),
-      loadThemeBySlug('xinimalist-paper')
+      loadThemeBySlug('xinimalist-paper'),
+      loadBackgroundPresetMap()
     ]);
+    stagePresentation = resolvePresentationBackgroundPresetRefs(rawStagePresentation, presetMap);
+    mapPresentation = resolvePresentationBackgroundPresetRefs(rawMapPresentation, presetMap);
+    paperTheme = paperThemeValue;
   });
 
   afterEach(() => {

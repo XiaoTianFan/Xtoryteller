@@ -53,6 +53,7 @@ interface BackgroundSectionLike {
 
 interface PresentationBackgroundLike {
   type?: string;
+  presetRef?: string;
   shader?: string;
   preset?: string;
   params?: Record<string, unknown>;
@@ -68,6 +69,7 @@ interface PresentationBackgroundLike {
   stages?: Array<{
     steps: [number, number];
     type?: string;
+    presetRef?: string;
     shader?: string;
     preset?: string;
     params?: Record<string, unknown>;
@@ -85,6 +87,7 @@ interface PresentationBackgroundLike {
     clusters?: string[];
     group?: string;
     type?: string;
+    presetRef?: string;
     shader?: string;
     preset?: string;
     params?: Record<string, unknown>;

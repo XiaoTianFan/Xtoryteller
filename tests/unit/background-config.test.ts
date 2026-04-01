@@ -1,3 +1,5 @@
+import { loadBackgroundPresetMap } from '@/lib/engine/background-preset-registry';
+import { resolvePresentationBackgroundPresetRefs } from '@/lib/engine/background-preset-resolver';
 import { resolveBackgroundState } from '@/lib/runtime/background-config';
 import type { PresentationConfig } from '@/lib/types/presentation';
 
@@ -17,6 +19,10 @@ function createStagePresentation(background?: PresentationConfig['background'], 
       { layout: 'single-content', components: [{ type: 'headline', content: 'Three' }] }
     ]
   };
+}
+
+async function withResolvedBackgroundPresets(presentation: PresentationConfig) {
+  return resolvePresentationBackgroundPresetRefs(presentation, await loadBackgroundPresetMap());
 }
 
 describe('background config', () => {
@@ -145,6 +151,119 @@ describe('background config', () => {
     expect(resolveBackgroundState(presentation, 0, 'detail').appearance).toMatchObject({
       kind: 'paper-shader',
       shader: 'water'
+    });
+  });
+
+  it('resolves top-level preset refs before background rendering', async () => {
+    const presentation = await withResolvedBackgroundPresets(
+      createStagePresentation({
+        type: 'paper-shader',
+        presetRef: 'editorial-paper',
+        intensity: 0.6
+      })
+    );
+
+    const state = resolveBackgroundState(presentation, 0, null);
+    expect(state.appearance).toMatchObject({
+      kind: 'paper-shader',
+      shader: 'paper-texture',
+      preset: 'abstract'
+    });
+    expect(state.appearance.params).toMatchObject({
+      fiber: 0.6,
+      roughness: 0.2
+    });
+  });
+
+  it('supports preset refs in stage overrides, step backgrounds, and legacy sections', async () => {
+    const basePresentation = createStagePresentation(
+      {
+        type: 'css',
+        value: 'linear-gradient(180deg, #fff, #eee)',
+        stages: [
+          {
+            steps: [1, 1],
+            presetRef: 'focus-grain'
+          }
+        ]
+      },
+      [
+        {
+          match: { stepRange: [3, 3] },
+          shader: {
+            type: 'paper-shader',
+            presetRef: 'tidal-waves'
+          }
+        }
+      ]
+    );
+    basePresentation.steps![0].background = {
+      type: 'paper',
+      presetRef: 'editorial-paper'
+    };
+
+    const presentation = await withResolvedBackgroundPresets(basePresentation);
+
+    expect(resolveBackgroundState(presentation, 0, null).appearance).toMatchObject({
+      kind: 'paper-shader',
+      shader: 'paper-texture'
+    });
+    expect(resolveBackgroundState(presentation, 1, null).appearance).toMatchObject({
+      kind: 'paper-shader',
+      shader: 'grain-gradient'
+    });
+    expect(resolveBackgroundState(presentation, 2, null).appearance).toMatchObject({
+      kind: 'paper-shader',
+      shader: 'waves'
+    });
+  });
+
+  it('supports preset refs in cluster backgrounds and map regions', async () => {
+    const presentation = await withResolvedBackgroundPresets({
+      meta: {
+        title: 'Map preset background',
+        slug: 'map-preset-background'
+      },
+      mode: 'map',
+      theme: 'default',
+      background: {
+        type: 'paper-shader',
+        presetRef: 'tidal-waves',
+        regions: [
+          {
+            group: 'focus',
+            presetRef: 'focus-grain',
+            intensity: 0.7
+          }
+        ]
+      },
+      clusters: [
+        {
+          id: 'overview',
+          group: 'overview',
+          layout: 'single-content',
+          components: [{ type: 'headline', content: 'Overview' }]
+        },
+        {
+          id: 'detail',
+          group: 'focus',
+          layout: 'single-content',
+          background: {
+            type: 'paper-shader',
+            presetRef: 'editorial-paper'
+          },
+          components: [{ type: 'headline', content: 'Detail' }]
+        }
+      ]
+    });
+
+    expect(resolveBackgroundState(presentation, 0, 'overview').appearance).toMatchObject({
+      kind: 'paper-shader',
+      shader: 'waves'
+    });
+    expect(resolveBackgroundState(presentation, 0, 'detail').appearance).toMatchObject({
+      kind: 'paper-shader',
+      shader: 'grain-gradient'
     });
   });
 });

@@ -13,19 +13,9 @@ background:
       - '#efe0d1'
   stages:
     - steps: [1, 1]
-      type: paper-shader
-      shader: grain-gradient
-      preset: wave
-      colorStops:
-        - '#101820'
-        - '#3a506b'
-        - '#f4d35e'
-      intensity: 0.42
-      grain: 0.18
+      presetRef: focus-grain
     - steps: [2, 2]
-      type: paper-shader
-      shader: grain-gradient
-      preset: wave
+      presetRef: focus-grain
       colorStops:
         - '#1b263b'
         - '#415a77'

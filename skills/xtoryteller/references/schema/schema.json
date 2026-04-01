@@ -83,6 +83,7 @@
           "type": "object",
           "properties": {
             "type": { "enum": ["paper-shader", "css", "none", "paper"] },
+            "presetRef": { "type": "string" },
             "shader": { "type": "string" },
             "preset": { "type": "string" },
             "params": { "type": "object" },
@@ -135,6 +136,7 @@
                     "maxItems": 2
                   },
                   "type": { "enum": ["paper-shader", "css", "none", "paper"] },
+                  "presetRef": { "type": "string" },
                   "shader": { "type": "string" },
                   "preset": { "type": "string" },
                   "params": { "type": "object" },
@@ -178,6 +180,7 @@
                   "clusters": { "type": "array", "items": { "type": "string" } },
                   "group": { "type": "string" },
                   "type": { "enum": ["paper-shader", "css", "none", "paper"] },
+                  "presetRef": { "type": "string" },
                   "shader": { "type": "string" },
                   "preset": { "type": "string" },
                   "params": { "type": "object" },

@@ -1,0 +1,19 @@
+meta:
+  title: CSS Preset Ref Conflict
+  slug: css-preset-ref-conflict
+mode: stage
+theme: xinimalist-paper
+background:
+  type: paper-shader
+  presetRef: editorial-paper
+  gradient:
+    type: linear
+    angle: 135
+    stops:
+      - '#ffffff'
+      - '#f3f4f6'
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Invalid CSS mix

@@ -1,0 +1,41 @@
+{
+  "count": 3,
+  "backgrounds": [
+    {
+      "slug": "editorial-paper",
+      "name": "Editorial Paper",
+      "description": "Warm paper texture for editorial or product storytelling.",
+      "tags": [
+        "paper",
+        "warm",
+        "editorial"
+      ],
+      "shader": "paper-texture",
+      "preset": "abstract"
+    },
+    {
+      "slug": "focus-grain",
+      "name": "Focus Grain",
+      "description": "Darker grain gradient for emphasis beats and focused sections.",
+      "tags": [
+        "grain",
+        "focus",
+        "dramatic"
+      ],
+      "shader": "grain-gradient",
+      "preset": "wave"
+    },
+    {
+      "slug": "tidal-waves",
+      "name": "Tidal Waves",
+      "description": "Flowing wave background for map canvases and guided motion.",
+      "tags": [
+        "waves",
+        "map",
+        "fluid"
+      ],
+      "shader": "waves",
+      "preset": "groovy"
+    }
+  ]
+}

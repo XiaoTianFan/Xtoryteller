@@ -5,17 +5,10 @@ mode: map
 theme: xinimalist-paper
 background:
   type: paper-shader
-  shader: waves
-  preset: groovy
-  colorStops:
-    - '#faf7f1'
-    - '#315c8f'
-    - '#d5a24f'
+  presetRef: tidal-waves
   regions:
     - group: focus
-      type: paper-shader
-      shader: waves
-      preset: groovy
+      presetRef: tidal-waves
       colorStops:
         - '#0f172a'
         - '#38bdf8'

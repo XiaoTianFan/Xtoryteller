@@ -20,6 +20,7 @@ Good fits:
    - `skills/xtoryteller/references/registries/layout-registry.json`
    - `skills/xtoryteller/references/registries/transition-registry.json`
    - `skills/xtoryteller/references/registries/theme-registry.json`
+   - `skills/xtoryteller/references/registries/background-registry.json`
 2. Read the schema:
    - `skills/xtoryteller/references/schema/schema.yaml`
 3. Read [yaml-conventions.md](yaml-conventions.md) if you are restructuring dense YAML.

@@ -5,13 +5,13 @@ Read this file before scaffolding or when you want the closest trustworthy YAML 
 ## Example Map
 
 - `skills/xtoryteller/references/examples/simple-stage.yaml`
-  Use for a short linear deck, foundational structure, or new-presentation scaffolding.
+  Use for a short linear deck, foundational structure, new-presentation scaffolding, or the simplest `presetRef` example.
 
 - `skills/xtoryteller/references/examples/complex-stage.yaml`
   Use for a richer linear deck with more component variety and build choreography.
 
 - `skills/xtoryteller/references/examples/simple-map.yaml`
-  Use for a minimal cluster-based story with straightforward anchors.
+  Use for a minimal cluster-based story with straightforward anchors and a shared background preset.
 
 - `skills/xtoryteller/references/examples/complex-map.yaml`
   Use for richer Map mode authoring, multiple diagram clusters, and guided navigation.
@@ -21,6 +21,7 @@ Read this file before scaffolding or when you want the closest trustworthy YAML 
 - If the user is starting from scratch and speed matters, scaffold from a simple example.
 - If the user already wants a more expressive deck and the content is varied, inspect the complex example first.
 - If the task is mostly about styling rather than structure, use style previews instead of overfitting the first real deck.
+- If the task needs a reusable Paper Shader look, inspect the background registry before inventing a new inline shader block.
 - If the task is about annotations, themes, transitions, or runtime behavior, read the matching guide first instead of overloading an example as documentation.
 
 ## Deterministic Helper

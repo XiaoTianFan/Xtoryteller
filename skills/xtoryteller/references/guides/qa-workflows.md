@@ -8,6 +8,8 @@ Read this file when the task changes authoring data, runtime behavior, manifests
   `node scripts/validate.mjs presentations/<slug>/presentation.yaml`
 - Validate one theme:
   `node scripts/validate-theme.mjs themes/<theme>.yaml`
+- Validate one shared background preset:
+  `node scripts/validate-all.mjs`
 - Refresh registries and validate the repo:
   `node scripts/validate-all.mjs`
 
@@ -27,6 +29,7 @@ Read this file when the task changes authoring data, runtime behavior, manifests
 ## Which Layer To Run
 
 - YAML-only deck edit: `validate`
+- Shared background preset change: `validate:all`, and add `test:unit` / `test:integration` if runtime behavior or validation rules changed
 - Shared manifest or theme change: `validate:all`
 - Shared visual-token or reusable CSS refactor: `validate:all`, `test:unit`, and `test:integration`
 - Validator, registry, or engine logic change: `test:unit` and `test:integration`

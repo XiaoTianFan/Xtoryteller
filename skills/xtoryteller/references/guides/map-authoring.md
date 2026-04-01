@@ -19,6 +19,8 @@ Good fits:
    - `skills/xtoryteller/references/registries/component-registry.json`
    - `skills/xtoryteller/references/registries/layout-registry.json`
    - `skills/xtoryteller/references/registries/transition-registry.json`
+   - `skills/xtoryteller/references/registries/theme-registry.json`
+   - `skills/xtoryteller/references/registries/background-registry.json`
    - `skills/xtoryteller/references/schema/schema.yaml`
 2. Read [current-runtime-limitations.md](current-runtime-limitations.md) and [runtime-support-matrix.md](runtime-support-matrix.md) if the request sounds close to APRD-only features.
 3. Read [yaml-conventions.md](yaml-conventions.md) if you are hand-editing complex cluster YAML.

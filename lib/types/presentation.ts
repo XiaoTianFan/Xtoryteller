@@ -45,11 +45,13 @@ export interface CssGradientConfig {
 }
 
 interface BackgroundConfigBase {
+  presetRef?: string;
   opacity?: number;
   transition?: BackgroundTransitionConfig;
   stages?: Array<{
     steps: [number, number];
     type?: BackgroundRendererType | 'paper';
+    presetRef?: string;
     shader?: SupportedPaperShaderName | string;
     preset?: string;
     params?: Record<string, unknown>;
@@ -67,6 +69,7 @@ interface BackgroundConfigBase {
     clusters?: string[];
     group?: string;
     type?: BackgroundRendererType | 'paper';
+    presetRef?: string;
     shader?: SupportedPaperShaderName | string;
     preset?: string;
     params?: Record<string, unknown>;

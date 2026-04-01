@@ -9,11 +9,8 @@
 mode: map
 theme: xinimalist-paper
 background:
-  type: paper
-  colorStops:
-    - 'rgba(247, 242, 234, 0.94)'
-    - 'rgba(42, 108, 100, 0.16)'
-    - 'rgba(141, 79, 45, 0.16)'
+  type: paper-shader
+  presetRef: tidal-waves
 canvas:
   spacing: 360
   initialZoom: 0.9

@@ -1,0 +1,13 @@
+meta:
+  title: Unknown Background Preset Ref
+  slug: unknown-background-preset-ref
+mode: stage
+theme: xinimalist-paper
+background:
+  type: paper-shader
+  presetRef: does-not-exist
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Invalid preset ref

@@ -11,9 +11,12 @@ Authoring choices:
 - `background: none`
 - `background: "linear-gradient(...)"` for a simple CSS background
 - `background: mesh-gradient` or another supported curated Paper shader
+- `background: { type: paper-shader, presetRef: editorial-paper }` for a shared repo preset
 - `background: { type: css, value: "..." }`
 - `background: { type: css, gradient: { type: linear, angle: 135, stops: [...] } }`
 - `background: { type: paper-shader, shader: waves, preset: groovy, colorStops: [...], intensity: 0.5 }`
+
+Shared preset references come from `references/registries/background-registry.json`. `presetRef` is Xtoryteller's reusable preset key; `preset` still means the upstream Paper Shader preset such as `groovy` or `wave`.
 
 Currently supported Paper shader targets:
 
@@ -38,9 +41,7 @@ Common pattern:
 ```yaml
 background:
   type: paper-shader
-  shader: waves
-  preset: groovy
-  colorStops: ['#faf7f1', '#315c8f', '#d5a24f']
+  presetRef: tidal-waves
   stages:
     - steps: [0, 1]
       type: css
@@ -49,8 +50,7 @@ background:
         angle: 135
         stops: ['#101820', '#1d3557']
     - steps: [2, 4]
-      shader: grain-gradient
-      preset: wave
+      presetRef: focus-grain
       colorStops: ['#0b132b', '#1c2541', '#5bc0be']
       intensity: 0.7
       grain: 0.25
