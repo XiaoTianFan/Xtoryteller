@@ -12,6 +12,24 @@ Why: Readability, motion clarity, and responsive behavior all degrade when a ste
 
 Fix: Split content across more steps or choose a layout with a better density fit.
 
+## Using Stat Cards For Prose
+
+Why: `stat-card` values render like emphasized metrics, so sentence-like values overflow and distort card balance.
+
+Fix: Keep stat values short and move explanatory phrases into `detail`, `feature-card`, `card`, or `callout`.
+
+## Treating Pyramid Rows Like Normal Cards
+
+Why: `pyramid-layout` is intentionally compact. List-heavy or tall cards push the Stage beyond the viewport and weaken the pyramid read.
+
+Fix: Keep each row to a short title plus a short sentence, or split the roadmap across more steps.
+
+## Assuming List Components Auto-Create Build Steps
+
+Why: Lists only reveal item-by-item when you author `build: sequential`.
+
+Fix: Add `build: sequential` whenever each bullet or numbered point should appear on its own advance.
+
 ## Inventing A Primitive Before Checking The Registry
 
 Why: It duplicates work and weakens the cumulative infrastructure model.

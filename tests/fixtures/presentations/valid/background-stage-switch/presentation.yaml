@@ -2,7 +2,7 @@ meta:
   title: Background Stage Switch
   slug: background-stage-switch
 mode: stage
-theme: default
+theme: xinimalist-paper
 background:
   type: css
   gradient:

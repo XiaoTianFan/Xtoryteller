@@ -1,6 +1,6 @@
 # QA System Plan
 
-Last updated: 2026-03-31
+Last updated: 2026-04-01
 
 ## Status Snapshot
 
@@ -10,6 +10,7 @@ Implemented and now enforced:
 - Runtime parity checks between filesystem manifests and runtime renderer maps
 - Theme validation for required tokens, contrast, and local font availability
 - Unit tests for build planning, arrangement, transition presets, markdown annotation parsing, theme resolution, template expansion, asset resolution, and portability helpers
+- Unit-level regression coverage for semantic visual tokenization across shell, component, and shared layout styling
 - Integration tests for canonical presentation validation and invalid fixture coverage
 - Runtime renderer contract tests for component, layout, stage, map, and theme-provider behavior
 - Playwright smoke coverage for dashboard discovery, tag filtering, Stage navigation, Map guided navigation, keyboard-only flow, reduced-motion behavior, accessibility scans, and the not-found route
@@ -137,7 +138,8 @@ Partial or intentionally limited:
 `scripts/validate-theme.mjs` now checks:
 
 - font role presence and allowed `source` values
-- required theme token coverage for colors, typography, spacing, radii, shadows, borders, and motion
+- required theme token coverage for colors, typography, spacing, sizing, radii, shadows, borders, and motion
+- required semantic families for shipped reusable visual language such as shell, component, and layout token groups
 - contrast for key foreground/background pairs
 - local font directory presence and WOFF2 availability when a font is marked `local`
 - explicit weights for non-system font sources
@@ -150,6 +152,7 @@ Current runtime coverage includes:
 - renderer tests for known and unknown components
 - layout resolution tests under the presentation provider
 - ThemeProvider CSS-variable output checks
+- visual-tokenization checks for dashboard shell, card/list/timeline families, and shared layout token usage
 - canonical Stage and Map renderer smoke coverage in jsdom
 
 ### Browser QA
@@ -225,4 +228,3 @@ Treat these as warning-level until a stronger policy is needed:
 - The QA system stays phased so correctness and coverage come before broader visual and performance work.
 - Initial browser coverage stays Chromium-first.
 - CI covers the same gates as local QA, with heavier layers added only after the new core checks stay stable.
-

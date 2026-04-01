@@ -16,7 +16,7 @@ async function scanManifests(baseDir) {
   const manifestPaths = await fg('*/manifest.yaml', {
     cwd: path.join(root, baseDir),
     absolute: true,
-    onlyFiles: true
+    onlyFiles: true,
   });
 
   const entries = await Promise.all(
@@ -24,7 +24,7 @@ async function scanManifests(baseDir) {
       const manifest = await parseYaml(manifestPath);
       return {
         ...manifest,
-        name: manifest.name || path.basename(path.dirname(manifestPath))
+        name: manifest.name || path.basename(path.dirname(manifestPath)),
       };
     })
   );
@@ -36,7 +36,7 @@ async function scanThemes() {
   const themePaths = await fg('*.yaml', {
     cwd: path.join(root, 'themes'),
     absolute: true,
-    onlyFiles: true
+    onlyFiles: true,
   });
 
   const themes = await Promise.all(
@@ -45,7 +45,7 @@ async function scanThemes() {
       return {
         slug: path.basename(themePath, '.yaml'),
         name: theme.name,
-        fonts: theme.fonts
+        fonts: theme.fonts,
       };
     })
   );
@@ -55,7 +55,10 @@ async function scanThemes() {
 
 async function writeJson(fileName, data) {
   await fs.mkdir(XTORYTELLER_REGISTRIES_DIR, { recursive: true });
-  await fs.writeFile(path.join(XTORYTELLER_REGISTRIES_DIR, fileName), JSON.stringify(data, null, 2));
+  await fs.writeFile(
+    path.join(XTORYTELLER_REGISTRIES_DIR, fileName),
+    JSON.stringify(data, null, 2)
+  );
 }
 
 export async function generateRegistries() {
@@ -63,31 +66,40 @@ export async function generateRegistries() {
     scanManifests('components'),
     scanManifests('layouts'),
     scanManifests('transitions'),
-    scanThemes()
+    scanThemes(),
   ]);
 
   await Promise.all([
-    writeJson('component-registry.json', { generatedAt: new Date().toISOString(), count: components.length, components }),
-    writeJson('layout-registry.json', { generatedAt: new Date().toISOString(), count: layouts.length, layouts }),
-    writeJson('transition-registry.json', { generatedAt: new Date().toISOString(), count: transitions.length, transitions }),
-    writeJson('theme-registry.json', { generatedAt: new Date().toISOString(), count: themes.length, themes })
+    writeJson('component-registry.json', {
+      count: components.length,
+      components,
+    }),
+    writeJson('layout-registry.json', { count: layouts.length, layouts }),
+    writeJson('transition-registry.json', {
+      count: transitions.length,
+      transitions,
+    }),
+    writeJson('theme-registry.json', { count: themes.length, themes }),
   ]);
 
   return {
     components: components.length,
     layouts: layouts.length,
     transitions: transitions.length,
-    themes: themes.length
+    themes: themes.length,
   };
 }
 
 function isCliEntry() {
-  return Boolean(process.argv[1]) && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+  return (
+    Boolean(process.argv[1]) &&
+    import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
+  );
 }
 
 if (isCliEntry()) {
   const counts = await generateRegistries();
   console.log(
-    `Generated ${counts.components} components, ${counts.layouts} layouts, ${counts.transitions} transitions, ${counts.themes} themes.`
+    `Generated ${counts.components} components, ${counts.layouts} layouts, ${counts.transitions} transitions, ${counts.themes} themes at ${new Date().toISOString()}.`
   );
 }

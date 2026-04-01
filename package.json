@@ -5,13 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"next dev\" \"node scripts/watch.mjs\"",
-    "build": "node scripts/validate-all.mjs && next build",
+    "build": "npm run validate:all && next build",
     "export": "cross-env STATIC_EXPORT=1 next build",
     "start": "next start",
     "lint": "eslint .",
     "validate": "node scripts/validate.mjs",
     "validate:theme": "node scripts/validate-theme.mjs",
-    "validate:all": "node scripts/validate-all.mjs",
+    "validate:all": "node scripts/run-with-tracked-file-guard.mjs validate:all node scripts/validate-all.mjs",
     "registries": "node scripts/generate-registries.mjs",
     "presentation:export": "node scripts/export.mjs",
     "presentation:import": "node scripts/import.mjs",
@@ -21,8 +21,8 @@
     "test:contracts": "vitest run tests/contracts",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
-    "test:portability": "node scripts/test-portability.mjs",
-    "test:e2e": "npm run build && playwright test",
+    "test:portability": "node scripts/run-with-tracked-file-guard.mjs test:portability node scripts/test-portability.mjs",
+    "test:e2e": "npm run build && node scripts/run-with-tracked-file-guard.mjs test:e2e node node_modules/playwright/cli.js test",
     "test:qa": "vitest run tests/contracts tests/unit tests/integration && npm run test:portability && npm run test:e2e"
   },
   "dependencies": {

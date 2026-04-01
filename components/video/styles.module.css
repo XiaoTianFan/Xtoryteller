@@ -1,13 +1,13 @@
 .figure {
   margin: 0;
   display: grid;
-  gap: 0.7rem;
+  gap: var(--spacing-components-media-figure-gap);
 }
 
 .video {
   width: 100%;
-  border-radius: var(--radius-medium);
-  border: var(--border-subtle);
+  border-radius: var(--radius-components-media);
+  border: var(--border-components-card);
   background: color-mix(in srgb, var(--color-panel) 70%, black 30%);
 }
 

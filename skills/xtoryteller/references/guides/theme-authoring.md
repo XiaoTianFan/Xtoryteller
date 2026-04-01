@@ -68,9 +68,31 @@ fonts:
         style: italic
 ```
 
-## Shell And Chrome Tokens
+## Semantic Token Taxonomy
 
-The runtime consumes additional nested theme token families beyond the basic core sections. Common groups include:
+The runtime consumes nested theme token families beyond the basic core sections. These nested values are flattened into CSS variables automatically.
+
+Use generic core tokens when a value truly belongs to the whole theme:
+
+- `typography.h1`, `typography.body`
+- `spacing.page`, `spacing.gap`
+- `radii.small`, `shadows.soft`, `borders.subtle`
+- `motion.fast`, `motion.easing`
+
+Use semantic families when the value belongs to reusable visual language rather than a one-off layout rule:
+
+- `spacing.chrome.*` for dashboard and viewer shell padding, dock spacing, chip spacing, and overlay spacing.
+- `spacing.components.*` for card, list, callout, timeline, annotation, code, media, chart, and helper spacing.
+- `spacing.layouts.*` for compact layout spacing, timeline offsets, and shared layout presentation gaps.
+- `sizing.components.*` for avatars, icons, tooltip widths, shortcut shell widths, media heights, and chart geometry that should be themeable.
+- `sizing.layouts.*` for repeated layout min/max widths, scattered widths, divider widths, and pyramid widths.
+- `typography.components.*` for component-specific type scales such as shell hero copy, feature-card titles, stat values, and diagram labels.
+- `radii.chrome.*`, `radii.components.*`, `radii.layouts.*` when shape is part of the visual language.
+- `shadows.chrome.*`, `shadows.components.*` when elevation differs by semantic surface.
+- `borders.chrome.*`, `borders.components.*` when border treatments are part of the reusable system.
+- `motion.components.*` only for component-specific offsets or delays not already covered by global motion groups.
+
+Supporting color groups still include:
 
 - `colors.chrome.*`
 - `colors.code.*`
@@ -85,7 +107,11 @@ The runtime consumes additional nested theme token families beyond the basic cor
 - `motion.panel.*`
 - `motion.hover.*`
 
-These nested values are flattened into CSS variables automatically.
+## Boundary
+
+- Theme YAML controls reusable visual language through CSS variables.
+- Runtime code owns behavior, content, layout algorithms, breakpoints, viewport mechanics, and intrinsic rendering math.
+- Keep values hard-coded only when they are structural mechanics like `100vh`, `100%`, SVG math, or algorithmic placement outputs rather than theme language.
 
 ## Validation
 

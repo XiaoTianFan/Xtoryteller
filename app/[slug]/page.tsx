@@ -1,7 +1,8 @@
-﻿import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { notFound } from 'next/navigation';
 
 import { loadPresentationBySlug, listPresentationSlugs } from '@/lib/engine/presentation-loader';
-import { loadThemeBySlug } from '@/lib/engine/theme-registry';
+import { GLOBAL_THEME_COOKIE_NAME, loadThemeWithFallback } from '@/lib/engine/theme-registry';
 import { PresentationProvider } from '@/lib/runtime/providers/presentation-provider';
 import { ThemeProvider } from '@/lib/runtime/providers/theme-provider';
 import { MapRenderer } from '@/lib/runtime/renderers/map-renderer';
@@ -16,8 +17,12 @@ export default async function PresentationPage({ params }: { params: Promise<{ s
   const { slug } = await params;
 
   try {
+    const cookieStore = await cookies();
     const presentation = await loadPresentationBySlug(slug);
-    const theme = await loadThemeBySlug(presentation.theme);
+    const { theme } = await loadThemeWithFallback(
+      presentation.theme,
+      cookieStore.get(GLOBAL_THEME_COOKIE_NAME)?.value
+    );
 
     return (
       <ThemeProvider theme={theme} overrides={presentation.themeOverrides}>

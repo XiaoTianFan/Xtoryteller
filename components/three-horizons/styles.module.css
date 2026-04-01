@@ -1,19 +1,20 @@
-﻿.figure {
+.figure {
   display: grid;
-  gap: 1rem;
+  gap: var(--spacing-components-horizons-gap);
 }
 
 .columns {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+  gap: var(--spacing-components-horizons-columns-gap);
 }
 
 .column {
-  padding: 0.9rem;
-  border-radius: var(--radius-medium);
-  border: var(--border-subtle);
+  padding: var(--spacing-components-horizons-column-padding);
+  border-radius: var(--radius-components-card);
+  border: var(--border-components-card);
   background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  box-shadow: var(--shadow-components-card);
 }
 
 .column h4,
@@ -22,9 +23,9 @@
 }
 
 .column ul {
-  padding-left: 1.1rem;
+  padding-left: var(--spacing-components-horizons-list-padding-start);
   display: grid;
-  gap: 0.35rem;
+  gap: var(--spacing-components-horizons-list-gap);
   color: var(--color-muted);
 }
 

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
@@ -47,7 +47,10 @@ export function StageRenderer() {
             layoutProps={step.layoutProps}
             items={visibleEntries.map((entry) => ({
               component: entry.component,
-              revealCount: getSequentialRevealCount(entry, machine.state.context.currentBuildIndex)
+              revealCount:
+                entry.component.build === 'sequential'
+                  ? getSequentialRevealCount(entry, machine.state.context.currentBuildIndex)
+                  : Number.MAX_SAFE_INTEGER
             }))}
           />
         </motion.section>

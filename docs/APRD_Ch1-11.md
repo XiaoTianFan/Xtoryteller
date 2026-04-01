@@ -242,7 +242,7 @@ meta:
 
 # --- Mode & Navigation ---
 mode: stage                         # "stage" or "map"
-theme: default                      # References themes/default.yaml
+theme: xinimalist-paper             # References themes/xinimalist-paper.yaml
 
 # --- Theme Overrides (optional) ---
 themeOverrides:
@@ -1082,10 +1082,10 @@ Each layer can override specific values from the layer below. This provides cons
 Themes are YAML files in the `/themes/` directory:
 
 yaml
-# themes/default.yaml
-name: default
-displayName: "Xtoryteller Default"
-description: "Clean, warm, professional default theme"
+# themes/xinimalist-paper.yaml
+name: xinimalist-paper
+displayName: "Xinimalist Paper"
+description: "Warm editorial paper theme with global shell support"
 version: 1.0.0
 
 colors:
@@ -1174,7 +1174,7 @@ animation:
 At runtime, the theme YAML is resolved into CSS custom properties injected into the document root. This allows all components to reference theme values without import:
 
 css
-/* Auto-generated from themes/default.yaml */
+/* Auto-generated from themes/xinimalist-paper.yaml */
 :root {
   --color-primary: #2c3e50;
   --color-secondary: #e74c3c;
@@ -1222,7 +1222,7 @@ A presentation can override specific theme values:
 
 yaml
 # In presentation.yaml
-theme: default
+theme: xinimalist-paper
 themeOverrides:
   colors:
     primary: "#1a7f5a"          # Override just this one value
@@ -1431,7 +1431,7 @@ background:
   value: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)"
 
 
-- **No background:** Set `background: none` to render content on the default theme background color.
+- **No background:** Set `background: none` to render content on the active theme background color.
 
 The background system checks the resolved config and delegates to the appropriate renderer. When authors omit `type`, the runtime infers the intent from the provided data so existing decks remain compatible.
 
@@ -2127,7 +2127,7 @@ json
 
 ### 11.6 Dashboard Styling
 
-The dashboard itself uses the project's default theme. Its design should be clean and minimal — the presentations are the stars, not the dashboard. The dashboard is a built-in view that is always present; it is not customizable in the same way presentations are (though it respects the project-level theme colors and fonts).
+The dashboard itself uses the active global theme. Its design should be clean and minimal — the presentations are the stars, not the dashboard. The dashboard is a built-in view that is always present and now includes a theme switcher for changing the persisted global theme.
 
 ---
 

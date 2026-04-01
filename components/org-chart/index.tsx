@@ -1,4 +1,4 @@
-﻿import styles from '@/components/_shared/diagram.module.css';
+import styles from '@/components/_shared/diagram.module.css';
 
 interface OrgNode {
   label?: string;
@@ -15,6 +15,12 @@ interface PositionedNode {
   depth: number;
   parentId?: string;
 }
+
+const NODE_WIDTH = 132;
+const NODE_HEIGHT = 44;
+const HORIZONTAL_SPACING = 170;
+const VERTICAL_SPACING = 110;
+const DIAGRAM_PADDING = 40;
 
 function flattenTree(root: OrgNode, spacingX: number, spacingY: number) {
   const nodes: PositionedNode[] = [];
@@ -40,7 +46,7 @@ function flattenTree(root: OrgNode, spacingX: number, spacingY: number) {
       label: String(node.label ?? 'Node'),
       x: center,
       y: 60 + depth * spacingY,
-      width: 132,
+      width: NODE_WIDTH,
       depth,
       parentId
     });
@@ -59,12 +65,20 @@ function flattenTree(root: OrgNode, spacingX: number, spacingY: number) {
 export default function OrgChart({ props }: { props?: Record<string, unknown> }) {
   const root = (props?.root as OrgNode | undefined) ?? { label: 'Root' };
   const direction = props?.direction === 'left-right' ? 'left-right' : 'top-bottom';
-  const nodes = flattenTree(root, 170, 110);
+  const nodes = flattenTree(root, HORIZONTAL_SPACING, VERTICAL_SPACING).map((node) => ({
+    ...node,
+    renderX: (direction === 'left-right' ? node.y : node.x) + DIAGRAM_PADDING,
+    renderY: (direction === 'left-right' ? node.x : node.y) + DIAGRAM_PADDING
+  }));
   const nodeMap = new Map(nodes.map((node) => [node.id, node]));
+  const viewWidth =
+    Math.max(...nodes.map((node) => node.renderX + NODE_WIDTH), NODE_WIDTH + DIAGRAM_PADDING * 2) + DIAGRAM_PADDING;
+  const viewHeight =
+    Math.max(...nodes.map((node) => node.renderY + NODE_HEIGHT), NODE_HEIGHT + DIAGRAM_PADDING * 2) + DIAGRAM_PADDING;
 
   return (
     <figure className={styles.shell}>
-      <svg viewBox="0 0 760 420" role="img" aria-label="Org chart">
+      <svg viewBox={`0 0 ${viewWidth} ${viewHeight}`} role="img" aria-label="Org chart">
         {nodes.map((node) => {
           if (!node.parentId) {
             return null;
@@ -79,7 +93,7 @@ export default function OrgChart({ props }: { props?: Record<string, unknown> })
             return (
               <path
                 key={`${parent.id}-${node.id}`}
-                d={`M${parent.y + 70} ${parent.x + 66} C ${parent.y + 105} ${parent.x + 66}, ${node.y + 15} ${node.x + 66}, ${node.y + 50} ${node.x + 66}`}
+                d={`M${parent.renderX + 70} ${parent.renderY + 22} C ${parent.renderX + 105} ${parent.renderY + 22}, ${node.renderX + 15} ${node.renderY + 22}, ${node.renderX + 50} ${node.renderY + 22}`}
                 fill="none"
                 stroke="var(--color-border)"
                 strokeWidth="2"
@@ -90,7 +104,7 @@ export default function OrgChart({ props }: { props?: Record<string, unknown> })
           return (
             <path
               key={`${parent.id}-${node.id}`}
-              d={`M${parent.x + 66} ${parent.y + 42} C ${parent.x + 66} ${parent.y + 72}, ${node.x + 66} ${node.y - 30}, ${node.x + 66} ${node.y}`}
+              d={`M${parent.renderX + 66} ${parent.renderY + 42} C ${parent.renderX + 66} ${parent.renderY + 72}, ${node.renderX + 66} ${node.renderY - 30}, ${node.renderX + 66} ${node.renderY}`}
               fill="none"
               stroke="var(--color-border)"
               strokeWidth="2"
@@ -98,17 +112,12 @@ export default function OrgChart({ props }: { props?: Record<string, unknown> })
           );
         })}
 
-        {nodes.map((node) => {
-          const x = direction === 'left-right' ? node.y : node.x;
-          const y = direction === 'left-right' ? node.x : node.y;
-
-          return (
-            <g key={node.id} transform={`translate(${x}, ${y})`}>
-              <rect width="132" height="44" rx="16" className={styles.surface} />
-              <text x="66" y="27" textAnchor="middle" className={styles.label}>{node.label}</text>
-            </g>
-          );
-        })}
+        {nodes.map((node) => (
+          <g key={node.id} transform={`translate(${node.renderX}, ${node.renderY})`}>
+            <rect width={NODE_WIDTH} height={NODE_HEIGHT} rx="16" className={styles.surface} />
+            <text x="66" y="27" textAnchor="middle" className={styles.label}>{node.label}</text>
+          </g>
+        ))}
       </svg>
     </figure>
   );

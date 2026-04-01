@@ -1,1 +1,1 @@
-This directory is ready for self-hosted font binaries such as Playfair Display, Inter, and JetBrains Mono. The default theme currently falls back to system stacks so the runtime works immediately before font files are added.
+This directory is ready for self-hosted font binaries such as Playfair Display, EB Garamond, General Sans, and Geist Mono. YAML themes can still fall back to system stacks so the runtime works immediately before local font files are added.

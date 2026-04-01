@@ -1,4 +1,4 @@
-﻿import styles from '@/components/_shared/diagram.module.css';
+import styles from '@/components/_shared/diagram.module.css';
 
 interface SankeyNode {
   id: string;
@@ -10,6 +10,13 @@ interface SankeyLink {
   target: string;
   value: number;
 }
+
+const NODE_WIDTH = 120;
+const NODE_HEIGHT = 44;
+const LEVEL_GAP = 170;
+const ROW_GAP = 95;
+const HORIZONTAL_PADDING = 56;
+const MIN_VIEW_HEIGHT = 220;
 
 function assignLevels(nodes: SankeyNode[], links: SankeyLink[]) {
   const levels = new Map<string, number>();
@@ -52,13 +59,20 @@ export default function SankeyDiagram({ props }: { props?: Record<string, unknow
     byLevel.set(level, bucket);
   }
 
+  const maxLevel = Math.max(...Array.from(levels.values()), 0);
+  const maxStack = Math.max(...Array.from(byLevel.values(), (bucket) => bucket.length), 1);
+  const contentHeight = (maxStack - 1) * ROW_GAP + NODE_HEIGHT;
+  const viewHeight = Math.max(MIN_VIEW_HEIGHT, contentHeight + 160);
+  const viewWidth = Math.max(760, HORIZONTAL_PADDING * 2 + maxLevel * LEVEL_GAP + NODE_WIDTH);
+  const top = (viewHeight - contentHeight) / 2;
+
   const positioned = new Map(
     nodes.map((node) => {
       const level = levels.get(node.id) ?? 0;
       const siblings = byLevel.get(level) ?? [];
       const index = siblings.findIndex((candidate) => candidate.id === node.id);
-      const x = 80 + level * 170;
-      const y = 70 + index * 95;
+      const x = HORIZONTAL_PADDING + level * LEVEL_GAP;
+      const y = top + index * ROW_GAP;
       return [node.id, { x, y, label: node.label ?? node.id }] as const;
     })
   );
@@ -67,7 +81,7 @@ export default function SankeyDiagram({ props }: { props?: Record<string, unknow
 
   return (
     <figure className={styles.shell}>
-      <svg viewBox="0 0 760 420" role="img" aria-label="Sankey diagram">
+      <svg viewBox={`0 0 ${viewWidth} ${viewHeight}`} role="img" aria-label="Sankey diagram">
         {links.map((link, index) => {
           const source = positioned.get(link.source);
           const target = positioned.get(link.target);
@@ -81,7 +95,7 @@ export default function SankeyDiagram({ props }: { props?: Record<string, unknow
           return (
             <path
               key={`${link.source}-${link.target}-${index}`}
-              d={`M${source.x + 120} ${source.y + 22} C ${source.x + 170} ${source.y + 22}, ${target.x - 50} ${target.y + 22}, ${target.x} ${target.y + 22}`}
+              d={`M${source.x + NODE_WIDTH} ${source.y + 22} C ${source.x + NODE_WIDTH + 50} ${source.y + 22}, ${target.x - 50} ${target.y + 22}, ${target.x} ${target.y + 22}`}
               fill="none"
               stroke="var(--color-primary)"
               strokeOpacity={Number(props?.opacity ?? 0.5)}
@@ -93,7 +107,7 @@ export default function SankeyDiagram({ props }: { props?: Record<string, unknow
 
         {Array.from(positioned.entries()).map(([id, node]) => (
           <g key={id} transform={`translate(${node.x}, ${node.y})`}>
-            <rect width="120" height="44" rx="14" className={styles.surface} />
+            <rect width={NODE_WIDTH} height={NODE_HEIGHT} rx="14" className={styles.surface} />
             <text x="60" y="27" textAnchor="middle" className={styles.label}>{node.label}</text>
           </g>
         ))}

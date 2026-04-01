@@ -1,11 +1,12 @@
-﻿.card {
+.card {
   display: grid;
-  gap: 0.45rem;
-  padding: 1.2rem;
-  border-radius: var(--radius-medium);
-  border: var(--border-subtle);
+  height: 100%;
+  gap: var(--spacing-components-stat-gap);
+  padding: var(--spacing-components-card-padding);
+  border-radius: var(--radius-components-card);
+  border: var(--border-components-card);
   background: color-mix(in srgb, var(--color-surface) 88%, transparent);
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-components-card);
 }
 
 .label {
@@ -19,7 +20,7 @@
 .value {
   margin: 0;
   color: var(--color-primary);
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: var(--text-components-stat-value);
   font-weight: 600;
   line-height: 0.95;
 }
@@ -33,14 +34,14 @@
 .trend {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: var(--spacing-components-stat-trend-gap);
   color: var(--color-secondary);
 }
 
 .trendIcon {
   display: inline-flex;
-  width: 1rem;
-  height: 1rem;
+  width: var(--size-components-stat-trend-icon);
+  height: var(--size-components-stat-trend-icon);
 }
 
 .trendIcon svg {

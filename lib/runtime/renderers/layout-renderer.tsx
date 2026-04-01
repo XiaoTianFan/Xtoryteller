@@ -9,7 +9,7 @@ import { ComponentRenderer } from '@/lib/runtime/renderers/component-renderer';
 import { getLayoutRevealMotion } from '@/lib/runtime/transition-presets';
 import { ComponentInstance } from '@/lib/types/presentation';
 
-const hoverableTypes = new Set(['card', 'comparison-card', 'feature-card', 'profile-card', 'stat-card', 'timeline-item']);
+const hoverableTypes = new Set(['card', 'callout', 'comparison-card', 'feature-card', 'profile-card', 'stat-card', 'timeline-item']);
 
 export function LayoutRenderer({
   layout,

@@ -19,10 +19,14 @@ pnpm-debug.log*
 # env
 .env*
 
-# registries / generated caches
-skills/references/*.json
-!skills/references/schema.json
-presentations-index.json
+# checked-in skill references
+!skills/xtoryteller/references/registries/*.json
+!skills/xtoryteller/references/schema/schema.json
 
 # generated presentation assets
-public/presentations/
+/public/presentations/
+
+# generated QA output
+/output/
+/playwright-report/
+/test-results/

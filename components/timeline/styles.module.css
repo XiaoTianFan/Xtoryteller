@@ -1,10 +1,13 @@
 .timeline {
   display: grid;
-  gap: 1rem;
+  gap: var(--spacing-components-timeline-gap);
 }
 
 .horizontal {
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--size-layouts-timeline-item-min-width), 1fr)
+  );
 }
 
 .vertical {
@@ -13,14 +16,17 @@
 
 .event {
   display: grid;
-  gap: 0.35rem;
-  padding: 1rem;
-  border-radius: var(--radius-medium);
-  border: var(--border-subtle);
+  gap: var(--spacing-components-timeline-event-gap);
+  padding: var(--spacing-components-timeline-event-padding);
+  border-radius: var(--radius-components-card);
+  border: var(--border-components-card);
   background: color-mix(in srgb, var(--color-surface) 88%, transparent);
   opacity: 0.2;
-  transform: translateY(0.4rem);
-  transition: opacity var(--motion-fast), transform var(--motion-fast);
+  transform: translateY(var(--motion-components-timeline-offset-y));
+  transition:
+    opacity var(--motion-fast),
+    transform var(--motion-fast);
+  box-shadow: var(--shadow-components-card);
 }
 
 .visible {
@@ -31,9 +37,9 @@
 .dot {
   display: grid;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 999px;
+  width: var(--size-components-timeline-event-dot);
+  height: var(--size-components-timeline-event-dot);
+  border-radius: var(--radius-components-marker);
   background: var(--color-secondary);
   color: white;
   font-weight: 600;

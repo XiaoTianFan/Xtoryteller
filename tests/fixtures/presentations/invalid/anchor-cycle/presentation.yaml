@@ -2,7 +2,7 @@ meta:
   title: Invalid Anchor Cycle
   slug: invalid-anchor-cycle
 mode: map
-theme: default
+theme: xinimalist-paper
 clusters:
   - id: alpha
     layout: single-content

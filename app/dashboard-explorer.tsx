@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { startTransition, useDeferredValue, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { startTransition, useDeferredValue, useEffect, useMemo, useState } from 'react';
 
+import type { ThemeRegistryEntry } from '@/lib/engine/theme-registry';
 import { PresentationIndexEntry } from '@/lib/types/presentation';
 
 function isVideoAsset(asset: string | undefined) {
@@ -26,12 +28,27 @@ function sortPresentations(items: PresentationIndexEntry[], sortMode: SortMode) 
   return copy.sort((left, right) => left.title.localeCompare(right.title));
 }
 
-export function DashboardExplorer({ presentations }: { presentations: PresentationIndexEntry[] }) {
+export function DashboardExplorer({
+  presentations,
+  themes,
+  activeThemeSlug
+}: {
+  presentations: PresentationIndexEntry[];
+  themes: ThemeRegistryEntry[];
+  activeThemeSlug: string;
+}) {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState('all');
   const [sortMode, setSortMode] = useState<SortMode>('updated');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [selectedThemeSlug, setSelectedThemeSlug] = useState(activeThemeSlug);
+  const [isSavingTheme, setIsSavingTheme] = useState(false);
   const deferredQuery = useDeferredValue(query.trim().toLowerCase());
+
+  useEffect(() => {
+    setSelectedThemeSlug(activeThemeSlug);
+  }, [activeThemeSlug]);
 
   const tags = useMemo(
     () => ['all', ...new Set(presentations.flatMap((presentation) => presentation.tags).sort((left, right) => left.localeCompare(right)))],
@@ -66,7 +83,12 @@ export function DashboardExplorer({ presentations }: { presentations: Presentati
         </label>
         <label>
           <span className="srOnly">Filter by tag</span>
-          <select className="dashboardSelect" value={selectedTag} onChange={(event) => setSelectedTag(event.target.value)}>
+          <select
+            className="dashboardSelect"
+            aria-label="Filter by tag"
+            value={selectedTag}
+            onChange={(event) => setSelectedTag(event.target.value)}
+          >
             {tags.map((tag) => (
               <option key={tag} value={tag}>
                 {tag === 'all' ? 'All tags' : tag}
@@ -76,10 +98,59 @@ export function DashboardExplorer({ presentations }: { presentations: Presentati
         </label>
         <label>
           <span className="srOnly">Sort presentations</span>
-          <select className="dashboardSelect" value={sortMode} onChange={(event) => setSortMode(event.target.value as SortMode)}>
+          <select
+            className="dashboardSelect"
+            aria-label="Sort presentations"
+            value={sortMode}
+            onChange={(event) => setSortMode(event.target.value as SortMode)}
+          >
             <option value="updated">Recently updated</option>
             <option value="created">Recently created</option>
             <option value="title">Title A-Z</option>
+          </select>
+        </label>
+        <label>
+          <span className="srOnly">Global theme</span>
+          <select
+            className="dashboardSelect"
+            aria-label="Global theme"
+            value={selectedThemeSlug}
+            disabled={isSavingTheme}
+            onChange={async (event) => {
+              const nextThemeSlug = event.target.value;
+              setSelectedThemeSlug(nextThemeSlug);
+              setIsSavingTheme(true);
+
+              try {
+                const response = await fetch('/api/theme', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ themeSlug: nextThemeSlug })
+                });
+
+                if (!response.ok) {
+                  throw new Error('Failed to save theme preference.');
+                }
+
+                const payload = (await response.json()) as { themeSlug?: string };
+                setSelectedThemeSlug(payload.themeSlug ?? nextThemeSlug);
+                startTransition(() => {
+                  router.refresh();
+                });
+              } catch {
+                setSelectedThemeSlug(activeThemeSlug);
+              } finally {
+                setIsSavingTheme(false);
+              }
+            }}
+          >
+            {themes.map((theme) => (
+              <option key={theme.slug} value={theme.slug}>
+                {theme.name}
+              </option>
+            ))}
           </select>
         </label>
         <div className="viewToggle" role="group" aria-label="View mode">

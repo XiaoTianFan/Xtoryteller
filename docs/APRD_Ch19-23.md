@@ -524,16 +524,17 @@ Alias for `bullet-list` with `ordered: true`. Same props and behavior.
 
 | Property | Value |
 |---|---|
-| **Purpose** | Short text badge or tag for categorization or annotation |
+| **Purpose** | Short metadata badge or section label |
 | **Content** | Plain text (short — 1-3 words) |
-| **HTML** | `<span>` with badge styling |
+| **HTML** | `<span>` with theme-shaped badge styling |
 
 **Props:**
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'outline'` | `'default'` | Color variant |
-| `size` | `'small' \| 'medium' \| 'large'` | `'medium'` | Badge size |
+| `tone` | `'default' \| 'primary' \| 'secondary'` | `'default'` | Text tone variant |
+
+**Authoring note:** The label follows the active theme's standard component radii. Do not assume pill corners unless the theme itself defines them.
 
 ---
 
@@ -720,6 +721,9 @@ Built-in presets use Lucide by default. Custom SVG should be treated as an advan
 | `trendValue` | `string` | `undefined` | Trend detail (e.g., "+12%") |
 | `prefix` | `string` | `undefined` | Value prefix (e.g., "$") |
 | `suffix` | `string` | `undefined` | Value suffix (e.g., "%") |
+| `detail` | `string` | `undefined` | Supporting explanation beneath the metric |
+
+**Authoring note:** Keep `value` short and metric-like. If the value reads like a phrase or sentence fragment, use `detail` or switch to `card`, `feature-card`, or `callout`.
 
 ---
 
@@ -1105,7 +1109,7 @@ branches:
 | **Purpose** | Hierarchical tree of roles, entities, or concepts |
 | **Content** | None — data via props |
 | **HTML** | `<svg>` with `role="img"` |
-| **Layout Engine** | ELK.js (tree layout) |
+| **Layout Engine** | Custom SVG tree layout with automatic viewBox expansion |
 
 **Props:**
 
@@ -1113,9 +1117,6 @@ branches:
 |---|---|---|---|
 | `root` | `OrgNode` | Required | Root node of the hierarchy |
 | `direction` | `'top-bottom' \| 'left-right'` | `'top-bottom'` | Tree direction |
-| `style.nodeColor` | `string` | `'var(--color-surface)'` | Node background color |
-| `style.borderColor` | `string` | `'var(--color-border)'` | Node border color |
-| `style.connectionStyle` | `'straight' \| 'curved' \| 'step'` | `'step'` | Edge style |
 
 **OrgNode type:**
 yaml
@@ -1134,6 +1135,8 @@ root:
 
 
 **Build Behavior:** Supports `sequential` — levels appear top-down, one tier at a time.
+
+**Authoring note:** Keep labels concise. Wide hierarchies now expand their SVG bounds to stay visible, but dense trees should still be split when readability starts to suffer.
 
 ---
 
@@ -1164,7 +1167,7 @@ root:
 | **Purpose** | Flow diagram showing quantity distribution between nodes across stages |
 | **Content** | None — data via props |
 | **HTML** | `<svg>` |
-| **Rendering** | D3.js (d3-sankey plugin) → SVG |
+| **Rendering** | Custom SVG sankey-style layout with automatic fit and vertical centering |
 
 **Props:**
 
@@ -1172,13 +1175,14 @@ root:
 |---|---|---|---|
 | `nodes` | `array<{ id: string, label: string }>` | Required | All nodes |
 | `links` | `array<{ source: string, target: string, value: number }>` | Required | Flows between nodes with magnitude |
-| `alignment` | `'left' \| 'right' \| 'center' \| 'justify'` | `'justify'` | Node alignment strategy |
-| `style.colorScheme` | `string` | `'categorical'` | Color scheme for flows |
-| `style.opacity` | `number` | `0.5` | Flow band opacity |
+| `alignment` | `'left' \| 'right' \| 'center' \| 'justify'` | `'justify'` | Reserved alignment hint for future layout tuning |
+| `opacity` | `number` | `0.5` | Flow band opacity |
 
 **Build Behavior:** Supports `nodes-first` — nodes appear, then flow bands animate in.
 
 **Density:** Maximum 15 nodes and 25 links before the diagram becomes unreadable.
+
+**Authoring note:** Keep node labels short. The runtime now expands the SVG width and vertically centers the band, but long labels or too many stages still reduce clarity quickly.
 
 ---
 
@@ -1356,7 +1360,9 @@ Detailed specifications for all built-in layouts. Each layout describes its slot
 | Arrangement | Horizontal or vertical timeline with connected events |
 | Props | `orientation: 'horizontal' \| 'vertical'`, `alternating: boolean` |
 | Responsive | Horizontal → vertical below 768px |
-| Density | Maximum 8 events (horizontal) or 10 (vertical) |
+| Density | 4-8 events depending on orientation |
+
+**Authoring note:** Keep timeline items similarly dense so cards align well in shared rows.
 
 #### `comparison-layout`
 | Slots | 2 |
@@ -1370,6 +1376,8 @@ Detailed specifications for all built-in layouts. Each layout describes its slot
 | Arrangement | Triangular arrangement — first slot narrow at top, widening rows below |
 | Responsive | Collapses to vertical stack below 600px |
 | Density | 1 component per row, compact (label + short text) |
+
+**Authoring note:** Treat this as a compact roadmap layout, not a general stacked-card layout. Long lists or multi-paragraph rows should be split into additional steps.
 
 ---
 

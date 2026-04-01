@@ -1,10 +1,10 @@
 .quote {
   margin: 0;
-  padding: clamp(1rem, 2vw, 1.6rem);
-  border-radius: var(--radius-large);
+  padding: var(--spacing-components-quote-padding);
+  border-radius: var(--radius-components-card);
   background: color-mix(in srgb, var(--color-surface) 88%, white 12%);
-  border: var(--border-subtle);
-  box-shadow: var(--shadow-soft);
+  border: var(--border-components-card);
+  box-shadow: var(--shadow-components-card);
 }
 
 .quote blockquote {
@@ -14,7 +14,7 @@
 }
 
 .quote figcaption {
-  margin-top: 1rem;
+  margin-top: var(--spacing-components-quote-caption-gap);
   color: var(--color-muted);
   font-size: var(--text-small);
 }

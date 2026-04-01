@@ -22,6 +22,9 @@ Each component should include:
 
 - Use semantic HTML instead of generic wrapper divs when the content has meaning.
 - Reference CSS variables from the active theme instead of hardcoded values.
+- Prefer semantic token families over ad hoc variables:
+  `spacing.components.*`, `sizing.components.*`, `typography.components.*`, and matching semantic `radii`, `shadows`, and `borders`.
+- Only keep literals in CSS when they are intrinsic rendering math, algorithmic geometry, or structural mechanics rather than reusable visual language.
 - Keep props concrete and agent-readable in the manifest.
 - Follow the existing component prop contract: `content`, `props`, and `style`.
 - Prefer CSS modules for component-specific layout and treatment.

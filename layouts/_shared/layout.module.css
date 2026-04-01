@@ -18,7 +18,10 @@
 }
 
 .titleLeft {
-  grid-template-columns: minmax(0, 1.25fr) minmax(220px, 0.8fr);
+  grid-template-columns: minmax(0, 1.25fr) minmax(
+      var(--size-layouts-title-left-accent-min-width),
+      0.8fr
+    );
   align-content: center;
   align-items: center;
   padding: var(--spacing-page);
@@ -40,13 +43,13 @@
 }
 
 .sectionHeader .panel:first-child {
-  max-width: 14rem;
+  max-width: var(--size-layouts-section-header-accent-max-width);
 }
 
 .singleContent {
   align-content: center;
   padding: var(--spacing-page);
-  max-width: min(78rem, 100%);
+  max-width: min(var(--size-layouts-single-content-max-width), 100%);
   margin: 0 auto;
 }
 
@@ -57,13 +60,19 @@
 }
 
 .contentLeftMediaRight {
-  grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(0, 1.55fr) minmax(
+      var(--size-layouts-content-media-min-width),
+      1fr
+    );
   align-items: center;
   padding: var(--spacing-page);
 }
 
 .mediaLeftContentRight {
-  grid-template-columns: minmax(280px, 1fr) minmax(0, 1.55fr);
+  grid-template-columns: minmax(
+      var(--size-layouts-content-media-min-width),
+      1fr
+    ) minmax(0, 1.55fr);
   align-items: center;
   padding: var(--spacing-page);
 }
@@ -107,18 +116,27 @@
 
 .grid3x2 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
   align-content: center;
   padding: var(--spacing-page);
 }
 
 .sidebarMain {
-  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.6fr);
+  grid-template-columns: minmax(
+      var(--size-layouts-sidebar-main-min-width),
+      0.7fr
+    ) minmax(0, 1.6fr);
   align-items: stretch;
   padding: var(--spacing-page);
 }
 
 .gallery {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--size-layouts-gallery-item-min-width), 1fr)
+  );
+  align-items: stretch;
   align-content: center;
   padding: var(--spacing-page);
 }
@@ -131,14 +149,14 @@
 
 .scatterItem {
   position: absolute;
-  width: min(320px, 32vw);
+  width: min(var(--size-layouts-scattered-item-width), 32vw);
   transform: translate(-50%, -50%);
 }
 
 .timelineLayout {
   position: relative;
   align-content: center;
-  gap: var(--spacing-section);
+  gap: var(--spacing-layouts-timeline-gap);
   padding: var(--spacing-page);
 }
 
@@ -149,8 +167,11 @@
 }
 
 .timelineLayoutHorizontal {
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  align-items: start;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--size-layouts-timeline-item-min-width), 1fr)
+  );
+  align-items: stretch;
 }
 
 .timelineLayoutHorizontal .timelineTrack::before {
@@ -171,13 +192,15 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 1.2rem;
+  left: var(--spacing-layouts-timeline-track-offset);
   border-left: 2px solid var(--color-border);
 }
 
 .timelineNode {
   position: relative;
   z-index: 1;
+  display: flex;
+  min-height: 0;
 }
 
 .comparisonLayout {
@@ -195,7 +218,7 @@
 .comparisonDivider {
   display: grid;
   place-items: center;
-  min-width: 4rem;
+  min-width: var(--size-layouts-comparison-divider-min-width);
   color: var(--color-muted);
   font-size: var(--text-small);
   text-transform: uppercase;
@@ -211,44 +234,51 @@
 .comparisonDividerBadge {
   display: grid;
   place-items: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 999px;
+  width: var(--size-layouts-comparison-divider-badge-size);
+  height: var(--size-layouts-comparison-divider-badge-size);
+  border-radius: var(--radius-layouts-divider-badge);
   border: var(--border-subtle);
   background: color-mix(in srgb, var(--color-surface) 80%, transparent);
 }
 
 .comparisonDividerArrow {
-  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  font-size: var(--text-components-comparison-divider);
 }
 
 .pyramidLayout {
+  height: 100%;
+  grid-template-rows: repeat(var(--pyramid-rows, 1), minmax(0, 1fr));
+  align-content: stretch;
   justify-items: center;
+  gap: var(--spacing-layouts-pyramid-gap);
   padding: var(--spacing-page);
+  overflow: hidden;
 }
 
 .pyramidItem {
-  width: min(100%, 52rem);
+  width: min(100%, var(--size-layouts-pyramid-max-width));
+  display: flex;
+  min-height: 0;
 }
 
 .pyramidItem:nth-child(1) {
-  width: min(18rem, 100%);
+  width: min(var(--size-layouts-pyramid-top-width), 100%);
 }
 
 .pyramidItem:nth-child(2),
 .pyramidItem:nth-child(3) {
-  width: min(28rem, 100%);
+  width: min(var(--size-layouts-pyramid-middle-width), 100%);
 }
 
 .pyramidItem:nth-child(n + 4) {
-  width: min(38rem, 100%);
+  width: min(var(--size-layouts-pyramid-base-width), 100%);
 }
 
 .compact {
   min-height: 100%;
   height: 100%;
-  padding: clamp(0.85rem, 1.4vw, 1.15rem);
-  gap: clamp(0.5rem, 1vw, 0.85rem);
+  padding: var(--spacing-layouts-compact-padding);
+  gap: var(--spacing-layouts-compact-gap);
 }
 
 .compact .panel {

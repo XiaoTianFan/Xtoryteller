@@ -30,6 +30,7 @@ These boundaries matter because the APRD is broader than the currently shipped r
 
 - Markdown hover annotations are shipped for markdown-rendered content, but the broader APRD-wide `annotation anywhere` model is still broader than the current runtime.
 - Component-level `enter` and `exit` animation props are supported, but motion-heavy storytelling changes should still be manually verified.
+- The theme system now owns reusable visual language through semantic token families in YAML; runtime code still owns behavior, viewport mechanics, responsive breakpoints, layout algorithms, and intrinsic rendering math.
 
 ## File Ownership
 
@@ -43,6 +44,7 @@ These boundaries matter because the APRD is broader than the currently shipped r
 
 - Prefer built-in primitives over new code.
 - Prefer theme tokens over per-component styling.
+- When styling work is reusable, start in `themes/*.yaml` rather than scattering literals through CSS modules.
 - Keep folder names, slugs, and asset paths aligned.
 - Split dense content early instead of hoping layout CSS will save it later.
 - When the task is about dashboard, viewer, renderer, or validation behavior, read `runtime-support-matrix.md` and `qa-workflows.md` before changing claims about what the product supports.

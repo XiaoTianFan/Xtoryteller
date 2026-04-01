@@ -11,4 +11,44 @@ fonts:
     source: system
 colors:
   background: '#ffffff'
-  foreground: '#000000'
+  surface: '#f7f7f7'
+  panel: '#f0f0f0'
+  foreground: '#111111'
+  muted: '#555555'
+  border: '#cccccc'
+  primary: '#222222'
+  secondary: '#333333'
+  accent: '#444444'
+  success: '#228b22'
+  warning: '#cc8800'
+  error: '#aa3333'
+  overlay: 'rgba(255, 255, 255, 0.88)'
+typography:
+  h1: '1rem'
+  h2: '1rem'
+  h3: '1rem'
+  body: '1rem'
+  small: '0.875rem'
+  lead: '1rem'
+  code: '0.875rem'
+spacing:
+  page: '1rem'
+  section: '1rem'
+  gap: '1rem'
+  cluster: '1rem'
+radii:
+  small: '0'
+  medium: '0'
+  large: '0'
+  pill: '999px'
+shadows:
+  soft: '0 4px 12px rgba(0, 0, 0, 0.1)'
+  strong: '0 10px 24px rgba(0, 0, 0, 0.16)'
+borders:
+  subtle: '1px solid #cccccc'
+  strong: '1px solid #999999'
+motion:
+  fast: '120ms'
+  normal: '240ms'
+  slow: '480ms'
+  easing: 'ease-in-out'

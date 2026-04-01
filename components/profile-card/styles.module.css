@@ -1,25 +1,27 @@
-﻿.card {
+.card {
   display: grid;
-  gap: 1rem;
-  padding: 1.2rem;
-  border-radius: var(--radius-medium);
-  border: var(--border-subtle);
+  height: 100%;
+  align-content: start;
+  gap: var(--spacing-components-profile-gap);
+  padding: var(--spacing-components-card-padding);
+  border-radius: var(--radius-components-card);
+  border: var(--border-components-card);
   background: color-mix(in srgb, var(--color-surface) 88%, transparent);
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-components-card);
 }
 
 .header {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.9rem;
+  gap: var(--spacing-components-profile-header-gap);
   align-items: center;
 }
 
 .avatar,
 .placeholder {
-  width: 4rem;
-  height: 4rem;
-  border-radius: 999px;
+  width: var(--size-components-profile-avatar);
+  height: var(--size-components-profile-avatar);
+  border-radius: var(--radius-components-avatar);
 }
 
 .avatar {
@@ -29,7 +31,11 @@
 .placeholder {
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
   color: white;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -44,7 +50,7 @@
 
 .meta {
   display: grid;
-  gap: 0.2rem;
+  gap: var(--spacing-components-profile-meta-gap);
 }
 
 .role {

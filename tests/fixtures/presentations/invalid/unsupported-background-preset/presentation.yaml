@@ -2,7 +2,7 @@ meta:
   title: Unsupported Background Preset
   slug: unsupported-background-preset
 mode: stage
-theme: default
+theme: xinimalist-paper
 background:
   type: paper-shader
   shader: grain-gradient

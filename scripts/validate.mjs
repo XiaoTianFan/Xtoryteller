@@ -445,6 +445,11 @@ function parseDensityLimit(layoutManifest) {
   const recommendation = String(layoutManifest?.density?.recommendation ?? '').trim();
   const slots = Array.isArray(layoutManifest?.slots) ? layoutManifest.slots.length : 0;
 
+  const rangeMatch = recommendation.match(/(\d+)\s*-\s*(\d+)/);
+  if (rangeMatch) {
+    return Number(rangeMatch[2]);
+  }
+
   const upToMatch = recommendation.match(/up to\s+(\d+)/i);
   if (upToMatch) {
     return Number(upToMatch[1]);
@@ -479,6 +484,17 @@ function getLineCount(content) {
     .filter((line) => line.length > 0).length;
 }
 
+function getWordCount(content) {
+  if (!content) {
+    return 0;
+  }
+
+  return String(content)
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+}
+
 function validateDensity(unit, layoutManifest, issues, kind, index) {
   const layoutLimit = parseDensityLimit(layoutManifest);
   const unitLabel = getUnitLabel(kind, index, unit.title);
@@ -511,6 +527,30 @@ function validateDensity(unit, layoutManifest, issues, kind, index) {
 
     if (component.type === 'code-block' && getLineCount(component.content) > 15) {
       issues.push(createIssue('warning', `${unitLabel} includes a code-block longer than the recommended 15 visible lines.`));
+    }
+
+    if (component.type === 'stat-card') {
+      const value = typeof component.props?.value === 'string' ? component.props.value.trim() : '';
+      if (value && (value.length > 20 || getWordCount(value) > 3)) {
+        issues.push(
+          createIssue(
+            'warning',
+            `${unitLabel} uses a stat-card value that reads like long prose. Keep stat-card values short and metric-like; move descriptive phrases into detail text or a different card type.`
+          )
+        );
+      }
+    }
+
+    if (unit.layout === 'pyramid-layout') {
+      const listItems = Array.isArray(component.props?.items) ? component.props.items.length : 0;
+      if (listItems > 0 || getLineCount(component.content) > 1) {
+        issues.push(
+          createIssue(
+            'warning',
+            `${unitLabel} uses content that is too dense for pyramid-layout. Keep each pyramid row to a compact label plus one short sentence.`
+          )
+        );
+      }
     }
   }
 }

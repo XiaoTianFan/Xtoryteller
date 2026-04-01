@@ -31,10 +31,11 @@ Shipped:
 
 Polished in this pass:
 - Validation now checks missing assets, build-step gaps, duplicate step or cluster ids, background-section references, map anchor cycles, and navigation sequence integrity.
-- Validation now emits density warnings for overloaded layouts and common content-heavy components.
+- Validation now emits density warnings for overloaded layouts, prose-like `stat-card` values, and over-dense `pyramid-layout` rows.
 - Shared validation now refreshes agent registries before running.
 - The watcher now refreshes registries automatically when manifests or themes change.
 - Stage keyboard support now includes `Home`, `End`, numeric step jumps, fullscreen, and a shortcuts overlay.
+- The Stage viewer is now explicitly viewport-locked, preventing page-height growth on dense steps.
 
 ## Phase 2
 
@@ -52,6 +53,7 @@ Polished in this pass:
 - Skill guidance now treats Map mode as a first-class orchestration path instead of a footnote.
 - Map keyboard support now covers guided navigation, free-roam pan/zoom controls, shortcuts help, and consistent Escape behavior.
 - Background resolution now supports APRD `background.stages` and `background.regions` plus legacy `backgroundSections`.
+- Diagram fit behavior was tightened so wide `org-chart` and `sankey-diagram` content expands its SVG viewBox instead of clipping against fixed bounds.
 
 ## Phase 3
 
@@ -73,6 +75,7 @@ Polished in this pass:
 - Runtime primitive resolution now honors presentation-scoped `components/`, `layouts/`, and `transitions/` ahead of the global libraries for the active presentation.
 - The background system now supports both CSS backgrounds and `@paper-design/shaders-react` through a curated adapter layer, with explicit supported shaders, presets, param validation, and CSS gradient normalization.
 - Validation and portability helpers now understand background assets, background stage/region switching, component enter/exit transition dependencies, and presentation-scoped primitive folders.
+- Shared grid, gallery, timeline, and pyramid rendering now stretches card-like components consistently so rows align visually without author-side spacing hacks.
 
 Still partial or worth noting:
 - Markdown hover annotations are shipped for markdown-rendered content, but the broader APRD-wide annotation vision still exceeds the current runtime surface.

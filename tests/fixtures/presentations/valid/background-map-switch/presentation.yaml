@@ -2,7 +2,7 @@ meta:
   title: Background Map Switch
   slug: background-map-switch
 mode: map
-theme: default
+theme: xinimalist-paper
 background:
   type: paper-shader
   shader: waves

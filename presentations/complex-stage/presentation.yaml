@@ -5,7 +5,7 @@
   author: Xtoryteller
   tags: [stage, demo, canonical, complex, architecture]
   createdAt: '2026-03-31'
-  updatedAt: '2026-03-31'
+  updatedAt: '2026-04-01'
 mode: stage
 theme: xinimalist-paper
 themeOverrides:
@@ -237,6 +237,7 @@ steps:
                 - type: subtitle
                   content: YAML orchestrates the runtime.
       - type: numbered-list
+        build: sequential
         props:
           items:
             - YAML describes what to render and when.
@@ -293,11 +294,12 @@ steps:
     layout: gallery
     transition: slide-left
     components:
-      - type: stat-card
+      - type: feature-card
+        content: Search covers titles, tags, descriptions, and extracted component copy.
         props:
-          label: Search scope
-          value: Title, tags, descriptions
-          detail: Extracted component content also becomes searchable.
+          eyebrow: Search scope
+          title: Metadata-first index
+          icon: search
       - type: feature-card
         content: Switch between grid and list views depending on whether you are browsing visually or scanning metadata.
         props:
@@ -376,27 +378,27 @@ steps:
         props:
           eyebrow: Base
           title: Runtime
-          items: [Stage machine, Map machine, renderers]
+        content: Stage machine, Map machine, renderers.
       - type: feature-card
         props:
           eyebrow: Layer
           title: Primitive libraries
-          items: [Components, layouts, transitions]
+        content: Components, layouts, transitions.
       - type: feature-card
         props:
           eyebrow: Layer
           title: Skills and validation
-          items: [Registries, schema, authoring guidance]
+        content: Registries, schema, authoring guidance.
       - type: feature-card
         props:
           eyebrow: Surface
           title: Discovery and portability
-          items: [Dashboard UX, export/import, promotion]
+        content: Dashboard UX, export/import, promotion.
       - type: feature-card
         props:
           eyebrow: Horizon
           title: Remaining partials
-          items: [Annotation UX, deeper polish, richer preview loops]
+        content: Annotation UX, deeper polish, richer preview loops.
   - id: close
     title: Closing
     layout: stack

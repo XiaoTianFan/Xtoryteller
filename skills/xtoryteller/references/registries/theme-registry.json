@@ -1,40 +1,6 @@
 {
-  "generatedAt": "2026-04-01T12:57:06.405Z",
-  "count": 3,
+  "count": 2,
   "themes": [
-    {
-      "slug": "default",
-      "name": "Default Narrative",
-      "fonts": {
-        "heading": {
-          "family": "\"Playfair Display\"",
-          "source": "system",
-          "fallbacks": [
-            "Georgia",
-            "\"Times New Roman\"",
-            "serif"
-          ]
-        },
-        "body": {
-          "family": "Inter",
-          "source": "system",
-          "fallbacks": [
-            "-apple-system",
-            "BlinkMacSystemFont",
-            "\"Segoe UI\"",
-            "sans-serif"
-          ]
-        },
-        "mono": {
-          "family": "\"JetBrains Mono\"",
-          "source": "system",
-          "fallbacks": [
-            "Consolas",
-            "monospace"
-          ]
-        }
-      }
-    },
     {
       "slug": "xinimalist-dark",
       "name": "Xinimalist Dark",

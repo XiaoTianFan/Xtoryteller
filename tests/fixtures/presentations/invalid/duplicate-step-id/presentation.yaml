@@ -2,7 +2,7 @@ meta:
   title: Invalid Duplicate Step Id
   slug: invalid-duplicate-step-id
 mode: stage
-theme: default
+theme: xinimalist-paper
 steps:
   - id: duplicate
     layout: single-content

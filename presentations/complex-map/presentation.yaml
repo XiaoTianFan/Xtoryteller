@@ -339,7 +339,7 @@ clusters:
         props:
           horizon1:
             label: Foundation
-            items: [Stage runtime, YAML loader, registries, default theme]
+            items: [Stage runtime, YAML loader, registries, global YAML theme]
           horizon2:
             label: Expansion
             items: [Map mode, diagram suite, dashboard controls, richer layouts]

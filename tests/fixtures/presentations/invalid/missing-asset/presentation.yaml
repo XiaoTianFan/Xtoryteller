@@ -2,7 +2,7 @@ meta:
   title: Invalid Missing Asset
   slug: invalid-missing-asset
 mode: stage
-theme: default
+theme: xinimalist-paper
 steps:
   - id: opening
     layout: single-content

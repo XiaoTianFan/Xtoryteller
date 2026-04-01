@@ -1,16 +1,16 @@
 .figure {
   margin: 0;
   display: grid;
-  gap: 0.75rem;
+  gap: var(--spacing-components-media-figure-gap);
 }
 
 .image {
   width: 100%;
   height: auto;
-  max-height: min(52vh, 420px);
+  max-height: min(52vh, var(--size-components-media-image-max-height));
   object-fit: contain;
-  border-radius: var(--radius-medium);
-  border: var(--border-subtle);
+  border-radius: var(--radius-components-media);
+  border: var(--border-components-card);
   background: color-mix(in srgb, var(--color-panel) 70%, white 30%);
 }
 

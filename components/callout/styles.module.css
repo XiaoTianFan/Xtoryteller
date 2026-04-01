@@ -1,13 +1,16 @@
 .callout {
-  padding: clamp(1rem, 2vw, 1.5rem);
-  border-radius: var(--radius-large);
+  display: grid;
+  height: 100%;
+  align-content: start;
+  padding: var(--spacing-components-callout-padding);
+  border-radius: var(--radius-components-callout);
   border: 1px solid color-mix(in srgb, var(--tone) 26%, transparent 74%);
   background: color-mix(in srgb, var(--tone) 13%, white 87%);
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-components-card);
 }
 
 .title {
-  margin: 0 0 0.4rem;
+  margin: 0 0 var(--spacing-components-callout-title-gap);
   font-size: var(--text-small);
   text-transform: uppercase;
   letter-spacing: 0.12em;

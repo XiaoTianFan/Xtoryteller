@@ -2,7 +2,7 @@ meta:
   title: Local Runtime Overrides
   slug: local-runtime-overrides
 mode: stage
-theme: default
+theme: xinimalist-paper
 background:
   type: paper-shader
   shader: waves

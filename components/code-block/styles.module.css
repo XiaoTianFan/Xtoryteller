@@ -1,24 +1,25 @@
-﻿.shell {
-  border-radius: var(--radius-code, var(--radius-large));
+.shell {
+  border-radius: var(--radius-components-code);
   overflow: hidden;
-  border: var(--border-subtle);
+  border: var(--border-components-code);
   background: var(--color-code-bg, #181512);
   color: var(--color-code-foreground, #f4eee5);
-  box-shadow: var(--shadow-strong);
+  box-shadow: var(--shadow-components-code);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.7rem 1rem;
+  padding: var(--spacing-components-code-header-padding-y)
+    var(--spacing-components-code-header-padding-x);
   background: var(--color-code-header-bg, rgba(255, 255, 255, 0.08));
   font-size: var(--text-small);
 }
 
 .code {
   margin: 0;
-  padding: 1rem;
+  padding: var(--spacing-components-code-body-padding);
   overflow: auto;
   font-size: var(--text-code);
   line-height: 1.6;

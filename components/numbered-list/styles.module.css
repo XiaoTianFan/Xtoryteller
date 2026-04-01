@@ -1,15 +1,17 @@
 .list {
   margin: 0;
-  padding-left: 1.4rem;
+  padding-left: var(--spacing-components-list-numbered-padding-start);
   display: grid;
-  gap: 0.7rem;
+  gap: var(--spacing-components-list-gap);
   color: var(--color-foreground);
 }
 
 .item {
   opacity: 0.2;
-  transform: translateY(0.35rem);
-  transition: opacity var(--motion-fast), transform var(--motion-fast);
+  transform: translateY(var(--motion-components-list-offset-y));
+  transition:
+    opacity var(--motion-fast),
+    transform var(--motion-fast);
 }
 
 .visible {

@@ -110,7 +110,7 @@ description: >
 1. Read `skills/references/component-registry.json` to know available components
 2. Read `skills/references/layout-registry.json` to know available layouts
 3. Read `skills/references/transition-registry.json` to know available transitions
-4. Read `skills/references/theme-registry.json` to know available themes
+4. Read `skills/xtoryteller/references/registries/theme-registry.json` to know available themes
 5. Understand the project structure by reading `skills/docs/architecture-overview.md`
 
 ## Phase 0: Detect Intent
@@ -206,7 +206,7 @@ steps:
     purpose: Know all available spatial arrangements and their slot counts
 
   - name: Scan Theme Registry
-    action: Read `skills/references/theme-registry.json`
+    action: Read `skills/xtoryteller/references/registries/theme-registry.json`
     purpose: Know available visual themes
 
   - name: Scan Existing Presentations
@@ -527,7 +527,7 @@ This script:
 1. Scans `components/*/manifest.yaml` → outputs `skills/references/component-registry.json`
 2. Scans `layouts/*/manifest.yaml` → outputs `skills/references/layout-registry.json`
 3. Scans `transitions/*/manifest.yaml` → outputs `skills/references/transition-registry.json`
-4. Scans `themes/*.yaml` → outputs `skills/references/theme-registry.json`
+4. Scans `themes/*.yaml` → outputs `skills/xtoryteller/references/registries/theme-registry.json`
 
 The JSON outputs contain the full manifest data for each entry, making them comprehensive references for agents without requiring the agent to read individual files.
 
@@ -804,10 +804,10 @@ The three rendering technologies coexist in layers:
 | Background | WebGL canvas (paper-shader) | -1 | Procedural textured background |
 | Content | React DOM | 0 | All presentation components, text, images, interactive elements |
 | Diagrams (within content) | SVG (inline in DOM) | 0 | Causal diagrams, mind maps, flowcharts, etc. rendered as inline SVG |
-| Data Viz (within content) | D3 → SVG (inline in DOM) | 0 | Sankey, radar, coordinate plots rendered by D3 into SVG |
+| Data Viz (within content) | SVG (custom and data-driven renderers) | 0 | Sankey, radar, coordinate plots and similar diagrams rendered as inline SVG |
 | UI Overlay | React DOM | 1 | Progress bar, navigation controls, tooltips |
 
-The WebGL background canvas is positioned `fixed` behind everything. All content renders as standard DOM elements. SVG diagrams are inline within the DOM tree (not separate canvases), so they participate in normal layout, styling, and accessibility. D3 renders into SVG elements managed by React refs.
+The WebGL background canvas is positioned `fixed` behind everything. All content renders as standard DOM elements. SVG diagrams are inline within the DOM tree (not separate canvases), so they participate in normal layout, styling, and accessibility. Some diagrams use custom SVG placement logic while others can use data-driven helpers, but they all render into the same inline SVG surface model.
 
 ### 13.9 Hot Reload Pipeline
 
@@ -936,7 +936,7 @@ function validateImport(packagePath: string): ImportValidationResult {
   if (!themeInGlobal && !themeInPackage) {
     issues.push({
       severity: 'warning',
-      message: `Theme "${themeName}" not found. Will fall back to default theme.`,
+      message: `Theme "${themeName}" not found. Will fall back to xinimalist-paper.`,
       suggestion: `The presentation may look different than intended. Ask the author for their theme file.`,
     });
   }
@@ -1394,7 +1394,7 @@ css
 Each theme specifies its fonts and their source:
 
 yaml
-# themes/default.yaml
+# themes/xinimalist-paper.yaml
 fonts:
   heading:
     family: "Playfair Display"
@@ -1442,7 +1442,7 @@ function resolveFonts(fontConfig: ThemeFonts): FontResolution {
 
 ### 16.4 Default Theme Fonts
 
-The default theme ships with these fonts pre-installed locally:
+The global fallback theme ships with these fonts pre-installed or configured:
 
 | Role | Font | Character | Rationale |
 |---|---|---|---|
@@ -1450,7 +1450,7 @@ The default theme ships with these fonts pre-installed locally:
 | Body | Inter | Clean, highly legible sans-serif | Optimized for screen reading at all sizes; extensive weight range |
 | Mono | JetBrains Mono | Developer-focused monospace | Excellent legibility for code blocks; ligature support |
 
-These fonts are included in the repository under `public/fonts/` so the default theme works fully offline.
+These fonts can be included in the repository under `public/fonts/` so the global fallback theme works fully offline.
 
 ### 16.5 Font Discovery Workflow
 
@@ -1700,7 +1700,7 @@ Transitions:
 Themes:
   Scanned: themes/*.yaml
   Found: 1 theme
-  Output: skills/references/theme-registry.json
+  Output: skills/xtoryteller/references/registries/theme-registry.json
 
 ✓ All registries generated
 

@@ -4,9 +4,9 @@
 
 .frame {
   width: 100%;
-  min-height: 320px;
+  min-height: var(--size-components-media-iframe-min-height);
   border: 0;
-  border-radius: var(--radius-medium);
-  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-components-media);
+  box-shadow: var(--shadow-components-card);
   background: color-mix(in srgb, var(--color-panel) 82%, white 18%);
 }

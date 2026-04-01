@@ -6,7 +6,7 @@
 }
 
 .body p {
-  margin: 0 0 0.85rem;
+  margin: 0 0 var(--spacing-gap);
 }
 
 .body a {

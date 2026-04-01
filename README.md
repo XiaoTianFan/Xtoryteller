@@ -53,10 +53,10 @@ Xtoryteller is a file-system-first runtime.
 
 ### Navigation Modes
 
-| Mode | Best For | Key Concepts |
-| --- | --- | --- |
-| `stage` | linear talks, walkthroughs, reports | steps, builds, transitions |
-| `map` | systems thinking, canvases, exploratory narratives | clusters, anchors, arrangement, navigation sequences |
+| Mode    | Best For                                           | Key Concepts                                         |
+| ------- | -------------------------------------------------- | ---------------------------------------------------- |
+| `stage` | linear talks, walkthroughs, reports                | steps, builds, transitions                           |
+| `map`   | systems thinking, canvases, exploratory narratives | clusters, anchors, arrangement, navigation sequences |
 
 ## Project Structure
 
@@ -116,8 +116,12 @@ Use Map mode when the material benefits from spatial exploration, systems views,
 - Keep the folder name and `meta.slug` aligned.
 - Prefer built-in components and layouts before creating new primitives.
 - Split dense content across more steps or clusters instead of cramming.
+- In Stage mode, the page must stay locked to the viewport. Never rely on scrolling or page-height growth to rescue dense content.
 - Keep assets relative to the presentation folder, usually under `assets/`.
 - Prefer theme tokens and `themeOverrides` over repeated inline style.
+- Keep `stat-card` values short and metric-like. Move sentence-like copy into `detail`, `feature-card`, `card`, or `callout`.
+- Add `build: sequential` explicitly when list items or numbered points should reveal one-by-one.
+- Keep `pyramid-layout` rows compact and concise.
 - Treat markdown hover annotations as supported inside markdown-rendered content, not as a universal `annotation anywhere` surface.
 - Verify advanced motion or component-level animation hints in the browser.
 
@@ -159,6 +163,8 @@ Guidelines:
 ### Themes
 
 Themes live in `themes/<slug>.yaml`.
+All theme data used at runtime comes from these YAML files; Xtoryteller does not keep a separate hardcoded TypeScript theme object.
+The app-wide fallback theme is `themes/xinimalist-paper.yaml`.
 
 Common sections:
 
@@ -166,6 +172,7 @@ Common sections:
 - `colors`
 - `typography`
 - `spacing`
+- `sizing`
 - `radii`
 - `shadows`
 - `borders`
@@ -177,7 +184,21 @@ Advanced theme support includes:
 
 - font sources: `system`, `local`, `google`, and `fontshare`
 - local font files declared from `public/fonts/`
-- nested shell and chrome token families such as `colors.chrome.*`, `colors.code.*`, `colors.scrollbar.*`, `colors.progress.*`, `colors.diagram.*`, `colors.backgroundStops.*`, and matching `motion.*` groups
+- semantic token families such as `spacing.chrome.*`, `spacing.components.*`, `spacing.layouts.*`, `sizing.components.*`, `sizing.layouts.*`, `typography.components.*`, and optional `motion.components.*`
+- semantic shape/elevation/border groups such as `radii.chrome.*`, `radii.components.*`, `radii.layouts.*`, `shadows.chrome.*`, `shadows.components.*`, `borders.chrome.*`, and `borders.components.*`
+- nested shell and color groups such as `colors.chrome.*`, `colors.code.*`, `colors.scrollbar.*`, `colors.progress.*`, `colors.diagram.*`, and `colors.backgroundStops.*`
+
+Decision rule:
+
+- use generic core tokens when the value belongs to the whole theme, like `spacing.page` or `typography.h1`
+- use semantic families when the value represents reusable visual language for shell, component, or layout patterns
+- keep values in code or CSS only when they are structural mechanics, viewport rules, algorithmic layout outputs, or rendering math rather than theme language
+
+Shared CSS should normally consume semantic tokens instead of hardcoded values for:
+
+- dashboard and viewer shell spacing and sizing
+- reusable card, list, callout, timeline, annotation, and media patterns
+- shared layout presentation values such as compact padding, divider badge size, scattered widths, and timeline offsets
 
 Validate themes with:
 
@@ -220,6 +241,7 @@ skills/xtoryteller/
 - theme, background, and transition work
 - component, layout, and primitive extension
 - dashboard and viewer runtime tasks
+- YAML-driven visual tokenization and semantic theme-system work
 - validation and QA workflows
 - export, import, and promotion workflows
 
@@ -258,6 +280,7 @@ npm run test:qa
 - presentation and theme validation
 - runtime integration coverage
 - browser smoke coverage
+- viewport-fit and overflow-sensitive viewer behavior
 - portability round-trip checks
 
 ## Portability Workflows
@@ -280,6 +303,7 @@ Use promotion when a presentation-scoped component should become part of the reu
 - The watcher refreshes registries when manifests or themes change.
 - The watcher publishes YAML, theme, manifest, and asset changes over WebSocket on port `3001`.
 - The runtime primarily assumes global components, layouts, and transitions for routine authoring.
+- If a requested theme slug is missing, runtime fallback resolves via `themes/xinimalist-paper.yaml`.
 
 ## Additional Docs
 
@@ -289,4 +313,3 @@ The remaining `docs/` folder is for longer-form or audit-style material rather t
 - [QA_SYSTEM_PLAN.md](/F:/Project/Xtoryteller/docs/QA_SYSTEM_PLAN.md)
 - [SKILL_EVALUATION_REPORT.md](/F:/Project/Xtoryteller/docs/SKILL_EVALUATION_REPORT.md)
 - APRD reference chapters under `docs/`
-

@@ -13,6 +13,7 @@ Create a new primitive only after checking the current registries first.
 ## Preferred Scope
 
 Default to:
+
 - `components/<name>/`
 - `layouts/<name>/`
 - `themes/<name>.yaml`
@@ -47,6 +48,8 @@ Use presentation-scoped folders when the primitive is intentionally deck-specifi
 
 - Prefer `themeOverrides` for one-off or local adjustments.
 - Create a full theme only when the style should be reusable.
+- When creating or extending a theme, add semantic token families instead of a flat pile of one-off replacements.
+- Use component/layout CSS literals only for structural mechanics or rendering math that should not be reused across themes.
 - Read [theme-authoring.md](theme-authoring.md) and [backgrounds-transitions.md](backgrounds-transitions.md) before changing shared theme or motion behavior.
 - Validate new themes with:
   `node scripts/validate-theme.mjs themes/<theme>.yaml`

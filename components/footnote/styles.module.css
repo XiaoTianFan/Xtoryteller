@@ -1,7 +1,7 @@
 .footnote {
   display: grid;
-  gap: 0.45rem;
-  padding-top: 0.75rem;
+  gap: var(--spacing-components-footnote-gap);
+  padding-top: var(--spacing-components-footnote-padding-top);
   border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
   color: var(--color-muted);
   font-size: var(--text-small);

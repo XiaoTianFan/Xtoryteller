@@ -15,15 +15,20 @@
 ## Content Density
 
 - Never rely on overflow or scrolling to rescue a crowded step.
+- In Stage mode, the document height must remain equal to the viewport. If the page grows taller, the step is overfilled.
 - Split long lists across builds or additional steps.
 - Split long prose into multiple steps or a more suitable layout.
 - Use layout density guidance from the layout registry and manifests.
+- Treat `pyramid-layout` as compact-only: one short heading plus one short line per row.
+- Treat `timeline-layout` as equal-density storytelling: if one item needs substantially more copy than its siblings, split it out.
+- Keep diagram labels concise enough to fit their containers without relying on clipping.
 
 ## Build Steps
 
 - Default-visible components effectively occupy build step `0`.
 - Keep explicit build indices contiguous so the user never advances into an empty click.
 - Use `build: sequential` when item-by-item reveal improves comprehension.
+- Add `build: sequential` explicitly for `bullet-list` or `numbered-list` when each point should get its own viewer advance.
 
 ## Assets
 
@@ -34,5 +39,15 @@
 ## Themes And Styles
 
 - Prefer theme tokens and `themeOverrides` over repeated inline style objects.
+- Use generic core tokens only for whole-theme values. Use semantic token families when the value belongs to reusable shell, component, or layout visual language.
+- Reach for `spacing.chrome.*`, `spacing.components.*`, `spacing.layouts.*`, `sizing.components.*`, `sizing.layouts.*`, and `typography.components.*` before inventing one-off CSS values.
 - Avoid hardcoded colors unless they are truly content-specific accents.
 - If a change should affect many components, move it into the theme instead of repeating overrides.
+- Let component shape follow theme radii. Do not assume decorative pills or rounded capsules unless the theme or component contract calls for them.
+- Keep viewport mechanics, SVG math, arrangement outputs, and similar intrinsic rules in code/CSS instead of moving them into YAML by default.
+
+## Card Selection
+
+- Use `stat-card` for short values with supporting detail.
+- Use `feature-card` for a named capability plus explanatory text.
+- Use `card` or `callout` when the main payload is prose rather than a metric.

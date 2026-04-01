@@ -53,17 +53,17 @@ vi.mock('next/navigation', () => ({
 describe('background layer integration', () => {
   let stagePresentation: PresentationConfig;
   let mapPresentation: PresentationConfig;
-  let defaultTheme: Awaited<ReturnType<typeof loadThemeBySlug>>;
+  let paperTheme: Awaited<ReturnType<typeof loadThemeBySlug>>;
 
   beforeAll(async () => {
-    [stagePresentation, mapPresentation, defaultTheme] = await Promise.all([
+    [stagePresentation, mapPresentation, paperTheme] = await Promise.all([
       parseYamlFile<PresentationConfig>(
         path.join(process.cwd(), 'tests', 'fixtures', 'presentations', 'valid', 'background-stage-switch', 'presentation.yaml')
       ),
       parseYamlFile<PresentationConfig>(
         path.join(process.cwd(), 'tests', 'fixtures', 'presentations', 'valid', 'background-map-switch', 'presentation.yaml')
       ),
-      loadThemeBySlug('default')
+      loadThemeBySlug('xinimalist-paper')
     ]);
   });
 
@@ -88,8 +88,8 @@ describe('background layer integration', () => {
 
   it('renders the stage background fixture through the live background layer', () => {
     render(
-      <ThemeProvider theme={defaultTheme}>
-        <PresentationProvider presentation={stagePresentation} theme={defaultTheme}>
+      <ThemeProvider theme={paperTheme}>
+        <PresentationProvider presentation={stagePresentation} theme={paperTheme}>
           <BackgroundHarness onReady={() => undefined} />
         </PresentationProvider>
       </ThemeProvider>
@@ -103,8 +103,8 @@ describe('background layer integration', () => {
     let mapMachine: ReturnType<typeof usePresentationRuntime>['machine'] | null = null;
 
     render(
-      <ThemeProvider theme={defaultTheme}>
-        <PresentationProvider presentation={mapPresentation} theme={defaultTheme}>
+      <ThemeProvider theme={paperTheme}>
+        <PresentationProvider presentation={mapPresentation} theme={paperTheme}>
           <BackgroundHarness
             onReady={(machine) => {
               mapMachine = machine;
