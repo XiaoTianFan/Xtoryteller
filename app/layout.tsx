@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { loadThemeBySlug } from '@/lib/engine/theme-registry';
+import { ThemeProvider } from '@/lib/runtime/providers/theme-provider';
 import { DevWatcher } from '@/lib/runtime/ui/dev-watcher';
 
 export const metadata: Metadata = {
@@ -7,12 +9,16 @@ export const metadata: Metadata = {
   description: 'Self-hosted, agent-first presentation infrastructure.'
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const shellTheme = await loadThemeBySlug('xinimalist-paper').catch(() => loadThemeBySlug('default'));
+
   return (
     <html lang="en">
       <body>
-        <DevWatcher />
-        {children}
+        <ThemeProvider theme={shellTheme}>
+          <DevWatcher />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,0 +1,14 @@
+name: Missing Token Theme
+fonts:
+  heading:
+    family: Example Heading
+    source: system
+  body:
+    family: Example Body
+    source: system
+  mono:
+    family: Example Mono
+    source: system
+colors:
+  background: '#ffffff'
+  foreground: '#000000'

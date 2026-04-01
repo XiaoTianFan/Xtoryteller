@@ -82,11 +82,21 @@ export function DashboardExplorer({ presentations }: { presentations: Presentati
             <option value="title">Title A-Z</option>
           </select>
         </label>
-        <div className="viewToggle" role="tablist" aria-label="View mode">
-          <button type="button" className={`viewToggleButton ${viewMode === 'grid' ? 'active' : ''}`} onClick={() => setViewMode('grid')}>
+        <div className="viewToggle" role="group" aria-label="View mode">
+          <button
+            type="button"
+            aria-pressed={viewMode === 'grid'}
+            className={`viewToggleButton ${viewMode === 'grid' ? 'active' : ''}`}
+            onClick={() => setViewMode('grid')}
+          >
             Grid
           </button>
-          <button type="button" className={`viewToggleButton ${viewMode === 'list' ? 'active' : ''}`} onClick={() => setViewMode('list')}>
+          <button
+            type="button"
+            aria-pressed={viewMode === 'list'}
+            className={`viewToggleButton ${viewMode === 'list' ? 'active' : ''}`}
+            onClick={() => setViewMode('list')}
+          >
             List
           </button>
         </div>
@@ -96,7 +106,7 @@ export function DashboardExplorer({ presentations }: { presentations: Presentati
         Showing {filtered.length} of {presentations.length} presentations
       </p>
 
-      <div className={`dashboardGrid ${viewMode === 'list' ? 'dashboardList' : ''}`}>
+      <div className={`dashboardGrid appScrollbarMuted ${viewMode === 'list' ? 'dashboardList' : ''}`}>
         {filtered.map((presentation) => (
           <Link href={`/${presentation.slug}`} key={presentation.slug} className={`presentationCard ${viewMode === 'list' ? 'presentationCardList' : ''}`}>
             <div className="thumbnailPlaceholder">

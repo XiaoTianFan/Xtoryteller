@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useGesture } from '@use-gesture/react';
 import { useRouter } from 'next/navigation';
@@ -7,13 +7,14 @@ import { motion, useReducedMotion } from 'framer-motion';
 
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
 import { LayoutRenderer } from '@/lib/runtime/renderers/layout-renderer';
+import { getMapCameraMotion } from '@/lib/runtime/transition-presets';
 import { BackgroundLayer } from '@/lib/runtime/ui/background-layer';
 import { LiveRegion } from '@/lib/runtime/ui/live-region';
 import { PresentationControls } from '@/lib/runtime/ui/presentation-controls';
 
 export function MapRenderer() {
   const router = useRouter();
-  const { presentation, machine } = usePresentationRuntime();
+  const { presentation, theme, machine } = usePresentationRuntime();
   const prefersReducedMotion = useReducedMotion();
   const activeClusterId = machine.state.context.currentClusterId;
   const clusters = presentation.clusters ?? [];
@@ -58,6 +59,7 @@ export function MapRenderer() {
   const currentPosition = activeIndexInDisplay >= 0 ? activeIndexInDisplay + 1 : Math.max(1, allClusterIds.indexOf(activeClusterId ?? '') + 1);
   const totalPositions = displaySequence.length || allClusterIds.length;
   const mapStatus = machine.state.context.guided ? 'Guided sequence active' : 'Free roam enabled';
+  const cameraMotion = getMapCameraMotion(presentation.navigation?.transition, theme, Boolean(prefersReducedMotion));
 
   const handleClusterKeyDown = (event: KeyboardEvent<HTMLElement>, clusterId: string) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -67,7 +69,7 @@ export function MapRenderer() {
   };
 
   return (
-    <div className="viewerShell mapViewer">
+    <main className="viewerShell mapViewer">
       <BackgroundLayer />
       <div ref={viewportRef} className="mapViewport" {...bind()}>
         <motion.div
@@ -77,7 +79,7 @@ export function MapRenderer() {
             y: viewportSize.height / 2 - camera.y * camera.zoom,
             scale: camera.zoom
           }}
-          transition={prefersReducedMotion ? { duration: 0.15 } : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={cameraMotion}
         >
           {machine.positionedClusters.map((position) => {
             const cluster = clusters.find((item) => item.id === position.id);
@@ -88,7 +90,7 @@ export function MapRenderer() {
             const clusterLabel = [cluster.title ?? cluster.id, cluster.description].filter(Boolean).join('. ');
 
             return (
-              <article
+              <div
                 key={cluster.id}
                 className={`clusterCard ${cluster.id === activeClusterId ? 'active' : ''}`}
                 style={{ left: position.x, top: position.y, width: position.width, height: position.height }}
@@ -110,7 +112,7 @@ export function MapRenderer() {
                     compact
                   />
                 </div>
-              </article>
+              </div>
             );
           })}
         </motion.div>
@@ -120,7 +122,7 @@ export function MapRenderer() {
         current={currentPosition}
         mapMode
         sequence={
-          <div className="mapSequence">
+          <div className="mapSequence appScrollbarMuted">
             {displaySequence.map((clusterId, index) => (
               <button
                 key={clusterId}
@@ -150,6 +152,6 @@ export function MapRenderer() {
         }
       />
       <LiveRegion message={`Map cluster ${activeClusterId ?? 'overview'}`} />
-    </div>
+    </main>
   );
 }

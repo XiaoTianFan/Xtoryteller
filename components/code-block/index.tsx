@@ -1,4 +1,4 @@
-import styles from './styles.module.css';
+﻿import styles from './styles.module.css';
 
 export default function CodeBlock({
   content,
@@ -14,7 +14,7 @@ export default function CodeBlock({
       <div className={styles.header}>
         <span>{String(props?.filename ?? props?.language ?? 'code')}</span>
       </div>
-      <pre className={styles.code}><code>{content}</code></pre>
+      <pre className={`${styles.code} appScrollbar`}><code>{content}</code></pre>
     </div>
   );
 }

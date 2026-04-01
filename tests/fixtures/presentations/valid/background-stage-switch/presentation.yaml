@@ -1,0 +1,56 @@
+meta:
+  title: Background Stage Switch
+  slug: background-stage-switch
+mode: stage
+theme: default
+background:
+  type: css
+  gradient:
+    type: linear
+    angle: 135
+    stops:
+      - '#f9f5ef'
+      - '#efe0d1'
+  stages:
+    - steps: [1, 1]
+      type: paper-shader
+      shader: grain-gradient
+      preset: wave
+      colorStops:
+        - '#101820'
+        - '#3a506b'
+        - '#f4d35e'
+      intensity: 0.42
+      grain: 0.18
+    - steps: [2, 2]
+      type: paper-shader
+      shader: grain-gradient
+      preset: wave
+      colorStops:
+        - '#1b263b'
+        - '#415a77'
+        - '#e0e1dd'
+      intensity: 0.82
+      grain: 0.58
+  transition:
+    duration: 600
+    easing: ease-in-out
+steps:
+  - id: intro
+    title: Intro
+    layout: single-content
+    components:
+      - type: headline
+        content: Intro
+  - id: focus
+    title: Focus
+    layout: single-content
+    components:
+      - type: headline
+        content: Focus
+  - id: detail
+    title: Detail
+    layout: single-content
+    components:
+      - type: headline
+        content: Detail

@@ -1,0 +1,56 @@
+meta:
+  title: Background Map Switch
+  slug: background-map-switch
+mode: map
+theme: default
+background:
+  type: paper-shader
+  shader: waves
+  preset: groovy
+  colorStops:
+    - '#faf7f1'
+    - '#315c8f'
+    - '#d5a24f'
+  regions:
+    - group: focus
+      type: paper-shader
+      shader: waves
+      preset: groovy
+      colorStops:
+        - '#0f172a'
+        - '#38bdf8'
+        - '#f59e0b'
+      intensity: 0.78
+    - clusters: [detail-b]
+      type: css
+      gradient:
+        type: radial
+        position: center
+        stops:
+          - '#f8fafc'
+          - '#cbd5e1'
+          - '#64748b'
+  transition:
+    duration: 640
+    easing: ease-in-out
+canvas:
+  spacing: 320
+clusters:
+  - id: overview
+    group: intro
+    layout: single-content
+    components:
+      - type: headline
+        content: Overview
+  - id: detail-a
+    group: focus
+    layout: single-content
+    components:
+      - type: headline
+        content: Detail A
+  - id: detail-b
+    group: detail
+    layout: single-content
+    components:
+      - type: headline
+        content: Detail B

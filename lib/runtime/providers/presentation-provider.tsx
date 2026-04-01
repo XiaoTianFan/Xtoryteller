@@ -1,7 +1,8 @@
-'use client';
+﻿'use client';
 
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 
+import { resolveTheme } from '@/lib/engine/theme-resolver';
 import { usePresentationMachine } from '@/lib/runtime/use-presentation-machine';
 import { PresentationConfig } from '@/lib/types/presentation';
 import { ThemeConfig } from '@/lib/types/theme';
@@ -24,9 +25,13 @@ export function PresentationProvider({
   children: ReactNode;
 }) {
   const machine = usePresentationMachine(presentation);
+  const resolvedTheme = useMemo(
+    () => resolveTheme(theme, presentation.themeOverrides).theme,
+    [presentation.themeOverrides, theme]
+  );
   const value = useMemo(
-    () => ({ presentation, theme, machine }),
-    [machine, presentation, theme]
+    () => ({ presentation, theme: resolvedTheme, machine }),
+    [machine, presentation, resolvedTheme]
   );
 
   return <PresentationContext.Provider value={value}>{children}</PresentationContext.Provider>;

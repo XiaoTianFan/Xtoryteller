@@ -15,7 +15,7 @@ body {
 body {
   font-family: var(--font-body, Inter, sans-serif);
   color: var(--color-foreground, #1d1b19);
-  background: #f6f1e8;
+  background: var(--color-background, #f6f1e8);
 }
 
 a {
@@ -23,7 +23,10 @@ a {
   text-decoration: none;
 }
 
-button {
+button,
+input,
+select,
+textarea {
   font: inherit;
 }
 
@@ -31,8 +34,8 @@ button {
   min-height: 100vh;
   padding: clamp(1.5rem, 4vw, 3rem);
   background:
-    radial-gradient(circle at top left, rgba(216, 154, 79, 0.16), transparent 26%),
-    linear-gradient(180deg, #f7f2ea 0%, #efe6d8 100%);
+    radial-gradient(circle at top left, var(--color-chrome-page-glow, rgba(216, 154, 79, 0.16)), transparent 26%),
+    linear-gradient(180deg, var(--color-chrome-page-top, #f7f2ea) 0%, var(--color-chrome-page-bottom, #efe6d8) 100%);
 }
 
 .dashboardHero {
@@ -44,7 +47,7 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.18em;
   font-size: 0.8rem;
-  color: #7c5b45;
+  color: var(--color-chrome-text-muted, #7c5b45);
 }
 
 .dashboardHero h1,
@@ -60,7 +63,7 @@ button {
   max-width: 48rem;
   font-size: clamp(1rem, 1.5vw, 1.2rem);
   line-height: 1.7;
-  color: #5d554d;
+  color: var(--color-chrome-text-soft, #5d554d);
 }
 
 .dashboardTools {
@@ -79,17 +82,17 @@ button {
 .dashboardSelect {
   width: 100%;
   min-height: 3rem;
-  border-radius: 999px;
-  border: 1px solid rgba(96, 88, 79, 0.14);
-  background: rgba(255, 249, 240, 0.88);
-  color: #2f2a24;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--color-chrome-border, rgba(96, 88, 79, 0.14));
+  background: var(--color-chrome-surface-strong, rgba(255, 249, 240, 0.88));
+  color: var(--color-chrome-text, #2f2a24);
   padding: 0.85rem 1rem;
-  box-shadow: 0 16px 48px rgba(61, 43, 24, 0.06);
+  box-shadow: var(--shadow-soft, 0 16px 48px rgba(61, 43, 24, 0.06));
 }
 
 .dashboardStatLine {
   margin: 0 0 1rem;
-  color: #60584f;
+  color: var(--color-chrome-text-soft, #60584f);
   font-size: 0.95rem;
 }
 
@@ -97,21 +100,29 @@ button {
   display: inline-flex;
   gap: 0.3rem;
   padding: 0.3rem;
-  border-radius: 999px;
-  border: 1px solid rgba(96, 88, 79, 0.14);
-  background: rgba(255, 249, 240, 0.76);
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--color-chrome-border, rgba(96, 88, 79, 0.14));
+  background: var(--color-chrome-surface, rgba(255, 249, 240, 0.76));
 }
 
 .viewToggleButton {
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill, 999px);
   background: transparent;
+  color: var(--color-chrome-text, #2f2a24);
   padding: 0.65rem 0.95rem;
   cursor: pointer;
+  transition:
+    transform var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    background-color var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.viewToggleButton:hover {
+  transform: translateY(var(--motion-hover-rise, 0px));
 }
 
 .viewToggleButton.active {
-  background: linear-gradient(135deg, rgba(42, 108, 100, 0.12), rgba(141, 79, 45, 0.14));
+  background: linear-gradient(135deg, var(--color-chrome-accent-start, rgba(42, 108, 100, 0.12)), var(--color-chrome-accent-end, rgba(141, 79, 45, 0.14)));
 }
 
 .dashboardGrid {
@@ -128,11 +139,19 @@ button {
   display: grid;
   gap: 0;
   overflow: hidden;
-  border-radius: 1.6rem;
-  border: 1px solid rgba(96, 88, 79, 0.14);
-  background: rgba(255, 249, 240, 0.76);
-  box-shadow: 0 24px 80px rgba(61, 43, 24, 0.08);
-  backdrop-filter: blur(16px);
+  border-radius: var(--radius-large, 1.6rem);
+  border: 1px solid var(--color-chrome-border, rgba(96, 88, 79, 0.14));
+  background: var(--color-chrome-surface, rgba(255, 249, 240, 0.76));
+  box-shadow: var(--shadow-strong, 0 24px 80px rgba(61, 43, 24, 0.08));
+  backdrop-filter: blur(var(--color-chrome-blur, 16px));
+  transition:
+    transform var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    box-shadow var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    background-color var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.presentationCard:hover {
+  transform: translateY(var(--motion-hover-rise, 0px)) scale(var(--motion-hover-scale, 1));
 }
 
 .presentationCardList {
@@ -144,8 +163,8 @@ button {
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(42, 108, 100, 0.86), rgba(141, 79, 45, 0.72));
-  color: white;
+  background: linear-gradient(135deg, var(--color-chrome-thumbnail-start, rgba(42, 108, 100, 0.86)), var(--color-chrome-thumbnail-end, rgba(141, 79, 45, 0.72)));
+  color: var(--color-chrome-thumbnail-text, white);
   font-family: var(--font-heading, serif);
   font-size: 2rem;
 }
@@ -169,7 +188,7 @@ button {
 
 .cardBody p {
   margin: 0;
-  color: #60584f;
+  color: var(--color-chrome-text-soft, #60584f);
   line-height: 1.55;
 }
 
@@ -191,9 +210,10 @@ button {
   align-items: center;
   gap: 0.35rem;
   padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  background: rgba(42, 108, 100, 0.09);
-  color: #245952;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--color-chrome-badge-border, transparent);
+  background: var(--color-chrome-badge-bg, rgba(42, 108, 100, 0.09));
+  color: var(--color-chrome-badge-text, #245952);
   font-size: 0.85rem;
 }
 
@@ -204,19 +224,24 @@ button {
   isolation: isolate;
 }
 
-.backgroundLayer {
+.backgroundLayer,
+.backgroundSurface,
+.backgroundSurfaceShader,
+.paperShaderCanvas {
   position: absolute;
   inset: 0;
+}
+
+.backgroundLayer {
   z-index: -2;
-  transition: background 420ms ease, opacity 420ms ease;
 }
 
 .backgroundNoise {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(0, 0, 0, 0.045) 0.6px, transparent 0.6px);
+  background-image: radial-gradient(rgba(var(--color-foreground-rgb, 29, 27, 25), var(--color-chrome-noise-opacity, 0.045)) 0.6px, transparent 0.6px);
   background-size: 8px 8px;
-  opacity: 0.22;
+  opacity: var(--color-chrome-noise-strength, 0.22);
   mix-blend-mode: multiply;
 }
 
@@ -229,10 +254,29 @@ button {
   min-height: 100vh;
 }
 
+.layoutRevealItem,
+.layoutRevealCard {
+  width: 100%;
+}
+
 .ghostButton,
 .sequenceChip,
 .clusterCard {
-  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  transition:
+    transform var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    background var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    border-color var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    box-shadow var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.ghostButton,
+.sequenceChip {
+  will-change: transform;
+}
+
+.ghostButton:hover,
+.sequenceChip:hover {
+  transform: translateY(var(--motion-hover-rise, 0px)) scale(var(--motion-hover-scale, 1));
 }
 
 .ghostButton {
@@ -240,10 +284,11 @@ button {
   align-items: center;
   justify-content: center;
   padding: 0.7rem 1rem;
-  border-radius: 999px;
-  border: 1px solid rgba(96, 88, 79, 0.15);
-  background: rgba(255, 249, 240, 0.78);
-  backdrop-filter: blur(12px);
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--color-chrome-border, rgba(96, 88, 79, 0.15));
+  background: var(--color-chrome-surface, rgba(255, 249, 240, 0.78));
+  color: var(--color-chrome-text, #2f2a24);
+  backdrop-filter: blur(var(--color-chrome-button-blur, 12px));
   cursor: pointer;
 }
 
@@ -275,7 +320,7 @@ button {
 }
 
 .viewerHud:focus-within .progressWrap {
-  box-shadow: 0 0 0 2px rgba(42, 108, 100, 0.18);
+  box-shadow: 0 0 0 2px var(--color-chrome-focus-ring, rgba(42, 108, 100, 0.18));
 }
 
 .viewerDock {
@@ -291,7 +336,7 @@ button {
   overflow: hidden;
   max-height: 0;
   pointer-events: none;
-  transition: max-height 240ms ease;
+  transition: max-height var(--motion-panel-duration, 240ms) var(--motion-panel-easing, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
 .viewerHud:hover .viewerDockPanelShell,
@@ -303,18 +348,21 @@ button {
 .viewerDockPanel {
   display: grid;
   gap: 0.85rem;
+  max-height: min(60vh, 28rem);
+  overflow: auto;
   padding: 0.95rem 1rem max(1rem, env(safe-area-inset-bottom));
-  border-top: 1px solid rgba(96, 88, 79, 0.15);
-  border-left: 1px solid rgba(96, 88, 79, 0.15);
-  border-right: 1px solid rgba(96, 88, 79, 0.15);
-  background: rgba(255, 249, 240, 0.92);
-  backdrop-filter: blur(16px);
-  box-shadow: 0 -18px 56px rgba(52, 38, 23, 0.12);
+  border-top: 1px solid var(--color-chrome-border, rgba(96, 88, 79, 0.15));
+  border-left: 1px solid var(--color-chrome-border, rgba(96, 88, 79, 0.15));
+  border-right: 1px solid var(--color-chrome-border, rgba(96, 88, 79, 0.15));
+  background: var(--color-chrome-overlay-surface, rgba(255, 249, 240, 0.92));
+  backdrop-filter: blur(var(--color-chrome-panel-blur, 16px));
+  box-shadow: var(--color-chrome-panel-shadow, 0 -18px 56px rgba(52, 38, 23, 0.12));
   opacity: 0;
-  transform: translateY(0.8rem);
-  transition: opacity 180ms ease, transform 220ms ease;
+  transform: translateY(var(--motion-panel-offset-y, 0.8rem));
+  transition:
+    opacity var(--motion-panel-duration, 220ms) var(--motion-panel-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    transform var(--motion-panel-duration, 220ms) var(--motion-panel-easing, cubic-bezier(0.22, 1, 0.36, 1));
 }
-
 .viewerHud:hover .viewerDockPanel,
 .viewerHud:focus-within .viewerDockPanel {
   opacity: 1;
@@ -343,19 +391,19 @@ button {
   height: var(--dock-progress-height);
   border-radius: 0;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.46);
+  background: var(--color-progress-track, rgba(255, 255, 255, 0.46));
 }
 
 .progressBar {
   height: 100%;
-  background: linear-gradient(90deg, #2a6c64, #8d4f2d);
-  transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  background: linear-gradient(90deg, var(--color-progress-start, #2a6c64), var(--color-progress-end, #8d4f2d));
+  transition: width var(--motion-scene-duration, 320ms) var(--motion-scene-easing, cubic-bezier(0.22, 1, 0.36, 1));
   will-change: width;
 }
 
 .progressMeta,
 .mapMeta {
-  color: #60584f;
+  color: var(--color-chrome-text-soft, #60584f);
   font-size: 0.92rem;
 }
 
@@ -389,8 +437,8 @@ button {
 }
 
 .sequenceChip.active {
-  border-color: rgba(141, 79, 45, 0.38);
-  background: rgba(255, 243, 232, 0.95);
+  border-color: var(--color-chrome-border-strong, rgba(141, 79, 45, 0.38));
+  background: var(--color-chrome-surface-active, rgba(255, 243, 232, 0.95));
 }
 
 .clusterCard.active {
@@ -418,15 +466,15 @@ button {
   gap: 0.5rem;
   max-width: calc(100% - 0.5rem);
   padding: 0.4rem 0.65rem;
-  border-radius: 999px;
-  border: 1px solid rgba(96, 88, 79, 0.16);
-  background: rgba(255, 249, 240, 0.82);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 14px 34px rgba(52, 38, 23, 0.1);
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--color-chrome-border, rgba(96, 88, 79, 0.16));
+  background: var(--color-chrome-surface-float, rgba(255, 249, 240, 0.82));
+  backdrop-filter: blur(var(--color-chrome-float-blur, 12px));
+  box-shadow: var(--color-chrome-float-shadow, 0 14px 34px rgba(52, 38, 23, 0.1));
 }
 
 .clusterCardTitle {
-  color: #3d342c;
+  color: var(--color-chrome-text, #3d342c);
   font-size: 0.95rem;
   font-weight: 600;
 }
@@ -434,13 +482,16 @@ button {
 .clusterCard.active .clusterCardHeader,
 .clusterCard:focus-visible .clusterCardHeader {
   z-index: 4;
-  border-color: rgba(141, 79, 45, 0.38);
-  background: rgba(255, 243, 232, 0.95);
+  border-color: var(--color-chrome-border-strong, rgba(141, 79, 45, 0.38));
+  background: var(--color-chrome-surface-active, rgba(255, 243, 232, 0.95));
 }
 
 .mapSequence {
   position: static;
   z-index: auto;
+  overflow: auto;
+  max-width: 100%;
+  padding-bottom: 0.25rem;
 }
 
 .emptyStatePage {
@@ -448,22 +499,126 @@ button {
   display: grid;
   place-items: center;
   padding: 2rem;
-  background: linear-gradient(180deg, #f7f2ea 0%, #efe6d8 100%);
+  background: linear-gradient(180deg, var(--color-chrome-page-top, #f7f2ea) 0%, var(--color-chrome-page-bottom, #efe6d8) 100%);
 }
 
 .emptyPanel {
   max-width: 34rem;
   padding: 2rem;
-  border-radius: 1.5rem;
-  background: rgba(255, 249, 240, 0.88);
-  border: 1px solid rgba(96, 88, 79, 0.16);
+  border-radius: var(--radius-large, 1.5rem);
+  background: var(--color-chrome-surface-strong, rgba(255, 249, 240, 0.88));
+  border: 1px solid var(--color-chrome-border, rgba(96, 88, 79, 0.16));
 }
 
 .missingPrimitive {
   padding: 1rem;
-  border-radius: 1rem;
-  background: rgba(165, 58, 58, 0.08);
-  border: 1px solid rgba(165, 58, 58, 0.24);
+  border-radius: var(--radius-medium, 1rem);
+  background: var(--color-error-surface, rgba(165, 58, 58, 0.08));
+  border: 1px solid var(--color-error-border, rgba(165, 58, 58, 0.24));
+}
+
+.shortcutOverlayBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: var(--color-overlay-scrim, rgba(20, 17, 12, 0.48));
+  backdrop-filter: blur(var(--color-chrome-overlay-blur, 14px));
+}
+
+.shortcutOverlayPanel {
+  width: min(32rem, 100%);
+  max-height: min(70vh, 42rem);
+  overflow: auto;
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+  border-radius: var(--radius-large, 1.4rem);
+  border: 1px solid var(--color-chrome-border, rgba(96, 88, 79, 0.18));
+  background: var(--color-chrome-overlay-surface, rgba(255, 249, 240, 0.96));
+  box-shadow: var(--color-chrome-overlay-shadow, 0 28px 80px rgba(44, 30, 15, 0.18));
+}
+
+.shortcutOverlayHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.shortcutOverlayTitle {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.shortcutOverlaySubtitle,
+.shortcutOverlayDescription {
+  color: var(--color-chrome-text-soft, #60584f);
+  line-height: 1.45;
+}
+
+.shortcutOverlaySection {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.shortcutOverlayRow {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 10rem) minmax(0, 1fr);
+  gap: 0.8rem;
+  align-items: start;
+}
+
+.shortcutOverlayKey {
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-small, 0.7rem);
+  background: var(--color-chrome-badge-bg, rgba(42, 108, 100, 0.08));
+  color: var(--color-chrome-badge-text, #245952);
+  font-size: 0.9rem;
+}
+
+.appScrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-scrollbar-thumb, var(--color-foreground)) var(--color-scrollbar-track, transparent);
+}
+
+.appScrollbar::-webkit-scrollbar,
+.appScrollbarMuted::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.appScrollbar::-webkit-scrollbar-track,
+.appScrollbarMuted::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-track, transparent);
+}
+
+.appScrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-scrollbar-thumb, var(--color-foreground));
+  border-radius: var(--radius-scrollbar, 3px);
+  border: 1px solid var(--color-scrollbar-border, var(--color-background));
+}
+
+.appScrollbarMuted {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-scrollbar-thumb-muted, color-mix(in srgb, var(--color-foreground) 80%, var(--color-background))) var(--color-scrollbar-track, transparent);
+}
+
+.appScrollbarMuted::-webkit-scrollbar-thumb {
+  background-color: var(--color-scrollbar-thumb-muted, color-mix(in srgb, var(--color-foreground) 80%, var(--color-background)));
+  border-radius: var(--radius-scrollbar, 3px);
+  border: 1px solid var(--color-scrollbar-border, var(--color-background));
+}
+
+.hideScrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hideScrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 .srOnly {
@@ -487,7 +642,8 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .viewerDockRow {
+  .viewerDockRow,
+  .shortcutOverlayHeader {
     align-items: flex-start;
   }
 
@@ -501,13 +657,11 @@ button {
     width: min(86vw, 320px) !important;
     height: min(72vw, 360px) !important;
   }
+
+  .shortcutOverlayRow {
+    grid-template-columns: 1fr;
+  }
 }
-
-
-
-
-
-
 
 @media (hover: none), (pointer: coarse) {
   .viewerDockTrigger {
@@ -527,11 +681,13 @@ button {
   }
 }
 
-
-
-
 @media (prefers-reduced-motion: reduce) {
-  .progressBar {
+  .progressBar,
+  .presentationCard,
+  .ghostButton,
+  .sequenceChip,
+  .clusterCard,
+  .viewToggleButton {
     transition-duration: 120ms;
   }
 }

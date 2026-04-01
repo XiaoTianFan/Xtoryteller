@@ -13,6 +13,7 @@ export const TRANSITIONS_DIR = path.join(ROOT, 'transitions');
 export const THEMES_DIR = path.join(ROOT, 'themes');
 
 const ASSET_KEYS = new Set(['src', 'poster', 'avatar', 'file', 'href']);
+const LOCAL_ASSET_PATTERN = /\.(?:png|jpe?g|webp|gif|svg|avif|bmp|ico|mp4|webm)$/i;
 
 export async function exists(targetPath) {
   try {
@@ -86,6 +87,12 @@ export function collectDependencyNames(config) {
 
     for (const component of unit.components ?? []) {
       components.add(component.type);
+      if (component.enter) {
+        transitions.add(component.enter);
+      }
+      if (component.exit) {
+        transitions.add(component.exit);
+      }
     }
   }
 
@@ -98,6 +105,10 @@ export function collectDependencyNames(config) {
 
 function isLocalAssetPath(value) {
   return typeof value === 'string' && value.trim() && !/^(https?:|data:|\/)/i.test(value) && !value.startsWith('#');
+}
+
+function looksLikeBackgroundAsset(value) {
+  return isLocalAssetPath(value) && LOCAL_ASSET_PATTERN.test(value);
 }
 
 function scanForAssets(value, output) {
@@ -121,6 +132,30 @@ function scanForAssets(value, output) {
   }
 }
 
+function scanBackgroundAssets(value, output) {
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      scanBackgroundAssets(entry, output);
+    }
+    return;
+  }
+
+  if (typeof value === 'string') {
+    if (looksLikeBackgroundAsset(value)) {
+      output.add(String(value).replace(/^\.\//, ''));
+    }
+    return;
+  }
+
+  if (!value || typeof value !== 'object') {
+    return;
+  }
+
+  for (const nested of Object.values(value)) {
+    scanBackgroundAssets(nested, output);
+  }
+}
+
 export function collectAssetReferences(config) {
   const assets = new Set();
 
@@ -129,10 +164,14 @@ export function collectAssetReferences(config) {
   }
 
   for (const unit of presentationUnits(config)) {
+    scanBackgroundAssets(unit.background, assets);
     for (const component of unit.components ?? []) {
       scanForAssets(component.props, assets);
     }
   }
+
+  scanBackgroundAssets(config.background, assets);
+  scanBackgroundAssets(config.backgroundSections, assets);
 
   return [...assets].sort();
 }

@@ -1,0 +1,54 @@
+.root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.trigger {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: help;
+  border-bottom: 1px dashed color-mix(in srgb, var(--color-secondary) 70%, transparent 30%);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 0.18rem;
+  border-radius: 0.2rem;
+}
+
+.popover {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.65rem);
+  z-index: 30;
+  width: min(20rem, 70vw);
+  transform: translateX(-50%);
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-medium);
+  border: var(--border-strong);
+  background: color-mix(in srgb, var(--color-surface) 92%, white 8%);
+  color: var(--color-foreground);
+  box-shadow: var(--shadow-soft);
+  font-size: var(--text-small);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.popover::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 0.8rem;
+  height: 0.8rem;
+  transform: translateX(-50%) rotate(45deg);
+  border-right: var(--border-strong);
+  border-bottom: var(--border-strong);
+  background: inherit;
+}

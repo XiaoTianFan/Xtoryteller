@@ -1,0 +1,67 @@
+$schema: ./schema.json
+required:
+  meta:
+    title: string
+    slug: string
+  mode: stage | map
+  theme: string
+stage:
+  requiredWhenModeIsStage:
+    steps:
+      - layout: string
+        components:
+          - type: string
+            content: string?
+            props: object?
+            style: object?
+            build: number | sequential | object?
+            enter: string?
+            exit: string?
+map:
+  requiredWhenModeIsMap:
+    clusters:
+      - id: string
+        layout: string
+        components:
+          - type: string
+            props: object?
+    canvas:
+      spacing: number?
+    navigation:
+      sequence: string[]?
+shared:
+  background:
+    stringValue: css background string | none | paper shader name
+    object:
+      type: paper-shader | css | none | legacy paper?
+      shader: string?
+      preset: string?
+      params: object?
+      value: string?
+      gradient:
+        type: linear | radial
+        angle: string | number
+        position: string?
+        stops: string[] (min 2)
+      colorStops: string[]?
+      intensity: number?
+      grain: number?
+      contrast: number?
+      speed: number?
+      opacity: number?
+      transition:
+        duration: number?
+        easing: string?
+      stages:
+        - steps: [number, number]
+          type: paper-shader | css | none | legacy paper?
+      regions:
+        - clusters: string[]?
+          group: string?
+          type: paper-shader | css | none | legacy paper?
+  backgroundSections:
+    - match:
+        stepRange: [number, number]?
+        clusterIds: string[]?
+        group: string?
+      shader: string | object

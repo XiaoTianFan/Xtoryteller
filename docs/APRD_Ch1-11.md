@@ -1273,30 +1273,32 @@ Themes are standalone files. A project can have any number of themes. Different 
 
 ### 8.1 Overview
 
-Xtoryteller uses the **paper-shader** library to render procedural, WebGL-based textured backgrounds that give presentations a distinctive, crafted visual quality. Unlike static CSS gradients or image backgrounds, paper-shader produces generative textures — grain, watercolor washes, parchment fibers, noise fields — that are rendered in real-time on a WebGL canvas behind the presentation content.
+Xtoryteller uses a **dual background renderer**. Procedural backgrounds come from `@paper-design/shaders-react`, while simpler decks can use native CSS backgrounds. This is more flexible than the original paper-shader-only draft because the same authoring surface can now choose between lightweight CSS, full Paper shaders, or no explicit background at all without changing the viewer architecture.
 
 The background system is:
-- **Configurable per presentation** — shader algorithm and parameters defined in YAML
+- **Configurable per presentation** — background renderer, shader algorithm, and params defined in YAML
 - **Dynamic across sections** — different steps/clusters can have different shader configurations
-- **Smoothly interpolated** — parameters transition smoothly between sections
-- **Customizable in real time** — parameters can be tweaked live during development
+- **Normalized for compatibility** — the runtime accepts APRD-style `background.stages` / `background.regions`, legacy `backgroundSections`, and concise string forms such as `background: none` or `background: mesh-gradient`
+- **Smoothly transitioned** — the active background cross-fades between resolved states using the configured duration/easing
+- **Customizable in real time** — Paper shader params and CSS values can be tweaked live during development
 - **Extensible** — users can replace paper-shader with custom WebGL backgrounds
 
-### 8.2 Paper Shader Integration
+### 8.2 Runtime Integration
 
-The paper-shader library exposes shader presets, each with numeric parameters that control the visual output. The Xtoryteller background manager wraps this library in a React component that:
+The background manager wraps both the Paper shader package and the CSS path in one React layer that:
 
-1. Renders a full-viewport WebGL canvas behind all presentation content (z-index: -1)
-2. Reads shader configuration from the presentation YAML
-3. Applies the correct shader preset and parameters for the current step/cluster
-4. Interpolates parameters smoothly when transitioning between sections with different configurations
+1. Renders a full-viewport background surface behind all presentation content
+2. Reads background configuration from the presentation YAML
+3. Normalizes APRD-style, legacy, and shorthand config shapes into one runtime background state
+4. Applies the correct CSS renderer or Paper shader component for the current step/cluster
+5. Resolves local asset-like strings inside shader params relative to the active presentation
 
 **Background component hierarchy:**
 
 
 <PresentationRoot>
-  <BackgroundLayer>           ← Full-viewport WebGL canvas
-    <PaperShaderRenderer />   ← Manages shader lifecycle
+  <BackgroundLayer>           ← Full-viewport background surface
+    <BackgroundRenderer />    ← CSS or Paper shader renderer
   </BackgroundLayer>
   <ContentLayer>              ← DOM content on top
     <NavigationController />
@@ -1309,7 +1311,7 @@ The paper-shader library exposes shader presets, each with numeric parameters th
 Background configuration lives within the presentation YAML:
 
 yaml
-# Simple: single shader for entire presentation
+# Simple: single Paper shader for entire presentation
 background:
   shader: grain
   params:
@@ -1319,7 +1321,7 @@ background:
 
 
 yaml
-# Advanced: different shaders per section with smooth transitions
+# Advanced: different backgrounds per section with smooth transitions
 background:
   stages:
     - steps: [0, 4]               # Active during steps 0 through 4
@@ -1345,7 +1347,15 @@ background:
     easing: ease-in-out            # Easing function for parameter interpolation
 
 
-For Map mode, background configuration references cluster IDs instead of step indices:
+The runtime also accepts concise string forms:
+
+```yaml
+background: none
+background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)"
+background: mesh-gradient
+```
+
+For Map mode, background configuration references cluster IDs or groups instead of step indices:
 
 yaml
 background:
@@ -1366,14 +1376,11 @@ background:
     easing: ease-in-out
 
 
-### 8.4 Parameter Interpolation
+### 8.4 Transition Behavior
 
-When the presentation transitions between sections that have different shader configurations, the background manager smoothly interpolates between parameter sets:
+When the presentation transitions between sections that have different background configurations, the current implementation cross-fades between the two resolved background layers using the configured duration and easing. This works across CSS-to-CSS, CSS-to-shader, and shader-to-shader changes with one consistent runtime path.
 
-- **Same shader, different params:** Numeric parameters are linearly interpolated over the transition duration. Color parameters are interpolated in LAB color space for perceptual smoothness.
-- **Different shaders:** Cross-fade between the two shader outputs. The outgoing shader fades out while the incoming shader fades in, using two shader passes during the transition period.
-
-The interpolation is driven by the XState presentation machine — the background manager subscribes to step/cluster transition events and computes interpolation progress based on elapsed time.
+Implementation note: this is more conservative than the original APRD sketch of deep per-parameter interpolation, but it is also more robust across renderer changes and keeps reduced-motion handling simple and predictable.
 
 typescript
 // Conceptual interpolation logic
@@ -1426,7 +1433,7 @@ background:
 
 - **No background:** Set `background: none` to render content on the default theme background color.
 
-The background system checks the `type` field (defaulting to `paper-shader` if absent) and delegates to the appropriate renderer.
+The background system checks the resolved config and delegates to the appropriate renderer. When authors omit `type`, the runtime infers the intent from the provided data so existing decks remain compatible.
 
 ### 8.6 Performance Considerations
 

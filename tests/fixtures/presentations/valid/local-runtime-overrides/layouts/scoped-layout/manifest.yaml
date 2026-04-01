@@ -1,0 +1,7 @@
+name: scoped-layout
+displayName: Scoped Layout
+description: Fixture-only presentation layout
+slots:
+  - default
+density:
+  recommendation: up to 2 components

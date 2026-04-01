@@ -1,0 +1,254 @@
+{
+  "generatedAt": "2026-04-01T12:57:06.405Z",
+  "count": 19,
+  "layouts": [
+    {
+      "name": "comparison-layout",
+      "displayName": "Comparison Layout",
+      "description": "Side-by-side comparison with divider treatment.",
+      "slots": [
+        "left",
+        "right"
+      ],
+      "density": {
+        "recommendation": "1 compact panel per side."
+      }
+    },
+    {
+      "name": "content-left-media-right",
+      "displayName": "Content Left Media Right",
+      "description": "Text-first split layout.",
+      "slots": [
+        "content",
+        "media"
+      ],
+      "density": {
+        "recommendation": "Text on the left, visual on the right."
+      }
+    },
+    {
+      "name": "full-bleed",
+      "displayName": "Full Bleed",
+      "description": "One component fills the viewport.",
+      "slots": [
+        "main"
+      ],
+      "density": {
+        "recommendation": "Use for hero visuals and large diagrams."
+      }
+    },
+    {
+      "name": "gallery",
+      "displayName": "Gallery",
+      "description": "Responsive multi-item gallery grid.",
+      "slots": [
+        "items"
+      ],
+      "density": {
+        "recommendation": "Up to nine visual tiles."
+      }
+    },
+    {
+      "name": "grid-2x2",
+      "displayName": "Grid 2x2",
+      "description": "Two-by-two card grid.",
+      "slots": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "density": {
+        "recommendation": "One card per cell."
+      }
+    },
+    {
+      "name": "grid-3x2",
+      "displayName": "Grid 3x2",
+      "description": "Six-cell grid for compact cards or stats.",
+      "slots": [
+        "cell-1",
+        "cell-2",
+        "cell-3",
+        "cell-4",
+        "cell-5",
+        "cell-6"
+      ],
+      "density": {
+        "recommendation": "Up to 6 compact cards."
+      }
+    },
+    {
+      "name": "media-left-content-right",
+      "displayName": "Media Left Content Right",
+      "description": "Visual-first split layout.",
+      "slots": [
+        "media",
+        "content"
+      ],
+      "density": {
+        "recommendation": "Visual left, explanatory content right."
+      }
+    },
+    {
+      "name": "pyramid-layout",
+      "displayName": "Pyramid Layout",
+      "description": "Triangular stacked composition for tiered ideas.",
+      "slots": [
+        "tier-1",
+        "tier-2",
+        "tier-3",
+        "tier-4",
+        "tier-5"
+      ],
+      "density": {
+        "recommendation": "3-5 compact rows."
+      }
+    },
+    {
+      "name": "scattered",
+      "displayName": "Scattered",
+      "description": "Organic positioned layout for map clusters.",
+      "slots": [
+        "items"
+      ],
+      "density": {
+        "recommendation": "Avoid overlap; use for exploratory map clusters."
+      }
+    },
+    {
+      "name": "section-header",
+      "displayName": "Section Header",
+      "description": "Large section break layout with label and title.",
+      "slots": [
+        "label",
+        "primary"
+      ],
+      "density": {
+        "recommendation": "1 section identifier, 1 title."
+      }
+    },
+    {
+      "name": "sidebar-main",
+      "displayName": "Sidebar Main",
+      "description": "Narrow sidebar with wide main area.",
+      "slots": [
+        "sidebar",
+        "main"
+      ],
+      "density": {
+        "recommendation": "Small contextual block plus one main component."
+      }
+    },
+    {
+      "name": "single-content",
+      "displayName": "Single Content",
+      "description": "Centered single-content layout.",
+      "slots": [
+        "main"
+      ],
+      "density": {
+        "recommendation": "1 heading plus one primary component."
+      }
+    },
+    {
+      "name": "stack",
+      "displayName": "Stack",
+      "description": "Vertical stack with consistent spacing.",
+      "slots": [
+        "stack"
+      ],
+      "density": {
+        "recommendation": "Up to five stacked components."
+      }
+    },
+    {
+      "name": "three-column",
+      "displayName": "Three Column",
+      "description": "Three equal-width columns.",
+      "slots": [
+        "left",
+        "center",
+        "right"
+      ],
+      "density": {
+        "recommendation": "One compact component per column."
+      }
+    },
+    {
+      "name": "timeline-layout",
+      "displayName": "Timeline Layout",
+      "description": "Timeline scaffold for timeline items or event cards.",
+      "slots": [
+        "events"
+      ],
+      "density": {
+        "recommendation": "4-8 events depending on orientation."
+      }
+    },
+    {
+      "name": "title-center",
+      "displayName": "Title Center",
+      "description": "Centered title layout.",
+      "slots": [
+        "primary",
+        "secondary",
+        "tertiary"
+      ],
+      "density": {
+        "recommendation": "1 headline, 1 subtitle, 1 optional label."
+      }
+    },
+    {
+      "name": "title-left",
+      "displayName": "Title Left",
+      "description": "Left-aligned title layout with optional accent element.",
+      "slots": [
+        "primary",
+        "secondary",
+        "accent"
+      ],
+      "density": {
+        "recommendation": "1 headline, 1 subtitle, 1 optional accent."
+      }
+    },
+    {
+      "name": "top-bottom",
+      "displayName": "Top Bottom",
+      "description": "Two-region vertical stack with ratio control.",
+      "slots": [
+        "top",
+        "bottom"
+      ],
+      "density": {
+        "recommendation": "1 component per region."
+      }
+    },
+    {
+      "name": "two-column",
+      "displayName": "Two Column",
+      "description": "Side-by-side columns with responsive stack.",
+      "slots": [
+        "left",
+        "right"
+      ],
+      "props": {
+        "ratio": {
+          "type": "enum",
+          "values": [
+            "50-50",
+            "60-40",
+            "40-60",
+            "70-30",
+            "30-70"
+          ],
+          "default": "50-50",
+          "description": "Column ratio."
+        }
+      },
+      "density": {
+        "recommendation": "One primary component per column."
+      }
+    }
+  ]
+}

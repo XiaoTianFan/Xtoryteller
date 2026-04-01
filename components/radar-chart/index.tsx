@@ -19,6 +19,12 @@ function polarPoint(index: number, total: number, radius: number, centerX: numbe
   };
 }
 
+const themePalette = [
+  'var(--color-diagram-series-1, var(--color-primary))',
+  'var(--color-diagram-series-2, var(--color-secondary))',
+  'var(--color-diagram-series-3, var(--color-accent))'
+];
+
 export default function RadarChart({ props }: { props?: Record<string, unknown> }) {
   const axes = Array.isArray(props?.axes) ? (props.axes as RadarAxis[]) : [];
   const datasets = Array.isArray(props?.datasets) ? (props.datasets as RadarDataset[]) : [];
@@ -56,7 +62,7 @@ export default function RadarChart({ props }: { props?: Record<string, unknown> 
         })}
 
         {datasets.map((dataset, datasetIndex) => {
-          const color = dataset.color ?? ['#4f8ef7', '#f97316', '#22c55e'][datasetIndex] ?? 'var(--color-primary)';
+          const color = dataset.color ?? themePalette[datasetIndex] ?? 'var(--color-primary)';
           const points = axes.map((axis, axisIndex) => {
             const rawValue = Number(dataset.values?.[axisIndex] ?? 0);
             const max = Number(axis.max ?? 100) || 100;

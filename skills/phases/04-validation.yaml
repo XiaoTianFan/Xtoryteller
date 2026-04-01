@@ -1,7 +1,0 @@
-phase: 4
-name: Validation
-steps:
-  - Run npm run validate -- presentations/<slug>/presentation.yaml
-  - Fix schema or registry errors
-  - Review density and asset paths
-  - Open the presentation in the browser

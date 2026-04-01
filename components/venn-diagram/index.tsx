@@ -18,6 +18,12 @@ function intersectionList(value: unknown): VennIntersection[] {
   return Array.isArray(value) ? (value as VennIntersection[]) : [];
 }
 
+const themePalette = [
+  'var(--color-diagram-series-1, var(--color-primary))',
+  'var(--color-diagram-series-2, var(--color-secondary))',
+  'var(--color-diagram-series-3, var(--color-accent))'
+];
+
 export default function VennDiagram({ props }: { props?: Record<string, unknown> }) {
   const sets = setList(props?.sets);
   const intersections = intersectionList(props?.intersections);
@@ -36,21 +42,24 @@ export default function VennDiagram({ props }: { props?: Record<string, unknown>
   return (
     <figure className={styles.shell}>
       <svg viewBox="0 0 680 380" role="img" aria-label="Venn diagram">
-        {sets.map((set, index) => (
-          <g key={`${set.label}-${index}`}>
-            <circle
-              cx={positions[index]?.cx ?? 200}
-              cy={positions[index]?.cy ?? 180}
-              r="110"
-              fill={set.color ?? ['#4f8ef7', '#2ba892', '#f59e0b'][index] ?? 'var(--color-primary)'}
-              opacity={Number(props?.opacity ?? 0.28)}
-              stroke={set.color ?? ['#4f8ef7', '#2ba892', '#f59e0b'][index] ?? 'var(--color-primary)'}
-            />
-            <text x={positions[index]?.cx ?? 200} y={(positions[index]?.cy ?? 180) - 118} textAnchor="middle" className={styles.label}>
-              {set.label}
-            </text>
-          </g>
-        ))}
+        {sets.map((set, index) => {
+          const color = set.color ?? themePalette[index] ?? 'var(--color-primary)';
+          return (
+            <g key={`${set.label}-${index}`}>
+              <circle
+                cx={positions[index]?.cx ?? 200}
+                cy={positions[index]?.cy ?? 180}
+                r="110"
+                fill={color}
+                opacity={Number(props?.opacity ?? 0.28)}
+                stroke={color}
+              />
+              <text x={positions[index]?.cx ?? 200} y={(positions[index]?.cy ?? 180) - 118} textAnchor="middle" className={styles.label}>
+                {set.label}
+              </text>
+            </g>
+          );
+        })}
         {intersections.map((intersection, index) => (
           <text
             key={`${intersection.label}-${index}`}

@@ -1,0 +1,15 @@
+meta:
+  title: Invalid Missing Asset
+  slug: invalid-missing-asset
+mode: stage
+theme: default
+steps:
+  - id: opening
+    layout: single-content
+    components:
+      - type: headline
+        content: Broken asset fixture
+      - type: image
+        props:
+          src: assets/missing.svg
+          alt: Missing fixture asset

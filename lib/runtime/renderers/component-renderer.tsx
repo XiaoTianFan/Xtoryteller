@@ -1,83 +1,9 @@
-﻿import BodyText from '@/components/body-text';
-import BulletList from '@/components/bullet-list';
-import BlockQuote from '@/components/blockquote';
-import Callout from '@/components/callout';
-import Card from '@/components/card';
-import CausalDiagram from '@/components/causal-diagram';
-import CodeBlock from '@/components/code-block';
-import ComparisonCard from '@/components/comparison-card';
-import CoordinatePlot from '@/components/coordinate-plot';
-import CycleDiagram from '@/components/cycle-diagram';
-import Divider from '@/components/divider';
-import FeatureCard from '@/components/feature-card';
-import Flowchart from '@/components/flowchart';
-import Footnote from '@/components/footnote';
-import FunnelDiagram from '@/components/funnel-diagram';
-import Headline from '@/components/headline';
-import IcebergDiagram from '@/components/iceberg-diagram';
-import Icon from '@/components/icon';
-import IframeEmbed from '@/components/iframe-embed';
-import ImageComponent from '@/components/image';
-import Label from '@/components/label';
-import MindMap from '@/components/mind-map';
-import NumberedList from '@/components/numbered-list';
-import OrgChart from '@/components/org-chart';
-import ProfileCard from '@/components/profile-card';
-import QuadrantChart from '@/components/quadrant-chart';
-import RadarChart from '@/components/radar-chart';
-import SankeyDiagram from '@/components/sankey-diagram';
-import SpectrumBar from '@/components/spectrum-bar';
-import StatCard from '@/components/stat-card';
-import StakeholderMap from '@/components/stakeholder-map';
-import Subtitle from '@/components/subtitle';
-import SvgGraphic from '@/components/svg-graphic';
-import ThreeHorizons from '@/components/three-horizons';
-import Timeline from '@/components/timeline';
-import TimelineItem from '@/components/timeline-item';
-import VennDiagram from '@/components/venn-diagram';
-import Video from '@/components/video';
-import { ComponentInstance } from '@/lib/types/presentation';
+import { CSSProperties } from 'react';
+import { motion } from 'framer-motion';
 
-const componentMap = {
-  headline: Headline,
-  subtitle: Subtitle,
-  label: Label,
-  'body-text': BodyText,
-  'bullet-list': BulletList,
-  'numbered-list': NumberedList,
-  blockquote: BlockQuote,
-  callout: Callout,
-  footnote: Footnote,
-  icon: Icon,
-  image: ImageComponent,
-  video: Video,
-  'svg-graphic': SvgGraphic,
-  'iframe-embed': IframeEmbed,
-  'code-block': CodeBlock,
-  card: Card,
-  'stat-card': StatCard,
-  'profile-card': ProfileCard,
-  'feature-card': FeatureCard,
-  'comparison-card': ComparisonCard,
-  'timeline-item': TimelineItem,
-  timeline: Timeline,
-  divider: Divider,
-  'causal-diagram': CausalDiagram,
-  'mind-map': MindMap,
-  'iceberg-diagram': IcebergDiagram,
-  'three-horizons': ThreeHorizons,
-  flowchart: Flowchart,
-  'quadrant-chart': QuadrantChart,
-  'spectrum-bar': SpectrumBar,
-  'funnel-diagram': FunnelDiagram,
-  'venn-diagram': VennDiagram,
-  'stakeholder-map': StakeholderMap,
-  'radar-chart': RadarChart,
-  'org-chart': OrgChart,
-  'cycle-diagram': CycleDiagram,
-  'sankey-diagram': SankeyDiagram,
-  'coordinate-plot': CoordinatePlot
-} as const;
+import { AnnotationProvider } from '@/components/_shared/annotation-context';
+import { resolveRuntimeComponent, resolveRuntimeTransition } from '@/lib/runtime/primitive-resolver';
+import { ComponentInstance } from '@/lib/types/presentation';
 
 export function ComponentRenderer({
   component,
@@ -88,7 +14,7 @@ export function ComponentRenderer({
   revealCount: number;
   slug: string;
 }) {
-  const Selected = componentMap[component.type as keyof typeof componentMap];
+  const Selected = resolveRuntimeComponent(slug, component.type);
 
   if (!Selected) {
     return (
@@ -98,13 +24,32 @@ export function ComponentRenderer({
     );
   }
 
-  return (
+  const enterPreset = component.enter ? resolveRuntimeTransition(slug, component.enter) : null;
+  const exitPreset = component.exit ? resolveRuntimeTransition(slug, component.exit) : enterPreset;
+  const contentNode = (
     <Selected
       content={component.content}
       props={component.props}
-      style={component.style as React.CSSProperties | undefined}
+      style={component.style as CSSProperties | undefined}
       revealCount={revealCount}
       slug={slug}
     />
+  );
+
+  return (
+    <AnnotationProvider annotations={component.annotations}>
+      {enterPreset || exitPreset ? (
+        <motion.div
+          initial={enterPreset?.enter}
+          animate={enterPreset?.center ?? exitPreset?.center}
+          exit={exitPreset?.exit}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {contentNode}
+        </motion.div>
+      ) : (
+        contentNode
+      )}
+    </AnnotationProvider>
   );
 }

@@ -1,0 +1,6 @@
+name: single-content
+displayName: Single Content
+description: Centered single-content layout.
+slots: [main]
+density:
+  recommendation: 1 heading plus one primary component.

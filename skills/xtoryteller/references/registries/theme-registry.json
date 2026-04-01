@@ -1,0 +1,147 @@
+{
+  "generatedAt": "2026-04-01T12:57:06.405Z",
+  "count": 3,
+  "themes": [
+    {
+      "slug": "default",
+      "name": "Default Narrative",
+      "fonts": {
+        "heading": {
+          "family": "\"Playfair Display\"",
+          "source": "system",
+          "fallbacks": [
+            "Georgia",
+            "\"Times New Roman\"",
+            "serif"
+          ]
+        },
+        "body": {
+          "family": "Inter",
+          "source": "system",
+          "fallbacks": [
+            "-apple-system",
+            "BlinkMacSystemFont",
+            "\"Segoe UI\"",
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "\"JetBrains Mono\"",
+          "source": "system",
+          "fallbacks": [
+            "Consolas",
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "xinimalist-dark",
+      "name": "Xinimalist Dark",
+      "fonts": {
+        "heading": {
+          "family": "EB Garamond",
+          "source": "google",
+          "weights": [
+            400,
+            500,
+            600,
+            700
+          ],
+          "styles": [
+            "normal",
+            "italic"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "Georgia",
+            "serif"
+          ]
+        },
+        "body": {
+          "family": "General Sans",
+          "source": "fontshare",
+          "cssUrl": "https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap",
+          "fallbacks": [
+            "Inter",
+            "-apple-system",
+            "BlinkMacSystemFont",
+            "\"Segoe UI\"",
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "Geist Mono",
+          "source": "google",
+          "weights": [
+            400,
+            500,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "Consolas",
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "xinimalist-paper",
+      "name": "Xinimalist Paper",
+      "fonts": {
+        "heading": {
+          "family": "EB Garamond",
+          "source": "google",
+          "weights": [
+            400,
+            500,
+            600,
+            700
+          ],
+          "styles": [
+            "normal",
+            "italic"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "Georgia",
+            "serif"
+          ]
+        },
+        "body": {
+          "family": "General Sans",
+          "source": "fontshare",
+          "cssUrl": "https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap",
+          "fallbacks": [
+            "Inter",
+            "-apple-system",
+            "BlinkMacSystemFont",
+            "\"Segoe UI\"",
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "Geist Mono",
+          "source": "google",
+          "weights": [
+            400,
+            500,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "Consolas",
+            "monospace"
+          ]
+        }
+      }
+    }
+  ]
+}

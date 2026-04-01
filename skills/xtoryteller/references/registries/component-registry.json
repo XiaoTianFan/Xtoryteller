@@ -1,0 +1,888 @@
+{
+  "generatedAt": "2026-04-01T12:57:06.404Z",
+  "count": 38,
+  "components": [
+    {
+      "name": "blockquote",
+      "displayName": "Blockquote",
+      "description": "Styled quotation with optional attribution.",
+      "category": "basic-content",
+      "content": true,
+      "props": {
+        "attribution": {
+          "type": "string",
+          "description": "Quote author or source."
+        },
+        "variant": {
+          "type": "enum",
+          "values": [
+            "default",
+            "large",
+            "minimal"
+          ],
+          "default": "default",
+          "description": "Visual style."
+        }
+      }
+    },
+    {
+      "name": "body-text",
+      "displayName": "Body Text",
+      "description": "Paragraph text blocks with rich formatting.",
+      "category": "basic-content",
+      "content": true,
+      "props": {
+        "align": {
+          "type": "enum",
+          "values": [
+            "left",
+            "center",
+            "right",
+            "justify"
+          ],
+          "default": "left",
+          "description": "Text alignment."
+        },
+        "maxWidth": {
+          "type": "string",
+          "default": "68ch",
+          "description": "Maximum readable width."
+        }
+      }
+    },
+    {
+      "name": "bullet-list",
+      "displayName": "Bullet List",
+      "description": "Ordered or unordered list with sequential build support.",
+      "category": "basic-content",
+      "content": false,
+      "props": {
+        "items": {
+          "type": "string[]",
+          "required": true,
+          "description": "List items."
+        },
+        "ordered": {
+          "type": "boolean",
+          "default": false,
+          "description": "Render as ordered list."
+        }
+      }
+    },
+    {
+      "name": "callout",
+      "displayName": "Callout",
+      "description": "Highlighted note box for key insights, tips, and warnings.",
+      "category": "basic-content",
+      "content": true,
+      "props": {
+        "variant": {
+          "type": "enum",
+          "values": [
+            "info",
+            "warning",
+            "tip",
+            "note",
+            "important"
+          ],
+          "default": "note",
+          "description": "Visual tone."
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional callout heading."
+        }
+      }
+    },
+    {
+      "name": "card",
+      "displayName": "Card",
+      "description": "General-purpose content card with optional header and footer.",
+      "category": "card-container",
+      "content": true,
+      "props": {
+        "header": {
+          "type": "string",
+          "description": "Optional card header."
+        },
+        "footer": {
+          "type": "string",
+          "description": "Optional card footer."
+        },
+        "variant": {
+          "type": "enum",
+          "values": [
+            "default",
+            "elevated",
+            "outlined",
+            "filled"
+          ],
+          "default": "default",
+          "description": "Visual variant."
+        }
+      }
+    },
+    {
+      "name": "causal-diagram",
+      "displayName": "Causal Diagram",
+      "description": "Directed graph showing causal relationships with polarity labels.",
+      "category": "diagram",
+      "content": false,
+      "props": {
+        "variables": {
+          "type": "array",
+          "required": true,
+          "description": "Diagram nodes."
+        },
+        "edges": {
+          "type": "array",
+          "required": true,
+          "description": "Directed edges with polarity."
+        }
+      }
+    },
+    {
+      "name": "code-block",
+      "displayName": "Code Block",
+      "description": "Syntax-like code display with optional filename.",
+      "category": "media",
+      "content": true,
+      "props": {
+        "language": {
+          "type": "string",
+          "default": "text",
+          "description": "Code language label."
+        },
+        "filename": {
+          "type": "string",
+          "description": "Optional filename shown in header."
+        }
+      }
+    },
+    {
+      "name": "comparison-card",
+      "displayName": "Comparison Card",
+      "description": "Two-sided card for tradeoff or before/after framing.",
+      "category": "content-card",
+      "content": true,
+      "props": {
+        "title": {
+          "type": "string"
+        },
+        "leftTitle": {
+          "type": "string",
+          "required": true
+        },
+        "leftContent": {
+          "type": "string"
+        },
+        "leftItems": {
+          "type": "array"
+        },
+        "rightTitle": {
+          "type": "string",
+          "required": true
+        },
+        "rightContent": {
+          "type": "string"
+        },
+        "rightItems": {
+          "type": "array"
+        },
+        "variant": {
+          "type": "enum",
+          "values": [
+            "versus",
+            "before-after",
+            "neutral"
+          ],
+          "default": "neutral"
+        }
+      }
+    },
+    {
+      "name": "coordinate-plot",
+      "displayName": "Coordinate Plot",
+      "description": "XY scatter plot with labeled points and optional variable radius.",
+      "category": "diagram",
+      "props": {
+        "xAxis": {
+          "type": "object",
+          "required": true
+        },
+        "yAxis": {
+          "type": "object",
+          "required": true
+        },
+        "points": {
+          "type": "array",
+          "required": true
+        },
+        "showGrid": {
+          "type": "boolean",
+          "default": true
+        },
+        "showLabels": {
+          "type": "boolean",
+          "default": true
+        },
+        "defaultRadius": {
+          "type": "number",
+          "default": 20
+        },
+        "defaultColor": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "cycle-diagram",
+      "displayName": "Cycle Diagram",
+      "description": "Circular process diagram with connected stages.",
+      "category": "diagram",
+      "props": {
+        "stages": {
+          "type": "array",
+          "required": true,
+          "description": "Stage objects may include an optional Lucide icon name in their icon field."
+        },
+        "direction": {
+          "type": "enum",
+          "values": [
+            "clockwise",
+            "counterclockwise"
+          ],
+          "default": "clockwise"
+        }
+      }
+    },
+    {
+      "name": "divider",
+      "displayName": "Divider",
+      "description": "Visual separator between content sections.",
+      "category": "basic-content",
+      "content": false,
+      "props": {
+        "variant": {
+          "type": "enum",
+          "values": [
+            "line",
+            "dots",
+            "ornamental",
+            "gradient"
+          ],
+          "default": "gradient",
+          "description": "Visual style."
+        }
+      }
+    },
+    {
+      "name": "feature-card",
+      "displayName": "Feature Card",
+      "description": "Card for a named feature, capability, or pillar.",
+      "category": "content-card",
+      "content": true,
+      "props": {
+        "eyebrow": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string",
+          "required": true
+        },
+        "icon": {
+          "type": "string",
+          "description": "Lucide icon name."
+        },
+        "items": {
+          "type": "array"
+        }
+      }
+    },
+    {
+      "name": "flowchart",
+      "displayName": "Flowchart",
+      "description": "Process flow with action and decision nodes.",
+      "category": "diagram",
+      "content": false,
+      "props": {
+        "nodes": {
+          "type": "array",
+          "required": true,
+          "description": "Flow nodes."
+        },
+        "edges": {
+          "type": "array",
+          "required": true,
+          "description": "Flow connections."
+        }
+      }
+    },
+    {
+      "name": "footnote",
+      "displayName": "Footnote",
+      "description": "Small supporting note for source or caveat text.",
+      "category": "basic-content",
+      "content": true,
+      "props": {
+        "label": {
+          "type": "string",
+          "description": "Optional prefix label."
+        }
+      }
+    },
+    {
+      "name": "funnel-diagram",
+      "displayName": "Funnel Diagram",
+      "description": "Trapezoid funnel showing narrowing stages or conversion steps.",
+      "category": "diagram",
+      "props": {
+        "stages": {
+          "type": "array",
+          "required": true
+        },
+        "orientation": {
+          "type": "enum",
+          "values": [
+            "vertical",
+            "horizontal"
+          ],
+          "default": "vertical"
+        },
+        "showValues": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    {
+      "name": "headline",
+      "displayName": "Headline",
+      "description": "Large title text for step headings and section titles.",
+      "category": "basic-content",
+      "content": true,
+      "props": {
+        "level": {
+          "type": "enum",
+          "values": [
+            1,
+            2,
+            3
+          ],
+          "default": 1,
+          "description": "Heading level."
+        },
+        "align": {
+          "type": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ],
+          "default": "left",
+          "description": "Text alignment."
+        }
+      },
+      "density": {
+        "recommendation": "Use for primary slide headings."
+      }
+    },
+    {
+      "name": "iceberg-diagram",
+      "displayName": "Iceberg Diagram",
+      "description": "Layered depth metaphor for hidden structures beneath surface observations.",
+      "category": "diagram",
+      "content": false,
+      "props": {
+        "layers": {
+          "type": "array",
+          "required": true,
+          "description": "Layers from top to bottom."
+        },
+        "waterlinePosition": {
+          "type": "number",
+          "default": 0.25,
+          "description": "Waterline fraction."
+        }
+      }
+    },
+    {
+      "name": "icon",
+      "displayName": "Icon",
+      "description": "Decorative or semantic icon element powered by Lucide icons by default.",
+      "category": "media",
+      "props": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "description": "Lucide icon name in kebab-case, for example sparkles or arrow-right."
+        },
+        "customSvg": {
+          "type": "string",
+          "description": "Optional raw SVG markup for an explicitly requested custom icon. Overrides name when provided."
+        },
+        "label": {
+          "type": "string"
+        },
+        "size": {
+          "type": "enum",
+          "values": [
+            "small",
+            "medium",
+            "large",
+            "xlarge"
+          ],
+          "default": "medium"
+        },
+        "color": {
+          "type": "string"
+        },
+        "strokeWidth": {
+          "type": "number"
+        }
+      }
+    },
+    {
+      "name": "iframe-embed",
+      "displayName": "Iframe Embed",
+      "description": "Responsive iframe wrapper for embeds.",
+      "category": "media",
+      "props": {
+        "src": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "height": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "image",
+      "displayName": "Image",
+      "description": "Responsive image with optional caption.",
+      "category": "media",
+      "content": false,
+      "props": {
+        "src": {
+          "type": "string",
+          "required": true,
+          "description": "Relative asset path or external URL."
+        },
+        "alt": {
+          "type": "string",
+          "required": true,
+          "description": "Accessible alt text."
+        },
+        "caption": {
+          "type": "string",
+          "description": "Optional caption."
+        },
+        "fit": {
+          "type": "enum",
+          "values": [
+            "contain",
+            "cover",
+            "fill"
+          ],
+          "default": "contain",
+          "description": "Object-fit mode."
+        }
+      }
+    },
+    {
+      "name": "label",
+      "displayName": "Label",
+      "description": "Small metadata pill or section label.",
+      "category": "basic-content",
+      "content": true,
+      "props": {
+        "tone": {
+          "type": "enum",
+          "values": [
+            "default",
+            "primary",
+            "secondary"
+          ],
+          "default": "default"
+        }
+      }
+    },
+    {
+      "name": "mind-map",
+      "displayName": "Mind Map",
+      "description": "Radial mind map with central root and branches.",
+      "category": "diagram",
+      "content": false,
+      "props": {
+        "root": {
+          "type": "object",
+          "required": true,
+          "description": "Central node."
+        },
+        "branches": {
+          "type": "array",
+          "required": true,
+          "description": "Branch structure."
+        }
+      }
+    },
+    {
+      "name": "numbered-list",
+      "displayName": "Numbered List",
+      "description": "Ordered sequence of points.",
+      "category": "basic-content",
+      "props": {
+        "items": {
+          "type": "array",
+          "description": "Ordered list items."
+        }
+      }
+    },
+    {
+      "name": "org-chart",
+      "displayName": "Org Chart",
+      "description": "Hierarchical tree of roles, entities, or concepts.",
+      "category": "diagram",
+      "props": {
+        "root": {
+          "type": "object",
+          "required": true
+        },
+        "direction": {
+          "type": "enum",
+          "values": [
+            "top-bottom",
+            "left-right"
+          ],
+          "default": "top-bottom"
+        }
+      }
+    },
+    {
+      "name": "profile-card",
+      "displayName": "Profile Card",
+      "description": "Person or entity card with avatar, name, role, and optional bio copy.",
+      "category": "content-card",
+      "content": true,
+      "props": {
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "role": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "quadrant-chart",
+      "displayName": "Quadrant Chart",
+      "description": "2x2 matrix with labeled axes and positioned items.",
+      "category": "diagram",
+      "content": false,
+      "props": {
+        "xAxis": {
+          "type": "object",
+          "required": true,
+          "description": "Horizontal axis."
+        },
+        "yAxis": {
+          "type": "object",
+          "required": true,
+          "description": "Vertical axis."
+        },
+        "items": {
+          "type": "array",
+          "required": true,
+          "description": "Positioned items in normalized coordinates."
+        }
+      }
+    },
+    {
+      "name": "radar-chart",
+      "displayName": "Radar Chart",
+      "description": "Spider chart for comparing datasets across multiple axes.",
+      "category": "diagram",
+      "props": {
+        "axes": {
+          "type": "array",
+          "required": true
+        },
+        "datasets": {
+          "type": "array",
+          "required": true
+        },
+        "showGrid": {
+          "type": "boolean",
+          "default": true
+        },
+        "showValues": {
+          "type": "boolean",
+          "default": false
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 0.2
+        }
+      }
+    },
+    {
+      "name": "sankey-diagram",
+      "displayName": "Sankey Diagram",
+      "description": "Flow diagram showing quantity distribution between staged nodes.",
+      "category": "diagram",
+      "props": {
+        "nodes": {
+          "type": "array",
+          "required": true
+        },
+        "links": {
+          "type": "array",
+          "required": true
+        },
+        "alignment": {
+          "type": "enum",
+          "values": [
+            "left",
+            "right",
+            "center",
+            "justify"
+          ],
+          "default": "justify"
+        },
+        "opacity": {
+          "type": "number",
+          "default": 0.5
+        }
+      }
+    },
+    {
+      "name": "spectrum-bar",
+      "displayName": "Spectrum Bar",
+      "description": "Linear spectrum with positioned markers and labels.",
+      "category": "diagram",
+      "props": {
+        "leftLabel": {
+          "type": "string",
+          "required": true
+        },
+        "rightLabel": {
+          "type": "string",
+          "required": true
+        },
+        "markers": {
+          "type": "array",
+          "required": true
+        },
+        "gradient": {
+          "type": "array"
+        },
+        "orientation": {
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "default": "horizontal"
+        }
+      }
+    },
+    {
+      "name": "stakeholder-map",
+      "displayName": "Stakeholder Map",
+      "description": "Concentric stakeholder proximity map with labeled rings and positioned participants.",
+      "category": "diagram",
+      "props": {
+        "center": {
+          "type": "string",
+          "required": true
+        },
+        "rings": {
+          "type": "array",
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "stat-card",
+      "displayName": "Stat Card",
+      "description": "Highlight a metric with supporting detail.",
+      "category": "content-card",
+      "props": {
+        "value": {
+          "type": "string",
+          "required": true
+        },
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "trend": {
+          "type": "enum",
+          "values": [
+            "up",
+            "down",
+            "neutral"
+          ]
+        },
+        "trendValue": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "suffix": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "subtitle",
+      "displayName": "Subtitle",
+      "description": "Secondary text below a headline.",
+      "category": "basic-content",
+      "content": true,
+      "props": {
+        "align": {
+          "type": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ],
+          "default": "left",
+          "description": "Text alignment."
+        }
+      }
+    },
+    {
+      "name": "svg-graphic",
+      "displayName": "SVG Graphic",
+      "description": "Render an SVG asset or inline SVG markup.",
+      "category": "media",
+      "content": true,
+      "props": {
+        "src": {
+          "type": "string"
+        },
+        "alt": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "three-horizons",
+      "displayName": "Three Horizons",
+      "description": "Three-curve futures framework showing present, transition, and emerging system states.",
+      "category": "diagram",
+      "props": {
+        "horizon1": {
+          "type": "object",
+          "required": true
+        },
+        "horizon2": {
+          "type": "object",
+          "required": true
+        },
+        "horizon3": {
+          "type": "object",
+          "required": true
+        },
+        "timeLabels": {
+          "type": "object"
+        }
+      }
+    },
+    {
+      "name": "timeline",
+      "displayName": "Timeline",
+      "description": "Connected sequence of dated events.",
+      "category": "diagram",
+      "props": {
+        "events": {
+          "type": "array"
+        },
+        "orientation": {
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "default": "horizontal"
+        }
+      }
+    },
+    {
+      "name": "timeline-item",
+      "displayName": "Timeline Item",
+      "description": "Event card intended for timeline-layout.",
+      "category": "content-card",
+      "content": true,
+      "props": {
+        "date": {
+          "type": "string",
+          "required": true
+        },
+        "title": {
+          "type": "string",
+          "required": true
+        },
+        "marker": {
+          "type": "enum",
+          "values": [
+            "dot",
+            "icon",
+            "number"
+          ],
+          "default": "dot"
+        },
+        "markerValue": {
+          "type": "string",
+          "description": "Lucide icon name when marker is icon, or literal number text when marker is number."
+        }
+      }
+    },
+    {
+      "name": "venn-diagram",
+      "displayName": "Venn Diagram",
+      "description": "Two or three overlapping sets with optional labeled intersections.",
+      "category": "diagram",
+      "props": {
+        "sets": {
+          "type": "array",
+          "required": true
+        },
+        "intersections": {
+          "type": "array"
+        },
+        "opacity": {
+          "type": "number",
+          "default": 0.3
+        }
+      }
+    },
+    {
+      "name": "video",
+      "displayName": "Video",
+      "description": "Embedded local or remote video with caption.",
+      "category": "media",
+      "props": {
+        "src": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        }
+      }
+    }
+  ]
+}

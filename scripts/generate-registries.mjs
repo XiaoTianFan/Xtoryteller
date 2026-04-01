@@ -1,7 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import fg from 'fast-glob';
 import YAML from 'yaml';
+
+import { XTORYTELLER_REGISTRIES_DIR } from './skill-paths.mjs';
 
 const root = process.cwd();
 
@@ -51,21 +54,40 @@ async function scanThemes() {
 }
 
 async function writeJson(fileName, data) {
-  await fs.writeFile(path.join(root, 'skills', 'references', fileName), JSON.stringify(data, null, 2));
+  await fs.mkdir(XTORYTELLER_REGISTRIES_DIR, { recursive: true });
+  await fs.writeFile(path.join(XTORYTELLER_REGISTRIES_DIR, fileName), JSON.stringify(data, null, 2));
 }
 
-const [components, layouts, transitions, themes] = await Promise.all([
-  scanManifests('components'),
-  scanManifests('layouts'),
-  scanManifests('transitions'),
-  scanThemes()
-]);
+export async function generateRegistries() {
+  const [components, layouts, transitions, themes] = await Promise.all([
+    scanManifests('components'),
+    scanManifests('layouts'),
+    scanManifests('transitions'),
+    scanThemes()
+  ]);
 
-await Promise.all([
-  writeJson('component-registry.json', { generatedAt: new Date().toISOString(), count: components.length, components }),
-  writeJson('layout-registry.json', { generatedAt: new Date().toISOString(), count: layouts.length, layouts }),
-  writeJson('transition-registry.json', { generatedAt: new Date().toISOString(), count: transitions.length, transitions }),
-  writeJson('theme-registry.json', { generatedAt: new Date().toISOString(), count: themes.length, themes })
-]);
+  await Promise.all([
+    writeJson('component-registry.json', { generatedAt: new Date().toISOString(), count: components.length, components }),
+    writeJson('layout-registry.json', { generatedAt: new Date().toISOString(), count: layouts.length, layouts }),
+    writeJson('transition-registry.json', { generatedAt: new Date().toISOString(), count: transitions.length, transitions }),
+    writeJson('theme-registry.json', { generatedAt: new Date().toISOString(), count: themes.length, themes })
+  ]);
 
-console.log(`Generated ${components.length} components, ${layouts.length} layouts, ${transitions.length} transitions, ${themes.length} themes.`);
+  return {
+    components: components.length,
+    layouts: layouts.length,
+    transitions: transitions.length,
+    themes: themes.length
+  };
+}
+
+function isCliEntry() {
+  return Boolean(process.argv[1]) && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+}
+
+if (isCliEntry()) {
+  const counts = await generateRegistries();
+  console.log(
+    `Generated ${counts.components} components, ${counts.layouts} layouts, ${counts.transitions} transitions, ${counts.themes} themes.`
+  );
+}

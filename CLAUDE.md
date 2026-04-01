@@ -99,11 +99,11 @@ xtoryteller/
 │   ├── renderers/          # React rendering components
 │   ├── hooks/              # Custom React hooks
 │   └── utils/              # Utilities
-├── skills/                  # Agent skill definitions
-│   ├── xtoryteller-skill.yaml
-│   ├── phases/
-│   ├── sub-pipelines/
-│   └── references/
+├── skills/                  # Canonical agent skill package
+│   └── xtoryteller/
+│       ├── SKILL.md
+│       ├── references/
+│       └── scripts/
 └── public/fonts/           # Self-hosted fonts
 ```
 
@@ -262,37 +262,31 @@ PresentationMachine
 
 ## Agent Skill System
 
-The agent skill system is the **primary interface** for creating presentations. Skills are agent-agnostic YAML files that any AI coding agent can consume.
+The agent skill system is the **primary interface** for creating presentations. The canonical deliverable is the agent-agnostic `skills/xtoryteller/` package.
 
 ### Skill Structure
 
-```
+```text
 skills/
-├── xtoryteller-skill.yaml          # Master skill definition
-├── phases/
-│   ├── 00-detect-intent.yaml       # What does user want?
-│   ├── 01-context-gathering.yaml   # Scan infrastructure
-│   ├── 02-content-style.yaml       # Content & style discovery
-│   ├── 03-orchestration.yaml       # Generate presentation YAML
-│   ├── 04-validation.yaml          # Validate & preview
-│   └── 05-iteration.yaml           # User feedback loop
-├── references/
-│   ├── schema.yaml                 # Presentation YAML schema
-│   ├── component-registry.json     # Auto-generated
-│   ├── layout-registry.json        # Auto-generated
-│   └── anti-patterns.yaml          # What NOT to do
-└── docs/
-    ├── architecture-overview.md
-    └── component-authoring.md
+└── xtoryteller/
+    ├── SKILL.md                 # Trigger + routing entrypoint
+    ├── references/
+    │   ├── guides/             # Human-readable scenario and workflow guides
+    │   ├── registries/         # Generated component/layout/transition/theme registries
+    │   ├── schema/             # JSON schema + human-readable schema summary
+    │   └── examples/           # Canonical YAML examples
+    ├── evals/                  # Prompt-based coverage checks for the skill
+    └── scripts/                # Deterministic helper scripts for repeated tasks
 ```
 
 ### Before Creating Presentations
 
 Agents MUST:
-1. Read `skills/references/component-registry.json`
-2. Read `skills/references/layout-registry.json`
-3. Read `skills/references/theme-registry.json`
-4. Read `skills/docs/architecture-overview.md`
+1. Read `skills/xtoryteller/references/registries/component-registry.json`
+2. Read `skills/xtoryteller/references/registries/layout-registry.json`
+3. Read `skills/xtoryteller/references/registries/theme-registry.json`
+4. Read `skills/xtoryteller/references/guides/architecture-overview.md`
+5. Read `skills/xtoryteller/references/schema/schema.yaml`
 
 ## Anti-Patterns & Guidelines
 
@@ -445,3 +439,6 @@ See APRD Chapter 22 (MVP Scope & Phasing) for detailed implementation checklist.
 5. **Composition over creation** - Assemble from proven presets
 6. **Responsive by nature** - Fluid sizing, adapts to any viewport
 7. **Incrementally adoptable** - Start with defaults, gradually customize
+
+
+

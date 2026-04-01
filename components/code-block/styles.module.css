@@ -1,9 +1,9 @@
-.shell {
-  border-radius: var(--radius-large);
+﻿.shell {
+  border-radius: var(--radius-code, var(--radius-large));
   overflow: hidden;
   border: var(--border-subtle);
-  background: #181512;
-  color: #f4eee5;
+  background: var(--color-code-bg, #181512);
+  color: var(--color-code-foreground, #f4eee5);
   box-shadow: var(--shadow-strong);
 }
 
@@ -12,7 +12,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.7rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--color-code-header-bg, rgba(255, 255, 255, 0.08));
   font-size: var(--text-small);
 }
 

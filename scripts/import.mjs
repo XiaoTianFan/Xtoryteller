@@ -1,6 +1,7 @@
-﻿import fs from 'node:fs/promises';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { generateRegistries } from './generate-registries.mjs';
 import {
   COMPONENTS_DIR,
   copyDirectory,
@@ -93,8 +94,13 @@ for (const [subdir, targetRoot] of [
   }
 }
 
+const counts = await generateRegistries();
+
 console.log(`Imported to presentations/${validation.config.meta.slug}`);
 console.log('Packaged components, layouts, and transitions were copied into the global libraries when needed.');
+console.log(
+  `Registries refreshed (${counts.components} components, ${counts.layouts} layouts, ${counts.transitions} transitions, ${counts.themes} themes).`
+);
 
 if (extractedDir) {
   await fs.rm(extractedDir, { recursive: true, force: true });

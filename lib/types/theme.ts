@@ -1,8 +1,16 @@
-export interface FontRoleConfig {
+﻿export interface FontRoleConfig {
   family: string;
   weights?: number[];
   source?: 'local' | 'google' | 'fontshare' | 'system';
   fallbacks?: string[];
+  styles?: Array<'normal' | 'italic'>;
+  display?: 'auto' | 'block' | 'swap' | 'fallback' | 'optional';
+  cssUrl?: string;
+  files?: Array<{
+    path: string;
+    weight: number;
+    style?: 'normal' | 'italic';
+  }>;
 }
 
 export interface ThemeConfig {
@@ -18,7 +26,7 @@ export interface ThemeConfig {
   radii: Record<string, string>;
   shadows: Record<string, string>;
   borders: Record<string, string>;
-  motion: Record<string, string | number>;
+  motion: Record<string, unknown>;
 }
 
 export interface ResolvedTheme {

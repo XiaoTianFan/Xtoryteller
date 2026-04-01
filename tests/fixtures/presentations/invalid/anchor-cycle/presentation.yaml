@@ -1,0 +1,20 @@
+meta:
+  title: Invalid Anchor Cycle
+  slug: invalid-anchor-cycle
+mode: map
+theme: default
+clusters:
+  - id: alpha
+    layout: single-content
+    anchor:
+      relativeTo: beta
+    components:
+      - type: headline
+        content: Alpha
+  - id: beta
+    layout: single-content
+    anchor:
+      relativeTo: alpha
+    components:
+      - type: headline
+        content: Beta

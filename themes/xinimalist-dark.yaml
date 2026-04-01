@@ -1,0 +1,144 @@
+﻿name: Xinimalist Dark
+fonts:
+  heading:
+    family: 'EB Garamond'
+    source: google
+    weights: [400, 500, 600, 700]
+    styles: [normal, italic]
+    display: swap
+    fallbacks: ['Georgia', 'serif']
+  body:
+    family: 'General Sans'
+    source: fontshare
+    cssUrl: 'https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap'
+    fallbacks: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif']
+  mono:
+    family: 'Geist Mono'
+    source: google
+    weights: [400, 500, 700]
+    styles: [normal]
+    display: swap
+    fallbacks: ['Consolas', 'monospace']
+colors:
+  background: '#303428'
+  surface: '#363a2f'
+  panel: '#272b22'
+  foreground: '#c8f2bf'
+  muted: '#9fc499'
+  border: 'rgba(200, 242, 191, 0.22)'
+  primary: '#c8f2bf'
+  secondary: '#e9d7ba'
+  accent: '#7dd3fc'
+  success: '#86efac'
+  warning: '#fbbf24'
+  error: '#fca5a5'
+  overlay: 'rgba(48, 52, 40, 0.88)'
+  'background-rgb': '48, 52, 40'
+  'foreground-rgb': '200, 242, 191'
+  chrome:
+    'page-glow': 'rgba(200, 242, 191, 0.08)'
+    'page-top': '#34382c'
+    'page-bottom': '#272b22'
+    surface: 'rgba(48, 52, 40, 0.76)'
+    'surface-strong': 'rgba(48, 52, 40, 0.9)'
+    'surface-active': 'rgba(54, 58, 47, 0.96)'
+    'surface-float': 'rgba(48, 52, 40, 0.84)'
+    'overlay-surface': 'rgba(48, 52, 40, 0.95)'
+    border: 'rgba(200, 242, 191, 0.2)'
+    'border-strong': 'rgba(200, 242, 191, 0.32)'
+    text: '#c8f2bf'
+    'text-muted': '#a5c89f'
+    'text-soft': '#92b38d'
+    'badge-bg': 'rgba(200, 242, 191, 0.08)'
+    'badge-border': 'rgba(200, 242, 191, 0.16)'
+    'badge-text': '#c8f2bf'
+    'accent-start': 'rgba(200, 242, 191, 0.08)'
+    'accent-end': 'rgba(125, 211, 252, 0.16)'
+    'thumbnail-start': 'rgba(48, 52, 40, 0.92)'
+    'thumbnail-end': 'rgba(200, 242, 191, 0.28)'
+    'thumbnail-text': '#c8f2bf'
+    'focus-ring': 'rgba(200, 242, 191, 0.24)'
+    'panel-shadow': '0 -8px 24px rgba(0, 0, 0, 0.32)'
+    'float-shadow': '0 4px 12px rgba(0, 0, 0, 0.24)'
+    'overlay-shadow': '0 12px 30px rgba(0, 0, 0, 0.3)'
+    'button-blur': '2px'
+    'panel-blur': '18px'
+    'float-blur': '12px'
+    'overlay-blur': '14px'
+    'noise-opacity': '0.04'
+    'noise-strength': '0.18'
+  code:
+    bg: '#161813'
+    foreground: '#dff6d8'
+    'header-bg': 'rgba(200, 242, 191, 0.06)'
+  scrollbar:
+    thumb: '#c8f2bf'
+    'thumb-muted': 'rgba(200, 242, 191, 0.72)'
+    track: 'transparent'
+    border: '#303428'
+  progress:
+    track: 'rgba(200, 242, 191, 0.18)'
+    start: '#c8f2bf'
+    end: '#7dd3fc'
+  'overlay-scrim': 'rgba(10, 12, 9, 0.56)'
+  diagram:
+    'series-1': '#c8f2bf'
+    'series-2': '#7dd3fc'
+    'series-3': '#e9d7ba'
+  'error-surface': 'rgba(252, 165, 165, 0.08)'
+  'error-border': 'rgba(252, 165, 165, 0.22)'
+  backgroundStops:
+    default:
+      - 'rgba(var(--color-background-rgb), 0.96)'
+      - 'rgba(var(--color-foreground-rgb), 0.12)'
+      - 'rgba(var(--color-foreground-rgb), 0.18)'
+typography:
+  h1: 'clamp(2.6rem, 4vw, 4.8rem)'
+  h2: 'clamp(2rem, 3vw, 3.2rem)'
+  h3: 'clamp(1.45rem, 2vw, 2rem)'
+  body: 'clamp(1rem, 1.2vw, 1.12rem)'
+  small: 'clamp(0.82rem, 1vw, 0.94rem)'
+  lead: 'clamp(1.1rem, 1.5vw, 1.32rem)'
+  code: 'clamp(0.88rem, 1vw, 0.98rem)'
+spacing:
+  page: 'clamp(1.4rem, 3vw, 3rem)'
+  section: 'clamp(1.1rem, 2vw, 1.9rem)'
+  gap: 'clamp(0.8rem, 1.3vw, 1.3rem)'
+  cluster: 'clamp(0.9rem, 1.4vw, 1.4rem)'
+radii:
+  small: '0.25rem'
+  medium: '0'
+  large: '0'
+  pill: '999px'
+  code: '10px'
+  scrollbar: '3px'
+shadows:
+  soft: '0 4px 12px rgba(0, 0, 0, 0.22)'
+  strong: '0 10px 24px rgba(0, 0, 0, 0.3)'
+borders:
+  subtle: '1px solid rgba(200, 242, 191, 0.16)'
+  strong: '1px solid rgba(200, 242, 191, 0.3)'
+motion:
+  fast: '180ms'
+  normal: '360ms'
+  slow: '700ms'
+  easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+  scene:
+    duration: '500ms'
+    easing: 'cubic-bezier(0.6, 0.01, 0.05, 0.9)'
+  reveal:
+    duration: '500ms'
+    easing: 'cubic-bezier(0.6, 0.01, 0.05, 0.9)'
+    'delay-step': '100ms'
+    'offset-y': 20
+    'initial-opacity': 0
+  panel:
+    duration: '300ms'
+    easing: 'ease-in-out'
+    'offset-y': '0.8rem'
+  hover:
+    duration: '200ms'
+    easing: 'ease-out'
+    scale: 1.02
+    rise: '0px'
+

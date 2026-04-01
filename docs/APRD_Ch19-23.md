@@ -1667,13 +1667,11 @@ xtoryteller/
 │           ├── JetBrainsMono-Regular.woff2
 │           └── JetBrainsMono-Medium.woff2
 │
-├── docs/                                 # Project documentation (for humans)
-│   ├── README.md                        # Project overview
-│   ├── GETTING_STARTED.md              # Setup guide
-│   ├── CREATING_PRESENTATIONS.md       # How to create presentations
-│   ├── CREATING_COMPONENTS.md          # How to create custom components
-│   ├── CREATING_THEMES.md             # How to create themes
-│   └── ARCHITECTURE.md                # Technical architecture overview
+├── docs/                                 # Longer-form project documentation and reference material
+│   ├── IMPLEMENTATION_PROGRESS.md      # APRD-aligned implementation snapshot
+│   ├── QA_SYSTEM_PLAN.md               # QA strategy and current coverage
+│   ├── SKILL_EVALUATION_REPORT.md      # Xtoryteller skill-package evaluation
+│   └── APRD_Ch*.md                     # Source APRD chapters and historical reference
 │
 ├── next.config.js                        # Next.js configuration
 ├── tsconfig.json                         # TypeScript configuration

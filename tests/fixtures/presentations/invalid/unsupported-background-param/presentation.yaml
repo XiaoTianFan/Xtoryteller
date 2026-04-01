@@ -1,0 +1,15 @@
+meta:
+  title: Unsupported Background Param
+  slug: unsupported-background-param
+mode: stage
+theme: default
+background:
+  type: paper-shader
+  shader: mesh-gradient
+  params:
+    image: https://example.com/background.webp
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Invalid background param

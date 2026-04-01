@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+﻿import { notFound } from 'next/navigation';
 
 import { loadPresentationBySlug, listPresentationSlugs } from '@/lib/engine/presentation-loader';
 import { loadThemeBySlug } from '@/lib/engine/theme-registry';
@@ -20,7 +20,7 @@ export default async function PresentationPage({ params }: { params: Promise<{ s
     const theme = await loadThemeBySlug(presentation.theme);
 
     return (
-      <ThemeProvider presentation={presentation} theme={theme}>
+      <ThemeProvider theme={theme} overrides={presentation.themeOverrides}>
         <PresentationProvider presentation={presentation} theme={theme}>
           {presentation.mode === 'map' ? <MapRenderer /> : <StageRenderer />}
         </PresentationProvider>

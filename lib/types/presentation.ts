@@ -21,16 +21,111 @@ export interface PresentationMeta {
   thumbnail?: string;
 }
 
-export interface BackgroundShaderConfig {
-  type: string;
+export interface BackgroundTransitionConfig {
+  duration?: number;
+  easing?: string;
+}
+
+export type BackgroundRendererType = 'paper-shader' | 'css' | 'none';
+
+export type SupportedPaperShaderName =
+  | 'grain-gradient'
+  | 'mesh-gradient'
+  | 'paper-texture'
+  | 'static-mesh-gradient'
+  | 'static-radial-gradient'
+  | 'water'
+  | 'waves';
+
+export interface CssGradientConfig {
+  type?: 'linear' | 'radial';
+  angle?: string | number;
+  position?: string;
+  stops: string[];
+}
+
+interface BackgroundConfigBase {
+  opacity?: number;
+  transition?: BackgroundTransitionConfig;
+  stages?: Array<{
+    steps: [number, number];
+    type?: BackgroundRendererType | 'paper';
+    shader?: SupportedPaperShaderName | string;
+    preset?: string;
+    params?: Record<string, unknown>;
+    value?: string;
+    gradient?: CssGradientConfig;
+    variant?: string;
+    colorStops?: string[];
+    intensity?: number;
+    grain?: number;
+    contrast?: number;
+    speed?: number;
+    opacity?: number;
+  }>;
+  regions?: Array<{
+    clusters?: string[];
+    group?: string;
+    type?: BackgroundRendererType | 'paper';
+    shader?: SupportedPaperShaderName | string;
+    preset?: string;
+    params?: Record<string, unknown>;
+    value?: string;
+    gradient?: CssGradientConfig;
+    variant?: string;
+    colorStops?: string[];
+    intensity?: number;
+    grain?: number;
+    contrast?: number;
+    speed?: number;
+    opacity?: number;
+  }>;
+}
+
+export interface BackgroundCssConfig extends BackgroundConfigBase {
+  type: 'css';
+  value?: string;
+  gradient?: CssGradientConfig;
+  variant?: string;
+  colorStops?: string[];
+}
+
+export interface BackgroundPaperShaderConfig extends BackgroundConfigBase {
+  type: 'paper-shader';
+  shader?: SupportedPaperShaderName | string;
+  preset?: string;
+  params?: Record<string, unknown>;
   variant?: string;
   colorStops?: string[];
   intensity?: number;
   grain?: number;
   contrast?: number;
   speed?: number;
-  opacity?: number;
 }
+
+export interface BackgroundNoneConfig extends BackgroundConfigBase {
+  type: 'none';
+}
+
+export interface LegacyPaperBackgroundConfig extends BackgroundConfigBase {
+  type: 'paper';
+  value?: string;
+  gradient?: CssGradientConfig;
+  variant?: string;
+  colorStops?: string[];
+  intensity?: number;
+  grain?: number;
+  contrast?: number;
+  speed?: number;
+}
+
+export type BackgroundConfigObject =
+  | BackgroundCssConfig
+  | BackgroundPaperShaderConfig
+  | BackgroundNoneConfig
+  | LegacyPaperBackgroundConfig;
+
+export type BackgroundShaderConfig = string | BackgroundConfigObject;
 
 export interface BackgroundSection {
   match: {
@@ -38,7 +133,7 @@ export interface BackgroundSection {
     clusterIds?: string[];
     group?: string;
   };
-  shader: BackgroundShaderConfig;
+  shader?: BackgroundShaderConfig;
 }
 
 export interface ComponentInstance {

@@ -1,47 +1,15 @@
-import ContentLeftMediaRightLayout from '@/layouts/content-left-media-right';
-import ComparisonLayout from '@/layouts/comparison-layout';
-import FullBleedLayout from '@/layouts/full-bleed';
-import GalleryLayout from '@/layouts/gallery';
-import Grid2x2Layout from '@/layouts/grid-2x2';
-import Grid3x2Layout from '@/layouts/grid-3x2';
-import MediaLeftContentRightLayout from '@/layouts/media-left-content-right';
-import PyramidLayout from '@/layouts/pyramid-layout';
-import ScatteredLayout from '@/layouts/scattered';
-import SectionHeaderLayout from '@/layouts/section-header';
-import SidebarMainLayout from '@/layouts/sidebar-main';
+﻿'use client';
+
+import { motion, useReducedMotion } from 'framer-motion';
+
 import SingleContentLayout from '@/layouts/single-content';
-import StackLayout from '@/layouts/stack';
-import ThreeColumnLayout from '@/layouts/three-column';
-import TitleCenterLayout from '@/layouts/title-center';
-import TitleLeftLayout from '@/layouts/title-left';
-import TimelineLayout from '@/layouts/timeline-layout';
-import TopBottomLayout from '@/layouts/top-bottom';
-import TwoColumnLayout from '@/layouts/two-column';
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
+import { resolveRuntimeLayout } from '@/lib/runtime/primitive-resolver';
 import { ComponentRenderer } from '@/lib/runtime/renderers/component-renderer';
+import { getLayoutRevealMotion } from '@/lib/runtime/transition-presets';
 import { ComponentInstance } from '@/lib/types/presentation';
 
-const layoutMap = {
-  'title-center': TitleCenterLayout,
-  'title-left': TitleLeftLayout,
-  'section-header': SectionHeaderLayout,
-  'single-content': SingleContentLayout,
-  'two-column': TwoColumnLayout,
-  'content-left-media-right': ContentLeftMediaRightLayout,
-  'full-bleed': FullBleedLayout,
-  stack: StackLayout,
-  'three-column': ThreeColumnLayout,
-  'top-bottom': TopBottomLayout,
-  'grid-2x2': Grid2x2Layout,
-  'grid-3x2': Grid3x2Layout,
-  'media-left-content-right': MediaLeftContentRightLayout,
-  'sidebar-main': SidebarMainLayout,
-  gallery: GalleryLayout,
-  scattered: ScatteredLayout,
-  'timeline-layout': TimelineLayout,
-  'comparison-layout': ComparisonLayout,
-  'pyramid-layout': PyramidLayout
-} as const;
+const hoverableTypes = new Set(['card', 'comparison-card', 'feature-card', 'profile-card', 'stat-card', 'timeline-item']);
 
 export function LayoutRenderer({
   layout,
@@ -54,19 +22,36 @@ export function LayoutRenderer({
   items: { component: ComponentInstance; revealCount: number }[];
   compact?: boolean;
 }) {
-  const Selected = layoutMap[layout as keyof typeof layoutMap] ?? SingleContentLayout;
-  const { presentation } = usePresentationRuntime();
-  const renderedEntries = items.map((item, index) => ({
-    component: item.component,
-    node: (
-      <ComponentRenderer
-        key={`${item.component.type}-${index}`}
-        component={item.component}
-        revealCount={item.revealCount}
-        slug={presentation.meta.slug}
-      />
-    )
-  }));
+  const { presentation, theme } = usePresentationRuntime();
+  const prefersReducedMotion = useReducedMotion();
+  const Selected = resolveRuntimeLayout(presentation.meta.slug, layout) ?? SingleContentLayout;
+  const hoverSection = theme.motion && typeof theme.motion === 'object'
+    ? ((theme.motion as Record<string, unknown>).hover as Record<string, unknown> | undefined)
+    : undefined;
+  const hoverScale = typeof hoverSection?.scale === 'number' ? hoverSection.scale : 1.01;
+  const renderedEntries = items.map((item, index) => {
+    const motionConfig = getLayoutRevealMotion(theme, Boolean(prefersReducedMotion), index, compact);
+
+    return {
+      component: item.component,
+      node: (
+        <motion.div
+          key={`${item.component.type}-${index}`}
+          className={hoverableTypes.has(item.component.type) ? 'layoutRevealCard' : 'layoutRevealItem'}
+          initial={motionConfig.initial}
+          animate={motionConfig.animate}
+          transition={motionConfig.transition}
+          whileHover={hoverableTypes.has(item.component.type) && !prefersReducedMotion ? { scale: hoverScale } : undefined}
+        >
+          <ComponentRenderer
+            component={item.component}
+            revealCount={item.revealCount}
+            slug={presentation.meta.slug}
+          />
+        </motion.div>
+      )
+    };
+  });
 
   return (
     <Selected

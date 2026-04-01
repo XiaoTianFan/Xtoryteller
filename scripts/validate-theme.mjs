@@ -1,4 +1,4 @@
-import fs from 'node:fs/promises';
+﻿import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fg from 'fast-glob';
@@ -6,6 +6,9 @@ import YAML from 'yaml';
 
 const root = process.cwd();
 const MIN_CONTRAST = 4.5;
+const FONT_SOURCES = ['local', 'google', 'fontshare', 'system'];
+const FONT_DISPLAYS = ['auto', 'block', 'swap', 'fallback', 'optional'];
+const FONT_STYLES = ['normal', 'italic'];
 
 function parseHex(hex) {
   const normalized = hex.replace('#', '').trim();
@@ -70,13 +73,109 @@ async function parseYaml(filePath) {
   return YAML.parse(await fs.readFile(filePath, 'utf8'));
 }
 
-function validateFontRole(roleName, role, issues) {
-  if (!role?.family) {
-    issues.push(`${roleName} font is missing a family.`);
+function validateRequiredKeys(sectionName, value, requiredKeys, issues) {
+  if (!value || typeof value !== 'object') {
+    issues.push(`${sectionName} is missing required values.`);
+    return;
   }
 
-  if (role?.source && !['local', 'google', 'fontshare', 'system'].includes(role.source)) {
-    issues.push(`${roleName} font has unsupported source \"${role.source}\".`);
+  for (const key of requiredKeys) {
+    if (!(key in value)) {
+      issues.push(`${sectionName} is missing required key "${key}".`);
+    }
+  }
+}
+
+function validateFontMetadata(roleName, role, issues) {
+  if (!role?.family) {
+    issues.push(`${roleName} font is missing a family.`);
+    return false;
+  }
+
+  if (role?.source && !FONT_SOURCES.includes(role.source)) {
+    issues.push(`${roleName} font has unsupported source "${role.source}".`);
+  }
+
+  if (role?.display && !FONT_DISPLAYS.includes(role.display)) {
+    issues.push(`${roleName} font has unsupported display "${role.display}".`);
+  }
+
+  if (Array.isArray(role?.styles)) {
+    for (const style of role.styles) {
+      if (!FONT_STYLES.includes(style)) {
+        issues.push(`${roleName} font has unsupported style "${style}".`);
+      }
+    }
+  }
+
+  return true;
+}
+
+async function validateLocalFontRole(roleName, role, issues) {
+  if (!Array.isArray(role.files) || role.files.length === 0) {
+    issues.push(`${roleName} font at "${role.family}" is local and must declare files.`);
+    return;
+  }
+
+  const fontsRoot = path.join(root, 'public', 'fonts');
+  for (const file of role.files) {
+    if (!file?.path || typeof file.path !== 'string') {
+      issues.push(`${roleName} font at "${role.family}" has a file entry without a path.`);
+      continue;
+    }
+
+    if (typeof file.weight !== 'number' || !Number.isFinite(file.weight)) {
+      issues.push(`${roleName} font at "${role.family}" has a file entry without a numeric weight.`);
+    }
+
+    if (file.style && !FONT_STYLES.includes(file.style)) {
+      issues.push(`${roleName} font at "${role.family}" has unsupported file style "${file.style}".`);
+    }
+
+    const relativePath = file.path.replace(/^\//, '').replace(/^fonts[\\/]/, '');
+    const resolvedPath = path.resolve(fontsRoot, relativePath);
+    if (!resolvedPath.startsWith(fontsRoot)) {
+      issues.push(`${roleName} font at "${role.family}" references ${file.path}, which is outside public/fonts/.`);
+      continue;
+    }
+
+    try {
+      await fs.access(resolvedPath);
+    } catch {
+      issues.push(`${roleName} font at "${role.family}" references missing file ${path.relative(root, resolvedPath)}.`);
+    }
+  }
+}
+
+function validateGoogleFontRole(roleName, role, issues) {
+  if (!Array.isArray(role.weights) || role.weights.length === 0) {
+    issues.push(`${roleName} font at "${role.family}" needs explicit weights when source is google.`);
+  }
+}
+
+function validateFontshareRole(roleName, role, issues) {
+  if (typeof role.cssUrl !== 'string' || !/^https?:\/\//i.test(role.cssUrl)) {
+    issues.push(`${roleName} font at "${role.family}" must provide a valid cssUrl when source is fontshare.`);
+  }
+}
+
+async function validateFontRole(roleName, role, issues) {
+  if (!validateFontMetadata(roleName, role, issues)) {
+    return;
+  }
+
+  switch (role?.source) {
+    case 'local':
+      await validateLocalFontRole(roleName, role, issues);
+      break;
+    case 'google':
+      validateGoogleFontRole(roleName, role, issues);
+      break;
+    case 'fontshare':
+      validateFontshareRole(roleName, role, issues);
+      break;
+    default:
+      break;
   }
 }
 
@@ -84,9 +183,19 @@ export async function validateTheme(filePath) {
   const theme = await parseYaml(filePath);
   const issues = [];
 
-  validateFontRole('heading', theme.fonts?.heading, issues);
-  validateFontRole('body', theme.fonts?.body, issues);
-  validateFontRole('mono', theme.fonts?.mono, issues);
+  await Promise.all([
+    validateFontRole('heading', theme.fonts?.heading, issues),
+    validateFontRole('body', theme.fonts?.body, issues),
+    validateFontRole('mono', theme.fonts?.mono, issues)
+  ]);
+
+  validateRequiredKeys('colors', theme.colors, ['background', 'surface', 'panel', 'foreground', 'muted', 'border', 'primary', 'secondary', 'accent', 'success', 'warning', 'error', 'overlay'], issues);
+  validateRequiredKeys('typography', theme.typography, ['h1', 'h2', 'h3', 'body', 'small', 'lead', 'code'], issues);
+  validateRequiredKeys('spacing', theme.spacing, ['page', 'section', 'gap', 'cluster'], issues);
+  validateRequiredKeys('radii', theme.radii, ['small', 'medium', 'large', 'pill'], issues);
+  validateRequiredKeys('shadows', theme.shadows, ['soft', 'strong'], issues);
+  validateRequiredKeys('borders', theme.borders, ['subtle', 'strong'], issues);
+  validateRequiredKeys('motion', theme.motion, ['fast', 'normal', 'slow', 'easing'], issues);
 
   const background = toRgb(theme.colors?.background);
   const surface = toRgb(theme.colors?.surface ?? theme.colors?.background);

@@ -16,9 +16,17 @@
     "presentation:export": "node scripts/export.mjs",
     "presentation:import": "node scripts/import.mjs",
     "component:promote": "node scripts/promote-component.mjs",
-    "watch": "node scripts/watch.mjs"
+    "watch": "node scripts/watch.mjs",
+    "test": "vitest run tests/contracts tests/unit tests/integration && npm run test:portability && npm run test:e2e",
+    "test:contracts": "vitest run tests/contracts",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:portability": "node scripts/test-portability.mjs",
+    "test:e2e": "npm run build && playwright test",
+    "test:qa": "vitest run tests/contracts tests/unit tests/integration && npm run test:portability && npm run test:e2e"
   },
   "dependencies": {
+    "@paper-design/shaders-react": "^0.0.72",
     "@use-gesture/react": "^10.3.1",
     "@xstate/react": "^5.0.2",
     "ajv": "^8.17.1",
@@ -38,15 +46,22 @@
     "yaml": "^2.6.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@playwright/test": "^1.58.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^6.0.1",
     "chokidar": "^4.0.3",
     "concurrently": "^9.1.2",
     "cross-env": "^7.0.3",
     "eslint": "^9.17.0",
     "eslint-config-next": "^15.0.0",
+    "jsdom": "^29.0.1",
     "prettier": "^3.4.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.2"
   }
 }

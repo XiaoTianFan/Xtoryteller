@@ -1,18 +1,20 @@
-'use client';
+﻿'use client';
 
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 import { createBuildPlan, getSequentialRevealCount, isComponentVisible } from '@/lib/runtime/build-plan';
+import { resolveRuntimeTransition } from '@/lib/runtime/primitive-resolver';
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
 import { LayoutRenderer } from '@/lib/runtime/renderers/layout-renderer';
+import { getStageSceneMotion } from '@/lib/runtime/transition-presets';
 import { BackgroundLayer } from '@/lib/runtime/ui/background-layer';
 import { LiveRegion } from '@/lib/runtime/ui/live-region';
 import { PresentationControls } from '@/lib/runtime/ui/presentation-controls';
 
 export function StageRenderer() {
   const router = useRouter();
-  const { presentation, machine } = usePresentationRuntime();
+  const { presentation, theme, machine } = usePresentationRuntime();
   const prefersReducedMotion = useReducedMotion();
   const step = presentation.steps?.[machine.state.context.currentStepIndex];
 
@@ -22,18 +24,23 @@ export function StageRenderer() {
 
   const buildPlan = createBuildPlan(step);
   const visibleEntries = buildPlan.filter((entry) => isComponentVisible(entry, machine.state.context.currentBuildIndex));
+  const sceneMotion = getStageSceneMotion(
+    resolveRuntimeTransition(presentation.meta.slug, step.transition),
+    theme,
+    Boolean(prefersReducedMotion)
+  );
 
   return (
-    <div className="viewerShell">
+    <main className="viewerShell">
       <BackgroundLayer />
       <AnimatePresence mode="wait">
         <motion.section
           key={`${presentation.meta.slug}-${machine.state.context.currentStepIndex}`}
           className="stepScene"
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={prefersReducedMotion ? {} : { opacity: 0, y: -18 }}
-          transition={{ duration: prefersReducedMotion ? 0.15 : 0.35 }}
+          initial={sceneMotion.initial}
+          animate={sceneMotion.animate}
+          exit={sceneMotion.exit}
+          transition={sceneMotion.transition}
         >
           <LayoutRenderer
             layout={step.layout}
@@ -57,6 +64,6 @@ export function StageRenderer() {
       <LiveRegion
         message={`Step ${machine.state.context.currentStepIndex + 1} of ${presentation.steps?.length ?? 0}: ${step.title ?? presentation.meta.title}`}
       />
-    </div>
+    </main>
   );
 }

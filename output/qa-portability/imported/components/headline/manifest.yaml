@@ -1,0 +1,18 @@
+name: headline
+displayName: Headline
+description: Large title text for step headings and section titles.
+category: basic-content
+content: true
+props:
+  level:
+    type: enum
+    values: [1, 2, 3]
+    default: 1
+    description: Heading level.
+  align:
+    type: enum
+    values: [left, center, right]
+    default: left
+    description: Text alignment.
+density:
+  recommendation: Use for primary slide headings.

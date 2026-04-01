@@ -1,7 +1,0 @@
-phase: 0
-name: Detect Intent
-rules:
-  - create-new-presentation: User provides content or asks to make a talk
-  - modify-presentation: User asks to edit an existing presentation
-  - create-component: User requests a missing visual primitive
-  - create-theme: User wants a new visual language

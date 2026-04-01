@@ -1,0 +1,76 @@
+{
+  "generatedAt": "2026-04-01T12:57:06.405Z",
+  "count": 10,
+  "transitions": [
+    {
+      "name": "blur",
+      "displayName": "Blur",
+      "description": "Focuses in from a soft blur.",
+      "category": "cinematic",
+      "feeling": "Reflective"
+    },
+    {
+      "name": "fade",
+      "displayName": "Fade",
+      "description": "Neutral fade transition.",
+      "category": "subtle",
+      "feeling": "Calm"
+    },
+    {
+      "name": "none",
+      "displayName": "None",
+      "description": "Instant switch with no motion.",
+      "category": "utility",
+      "feeling": "Instant"
+    },
+    {
+      "name": "scale",
+      "displayName": "Scale",
+      "description": "Subtle zoom-based emphasis.",
+      "category": "dramatic",
+      "feeling": "Focus"
+    },
+    {
+      "name": "scale-out",
+      "displayName": "Scale Out",
+      "description": "Pulls back into a wider frame.",
+      "category": "dramatic",
+      "feeling": "Expanding"
+    },
+    {
+      "name": "slide-down",
+      "displayName": "Slide Down",
+      "description": "Content descends into place.",
+      "category": "dynamic",
+      "feeling": "Grounding"
+    },
+    {
+      "name": "slide-left",
+      "displayName": "Slide Left",
+      "description": "Content advances from the right and exits left.",
+      "category": "dynamic",
+      "feeling": "Forward progression"
+    },
+    {
+      "name": "slide-right",
+      "displayName": "Slide Right",
+      "description": "Content moves rightward across the frame.",
+      "category": "dynamic",
+      "feeling": "Looking back"
+    },
+    {
+      "name": "slide-up",
+      "displayName": "Slide Up",
+      "description": "Content rises into view.",
+      "category": "dynamic",
+      "feeling": "Emergence"
+    },
+    {
+      "name": "wipe-left",
+      "displayName": "Wipe Left",
+      "description": "Hard-edge wipe from right to left.",
+      "category": "bold",
+      "feeling": "Decisive"
+    }
+  ]
+}

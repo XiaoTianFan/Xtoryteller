@@ -1,0 +1,16 @@
+meta:
+  title: Invalid Duplicate Step Id
+  slug: invalid-duplicate-step-id
+mode: stage
+theme: default
+steps:
+  - id: duplicate
+    layout: single-content
+    components:
+      - type: headline
+        content: First duplicate
+  - id: duplicate
+    layout: single-content
+    components:
+      - type: headline
+        content: Second duplicate

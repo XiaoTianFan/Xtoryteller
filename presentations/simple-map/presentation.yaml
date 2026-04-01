@@ -1,13 +1,13 @@
-meta:
-  title: Simple Map Example
+﻿meta:
+  title: Xtoryteller Simple Map Demo
   slug: simple-map
-  description: A minimal Map-mode presentation showing spatial clusters and guided navigation.
+  description: A compact canonical Map presentation showing how Xtoryteller uses clusters, diagrams, and guided navigation.
   author: Xtoryteller
-  tags: [map, demo, diagrams]
-  createdAt: 2026-03-31
-  updatedAt: 2026-03-31
+  tags: [map, demo, canonical, overview]
+  createdAt: '2026-03-31'
+  updatedAt: '2026-03-31'
 mode: map
-theme: default
+theme: xinimalist-paper
 background:
   type: paper
   colorStops:
@@ -15,14 +15,14 @@ background:
     - 'rgba(42, 108, 100, 0.16)'
     - 'rgba(141, 79, 45, 0.16)'
 canvas:
-  spacing: 360
-  initialZoom: 0.9
+  spacing: 380
+  initialZoom: 0.88
 navigation:
-  sequence: [overview, systems, synthesis]
+  sequence: [overview, philosophy, system-loop, mode-fit, synthesis]
 clusters:
   - id: overview
     title: Overview
-    description: A broad framing cluster.
+    description: The high-level framing cluster for the map runtime.
     group: intro
     layout: title-center
     anchor: { x: 0, y: 0 }
@@ -31,46 +31,90 @@ clusters:
         content: Map mode
         props: { align: center }
       - type: subtitle
-        content: Explore related clusters non-linearly or through a guided path.
+        content: Explore related ideas spatially, then guide people through them when you need a clear narrative path.
         props: { align: center }
-  - id: systems
-    title: Systems view
-    description: Diagram-rich content lives naturally in spatial mode.
+      - type: svg-graphic
+        props:
+          src: assets/hero.svg
+          alt: Abstract map-mode hero illustration
+  - id: philosophy
+    title: Why a map exists
+    description: Why spatial storytelling matters in this project.
+    group: intro
+    layout: sidebar-main
+    anchor:
+      relativeTo: overview
+      direction: right
+      distance: 660
+    components:
+      - type: callout
+        content: Map mode is for systems, relationships, workshops, and any story where *orientation* matters as much as sequence.
+        props:
+          title: Best fit
+          variant: important
+      - type: bullet-list
+        props:
+          items:
+            - Clusters preserve context instead of flattening everything into slides.
+            - Camera movement can explain relationships between ideas.
+            - Guided and free-roam modes support both presentation and exploration.
+  - id: system-loop
+    title: System loop
+    description: The compounding logic behind Xtoryteller.
     group: analysis
     layout: single-content
     anchor:
       relativeTo: overview
-      direction: right
-      distance: 620
+      direction: below
+      distance: 520
     components:
-      - type: causal-diagram
+      - type: mind-map
         props:
-          variables:
-            - { id: registry, label: Registry depth }
-            - { id: agent, label: Agent confidence }
-            - { id: quality, label: Presentation quality }
-          edges:
-            - { from: registry, to: agent, polarity: '+' }
-            - { from: agent, to: quality, polarity: '+' }
-            - { from: quality, to: registry, polarity: '+' }
+          root: { label: Xtoryteller }
+          branches:
+            - label: Agent skill surface
+            - label: YAML orchestration
+            - label: Reusable primitives
+            - label: Browser runtime
+            - label: Validation and portability
+  - id: mode-fit
+    title: Choosing the mode
+    description: The simplest mental model for when to use Stage vs Map.
+    group: analysis
+    layout: two-column
+    anchor:
+      relativeTo: philosophy
+      direction: below
+      distance: 520
+    components:
+      - type: body-text
+        content: |
+          Use **Stage** when the audience should move through a clearly ordered
+          story beat by beat. Use **Map** when the subject is a landscape,
+          network, architecture, system, or strategy space.
+      - type: spectrum-bar
+        props:
+          leftLabel: Linear
+          rightLabel: Exploratory
+          markers:
+            - { label: Launch talk, position: 0.18 }
+            - { label: Product walkthrough, position: 0.36 }
+            - { label: Architecture review, position: 0.68 }
+            - { label: Strategy workshop, position: 0.86 }
   - id: synthesis
     title: Synthesis
-    description: Pull ideas back into a composable frame.
+    description: Pull the map back into one memorable idea.
     group: synthesis
-    layout: sidebar-main
+    layout: single-content
     anchor:
-      relativeTo: systems
-      direction: below
-      distance: 460
+      relativeTo: system-loop
+      direction: right
+      distance: 660
     components:
-      - type: callout
-        content: Guided mode makes the map readable for an audience; free roam keeps it exploratory for workshops.
+      - type: blockquote
+        content: >-
+          The map is not a gimmick. It is a memory aid, a systems lens, and a
+          more honest way to present connected ideas.
         props:
-          title: Why both?
-          variant: info
-      - type: bullet-list
-        props:
-          items:
-            - Spatial memory improves orientation.
-            - Clusters can hold dense visual structures.
-            - Camera motion can explain relationships, not just sequence.
+          attribution: Xtoryteller framing
+

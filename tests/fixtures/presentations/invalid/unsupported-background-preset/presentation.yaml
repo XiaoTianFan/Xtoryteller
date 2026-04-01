@@ -1,0 +1,14 @@
+meta:
+  title: Unsupported Background Preset
+  slug: unsupported-background-preset
+mode: stage
+theme: default
+background:
+  type: paper-shader
+  shader: grain-gradient
+  preset: cinematic
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Invalid background preset

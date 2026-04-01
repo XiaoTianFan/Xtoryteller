@@ -1,5 +1,6 @@
-﻿import path from 'node:path';
+import path from 'node:path';
 
+import { generateRegistries } from './generate-registries.mjs';
 import {
   COMPONENTS_DIR,
   copyDirectory,
@@ -32,6 +33,9 @@ if ((await exists(targetPath)) && !options.force) {
 
 await ensureDir(COMPONENTS_DIR);
 await copyDirectory(sourcePath, targetPath);
+const counts = await generateRegistries();
 
 console.log(`Promoted ${componentName} from presentations/${slug}/components to components/${componentName}`);
-console.log('Run node scripts/generate-registries.mjs to refresh the skill registries.');
+console.log(
+  `Registries refreshed (${counts.components} components, ${counts.layouts} layouts, ${counts.transitions} transitions, ${counts.themes} themes).`
+);

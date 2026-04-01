@@ -1,0 +1,23 @@
+meta:
+  title: Local Runtime Overrides
+  slug: local-runtime-overrides
+mode: stage
+theme: default
+background:
+  type: paper-shader
+  shader: waves
+  stages:
+    - steps: [0, 0]
+      type: css
+      value: linear-gradient(180deg, #ffffff, #f2ede5)
+  transition:
+    duration: 640
+    easing: ease-in-out
+steps:
+  - id: intro
+    layout: scoped-layout
+    transition: scoped-transition
+    components:
+      - type: scoped-callout
+        content: Scoped primitives validate alongside global ones.
+        enter: scoped-transition
