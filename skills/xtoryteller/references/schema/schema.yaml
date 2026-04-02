@@ -18,6 +18,11 @@ stage:
             build: number | sequential | object?
             enter: string?
             exit: string?
+            position:
+              x: number?
+              y: number?
+              width: number?
+              height: number?
 map:
   requiredWhenModeIsMap:
     clusters:
@@ -36,6 +41,11 @@ map:
         components:
           - type: string
             props: object?
+            position:
+              x: number?
+              y: number?
+              width: number?
+              height: number?
     canvas:
       spacing: number?
       arrangement:

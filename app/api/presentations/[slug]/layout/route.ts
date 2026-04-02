@@ -2,17 +2,28 @@ import { NextResponse } from 'next/server';
 
 import {
   ClusterLayoutGeometry,
+  PresentationLayoutSavePayload,
   PresentationLayoutSaveError,
+  StageComponentLayoutGeometry,
   savePresentationLayoutBySlug
 } from '@/lib/engine/presentation-layout-save';
 
-function readClusterGeometry(payload: unknown): ClusterLayoutGeometry[] {
+function readLayoutPayload(payload: unknown): PresentationLayoutSavePayload {
   const clusters = (payload as { clusters?: ClusterLayoutGeometry[] } | null)?.clusters;
   if (!Array.isArray(clusters)) {
-    throw new PresentationLayoutSaveError(400, 'Request body must include a clusters array.');
+    const stepIndex = (payload as { stepIndex?: number } | null)?.stepIndex;
+    const components = (payload as { components?: StageComponentLayoutGeometry[] } | null)?.components;
+    if (Number.isInteger(stepIndex) && Array.isArray(components)) {
+      return {
+        stepIndex,
+        components
+      };
+    }
+
+    throw new PresentationLayoutSaveError(400, 'Request body must include either clusters or stepIndex/components layout data.');
   }
 
-  return clusters;
+  return { clusters };
 }
 
 export async function POST(
@@ -21,13 +32,21 @@ export async function POST(
 ) {
   try {
     const payload = await request.json().catch(() => null);
-    const clusters = readClusterGeometry(payload);
+    const layoutPayload = readLayoutPayload(payload);
     const { slug } = await params;
-    const result = await savePresentationLayoutBySlug(slug, clusters);
+    const result = await savePresentationLayoutBySlug(slug, layoutPayload);
+
+    if ('clusterCount' in result) {
+      return NextResponse.json({
+        updatedAt: result.updatedAt,
+        clusterCount: result.clusterCount
+      });
+    }
 
     return NextResponse.json({
       updatedAt: result.updatedAt,
-      clusterCount: result.clusterCount
+      stepIndex: result.stepIndex,
+      componentCount: result.componentCount
     });
   } catch (error) {
     if (error instanceof PresentationLayoutSaveError) {

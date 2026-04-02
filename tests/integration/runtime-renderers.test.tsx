@@ -124,6 +124,46 @@ describe('runtime renderers', () => {
     expect(screen.getByRole('heading', { name: 'Layout contract' })).toBeInTheDocument();
   });
 
+  it('honors explicit scattered item width and height geometry when provided', () => {
+    render(
+      createElement(
+        PresentationProvider,
+        { presentation: stagePresentation, theme: stageTheme },
+        createElement(LayoutRenderer, {
+          layout: 'scattered',
+          items: [
+            {
+              component: {
+                type: 'headline',
+                content: 'Pinned geometry',
+                position: {
+                  x: 0.12,
+                  y: 0.18,
+                  width: 0.4,
+                  height: 0.3
+                }
+              },
+              revealCount: 0
+            }
+          ]
+        })
+      )
+    );
+
+    const heading = screen.getByRole('heading', { name: 'Pinned geometry' });
+    let scatterItem = heading.parentElement as HTMLElement | null;
+    while (scatterItem && scatterItem.style.width !== '40%') {
+      scatterItem = scatterItem.parentElement as HTMLElement | null;
+    }
+
+    expect(scatterItem).toBeTruthy();
+    expect(scatterItem.style.left).toBe('12%');
+    expect(scatterItem.style.top).toBe('18%');
+    expect(scatterItem.style.width).toBe('40%');
+    expect(scatterItem.style.height).toBe('30%');
+    expect(scatterItem.style.transform).toBe('none');
+  });
+
   it('injects resolved theme variables and font assets into the DOM', () => {
     const presentation = {
       ...stagePresentation,

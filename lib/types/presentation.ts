@@ -10,6 +10,13 @@ export type ComponentBuildMode =
   | 'top-down'
   | { with: number };
 
+export interface ComponentPosition {
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+}
+
 export interface PresentationMeta {
   title: string;
   slug: string;
@@ -172,7 +179,7 @@ export interface ComponentInstance {
   enter?: string;
   exit?: string;
   annotations?: Record<string, string>;
-  position?: { x: number; y: number };
+  position?: ComponentPosition;
 }
 
 export interface StepDefinition {

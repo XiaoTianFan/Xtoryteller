@@ -7,6 +7,13 @@ import { useRouter } from 'next/navigation';
 import { resolveTheme } from '@/lib/engine/theme-resolver';
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
 
+export interface PresentationNavigationHandlers {
+  onRequestNext?: () => void;
+  onRequestPrev?: () => void;
+  onRequestGoToStep?: (stepIndex: number) => void;
+  onRequestExit?: () => void;
+}
+
 function isEditableTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
     return false;
@@ -118,12 +125,14 @@ function ViewerHotkeys({
   total,
   current,
   mapMode,
-  onToggleShortcuts
+  onToggleShortcuts,
+  navigationHandlers
 }: {
   total: number;
   current: number;
   mapMode: boolean;
   onToggleShortcuts: () => void;
+  navigationHandlers?: PresentationNavigationHandlers;
 }) {
   const router = useRouter();
   const { presentation, machine } = usePresentationRuntime();
@@ -297,7 +306,11 @@ function ViewerHotkeys({
         const requestedStep = pushDigit(event.key);
         const zeroBasedIndex = requestedStep === 0 ? 0 : requestedStep - 1;
         if (zeroBasedIndex >= 0 && zeroBasedIndex < total) {
-          machine.goToStep(zeroBasedIndex);
+          if (navigationHandlers?.onRequestGoToStep) {
+            navigationHandlers.onRequestGoToStep(zeroBasedIndex);
+          } else {
+            machine.goToStep(zeroBasedIndex);
+          }
         }
         return;
       }
@@ -308,23 +321,39 @@ function ViewerHotkeys({
         case ' ':
         case 'PageDown':
           event.preventDefault();
-          machine.next();
+          if (navigationHandlers?.onRequestNext) {
+            navigationHandlers.onRequestNext();
+          } else {
+            machine.next();
+          }
           return;
         case 'ArrowLeft':
         case 'ArrowUp':
         case 'PageUp':
           event.preventDefault();
-          machine.prev();
+          if (navigationHandlers?.onRequestPrev) {
+            navigationHandlers.onRequestPrev();
+          } else {
+            machine.prev();
+          }
           return;
         case 'Home':
           event.preventDefault();
           clearDigitBuffer();
-          machine.goToStep(0);
+          if (navigationHandlers?.onRequestGoToStep) {
+            navigationHandlers.onRequestGoToStep(0);
+          } else {
+            machine.goToStep(0);
+          }
           return;
         case 'End':
           event.preventDefault();
           clearDigitBuffer();
-          machine.goToStep(Math.max(0, total - 1));
+          if (navigationHandlers?.onRequestGoToStep) {
+            navigationHandlers.onRequestGoToStep(Math.max(0, total - 1));
+          } else {
+            machine.goToStep(Math.max(0, total - 1));
+          }
           return;
         case 'f':
         case 'F':
@@ -335,9 +364,17 @@ function ViewerHotkeys({
           event.preventDefault();
           clearDigitBuffer();
           if (current > 1 || machine.state.context.currentBuildIndex > 0) {
-            machine.goToStep(0);
+            if (navigationHandlers?.onRequestGoToStep) {
+              navigationHandlers.onRequestGoToStep(0);
+            } else {
+              machine.goToStep(0);
+            }
           } else {
-            router.push('/');
+            if (navigationHandlers?.onRequestExit) {
+              navigationHandlers.onRequestExit();
+            } else {
+              router.push('/');
+            }
           }
           return;
         default:
@@ -350,7 +387,7 @@ function ViewerHotkeys({
       window.removeEventListener('keydown', onKeyDown);
       clearDigitBuffer();
     };
-  }, [current, machine, mapMode, onToggleShortcuts, presentation, router, total]);
+  }, [current, machine, mapMode, navigationHandlers, onToggleShortcuts, presentation, router, total]);
 
   return null;
 }
@@ -360,13 +397,15 @@ export function PresentationControls({
   current,
   mapMode,
   sequence,
-  rightActions
+  rightActions,
+  navigationHandlers
 }: {
   total: number;
   current: number;
   mapMode?: boolean;
   sequence?: ReactNode;
   rightActions?: ReactNode;
+  navigationHandlers?: PresentationNavigationHandlers;
 }) {
   const { machine, theme } = usePresentationRuntime();
   const [showShortcuts, setShowShortcuts] = useState(false);
@@ -377,13 +416,37 @@ export function PresentationControls({
     () => resolveTheme(theme).cssVariables as CSSProperties,
     [theme]
   );
+  const requestGoToStep = (stepIndex: number) => {
+    if (navigationHandlers?.onRequestGoToStep) {
+      navigationHandlers.onRequestGoToStep(stepIndex);
+      return;
+    }
+
+    machine.goToStep(stepIndex);
+  };
+  const requestPrev = () => {
+    if (navigationHandlers?.onRequestPrev) {
+      navigationHandlers.onRequestPrev();
+      return;
+    }
+
+    machine.prev();
+  };
+  const requestNext = () => {
+    if (navigationHandlers?.onRequestNext) {
+      navigationHandlers.onRequestNext();
+      return;
+    }
+
+    machine.next();
+  };
 
   const jumpToProgressPosition = (clientX: number, element: HTMLElement) => {
     if (!canScrubSteps) {
       return;
     }
 
-    machine.goToStep(getStepIndexFromClientX(clientX, element, total));
+    requestGoToStep(getStepIndexFromClientX(clientX, element, total));
   };
 
   const onProgressKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
@@ -395,20 +458,20 @@ export function PresentationControls({
       case 'ArrowLeft':
       case 'ArrowDown':
         event.preventDefault();
-        machine.goToStep(clamp(current - 2, 0, total - 1));
+        requestGoToStep(clamp(current - 2, 0, total - 1));
         return;
       case 'ArrowRight':
       case 'ArrowUp':
         event.preventDefault();
-        machine.goToStep(clamp(current, 0, total - 1));
+        requestGoToStep(clamp(current, 0, total - 1));
         return;
       case 'Home':
         event.preventDefault();
-        machine.goToStep(0);
+        requestGoToStep(0);
         return;
       case 'End':
         event.preventDefault();
-        machine.goToStep(total - 1);
+        requestGoToStep(total - 1);
         return;
       default:
         return;
@@ -422,6 +485,7 @@ export function PresentationControls({
         current={current}
         mapMode={Boolean(mapMode)}
         onToggleShortcuts={() => setShowShortcuts((value) => !value)}
+        navigationHandlers={navigationHandlers}
       />
       <ShortcutOverlay open={showShortcuts} mapMode={Boolean(mapMode)} onClose={() => setShowShortcuts(false)} />
       <div className="viewerHud">
@@ -432,13 +496,13 @@ export function PresentationControls({
               {sequence ? sequence : null}
               <div className="viewerDockRow">
                 <div className="viewerDockPrimary">
-                  <button type="button" className="ghostButton" onClick={machine.prev}>
+                  <button type="button" className="ghostButton" onClick={requestPrev}>
                     Previous
                   </button>
                   <span className="progressMeta">
                     {unitLabel} {Math.max(current, 1)} / {total}
                   </span>
-                  <button type="button" className="ghostButton" onClick={machine.next}>
+                  <button type="button" className="ghostButton" onClick={requestNext}>
                     Next
                   </button>
                   <button

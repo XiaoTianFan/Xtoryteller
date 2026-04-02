@@ -67,4 +67,83 @@ describe('presentation layout save integration', () => {
     };
     expect(raw.clusters[1].anchor?.relativeTo).toBeUndefined();
   });
+
+  it('saves stage component geometry as scattered positions that still validate and reload', async () => {
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'xtoryteller-stage-layout-save-'));
+    const presentationDir = path.join(tempRoot, 'stage-layout-save');
+    const targetPath = path.join(presentationDir, 'presentation.yaml');
+
+    await fs.mkdir(presentationDir, { recursive: true });
+    await fs.writeFile(
+      targetPath,
+      `meta:
+  title: Stage save fixture
+  slug: stage-layout-save
+  updatedAt: '2026-01-10'
+mode: stage
+steps:
+  - id: intro
+    title: Intro
+    layout: two-column
+    layoutProps:
+      gap: 2rem
+      ratio: 60-40
+      width: 900
+    components:
+      - type: headline
+        content: Intro title
+      - type: body-text
+        content: Intro body
+`,
+      'utf8'
+    );
+
+    await savePresentationLayoutAtPath(
+      targetPath,
+      {
+        stepIndex: 0,
+        components: [
+          { index: 0, x: 0.08, y: 0.12, width: 0.36, height: 0.28 },
+          { index: 1, x: 0.54, y: 0.2, width: 0.26, height: 0.32 }
+        ]
+      },
+      {
+        now: new Date(2026, 3, 3, 12, 0, 0)
+      }
+    );
+
+    const validation = await validatePresentation(targetPath, {
+      report: false,
+      throwOnError: false
+    });
+    expect(validation.valid).toBe(true);
+
+    const saved = await parseYamlFile<PresentationConfig>(targetPath);
+    expect(saved.meta.updatedAt).toBe('2026-04-03');
+    expect(saved.steps?.[0].layout).toBe('scattered');
+    expect(saved.steps?.[0].layoutProps).toEqual({
+      gap: '2rem',
+      width: 900
+    });
+    expect(saved.steps?.[0].components[0].position).toEqual({
+      x: 0.08,
+      y: 0.12,
+      width: 0.36,
+      height: 0.28
+    });
+    expect(saved.steps?.[0].components[1].position).toEqual({
+      x: 0.54,
+      y: 0.2,
+      width: 0.26,
+      height: 0.32
+    });
+
+    const raw = YAML.parse(await fs.readFile(targetPath, 'utf8')) as {
+      steps: Array<{ layoutProps?: Record<string, unknown> }>;
+    };
+    expect(raw.steps[0].layoutProps).toEqual({
+      gap: '2rem',
+      width: 900
+    });
+  });
 });

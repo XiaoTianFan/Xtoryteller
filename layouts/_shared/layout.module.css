@@ -153,6 +153,16 @@
   transform: translate(-50%, -50%);
 }
 
+.scatterItemPinned {
+  display: flex;
+}
+
+.scatterItemPinned > * {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 100%;
+}
+
 .timelineLayout {
   position: relative;
   align-content: center;

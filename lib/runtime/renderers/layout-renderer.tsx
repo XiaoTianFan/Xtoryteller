@@ -15,12 +15,14 @@ export function LayoutRenderer({
   layout,
   layoutProps,
   items,
-  compact
+  compact,
+  disableMotion
 }: {
   layout: string;
   layoutProps?: Record<string, unknown>;
   items: { component: ComponentInstance; revealCount: number }[];
   compact?: boolean;
+  disableMotion?: boolean;
 }) {
   const { presentation, theme } = usePresentationRuntime();
   const prefersReducedMotion = useReducedMotion();
@@ -34,10 +36,24 @@ export function LayoutRenderer({
 
     return {
       component: item.component,
-      node: (
+      node: disableMotion ? (
+        <div
+          key={`${item.component.type}-${index}`}
+          className={hoverableTypes.has(item.component.type) ? 'layoutRevealCard' : 'layoutRevealItem'}
+          data-layout-item-index={index}
+        >
+          <ComponentRenderer
+            component={item.component}
+            revealCount={item.revealCount}
+            slug={presentation.meta.slug}
+            compact={compact}
+          />
+        </div>
+      ) : (
         <motion.div
           key={`${item.component.type}-${index}`}
           className={hoverableTypes.has(item.component.type) ? 'layoutRevealCard' : 'layoutRevealItem'}
+          data-layout-item-index={index}
           initial={motionConfig.initial}
           animate={motionConfig.animate}
           transition={motionConfig.transition}
