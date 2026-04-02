@@ -402,6 +402,7 @@ function normalizeGraph(props?: Record<string, unknown>): NormalizedGraph {
           stroke: variable.stroke,
           textColor: variable.textColor,
           fontSize: variable.fontSize,
+          order: variable.order,
           layoutOptions: variable.layoutOptions
         }));
 
