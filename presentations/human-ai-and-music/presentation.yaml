@@ -1,9 +1,10 @@
 meta:
   title: Human, AI, and Music
   slug: human-ai-and-music
-  description: A systems-thinking landscape map of generative AI's impact on music ecosystems, moving from extraction toward creative co-evolution.
+  description: A systems-thinking landscape map of generative AI's impact on music
+    ecosystems, moving from extraction toward creative co-evolution.
   author: Xtoryteller
-  tags: [map, ai, music, systems, transition-design]
+  tags: [ map, ai, music, systems, transition-design ]
   createdAt: '2026-04-02'
   updatedAt: '2026-04-02'
 mode: map
@@ -40,11 +41,12 @@ navigation:
 clusters:
   - id: overview
     title: Overview
-    description: The project reframes AI music as a system transition rather than a single legal or technical controversy.
+    description: The project reframes AI music as a system transition rather than a
+      single legal or technical controversy.
     group: intro
     layout: title-center
-    frame: { width: 760, height: 380 }
-    anchor: { x: 0, y: 0 }
+    frame: { width: 760, height: 539 }
+    anchor: { x: -47, y: -29 }
     components:
       - type: label
         content: Systems synthesis map
@@ -58,7 +60,8 @@ clusters:
           fontSize: clamp(4rem, 5.6vw, 5.8rem)
           lineHeight: 0.94
       - type: subtitle
-        content: From extractive AI monoculture toward a pluralistic music ecosystem built around provenance, consent, and co-evolution.
+        content: From extractive AI monoculture toward a pluralistic music ecosystem
+          built around provenance, consent, and co-evolution.
         props: { align: center }
         style:
           maxWidth: 40rem
@@ -67,11 +70,12 @@ clusters:
 
   - id: abstract
     title: Abstract
-    description: The core argument is that generative AI music disrupts the music system through interlocking feedback loops, not isolated incidents.
+    description: The core argument is that generative AI music disrupts the music
+      system through interlocking feedback loops, not isolated incidents.
     group: intro
     layout: stack
-    frame: { width: 700, height: 360 }
-    anchor: { x: 0, y: 470 }
+    frame: { width: 712, height: 360 }
+    anchor: { x: -2, y: 645 }
     components:
       - type: body-text
         content: |
@@ -91,11 +95,12 @@ clusters:
 
   - id: context-crisis
     title: Context
-    description: The context combines streaming precarity, dataset bias, artist identity strain, and slow-moving governance.
+    description: The context combines streaming precarity, dataset bias, artist
+      identity strain, and slow-moving governance.
     group: intro
     layout: stack
-    frame: { width: 720, height: 700 }
-    anchor: { x: 0, y: 900 }
+    frame: { width: 742, height: 1174 }
+    anchor: { x: -7, y: 1093 }
     components:
       - type: body-text
         content: |
@@ -126,9 +131,12 @@ clusters:
       - type: bullet-list
         props:
           items:
-            - "Economic context: platform economics were built for scarce human-speed production, not infinite synthetic output."
-            - "Cultural context: 94.8% Global North training bias makes non-Western traditions easier to erase digitally."
-            - "Political context: copyright, research, and likeness governance are all lagging behind commercial deployment."
+            - "Economic context: platform economics were built for scarce
+              human-speed production, not infinite synthetic output."
+            - "Cultural context: 94.8% Global North training bias makes
+              non-Western traditions easier to erase digitally."
+            - "Political context: copyright, research, and likeness governance
+              are all lagging behind commercial deployment."
         style:
           gap: 0.34rem
           lineHeight: 1.24
@@ -148,11 +156,12 @@ clusters:
 
   - id: research-approach
     title: Research Approach
-    description: The method moves from litany to structures, worldview, and myth to expose the deeper system logic around AI music.
+    description: The method moves from litany to structures, worldview, and myth to
+      expose the deeper system logic around AI music.
     group: method
     layout: stack
-    frame: { width: 660, height: 430 }
-    anchor: { x: 880, y: 0 }
+    frame: { width: 801, height: 483 }
+    anchor: { x: 843, y: 722 }
     components:
       - type: callout
         content: |
@@ -168,7 +177,8 @@ clusters:
       - type: bullet-list
         props:
           items:
-            - 9 semi-structured interviews across listeners, musicians, and MIR researchers.
+            - 9 semi-structured interviews across listeners, musicians, and MIR
+              researchers.
             - Iceberg prompts spanning litany, structures, worldview, and myths.
             - Causal loop mapping of reinforcing and balancing dynamics.
             - Three Horizons modeling for the 2025-2040 transition pathway.
@@ -178,11 +188,12 @@ clusters:
 
   - id: iceberg-questions
     title: Iceberg Questions
-    description: The method descends from visible events into hidden structures, value systems, and deep metaphors.
+    description: The method descends from visible events into hidden structures,
+      value systems, and deep metaphors.
     group: method
     layout: single-content
-    frame: { width: 980, height: 1080 }
-    anchor: { x: 680, y: 500 }
+    frame: { width: 980, height: 1420 }
+    anchor: { x: 734, y: 1248 }
     components:
       - type: iceberg-diagram
         props:
@@ -192,50 +203,91 @@ clusters:
             - depth: litany
               label: LITANY
               items:
-                - "Walk me through the last time you discovered a new song or artist you loved. Where did you find it, and what made you press play?"
-                - "Do you ever check who created a song you're listening to, or do you mostly focus on the vibe or playlist it's in?"
-                - "If I told you that some songs in your Chill Vibes or Focus Flow playlist were made entirely by AI, how would that make you feel?"
-                - "Can you describe a specific moment when you first felt AI music tools were affecting your career, positively or negatively?"
-                - "What are your musician peers saying about AI right now: panic, excitement, denial, adaptation?"
-                - "From your research perspective, what observable trends or case studies in AI-generated music have surprised you, things that didn't fit initial predictions?"
+                - "Walk me through the last time you discovered a new song or
+                  artist you loved. Where did you find it, and what made you
+                  press play?"
+                - "Do you ever check who created a song you're listening to, or
+                  do you mostly focus on the vibe or playlist it's in?"
+                - "If I told you that some songs in your Chill Vibes or Focus
+                  Flow playlist were made entirely by AI, how would that make
+                  you feel?"
+                - "Can you describe a specific moment when you first felt AI
+                  music tools were affecting your career, positively or
+                  negatively?"
+                - "What are your musician peers saying about AI right now:
+                  panic, excitement, denial, adaptation?"
+                - "From your research perspective, what observable trends or
+                  case studies in AI-generated music have surprised you, things
+                  that didn't fit initial predictions?"
             - depth: structures
               label: STRUCTURES & SYSTEMS
               items:
-                - "Do you listen to music differently than you did a couple of years ago, such as albums versus playlists or active versus background listening?"
-                - "Do you know how songs get recommended to you on Spotify or Apple Music? Do you trust the algorithm to understand your taste?"
-                - "Who do you think has the most power in the music industry today: labels, streaming platforms, tech companies like Google or Nvidia, or artists themselves?"
-                - "What percentage of your income comes from streaming versus other sources like live shows, sync, or teaching? Which has changed most dramatically in the past 3 years?"
-                - "Do you feel pressure to release music more frequently now than in the past? Where does that pressure come from?"
-                - "Who truly controls the infrastructure of music now: labels, platforms, cloud providers, or GPU manufacturers? How has power shifted?"
-                - "Is the streaming pro-rata royalty model sustainable in an age of infinite AI content, or does it need fundamental redesign?"
-                - "What are the key legal or policy questions being grappled with right now: training data consent, voice cloning rights, AI copyrightability?"
+                - "Do you listen to music differently than you did a couple of
+                  years ago, such as albums versus playlists or active versus
+                  background listening?"
+                - "Do you know how songs get recommended to you on Spotify or
+                  Apple Music? Do you trust the algorithm to understand your
+                  taste?"
+                - "Who do you think has the most power in the music industry
+                  today: labels, streaming platforms, tech companies like Google
+                  or Nvidia, or artists themselves?"
+                - "What percentage of your income comes from streaming versus
+                  other sources like live shows, sync, or teaching? Which has
+                  changed most dramatically in the past 3 years?"
+                - "Do you feel pressure to release music more frequently now
+                  than in the past? Where does that pressure come from?"
+                - "Who truly controls the infrastructure of music now: labels,
+                  platforms, cloud providers, or GPU manufacturers? How has
+                  power shifted?"
+                - "Is the streaming pro-rata royalty model sustainable in an age
+                  of infinite AI content, or does it need fundamental redesign?"
+                - "What are the key legal or policy questions being grappled
+                  with right now: training data consent, voice cloning rights,
+                  AI copyrightability?"
             - depth: worldview
               label: WORLDVIEW & VALUES
               items:
-                - "If a song was created entirely by AI but made you cry or gave you chills, would you value it less? Why or why not?"
-                - "What makes a song good to you: the technical skill, the emotional impact, the story behind it, or just how it makes you feel?"
-                - "What does being a musician mean to you at the deepest level: skill, expression, connection, identity, craft?"
-                - "If you used AI to create a track that became your biggest hit, would you feel proud or conflicted? Why?"
-                - "What paradigm shift do you see happening regarding the definition of authorship, creativity, or artistic value?"
-                - "Is the belief that human-made art is inherently more valuable than machine-made output a cultural construct or a psychological universal?"
+                - "If a song was created entirely by AI but made you cry or gave
+                  you chills, would you value it less? Why or why not?"
+                - "What makes a song good to you: the technical skill, the
+                  emotional impact, the story behind it, or just how it makes
+                  you feel?"
+                - "What does being a musician mean to you at the deepest level:
+                  skill, expression, connection, identity, craft?"
+                - "If you used AI to create a track that became your biggest
+                  hit, would you feel proud or conflicted? Why?"
+                - "What paradigm shift do you see happening regarding the
+                  definition of authorship, creativity, or artistic value?"
+                - "Is the belief that human-made art is inherently more valuable
+                  than machine-made output a cultural construct or a
+                  psychological universal?"
             - depth: myths
               label: DEEP MYTHS
               items:
-                - "If you had to describe music using a metaphor, what would it be: fuel for your day, a companion, a mirror, background noise, something else?"
-                - "How would you describe the music industry right now using a metaphor: a battlefield, a lottery, a garden, a factory, a collapsing building, something else?"
-                - "There's a myth that scarcity creates value. If AI shatters that by creating abundance, what new organizing principle might replace it?"
-                - "If music becomes post-scarce, infinitely abundant at near-zero cost, what does that reveal about the nature of art, labor, and meaning?"
+                - "If you had to describe music using a metaphor, what would it
+                  be: fuel for your day, a companion, a mirror, background
+                  noise, something else?"
+                - "How would you describe the music industry right now using a
+                  metaphor: a battlefield, a lottery, a garden, a factory, a
+                  collapsing building, something else?"
+                - "There's a myth that scarcity creates value. If AI shatters
+                  that by creating abundance, what new organizing principle
+                  might replace it?"
+                - "If music becomes post-scarce, infinitely abundant at
+                  near-zero cost, what does that reveal about the nature of art,
+                  labor, and meaning?"
 
   - id: system-dynamics
     title: System Dynamics
-    description: The diagnosis reads the merged graph as an interacting system of supply expansion, data concentration, attention capture, and emergent counterweights.
+    description: The diagnosis reads the merged graph as an interacting system of
+      supply expansion, data concentration, attention capture, and emergent
+      counterweights.
     group: diagnosis
     layout: two-column
-    frame: { width: 1600, height: 420 }
+    frame: { width: 1406, height: 420 }
     anchor:
-      relativeTo: ecosystem-loops
-      direction: below
-      distance: 110
+      x: 1677
+      y: 705
     components:
       - type: body-text
         content: |
@@ -261,11 +313,21 @@ clusters:
       - type: bullet-list
         props:
           items:
-            - "R2 Data concentration: Western-heavy datasets, stronger model performance, and higher usage reinforce each other and keep underrepresented traditions digitally marginal."
-            - "R1 Race to the Bottom: faster generation and lower barriers to entry expand uploads, dilute payouts, and intensify pressure on artists to produce more."
-            - "R3 Attention trap: once music supply becomes effectively infinite, the scarce resource shifts to attention, making algorithmic utility more valuable than depth or surprise."
-            - "B1 Regulatory Brake: lawsuits, compliance costs, and licensing fees can slow extractive scaling, but usually after infrastructure and habits are already in place."
-            - "B2 Authenticity Premium: fatigue with generic AI output can create demand for live, verified, and context-rich music that restores value outside stream-count logic."
+            - "R2 Data concentration: Western-heavy datasets, stronger model
+              performance, and higher usage reinforce each other and keep
+              underrepresented traditions digitally marginal."
+            - "R1 Race to the Bottom: faster generation and lower barriers to
+              entry expand uploads, dilute payouts, and intensify pressure on
+              artists to produce more."
+            - "R3 Attention trap: once music supply becomes effectively
+              infinite, the scarce resource shifts to attention, making
+              algorithmic utility more valuable than depth or surprise."
+            - "B1 Regulatory Brake: lawsuits, compliance costs, and licensing
+              fees can slow extractive scaling, but usually after infrastructure
+              and habits are already in place."
+            - "B2 Authenticity Premium: fatigue with generic AI output can
+              create demand for live, verified, and context-rich music that
+              restores value outside stream-count logic."
         style:
           gap: 0.34rem
           lineHeight: 1.24
@@ -273,11 +335,12 @@ clusters:
 
   - id: ecosystem-loops
     title: Merged Causal Graph
-    description: One integrated map of feedback loops, balancing forces, and relationship directions across the AI music ecosystem.
+    description: One integrated map of feedback loops, balancing forces, and
+      relationship directions across the AI music ecosystem.
     group: diagnosis
     layout: single-content
-    frame: { width: 1600, height: 1080 }
-    anchor: { x: 1600, y: 0 }
+    frame: { width: 2219, height: 756 }
+    anchor: { x: 850, y: -112 }
     components:
       - type: causal-diagram
         props:
@@ -742,11 +805,12 @@ clusters:
 
   - id: transition-map
     title: Transition Map
-    description: The Three Horizons frame translates diagnosis into a strategic transition between 2025 and 2040.
+    description: The Three Horizons frame translates diagnosis into a strategic
+      transition between 2025 and 2040.
     group: transition
     layout: single-content
-    frame: { width: 1600, height: 1080 }
-    anchor: { x: 3280, y: 0 }
+    frame: { width: 1822, height: 1167 }
+    anchor: { x: 3099, y: 351 }
     components:
       - type: three-horizons
         props:
@@ -758,88 +822,95 @@ clusters:
                 notes:
                   - label: Pro-Rata Streaming Royalty Model
                     detail: >-
-                      Paying per-stream when supply is infinite creates a "Tragedy of
-                      the Commons." The 0.003-0.005 cents per stream is already
-                      unsustainable for artists. As AI floods platforms with millions of
-                      tracks, payouts will approach zero. **Under strain:** Spotify's
-                      recent "1,000 stream threshold" is a desperate patch, not a
-                      solution. Must be replaced with quality-weighted or
-                      subscription-split models.
+                      Paying per-stream when supply is infinite creates a
+                      "Tragedy of the Commons." The 0.003-0.005 cents per stream
+                      is already unsustainable for artists. As AI floods
+                      platforms with millions of tracks, payouts will approach
+                      zero. **Under strain:** Spotify's recent "1,000 stream
+                      threshold" is a desperate patch, not a solution. Must be
+                      replaced with quality-weighted or subscription-split
+                      models.
                   - label: Unregulated Data Scraping for AI Training
                     detail: >-
-                      Current legal ambiguity ("Is training Fair Use?") allows companies
-                      to build billion-dollar models on uncompensated artist labor.
-                      **Evidence of failure:** RIAA lawsuits against Suno/Udio show this
-                      is untenable. Artists are organizing through class actions and
-                      boycotts. The system is forcing a legal reckoning it cannot avoid
-                      much longer.
+                      Current legal ambiguity ("Is training Fair Use?") allows
+                      companies to build billion-dollar models on uncompensated
+                      artist labor. **Evidence of failure:** RIAA lawsuits
+                      against Suno/Udio show this is untenable. Artists are
+                      organizing through class actions and boycotts. The system
+                      is forcing a legal reckoning it cannot avoid much longer.
                   - label: Opacity in Algorithmic Curation
                     detail: >-
-                      Streaming platforms do not disclose how playlists are curated or
-                      whether AI tracks are prioritized for lower licensing costs.
-                      **Under pressure:** EU Digital Services Act and AI Act rules are
-                      forcing transparency. Listeners are demanding to know what is
-                      human versus AI. Trust is eroding.
+                      Streaming platforms do not disclose how playlists are
+                      curated or whether AI tracks are prioritized for lower
+                      licensing costs. **Under pressure:** EU Digital Services
+                      Act and AI Act rules are forcing transparency. Listeners
+                      are demanding to know what is human versus AI. Trust is
+                      eroding.
                   - label: Western-Centric Training Data + Homogenization Loops
                     detail: >-
-                      94.8% Global North data creates a reinforcing loop: Western sounds
-                      lead to better AI performance, more Western adoption, and then
-                      even more Western data. **Failing:** UNESCO and Global South
-                      governments such as Brazil, India, and South Africa are calling
-                      this "Digital Colonialism." International pressure is mounting.
+                      94.8% Global North data creates a reinforcing loop:
+                      Western sounds lead to better AI performance, more Western
+                      adoption, and then even more Western data. **Failing:**
+                      UNESCO and Global South governments such as Brazil, India,
+                      and South Africa are calling this "Digital Colonialism."
+                      International pressure is mounting.
                   - label: Invisible Carbon Cost of AI Infrastructure
                     detail: >-
-                      Training large audio models consumes energy equivalent to months of
-                      household use, but those costs are externalized. **Strain:** EU
-                      climate regulations such as the Carbon Border Adjustment
-                      Mechanism will soon tax high-carbon digital services. This "free
-                      ride" is ending.
+                      Training large audio models consumes energy equivalent to
+                      months of household use, but those costs are externalized.
+                      **Strain:** EU climate regulations such as the Carbon
+                      Border Adjustment Mechanism will soon tax high-carbon
+                      digital services. This "free ride" is ending.
                   - label: Artist Identity as Sole Value Proposition
                     detail: >-
-                      The old model assumes people value an artist because of their
-                      unique story or genius. AI disrupts this by showing emotional
-                      impact can exist without human authorship. **Under pressure:**
-                      younger listeners increasingly do not care who made a track if it
-                      "slaps." The myth of the auteur is weakening.
+                      The old model assumes people value an artist because of
+                      their unique story or genius. AI disrupts this by showing
+                      emotional impact can exist without human authorship.
+                      **Under pressure:** younger listeners increasingly do not
+                      care who made a track if it "slaps." The myth of the
+                      auteur is weakening.
               - title: 4 - Elements of the Current System to Retain
                 notes:
                   - label: Copyright Law's Core Principles
                     detail: >-
-                      While copyright law is struggling with AI, its foundational values
-                      of attribution, consent, and compensation remain vital. Do not
-                      throw out the framework; update it. The ethics of "don't steal"
-                      still apply even if the technology is new.
+                      While copyright law is struggling with AI, its
+                      foundational values of attribution, consent, and
+                      compensation remain vital. Do not throw out the framework;
+                      update it. The ethics of "don't steal" still apply even if
+                      the technology is new.
                   - label: Performing Rights Organizations Infrastructure
                     detail: >-
-                      ASCAP, BMI, PRS, and related PROs already have global networks
-                      for tracking and distributing royalties. Do not rebuild from
-                      scratch. Extend their mandate to cover AI-generated works and
-                      training-data usage. They are imperfect but functional.
+                      ASCAP, BMI, PRS, and related PROs already have global
+                      networks for tracking and distributing royalties. Do not
+                      rebuild from scratch. Extend their mandate to cover
+                      AI-generated works and training-data usage. They are
+                      imperfect but functional.
                   - label: Live Music Ecosystem
                     detail: >-
-                      AI cannot replicate physical presence. The infrastructure of
-                      concerts, venues, sound engineers, and tour managers is
-                      irreplaceable. **Retain and protect:** subsidize live venues,
-                      fund local scenes, and ensure visa access for touring musicians.
-                      This is the authenticity anchor.
+                      AI cannot replicate physical presence. The infrastructure
+                      of concerts, venues, sound engineers, and tour managers is
+                      irreplaceable. **Retain and protect:** subsidize live
+                      venues, fund local scenes, and ensure visa access for
+                      touring musicians. This is the authenticity anchor.
                   - label: Community Music Education
                     detail: >-
-                      Human-to-human teaching preserves the "why" behind music through
-                      cultural context and emotional expression. Even if AI can
-                      generate technically, education ensures humans understand what
-                      they are generating. Keep public music programs funded.
+                      Human-to-human teaching preserves the "why" behind music
+                      through cultural context and emotional expression. Even if
+                      AI can generate technically, education ensures humans
+                      understand what they are generating. Keep public music
+                      programs funded.
                   - label: Open-Source AI Research Culture
                     detail: >-
-                      The academic tradition of publishing methodologies and sharing
-                      code is crucial for transparency and Global South access.
-                      Commercialization is fine, but the knowledge commons must remain
-                      open.
+                      The academic tradition of publishing methodologies and
+                      sharing code is crucial for transparency and Global South
+                      access. Commercialization is fine, but the knowledge
+                      commons must remain open.
                   - label: Metadata Standards
                     detail: >-
-                      Decades of work on ID3 tags, ISRC codes, and MusicBrainz should
-                      not be discarded. Extend these systems with fields such as
-                      "Generation Method" and "Training Provenance." The infrastructure
-                      exists; it just needs new fields.
+                      Decades of work on ID3 tags, ISRC codes, and MusicBrainz
+                      should not be discarded. Extend these systems with fields
+                      such as "Generation Method" and "Training Provenance." The
+                      infrastructure exists; it just needs new fields.
           horizon2:
             label: Horizon 2
             color: var(--color-primary)
@@ -848,97 +919,108 @@ clusters:
                 notes:
                   - label: Human Music Certification Labels
                     detail: >-
-                      Launch "100% Human Made" badges like organic food labels on
-                      streaming platforms. It is imperfect because it begins as
-                      voluntary, but it creates market segmentation immediately without
-                      waiting for regulation. It builds consumer awareness and pressures
-                      platforms to standardize later.
+                      Launch "100% Human Made" badges like organic food labels
+                      on streaming platforms. It is imperfect because it begins
+                      as voluntary, but it creates market segmentation
+                      immediately without waiting for regulation. It builds
+                      consumer awareness and pressures platforms to standardize
+                      later.
                   - label: Two-Tier Royalty Systems
                     detail: >-
                       Platforms pay differently for "professional" music versus
-                      functional AI-generated loops. It is imperfect because someone
-                      must decide quality, but it buys time for deeper reforms and
-                      signals that not all streams are equal.
+                      functional AI-generated loops. It is imperfect because
+                      someone must decide quality, but it buys time for deeper
+                      reforms and signals that not all streams are equal.
                   - label: Mandatory AI Disclosure in Sync Licensing
                     detail: >-
-                      Require TV, film, and ad agencies to label AI music in credits.
-                      It is not the end goal because disclosure should be broader, but
-                      sync licensing can move faster than consumer streaming. It sets a
-                      precedent and proves feasibility.
+                      Require TV, film, and ad agencies to label AI music in
+                      credits. It is not the end goal because disclosure should
+                      be broader, but sync licensing can move faster than
+                      consumer streaming. It sets a precedent and proves
+                      feasibility.
                   - label: Carbon Offset Programs for AI Companies
                     detail: >-
-                      AI companies purchase carbon credits to "neutralize" training
-                      emissions. **Imperfect:** offsets do not reduce actual usage. But
-                      they make energy cost visible, fund renewable projects, and build
-                      accountability infrastructure on the path to mandatory efficiency
+                      AI companies purchase carbon credits to "neutralize"
+                      training emissions. **Imperfect:** offsets do not reduce
+                      actual usage. But they make energy cost visible, fund
+                      renewable projects, and build accountability
+                      infrastructure on the path to mandatory efficiency
                       standards.
                   - label: Licensing Co-Ops for Training Data
                     detail: >-
-                      Musicians join collectives, similar to stock photo agencies, that
-                      negotiate bulk licensing with AI companies. It is still
-                      extractive, but it gives artists collective bargaining power and
-                      proves the economic viability of consent-based training.
+                      Musicians join collectives, similar to stock photo
+                      agencies, that negotiate bulk licensing with AI companies.
+                      It is still extractive, but it gives artists collective
+                      bargaining power and proves the economic viability of
+                      consent-based training.
                   - label: University-Led Global Music Archive Projects
                     detail: >-
-                      Academic institutions digitize Global South music traditions for
-                      research. This should eventually be community-led, but
-                      universities have funding and infrastructure now. It breaks the
-                      Western data monopoly while better governance is still forming.
+                      Academic institutions digitize Global South music
+                      traditions for research. This should eventually be
+                      community-led, but universities have funding and
+                      infrastructure now. It breaks the Western data monopoly
+                      while better governance is still forming.
                   - label: Blockchain Royalty Tracking Pilots
                     detail: >-
-                      Use blockchain for transparent micro-payments whenever AI uses
-                      training data. **Imperfect:** blockchain is energy-intensive and
-                      overhyped. But it demonstrates the technical feasibility of
-                      real-time attribution at scale before moving to more efficient
-                      databases.
+                      Use blockchain for transparent micro-payments whenever AI
+                      uses training data. **Imperfect:** blockchain is
+                      energy-intensive and overhyped. But it demonstrates the
+                      technical feasibility of real-time attribution at scale
+                      before moving to more efficient databases.
               - title: 6 - Elements of the Current System to Repurpose
                 notes:
                   - label: Repurpose PROs (ASCAP/BMI) as AI Training Registries
                     detail: >-
                       Current function: track public performances and distribute
-                      royalties. **New use:** expand the mandate to track when songs are
-                      used in training datasets and distribute "Training Royalties."
-                      Leverage existing global networks, legal authority, and trust. No
-                      need to build new institutions; extend the existing ones.
+                      royalties. **New use:** expand the mandate to track when
+                      songs are used in training datasets and distribute
+                      "Training Royalties." Leverage existing global networks,
+                      legal authority, and trust. No need to build new
+                      institutions; extend the existing ones.
                   - label: Redirect Streaming Discovery Budgets
                     detail: >-
                       Platforms already spend millions on algorithmic discovery.
-                      **Repurpose:** allocate 20% of that budget to human A&R scouts,
-                      local scene grants, and emerging artist residencies. Use existing
-                      artist-development infrastructure differently to balance machine
-                      discovery with human curation.
+                      **Repurpose:** allocate 20% of that budget to human A&R
+                      scouts, local scene grants, and emerging artist
+                      residencies. Use existing artist-development
+                      infrastructure differently to balance machine discovery
+                      with human curation.
                   - label: Convert GPU Compute Clusters to Public AI Infrastructure
                     detail: >-
-                      Repurpose idle compute time for Global South model fine-tuning,
-                      academic research, and climate modeling instead of only
-                      profit-driven generative AI. The model is closer to distributed
-                      public computing, with tax credits rewarding compute philanthropy.
+                      Repurpose idle compute time for Global South model
+                      fine-tuning, academic research, and climate modeling
+                      instead of only profit-driven generative AI. The model is
+                      closer to distributed public computing, with tax credits
+                      rewarding compute philanthropy.
                   - label: Transform Music Journalism into Context Labor
                     detail: >-
-                      Music critics currently review albums for low pay and shrinking
-                      audiences. **Repurpose:** critics become "Meaning Curators" paid
-                      to explain the why behind music through context, analysis, and
-                      cultural history. That turns causal reasoning into recognized
-                      labor.
+                      Music critics currently review albums for low pay and
+                      shrinking audiences. **Repurpose:** critics become
+                      "Meaning Curators" paid to explain the why behind music
+                      through context, analysis, and cultural history. That
+                      turns causal reasoning into recognized labor.
                   - label: Reframe Copyright Lawsuits as System Design Negotiations
                     detail: >-
-                      The current RIAA versus Suno/Udio dynamic is adversarial and
-                      zero-sum. **Repurpose:** use court-mandated mediation to force
-                      design workshops among labels, AI companies, artists, and
-                      academics. Legal pressure becomes a collaboration mechanism.
+                      The current RIAA versus Suno/Udio dynamic is adversarial
+                      and zero-sum. **Repurpose:** use court-mandated mediation
+                      to force design workshops among labels, AI companies,
+                      artists, and academics. Legal pressure becomes a
+                      collaboration mechanism.
                   - label: Leverage Music Technology Companies as Ethics Certifiers
                     detail: >-
-                      Ableton, Native Instruments, and Splice already reach millions of
-                      creators. **Repurpose:** let them certify "Ethical AI Tools" so
-                      only plugins trained on consent-based datasets earn verified
-                      badges. Existing distribution channels can enforce new norms.
+                      Ableton, Native Instruments, and Splice already reach
+                      millions of creators. **Repurpose:** let them certify
+                      "Ethical AI Tools" so only plugins trained on
+                      consent-based datasets earn verified badges. Existing
+                      distribution channels can enforce new norms.
                   - label: Turn TikTok and Social Media into Cultural Amplifiers
                     detail: >-
-                      Social platforms currently reward viral AI loops and memes.
-                      **Repurpose:** require a share of recommendation space to feature
-                      human-made music from underrepresented regions, backed by public
-                      incentives or market-access rules. The recommendation machinery is
-                      reused for equity rather than extraction.
+                      Social platforms currently reward viral AI loops and
+                      memes. **Repurpose:** require a share of recommendation
+                      space to feature human-made music from underrepresented
+                      regions, backed by public incentives or market-access
+                      rules. The recommendation machinery is reused for equity
+                      rather than extraction.
           horizon3:
             label: Horizon 3
             color: var(--color-success)
@@ -947,86 +1029,94 @@ clusters:
                 notes:
                   - label: Pluralistic Music Ecosystem with Co-Existence Architecture
                     detail: >-
-                      Music creation exists on a spectrum from pure human to human-AI
-                      collaboration to pure AI, with transparent labeling such as
-                      "Human Certified," "AI-Assisted," and "Fully Synthetic."
-                      Listeners choose based on context. Human music serves emotional
-                      connection, AI serves functional uses, and both are valued
-                      differently but compensated fairly.
+                      Music creation exists on a spectrum from pure human to
+                      human-AI collaboration to pure AI, with transparent
+                      labeling such as "Human Certified," "AI-Assisted," and
+                      "Fully Synthetic." Listeners choose based on context.
+                      Human music serves emotional connection, AI serves
+                      functional uses, and both are valued differently but
+                      compensated fairly.
                   - label: Representational Parity in Global Music Data
                     detail: >-
-                      The 94.8% Western bias is reversed. Training datasets reach a
-                      Global North and Global South balance through UNESCO-funded
-                      digitization. Maqam, Hindustani classical, West African
-                      polyrhythms, and Indigenous traditions become first-class
-                      citizens, with mandatory cultural provenance metadata and royalty
-                      flows back to source communities.
+                      The 94.8% Western bias is reversed. Training datasets
+                      reach a Global North and Global South balance through
+                      UNESCO-funded digitization. Maqam, Hindustani classical,
+                      West African polyrhythms, and Indigenous traditions become
+                      first-class citizens, with mandatory cultural provenance
+                      metadata and royalty flows back to source communities.
                   - label: Post-Scarcity Value System Based on Meaning Labor
                     detail: >-
-                      With music reproduction costs near zero, value shifts to causal
-                      reasoning, cultural context, and live presence. Artists are paid
-                      for teaching, contextualizing, and performing rather than only for
-                      streams. A global Cultural UBI supplements income and recognizes
-                      music as a public good.
+                      With music reproduction costs near zero, value shifts to
+                      causal reasoning, cultural context, and live presence.
+                      Artists are paid for teaching, contextualizing, and
+                      performing rather than only for streams. A global Cultural
+                      UBI supplements income and recognizes music as a public
+                      good.
                   - label: Net-Zero Music Infrastructure
                     detail: >-
                       Major streaming platforms and AI companies operate on 100%
                       renewable energy. Compute efficiency becomes a competitive
-                      advantage. A carbon label appears on every AI-generated track, and
-                      data centers are co-located with renewable sources while excess
-                      compute supports climate research.
+                      advantage. A carbon label appears on every AI-generated
+                      track, and data centers are co-located with renewable
+                      sources while excess compute supports climate research.
                   - label: Consent-First AI Training Economy
                     detail: >-
-                      Artists control their data through a federated "Creative Commons
-                      for AI" registry. Opt-in creators receive micro-royalties whenever
-                      their style influences a generation. "No Training Without
-                      Compensation" becomes international law, turning passive AI
-                      licensing into a real income stream without blocking research.
+                      Artists control their data through a federated "Creative
+                      Commons for AI" registry. Opt-in creators receive
+                      micro-royalties whenever their style influences a
+                      generation. "No Training Without Compensation" becomes
+                      international law, turning passive AI licensing into a
+                      real income stream without blocking research.
               - title: 2 - Pockets of the Future in the Present
                 notes:
                   - label: Holly+ and Ethical Voice Models
                     detail: >-
-                      Artist Holly Herndon released Holly+, an AI model of her voice
-                      trained with explicit consent. Anyone can use it, but revenues
-                      flow back to her. It prefigures a consent-first economy where
-                      artists are active partners in AI rather than passive victims.
+                      Artist Holly Herndon released Holly+, an AI model of her
+                      voice trained with explicit consent. Anyone can use it,
+                      but revenues flow back to her. It prefigures a
+                      consent-first economy where artists are active partners in
+                      AI rather than passive victims.
                   - label: Spawning.ai's Have I Been Trained? Tool
                     detail: >-
-                      Artists can search whether their work appears in major training
-                      sets and opt out. It has already been used by tens of thousands of
-                      creators, showing strong demand for data-sovereignty tools and
-                      proving that transparency infrastructure can scale.
+                      Artists can search whether their work appears in major
+                      training sets and opt out. It has already been used by
+                      tens of thousands of creators, showing strong demand for
+                      data-sovereignty tools and proving that transparency
+                      infrastructure can scale.
                   - label: Bandcamp Fridays and Direct-to-Fan Models
                     detail: >-
-                      The platform waives fees one day each month so all revenue goes to
-                      artists. Fans consciously choose to support humans, and revenue
-                      spikes show a willingness to pay a premium for known human origin.
-                      This demonstrates an authenticity-premium niche.
+                      The platform waives fees one day each month so all revenue
+                      goes to artists. Fans consciously choose to support
+                      humans, and revenue spikes show a willingness to pay a
+                      premium for known human origin. This demonstrates an
+                      authenticity-premium niche.
                   - label: Parameter-Efficient Fine-Tuning Projects
                     detail: >-
-                      Researchers are showing that non-Western music traditions such as
-                      Maqam and Raga can be integrated without retraining entire models.
-                      This proves the technical feasibility of cultural fine-tuning at
-                      scale and weakens the assumption that AI must remain Western by
-                      default.
+                      Researchers are showing that non-Western music traditions
+                      such as Maqam and Raga can be integrated without
+                      retraining entire models. This proves the technical
+                      feasibility of cultural fine-tuning at scale and weakens
+                      the assumption that AI must remain Western by default.
                   - label: C2PA Content Provenance Standard
                     detail: >-
-                      Adobe, Microsoft, BBC, and others are developing cryptographic
-                      origin labels for media. If adopted for music, C2PA provides the
-                      backbone for human certification and transparent provenance without
-                      requiring government enforcement first.
+                      Adobe, Microsoft, BBC, and others are developing
+                      cryptographic origin labels for media. If adopted for
+                      music, C2PA provides the backbone for human certification
+                      and transparent provenance without requiring government
+                      enforcement first.
                   - label: Green AI Research Movement
                     detail: >-
-                      Research on energy and policy for deep learning established carbon
-                      tracking norms, and groups such as Hugging Face now publish model
-                      carbon costs. Academic pressure is already shifting expectations
-                      around energy accountability.
+                      Research on energy and policy for deep learning
+                      established carbon tracking norms, and groups such as
+                      Hugging Face now publish model carbon costs. Academic
+                      pressure is already shifting expectations around energy
+                      accountability.
                   - label: The ELVIS Act
                     detail: >-
-                      Tennessee's 2024 ELVIS Act protects voice as property. It shows
-                      the legal regime is beginning to catch up, and if similar rules
-                      spread federally and internationally, they can underpin a real
-                      voice-rights economy.
+                      Tennessee's 2024 ELVIS Act protects voice as property. It
+                      shows the legal regime is beginning to catch up, and if
+                      similar rules spread federally and internationally, they
+                      can underpin a real voice-rights economy.
           timeLabels:
             start: 2025
             mid: 2030
@@ -1034,17 +1124,20 @@ clusters:
 
   - id: h1-under-pressure
     title: Horizon 1
-    description: The current regime remains dominant, but its legitimacy and resilience are declining.
+    description: The current regime remains dominant, but its legitimacy and
+      resilience are declining.
     group: transition
     layout: stack
     frame: { width: 560, height: 280 }
-    anchor: { x: 4940, y: 0 }
+    anchor: { x: 3133, y: 12 }
     components:
       - type: bullet-list
         props:
           items:
-            - "Declining concerns: pro-rata royalties, opaque curation, uncompensated training, Western data lock-in."
-            - "Retain and adapt: attribution, consent, PRO infrastructure, live performance ecosystems, open research norms."
+            - "Declining concerns: pro-rata royalties, opaque curation,
+              uncompensated training, Western data lock-in."
+            - "Retain and adapt: attribution, consent, PRO infrastructure, live
+              performance ecosystems, open research norms."
         style:
           gap: 0.34rem
           lineHeight: 1.28
@@ -1055,7 +1148,7 @@ clusters:
     group: transition
     layout: stack
     frame: { width: 560, height: 330 }
-    anchor: { x: 4940, y: 360 }
+    anchor: { x: 3742, y: 9 }
     components:
       - type: body-text
         content: |
@@ -1068,36 +1161,42 @@ clusters:
           items:
             - Voluntary Human Certified labels and sync disclosure.
             - Artist licensing co-ops and AI training registries.
-            - Carbon reporting and offset schemes as stepping stones to harder standards.
+            - Carbon reporting and offset schemes as stepping stones to harder
+              standards.
         style:
           gap: 0.34rem
           lineHeight: 1.28
 
   - id: h3-future
     title: Horizon 3
-    description: The desired future is co-existence architecture, not anti-technology nostalgia.
+    description: The desired future is co-existence architecture, not
+      anti-technology nostalgia.
     group: transition
     layout: stack
     frame: { width: 560, height: 320 }
-    anchor: { x: 4940, y: 760 }
+    anchor: { x: 4353, y: 10 }
     components:
       - type: bullet-list
         props:
           items:
-            - Provenance, compensation, and diversity shape the rules of coexistence.
-            - Pockets of the future already exist in Holly+, Spawning.ai, C2PA, Bandcamp Fridays, and PEFT diversity research.
-            - Long-term value shifts toward context, meaning labor, and renewable compute.
+            - Provenance, compensation, and diversity shape the rules of
+              coexistence.
+            - Pockets of the future already exist in Holly+, Spawning.ai, C2PA,
+              Bandcamp Fridays, and PEFT diversity research.
+            - Long-term value shifts toward context, meaning labor, and
+              renewable compute.
         style:
           gap: 0.34rem
           lineHeight: 1.28
 
   - id: critical-insights
     title: Seven Critical Insights
-    description: The synthesis points toward infrastructural and cultural leverage points rather than purely aesthetic fixes.
+    description: The synthesis points toward infrastructural and cultural leverage
+      points rather than purely aesthetic fixes.
     group: action
     layout: two-column
-    frame: { width: 1020, height: 330 }
-    anchor: { x: 1730, y: 1670 }
+    frame: { width: 1192, height: 330 }
+    anchor: { x: 1798, y: 1193 }
     components:
       - type: bullet-list
         props:
@@ -1113,7 +1212,8 @@ clusters:
       - type: bullet-list
         props:
           items:
-            - Authenticity is socially constructed but still economically consequential.
+            - Authenticity is socially constructed but still economically
+              consequential.
             - Voluntary markets often prefigure later regulation.
             - The system will not self-correct without coordinated intervention.
         style:
@@ -1123,11 +1223,12 @@ clusters:
 
   - id: roadmap-musicians
     title: Roadmap for Musicians
-    description: Artists need collective leverage, transparent tools, and diversified value beyond streaming.
+    description: Artists need collective leverage, transparent tools, and
+      diversified value beyond streaming.
     group: action
     layout: single-content
     frame: { width: 680, height: 560 }
-    anchor: { x: 820, y: 2140 }
+    anchor: { x: 1744, y: 1646 }
     components:
       - type: timeline
         props:
@@ -1135,21 +1236,25 @@ clusters:
           events:
             - date: 2025-2027
               title: Short term
-              description: Join data co-ops, track scraping, adopt provenance badges, and reduce dependence on streaming-only income.
+              description: Join data co-ops, track scraping, adopt provenance badges, and
+                reduce dependence on streaming-only income.
             - date: 2028-2032
               title: Medium term
-              description: Support training-rights legislation, build guild norms, and fund cross-regional cultural dataset work.
+              description: Support training-rights legislation, build guild norms, and fund
+                cross-regional cultural dataset work.
             - date: 2033-2040
               title: Long term
-              description: Shift toward meaning labor, governance participation, and cultural public-good models.
+              description: Shift toward meaning labor, governance participation, and cultural
+                public-good models.
 
   - id: roadmap-platforms
     title: Roadmap for Platforms
-    description: Platforms and toolmakers need to redesign for co-evolution rather than extraction and opacity.
+    description: Platforms and toolmakers need to redesign for co-evolution rather
+      than extraction and opacity.
     group: action
     layout: single-content
     frame: { width: 680, height: 560 }
-    anchor: { x: 1870, y: 2140 }
+    anchor: { x: 2558, y: 1648 }
     components:
       - type: timeline
         props:
@@ -1157,21 +1262,25 @@ clusters:
           events:
             - date: 2025-2027
               title: Short term
-              description: Add mandatory AI disclosure, publish transparency reports, and pilot alternatives to pure stream-count payouts.
+              description: Add mandatory AI disclosure, publish transparency reports, and
+                pilot alternatives to pure stream-count payouts.
             - date: 2028-2032
               title: Medium term
-              description: Integrate provenance standards, fund human creator development, and reward diversity and context more explicitly.
+              description: Integrate provenance standards, fund human creator development, and
+                reward diversity and context more explicitly.
             - date: 2033-2040
               title: Long term
-              description: Operate as stewards of a musical commons with parity metrics, shared governance, and renewable infrastructure.
+              description: Operate as stewards of a musical commons with parity metrics,
+                shared governance, and renewable infrastructure.
 
   - id: roadmap-policy
     title: Roadmap for Policymakers
-    description: Public institutions can create the enabling conditions for consent, research, diversity, and sustainable infrastructure.
+    description: Public institutions can create the enabling conditions for consent,
+      research, diversity, and sustainable infrastructure.
     group: action
     layout: single-content
     frame: { width: 680, height: 560 }
-    anchor: { x: 2920, y: 2140 }
+    anchor: { x: 3371, y: 1651 }
     components:
       - type: timeline
         props:
@@ -1179,10 +1288,13 @@ clusters:
           events:
             - date: 2025-2027
               title: Short term
-              description: Pass Right to Research protections, extend training rights, fund Global South digitization, and require carbon reporting.
+              description: Pass Right to Research protections, extend training rights, fund
+                Global South digitization, and require carbon reporting.
             - date: 2028-2032
               title: Medium term
-              description: Build international AI music governance standards, subsidize public compute, and test Cultural UBI pilots.
+              description: Build international AI music governance standards, subsidize public
+                compute, and test Cultural UBI pilots.
             - date: 2033-2040
               title: Long term
-              description: Enforce representational parity in public deployments and protect endangered musical traditions as digital heritage.
+              description: Enforce representational parity in public deployments and protect
+                endangered musical traditions as digital heritage.
