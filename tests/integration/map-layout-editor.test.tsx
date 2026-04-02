@@ -55,7 +55,7 @@ describe('map layout editor', () => {
   const fetchMock = vi.fn<typeof fetch>();
 
   beforeAll(async () => {
-    mapPresentation = await loadPresentationBySlug('simple-map');
+    mapPresentation = await loadPresentationBySlug('human-ai-and-music');
     mapTheme = await loadThemeWithFallback(mapPresentation.theme).then((result) => result.theme);
     humanAiPresentation = await loadPresentationBySlug('human-ai-and-music');
     humanAiTheme = await loadThemeWithFallback(humanAiPresentation.theme).then((result) => result.theme);
@@ -92,7 +92,7 @@ describe('map layout editor', () => {
     expect(saveButton).toBeDisabled();
 
     const overviewCluster = screen.getByRole('button', {
-      name: /Overview\. The high-level framing cluster for the map runtime\./i
+      name: /Overview\. The project reframes AI music as a system transition/i
     });
 
     fireEvent.click(overviewCluster);
@@ -136,7 +136,7 @@ describe('map layout editor', () => {
     });
 
     const [url, options] = fetchMock.mock.calls[0];
-    expect(url).toBe('/api/presentations/simple-map/layout');
+    expect(url).toBe('/api/presentations/human-ai-and-music/layout');
     expect(options?.method).toBe('POST');
 
     const payload = JSON.parse(String(options?.body)) as {

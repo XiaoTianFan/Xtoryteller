@@ -41,7 +41,7 @@ The system combines:
 - **Validation tooling** for presentations, themes, runtime parity, density guidance, and asset references
 - **Portability tooling** for export, import, and promotion of presentation-scoped components
 - **Canonical agent skill package** under `skills/xtoryteller/`
-- **Four canonical demos**: `simple-stage`, `simple-map`, `complex-stage`, and `complex-map`
+- **Canonical demos**: `human-ai-and-music-insight-brief` (stage) and `human-ai-and-music` (map)
 
 ## Architecture Overview
 

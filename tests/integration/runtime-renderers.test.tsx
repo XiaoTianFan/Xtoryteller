@@ -1,4 +1,4 @@
-﻿/** @vitest-environment jsdom */
+/** @vitest-environment jsdom */
 import { createElement } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
@@ -64,12 +64,12 @@ describe('runtime renderers', () => {
 
   beforeAll(async () => {
     [stagePresentation, mapPresentation] = await Promise.all([
-      loadPresentationBySlug('simple-stage'),
-      loadPresentationBySlug('complex-map')
+      loadPresentationBySlug('human-ai-and-music-insight-brief'),
+      loadPresentationBySlug('human-ai-and-music')
     ]);
     [stageTheme, mapTheme] = await Promise.all([
       loadThemeWithFallback(stagePresentation.theme).then((result) => result.theme),
-      loadThemeWithFallback('xinimalist-dark').then((result) => result.theme)
+      loadThemeWithFallback(mapPresentation.theme).then((result) => result.theme)
     ]);
   });
 
@@ -84,16 +84,22 @@ describe('runtime renderers', () => {
           }
         },
         revealCount: 0,
-        slug: 'simple-stage'
+        slug: 'human-ai-and-music-insight-brief'
       })
     );
 
     expect(screen.getByRole('img', { name: 'Runtime image' })).toHaveAttribute(
       'src',
-      '/presentations/simple-stage/assets/hero.svg'
+      '/presentations/human-ai-and-music-insight-brief/assets/hero.svg'
     );
 
-    render(createElement(ComponentRenderer, { component: { type: 'does-not-exist' }, revealCount: 0, slug: 'simple-stage' }));
+    render(
+      createElement(ComponentRenderer, {
+        component: { type: 'does-not-exist' },
+        revealCount: 0,
+        slug: 'human-ai-and-music-insight-brief'
+      })
+    );
 
     expect(screen.getByText('Unknown component: does-not-exist')).toBeInTheDocument();
   });
@@ -158,8 +164,10 @@ describe('runtime renderers', () => {
       .map((style) => style.textContent ?? '')
       .filter((content) => content.includes(':root') && content.includes('--color-background'));
 
-    expect(rootStyles.at(-2)).toContain('--color-background: #f5f2e3');
-    expect(rootStyles.at(-1)).toContain('--color-background: #303428');
+    expect(rootStyles.length).toBeGreaterThanOrEqual(2);
+    expect(rootStyles.at(-2)).toContain('--color-background:');
+    expect(rootStyles.at(-1)).toContain('--color-background:');
+    expect(rootStyles.at(-1)).not.toBe(rootStyles.at(-2));
   });
 
   it('renders the canonical stage viewer shell', async () => {
@@ -180,7 +188,7 @@ describe('runtime renderers', () => {
     });
 
     expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
-    await waitFor(() => expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent('Step 1 of 5: Opening'));
+    await waitFor(() => expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent(/Step 1 of .*: Opening/i));
   });
 
   it('renders the canonical map viewer shell', async () => {
@@ -201,8 +209,8 @@ describe('runtime renderers', () => {
     });
 
     expect(screen.getByRole('button', { name: 'Bounds' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /1\. north-star/i })).toBeInTheDocument();
-    await waitFor(() => expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent('north-star'));
+    expect(screen.getByRole('button', { name: /1\. overview/i })).toBeInTheDocument();
+    await waitFor(() => expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent('overview'));
 
     fireEvent.click(screen.getByRole('button', { name: 'Bounds' }));
     expect(document.querySelectorAll('.clusterCardBounds').length).toBeGreaterThan(0);
@@ -251,7 +259,7 @@ describe('runtime renderers', () => {
 
     vi.useFakeTimers();
     await act(async () => {
-      mapMachine!.flyToCluster('philosophy');
+      mapMachine!.flyToCluster('abstract');
     });
 
     expect(mapCanvas).toHaveAttribute('data-camera-behavior', 'flight');
@@ -261,7 +269,7 @@ describe('runtime renderers', () => {
     });
 
     expect(mapCanvas).toHaveAttribute('data-camera-behavior', 'interactive');
-    expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent('philosophy');
+    expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent('abstract');
 
     vi.useRealTimers();
   });

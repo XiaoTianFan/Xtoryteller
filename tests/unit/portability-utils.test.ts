@@ -23,7 +23,7 @@ describe('portability helpers', () => {
   it('collects local asset references from component props and backgrounds', () => {
     expect(
       collectAssetReferences({
-        meta: { slug: 'simple-stage', thumbnail: './assets/thumb.svg' },
+        meta: { slug: 'human-ai-and-music-insight-brief', thumbnail: './assets/thumb.svg' },
         mode: 'stage',
         background: {
           type: 'paper-shader',
@@ -62,9 +62,9 @@ describe('portability helpers', () => {
   });
 
   it('parses command-line arguments into positional and named options', () => {
-    expect(parseArgs(['--confirm', '--output=exports', 'simple-stage'])).toEqual({
+    expect(parseArgs(['--confirm', '--output=exports', 'human-ai-and-music-insight-brief'])).toEqual({
       options: { confirm: true, output: 'exports' },
-      positional: ['simple-stage']
+      positional: ['human-ai-and-music-insight-brief']
     });
   });
 });

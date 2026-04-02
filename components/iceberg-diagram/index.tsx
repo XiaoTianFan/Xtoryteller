@@ -1,4 +1,5 @@
-import { CSSProperties, MouseEvent, useId } from 'react';
+import { CSSProperties, MouseEvent, startTransition, useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import styles from '@/components/_shared/diagram.module.css';
 
@@ -25,6 +26,14 @@ interface PositionedNote {
   height: number;
   fontSize: number;
   lineClamp: number;
+}
+
+interface TooltipState {
+  text: string;
+  left: number;
+  top: number;
+  placement: 'top' | 'bottom';
+  visible: boolean;
 }
 
 const VIEWBOX_WIDTH = 1092;
@@ -253,6 +262,16 @@ function dividerPositions(waterY: number) {
 export default function IcebergDiagram({ props }: { props?: Record<string, unknown> }) {
   const clipPathId = useId().replace(/[:]/g, '-');
   const gradientId = `${clipPathId}-gradient`;
+  const tooltipId = `iceberg-note-${clipPathId}`;
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+  const activeAnchorRef = useRef<HTMLElement | null>(null);
+  const [tooltip, setTooltip] = useState<TooltipState>({
+    text: '',
+    left: 0,
+    top: 0,
+    placement: 'top',
+    visible: false
+  });
   const resolvedLayers = Array.isArray(props?.layers) ? (props.layers as Layer[]).slice(0, 4) : [];
   const showLabels = props?.showLabels !== false;
   const labelsHidden = !showLabels;
@@ -289,6 +308,115 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
   const stopClusterNavigation = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
   };
+
+  useEffect(() => {
+    if (!tooltip.visible || !tooltip.text) {
+      return;
+    }
+
+    let frame = 0;
+
+    const updatePosition = () => {
+      const anchor = activeAnchorRef.current;
+      const tooltipElement = tooltipRef.current;
+      if (!anchor || !tooltipElement) {
+        return;
+      }
+
+      const anchorRect = anchor.getBoundingClientRect();
+      const tooltipRect = tooltipElement.getBoundingClientRect();
+      const gap = 12;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      let placement: 'top' | 'bottom' = 'top';
+      let top = anchorRect.top - tooltipRect.height - gap;
+
+      if (top < 12) {
+        placement = 'bottom';
+        top = anchorRect.bottom + gap;
+      }
+
+      if (top + tooltipRect.height > viewportHeight - 12) {
+        top = Math.max(12, viewportHeight - tooltipRect.height - 12);
+      }
+
+      const centeredLeft = anchorRect.left + anchorRect.width / 2 - tooltipRect.width / 2;
+      const left = Math.min(Math.max(12, centeredLeft), viewportWidth - tooltipRect.width - 12);
+
+      startTransition(() => {
+        setTooltip((current) => ({
+          ...current,
+          left,
+          top,
+          placement
+        }));
+      });
+    };
+
+    const scheduleUpdate = () => {
+      cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(updatePosition);
+    };
+
+    scheduleUpdate();
+    window.addEventListener('resize', scheduleUpdate);
+    window.addEventListener('scroll', scheduleUpdate, true);
+
+    const observer = new ResizeObserver(scheduleUpdate);
+    if (activeAnchorRef.current) {
+      observer.observe(activeAnchorRef.current);
+    }
+    if (tooltipRef.current) {
+      observer.observe(tooltipRef.current);
+    }
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', scheduleUpdate);
+      window.removeEventListener('scroll', scheduleUpdate, true);
+      observer.disconnect();
+    };
+  }, [tooltip.visible, tooltip.text]);
+
+  const showTooltip = (event: { currentTarget: HTMLButtonElement }, text: string) => {
+    activeAnchorRef.current = event.currentTarget;
+    startTransition(() => {
+      setTooltip({
+        text,
+        left: 0,
+        top: 0,
+        placement: 'top',
+        visible: true
+      });
+    });
+  };
+
+  const hideTooltip = () => {
+    activeAnchorRef.current = null;
+    startTransition(() => {
+      setTooltip((current) => ({ ...current, visible: false }));
+    });
+  };
+
+  const noteTooltip = tooltip.visible && tooltip.text && typeof document !== 'undefined'
+    ? createPortal(
+        <div
+          ref={tooltipRef}
+          id={tooltipId}
+          role="tooltip"
+          className={localStyles.tooltip}
+          data-placement={tooltip.placement}
+          style={{
+            left: tooltip.left,
+            top: tooltip.top
+          }}
+        >
+          <span className={localStyles.tooltipEyebrow}>Layer note</span>
+          <p>{tooltip.text}</p>
+        </div>,
+        document.body
+      )
+    : null;
 
   return (
     <figure className={`${styles.shell} ${localStyles.figure}`}>
@@ -363,9 +491,13 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
                 data-iceberg-note="true"
                 data-layer-index={layerIndex}
                 aria-label={note.text}
-                title={note.text}
+                aria-describedby={tooltip.visible && tooltip.text === note.text ? tooltipId : undefined}
                 onClick={stopClusterNavigation}
                 onMouseDown={stopClusterNavigation}
+                onMouseEnter={(event) => showTooltip(event, note.text)}
+                onMouseLeave={hideTooltip}
+                onFocus={(event) => showTooltip(event, note.text)}
+                onBlur={hideTooltip}
                 style={{
                   left: `${((note.left - visibleX) / visibleWidth) * 100}%`,
                   top: `${(note.top / VIEWBOX_HEIGHT) * 100}%`,
@@ -380,6 +512,7 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
             ))
           )}
         </div>
+        {noteTooltip}
         </div>
       </div>
     </figure>

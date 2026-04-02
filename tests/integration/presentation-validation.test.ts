@@ -3,8 +3,8 @@ import path from 'node:path';
 import { validatePresentation } from '@/scripts/validate.mjs';
 
 describe('presentation validation integration', () => {
-  it('validates the four canonical demo presentations', async () => {
-    for (const slug of ['simple-stage', 'simple-map', 'complex-stage', 'complex-map']) {
+  it('validates the canonical human-ai demo presentations', async () => {
+    for (const slug of ['human-ai-and-music-insight-brief', 'human-ai-and-music']) {
       const result = await validatePresentation(path.join(process.cwd(), 'presentations', slug, 'presentation.yaml'), {
         report: false,
         throwOnError: false

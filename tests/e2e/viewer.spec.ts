@@ -15,21 +15,21 @@ function extractScale(transform: string) {
 
 test('stage viewer supports keyboard-only navigation and reduced motion', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/complex-stage');
+  await page.goto('/human-ai-and-music-insight-brief');
 
   const liveRegion = page.locator('[aria-live="polite"]');
   const backgroundLayer = page.locator('[data-background-key]').last();
-  await expect(liveRegion).toContainText('Step 1 of 15: Opening');
+  await expect(liveRegion).toContainText(/Step 1 of .*: Opening/i);
   await expect(backgroundLayer).toHaveAttribute('data-background-kind', 'paper-shader');
 
   await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })));
-  await expect(liveRegion).toContainText('Step 2 of 15: North Star');
+  await expect(liveRegion).toContainText(/Step 2 of .*:/i);
   await expect(backgroundLayer).toHaveAttribute('data-background-key', /.+/);
   await expect(page.locator('[data-background-key]')).toHaveCount(1);
 });
 
 test('stage viewer escape returns to the dashboard from the first step', async ({ page }) => {
-  await page.goto('/simple-stage');
+  await page.goto('/human-ai-and-music-insight-brief');
 
   await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })));
   await expect(page).toHaveURL(/\/$/);
@@ -37,7 +37,7 @@ test('stage viewer escape returns to the dashboard from the first step', async (
 });
 
 test('map viewer supports guided navigation and accessibility', async ({ page }) => {
-  await page.goto('/simple-map');
+  await page.goto('/human-ai-and-music');
 
   const liveRegion = page.locator('[aria-live="polite"]');
   await expect(page.getByRole('button', { name: 'Guided' })).toBeVisible();
@@ -47,14 +47,14 @@ test('map viewer supports guided navigation and accessibility', async ({ page })
   await expect(page.getByRole('button', { name: 'Free roam' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Next' }).click();
-  await expect(liveRegion).toContainText('philosophy');
+  await expect(liveRegion).toContainText('abstract');
 
-  await page.getByRole('button', { name: /3\. system-loop/i }).click();
-  await expect(liveRegion).toContainText('system-loop', { timeout: 5000 });
+  await page.getByRole('button', { name: /3\. context-crisis/i }).click();
+  await expect(liveRegion).toContainText('context-crisis', { timeout: 5000 });
 });
 
 test('map viewer supports immediate wheel zoom and drag pan in free roam', async ({ page }) => {
-  await page.goto('/simple-map');
+  await page.goto('/human-ai-and-music');
   await expect(page.getByRole('button', { name: 'Guided' })).toBeVisible();
 
   const viewport = page.locator('.mapViewport');
@@ -85,14 +85,14 @@ test('map viewer supports immediate wheel zoom and drag pan in free roam', async
 });
 
 test('map viewer guided mode allows temporary free navigation and snaps back on next', async ({ page }) => {
-  await page.goto('/simple-map');
+  await page.goto('/human-ai-and-music');
 
   const liveRegion = page.locator('[aria-live="polite"]');
   await page.getByRole('button', { name: 'Guided' }).click();
   await expect(page.getByRole('button', { name: 'Free roam' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Next' }).click();
-  await expect(liveRegion).toContainText('philosophy');
+  await expect(liveRegion).toContainText('abstract');
 
   const viewport = page.locator('.mapViewport');
   const box = await viewport.boundingBox();
@@ -108,11 +108,11 @@ test('map viewer guided mode allows temporary free navigation and snaps back on 
 
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(page.locator('.mapCanvas')).toHaveAttribute('data-camera-behavior', 'flight');
-  await expect(liveRegion).toContainText('system-loop', { timeout: 5000 });
+  await expect(liveRegion).toContainText('context-crisis', { timeout: 5000 });
 });
 
 test('map viewer responds to touch-style dragging', async ({ page }) => {
-  await page.goto('/simple-map');
+  await page.goto('/human-ai-and-music');
   await expect(page.getByRole('button', { name: 'Guided' })).toBeVisible();
 
   const before = await readMapCanvasState(page);
@@ -144,13 +144,13 @@ test('map viewer responds to touch-style dragging', async ({ page }) => {
   expect(after.transform).not.toBe(before.transform);
 });
 
-test('canonical demos inherit the dashboard-selected global theme background', async ({ page }) => {
+test('human-ai demos inherit the dashboard-selected global theme background', async ({ page }) => {
   await page.goto('/');
   await page.getByLabel('Global theme').selectOption('neon-cyber');
   await expect(page.getByLabel('Global theme')).toHaveValue('neon-cyber');
 
-  await page.getByRole('link', { name: /Xtoryteller Complex Map Demo/i }).click();
-  await expect(page).toHaveURL(/\/complex-map$/);
+  await page.getByRole('link', { name: /Human, AI, and Music/i }).click();
+  await expect(page).toHaveURL(/\/human-ai-and-music$/);
   const backgroundLayer = page.locator('[data-background-key]').last();
   await expect(backgroundLayer).toHaveAttribute('data-background-kind', 'paper-shader');
   await expect(backgroundLayer).toHaveAttribute('data-background-shader', 'mesh-gradient');

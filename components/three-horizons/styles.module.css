@@ -240,13 +240,14 @@
   width: min(28rem, calc(100vw - 1.5rem));
   padding: 0.9rem 1rem;
   border: 1px solid color-mix(in srgb, var(--tooltip-accent) 44%, var(--color-foreground) 22%);
+  border-radius: var(--radius-components-card);
   background:
     linear-gradient(
       180deg,
       color-mix(in srgb, var(--color-surface) 94%, var(--tooltip-accent) 6%) 0%,
-      color-mix(in srgb, var(--color-panel) 92%, black 8%) 100%
+      color-mix(in srgb, var(--color-panel, var(--color-background)) 93%, var(--color-foreground) 7%) 100%
     );
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
+  box-shadow: var(--shadow-strong);
   pointer-events: none;
 }
 
@@ -300,7 +301,7 @@
 
 .tooltipBody :global(p) {
   margin: 0;
-  color: var(--color-muted);
+  color: color-mix(in srgb, var(--color-foreground) 78%, transparent 22%);
   line-height: 1.45;
 }
 
