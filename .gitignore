@@ -30,3 +30,6 @@ pnpm-debug.log*
 /output/
 /playwright-report/
 /test-results/
+
+#presentation refs
+/presentations/human-ai-and-music/ref

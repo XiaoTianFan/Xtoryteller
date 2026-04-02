@@ -90,6 +90,7 @@ Use these when repeated scaffolding would otherwise become manual and fragile.
 - Never use `preset` when you mean the shared Xtoryteller background preset name; use `presetRef` for the shared preset and keep `preset` for the upstream Paper Shader preset.
 - Never add `background.filter` to CSS or `none` backgrounds; it is only for Paper Shader surfaces and preset-backed Paper Shader backgrounds.
 - Never replace a reusable preset just to solve central text legibility until you have considered a theme- or presentation-level `background.filter` overlay first.
+- Use the non-reverse filter modes when the center should stay clearer and the reverse modes when the center should be more covered than the edges.
 - Never add wrapper-driven Paper Shader motion where the upstream shader already supports built-in animation through `speed` or `frame`.
 - Never turn intrinsic layout mechanics like `100vh`, `100%`, SVG geometry, or arrangement outputs into theme tokens unless they are clearly intended as reusable visual language.
 - Never settle for generic “AI default” styling when the task clearly needs character. Prefer a named preset family, a deliberate type pairing, and a repeated layout motif.

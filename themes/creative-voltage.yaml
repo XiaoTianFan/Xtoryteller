@@ -295,6 +295,10 @@ name: Creative Voltage
 background:
   type: paper-shader
   presetRef: voltage-warp
+  filter:
+    mode: linear-vertical
+    opacity: 0.9
+    linearProportion: 0.5
 fonts:
   heading:
     family: Syne

@@ -109,7 +109,12 @@
       },
       "background": {
         "type": "paper-shader",
-        "presetRef": "voltage-warp"
+        "presetRef": "voltage-warp",
+        "filter": {
+          "mode": "linear-vertical",
+          "opacity": 0.9,
+          "linearProportion": 0.5
+        }
       }
     },
     {

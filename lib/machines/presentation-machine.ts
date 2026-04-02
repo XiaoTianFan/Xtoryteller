@@ -1,13 +1,16 @@
 import { assign, setup } from 'xstate';
 
+import {
+  CameraState,
+  panCameraByScreenDelta,
+  ViewportPoint,
+  ViewportSize,
+  zoomCameraAtViewportPoint
+} from '@/lib/engine/arrangement';
 import { getTotalBuildSteps } from '@/lib/runtime/build-plan';
 import { ClusterDefinition, PresentationConfig } from '@/lib/types/presentation';
 
-interface CameraState {
-  x: number;
-  y: number;
-  zoom: number;
-}
+type CameraBehavior = 'interactive' | 'flight';
 
 interface RuntimeContext {
   presentation: PresentationConfig;
@@ -18,6 +21,9 @@ interface RuntimeContext {
   guidedIndex: number;
   guided: boolean;
   camera: CameraState;
+  cameraBehavior: CameraBehavior;
+  overviewCamera: CameraState;
+  clusterCameras: Record<string, CameraState>;
   targetStepIndex: number | null;
   targetClusterId: string | null;
 }
@@ -33,15 +39,24 @@ function getClusterById(presentation: PresentationConfig, clusterId: string | nu
 export const presentationMachine = setup({
   types: {
     context: {} as RuntimeContext,
-    input: {} as { presentation: PresentationConfig; initialCamera?: CameraState; initialHash?: string },
+    input: {} as {
+      presentation: PresentationConfig;
+      initialCamera?: CameraState;
+      overviewCamera: CameraState;
+      clusterCameras: Record<string, CameraState>;
+      initialHash?: string;
+    },
     events: {} as
       | { type: 'NEXT' }
       | { type: 'PREV' }
       | { type: 'GO_TO_STEP'; stepIndex: number }
-      | { type: 'SET_CAMERA'; camera: CameraState }
-      | { type: 'PAN'; deltaX: number; deltaY: number }
-      | { type: 'ZOOM'; zoom: number }
-      | { type: 'GO_TO_CLUSTER'; clusterId: string }
+      | { type: 'BEGIN_INTERACTION' }
+      | { type: 'END_INTERACTION' }
+      | { type: 'PAN_BY'; deltaX: number; deltaY: number }
+      | { type: 'ZOOM_TO_POINT'; zoom: number; point: ViewportPoint; viewport: ViewportSize }
+      | { type: 'FLY_TO_CLUSTER'; clusterId: string }
+      | { type: 'FLY_TO_CAMERA'; camera: CameraState; preserveCluster?: boolean }
+      | { type: 'RESET_OVERVIEW' }
       | { type: 'ENTER_GUIDED' }
       | { type: 'EXIT_GUIDED' }
       | { type: 'BACKGROUND_UPDATE' }
@@ -52,6 +67,7 @@ export const presentationMachine = setup({
     hasNextStep: ({ context }) => context.currentStepIndex < (context.presentation.steps?.length ?? 0) - 1,
     hasPrevStep: ({ context }) => context.currentStepIndex > 0,
     isAtFirstBuild: ({ context }) => context.currentBuildIndex === 0,
+    hasTargetCluster: ({ context }) => Boolean(context.targetClusterId),
     hasNextCluster: ({ context }) => {
       const sequence = getGuidedSequence(context.presentation);
       return context.guidedIndex < sequence.length - 1;
@@ -86,64 +102,87 @@ export const presentationMachine = setup({
       };
     }),
     resetBuild: assign({ currentBuildIndex: 0 }),
-    enterGuided: assign({ guided: true }),
+    beginInteraction: assign({ cameraBehavior: 'interactive' }),
+    endInteraction: assign({ cameraBehavior: 'interactive' }),
+    enterGuided: assign(({ context }) => {
+      const sequence = getGuidedSequence(context.presentation);
+      return {
+        guided: true,
+        guidedIndex: Math.max(0, sequence.indexOf(context.currentClusterId ?? ''))
+      };
+    }),
     exitGuided: assign({ guided: false }),
     advanceGuided: assign(({ context }) => {
       const sequence = getGuidedSequence(context.presentation);
       const nextIndex = Math.min(sequence.length - 1, context.guidedIndex + 1);
+      const clusterId = sequence[nextIndex];
       return {
         guidedIndex: nextIndex,
-        targetClusterId: sequence[nextIndex]
+        targetClusterId: clusterId,
+        camera: context.clusterCameras[clusterId] ?? context.camera,
+        cameraBehavior: 'flight'
       };
     }),
     retreatGuided: assign(({ context }) => {
       const sequence = getGuidedSequence(context.presentation);
       const nextIndex = Math.max(0, context.guidedIndex - 1);
+      const clusterId = sequence[nextIndex];
       return {
         guidedIndex: nextIndex,
-        targetClusterId: sequence[nextIndex]
+        targetClusterId: clusterId,
+        camera: context.clusterCameras[clusterId] ?? context.camera,
+        cameraBehavior: 'flight'
       };
     }),
-    setTargetCluster: assign(({ event, context }) => {
+    flyToCluster: assign(({ event, context }) => {
       const clusterId = 'clusterId' in event ? event.clusterId : context.targetClusterId;
       const sequence = getGuidedSequence(context.presentation);
       return {
         targetClusterId: clusterId,
-        guidedIndex: Math.max(0, sequence.indexOf(clusterId ?? ''))
+        guidedIndex: Math.max(0, sequence.indexOf(clusterId ?? '')),
+        camera: (clusterId ? context.clusterCameras[clusterId] : undefined) ?? context.camera,
+        cameraBehavior: 'flight'
       };
     }),
-    arriveAtCluster: assign(({ context }) => ({
-      currentClusterId: context.targetClusterId,
+    flyToCamera: assign(({ context, event }) =>
+      'camera' in event
+        ? {
+            camera: event.camera,
+            cameraBehavior: 'flight',
+            targetClusterId: event.preserveCluster ? context.targetClusterId : null
+          }
+        : {}
+    ),
+    resetOverview: assign(({ context }) => ({
+      camera: context.overviewCamera,
+      cameraBehavior: 'flight',
       targetClusterId: null
     })),
+    arriveAtCluster: assign(({ context }) => ({
+      currentClusterId: context.targetClusterId,
+      targetClusterId: null,
+      cameraBehavior: 'interactive'
+    })),
+    finishFlight: assign({ cameraBehavior: 'interactive' }),
     panCamera: assign(({ context, event }) =>
       'deltaX' in event
         ? {
-            camera: {
-              ...context.camera,
-              x: context.camera.x - event.deltaX,
-              y: context.camera.y - event.deltaY
-            }
+            camera: panCameraByScreenDelta(context.camera, event.deltaX, event.deltaY),
+            cameraBehavior: 'interactive'
           }
         : {}
     ),
     zoomCamera: assign(({ context, event }) =>
       'zoom' in event
         ? {
-            camera: {
-              ...context.camera,
-              zoom: Math.min(
-                context.presentation.canvas?.maxZoom ?? 2.5,
-                Math.max(context.presentation.canvas?.minZoom ?? 0.35, event.zoom)
-              )
-            }
-          }
-        : {}
-    ),
-    setCamera: assign(({ event }) =>
-      'camera' in event
-        ? {
-            camera: event.camera
+            camera: zoomCameraAtViewportPoint(
+              context.camera,
+              event.zoom,
+              event.point,
+              event.viewport,
+              context.presentation.canvas
+            ),
+            cameraBehavior: 'interactive'
           }
         : {}
     )
@@ -164,6 +203,9 @@ export const presentationMachine = setup({
       y: 0,
       zoom: input.presentation.canvas?.initialZoom ?? 1
     },
+    cameraBehavior: 'interactive',
+    overviewCamera: input.overviewCamera,
+    clusterCameras: input.clusterCameras,
     targetStepIndex: null,
     targetClusterId: null
   }),
@@ -240,12 +282,21 @@ export const presentationMachine = setup({
           states: {
             freeRoam: {
               on: {
-                SET_CAMERA: { actions: 'setCamera' },
-                PAN: { actions: 'panCamera' },
-                ZOOM: { actions: 'zoomCamera' },
-                GO_TO_CLUSTER: {
+                BEGIN_INTERACTION: { actions: 'beginInteraction' },
+                END_INTERACTION: { actions: 'endInteraction' },
+                PAN_BY: { actions: 'panCamera' },
+                ZOOM_TO_POINT: { actions: 'zoomCamera' },
+                FLY_TO_CLUSTER: {
                   target: 'flying',
-                  actions: 'setTargetCluster'
+                  actions: 'flyToCluster'
+                },
+                FLY_TO_CAMERA: {
+                  target: 'flying',
+                  actions: 'flyToCamera'
+                },
+                RESET_OVERVIEW: {
+                  target: 'flying',
+                  actions: 'resetOverview'
                 },
                 ENTER_GUIDED: {
                   target: 'guided',
@@ -254,26 +305,36 @@ export const presentationMachine = setup({
               }
             },
             flying: {
-              on: {
-                SET_CAMERA: { actions: 'setCamera' }
-              },
               after: {
                 700: [
                   {
                     target: 'guided',
+                    guard: ({ context }) => context.guided && Boolean(context.targetClusterId),
+                    actions: 'arriveAtCluster'
+                  },
+                  {
+                    target: 'guided',
                     guard: ({ context }) => context.guided,
+                    actions: 'finishFlight'
+                  },
+                  {
+                    target: 'freeRoam',
+                    guard: 'hasTargetCluster',
                     actions: 'arriveAtCluster'
                   },
                   {
                     target: 'freeRoam',
-                    actions: 'arriveAtCluster'
+                    actions: 'finishFlight'
                   }
                 ]
               }
             },
             guided: {
               on: {
-                SET_CAMERA: { actions: 'setCamera' },
+                BEGIN_INTERACTION: { actions: 'beginInteraction' },
+                END_INTERACTION: { actions: 'endInteraction' },
+                PAN_BY: { actions: 'panCamera' },
+                ZOOM_TO_POINT: { actions: 'zoomCamera' },
                 NEXT: {
                   guard: 'hasNextCluster',
                   target: 'flying',
@@ -284,9 +345,17 @@ export const presentationMachine = setup({
                   target: 'flying',
                   actions: 'retreatGuided'
                 },
-                GO_TO_CLUSTER: {
+                FLY_TO_CLUSTER: {
                   target: 'flying',
-                  actions: 'setTargetCluster'
+                  actions: 'flyToCluster'
+                },
+                FLY_TO_CAMERA: {
+                  target: 'flying',
+                  actions: 'flyToCamera'
+                },
+                RESET_OVERVIEW: {
+                  target: 'flying',
+                  actions: 'resetOverview'
                 },
                 EXIT_GUIDED: {
                   target: 'freeRoam',

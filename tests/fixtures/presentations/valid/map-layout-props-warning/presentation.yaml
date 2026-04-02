@@ -1,0 +1,14 @@
+meta:
+  title: Legacy layout props warning
+  slug: map-layout-props-warning
+mode: map
+clusters:
+  - id: root
+    layout: single-content
+    layoutProps:
+      width: 620
+      minHeight: 420
+    anchor: { x: 0, y: 0 }
+    components:
+      - type: headline
+        content: Legacy sizing

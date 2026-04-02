@@ -44,6 +44,7 @@ clusters:
     description: The product identity and the promise the rest of the map should reinforce.
     group: vision
     layout: title-center
+    frame: { width: 620, height: 400 }
     anchor: { x: 0, y: 0 }
     components:
       - type: headline
@@ -61,10 +62,11 @@ clusters:
     description: The governing ideas behind the platform.
     group: vision
     layout: sidebar-main
+    frame: { width: 560, height: 420 }
     anchor:
       relativeTo: north-star
       direction: right
-      distance: 700
+      distance: 180
     components:
       - type: callout
         content: Infrastructure over generation is the core bet. The agent should reason from a durable system, not improvise a fresh one-off UI every time.
@@ -83,10 +85,11 @@ clusters:
     description: The major surfaces that make the product coherent.
     group: vision
     layout: single-content
+    frame: { width: 500, height: 360 }
     anchor:
       relativeTo: north-star
       direction: below
-      distance: 540
+      distance: 180
     components:
       - type: mind-map
         props:
@@ -104,10 +107,11 @@ clusters:
     description: Why the system compounds over time.
     group: runtime
     layout: single-content
+    frame: { width: 500, height: 340 }
     anchor:
       relativeTo: system-map
       direction: right
-      distance: 760
+      distance: 220
     components:
       - type: causal-diagram
         props:
@@ -126,10 +130,11 @@ clusters:
     description: How intent becomes a presentation artifact.
     group: runtime
     layout: single-content
+    frame: { width: 520, height: 340 }
     anchor:
       relativeTo: philosophy
       direction: right
-      distance: 760
+      distance: 220
     components:
       - type: flowchart
         props:
@@ -149,10 +154,11 @@ clusters:
     description: Stage and Map are related, not competing, presentation modes.
     group: runtime
     layout: two-column
+    frame: { width: 620, height: 380 }
     anchor:
       relativeTo: philosophy
       direction: below
-      distance: 540
+      distance: 180
     components:
       - type: spectrum-bar
         props:
@@ -176,10 +182,11 @@ clusters:
     description: What sits below the visible presentation surface.
     group: runtime
     layout: content-left-media-right
+    frame: { width: 700, height: 420 }
     anchor:
       relativeTo: feedback-loops
       direction: below
-      distance: 560
+      distance: 180
     components:
       - type: body-text
         content: |
@@ -199,10 +206,11 @@ clusters:
     description: A compact gallery of important built-in surfaces.
     group: runtime
     layout: gallery
+    frame: { width: 700, height: 460 }
     anchor:
       relativeTo: feedback-loops
       direction: right
-      distance: 760
+      distance: 220
     components:
       - type: feature-card
         content: Typography, lists, callouts, quotes, and code blocks handle the editorial core.
@@ -245,10 +253,11 @@ clusters:
     description: The repo structure as a map of responsibilities.
     group: runtime
     layout: scattered
+    frame: { width: 620, height: 420 }
     anchor:
       relativeTo: navigation-spectrum
       direction: below
-      distance: 580
+      distance: 200
     components:
       - type: card
         content: Presentation YAML, local assets, and the user-facing story artifacts.
@@ -279,10 +288,11 @@ clusters:
     description: Where the most meaningful future bets sit.
     group: roadmap
     layout: single-content
+    frame: { width: 520, height: 360 }
     anchor:
       relativeTo: file-system-atlas
       direction: right
-      distance: 760
+      distance: 220
     components:
       - type: quadrant-chart
         props:
@@ -298,10 +308,11 @@ clusters:
     description: How the project has evolved and where it can keep growing.
     group: roadmap
     layout: single-content
+    frame: { width: 520, height: 360 }
     anchor:
       relativeTo: roadmap-bets
       direction: below
-      distance: 560
+      distance: 180
     components:
       - type: three-horizons
         props:
@@ -323,10 +334,11 @@ clusters:
     description: What the repo now surfaces clearly to agents and humans.
     group: roadmap
     layout: grid-2x2
+    frame: { width: 640, height: 440 }
     anchor:
       relativeTo: phase-horizons
       direction: right
-      distance: 760
+      distance: 220
     components:
       - type: stat-card
         props:
@@ -353,10 +365,11 @@ clusters:
     description: A more visual read on maturity and coverage.
     group: roadmap
     layout: two-column
+    frame: { width: 620, height: 400 }
     anchor:
       relativeTo: quality-grid
       direction: below
-      distance: 560
+      distance: 180
     components:
       - type: radar-chart
         props:
@@ -387,12 +400,13 @@ clusters:
     description: The audience and delivery path around a portable presentation system.
     group: roadmap
     layout: top-bottom
+    frame: { width: 720, height: 440 }
     layoutProps:
       ratio: 55-45
     anchor:
       relativeTo: component-atlas
       direction: below
-      distance: 600
+      distance: 220
     components:
       - type: funnel-diagram
         props:
@@ -419,10 +433,11 @@ clusters:
     description: Where value moves when a presentation becomes portable and reusable.
     group: roadmap
     layout: full-bleed
+    frame: { width: 760, height: 440 }
     anchor:
       relativeTo: funnel-stakeholders
       direction: right
-      distance: 760
+      distance: 220
     components:
       - type: sankey-diagram
         props:
@@ -442,10 +457,11 @@ clusters:
     description: The current implementation story at a glance.
     group: roadmap
     layout: single-content
+    frame: { width: 540, height: 400 }
     anchor:
       relativeTo: ecosystem-flow
       direction: below
-      distance: 560
+      distance: 180
     components:
       - type: timeline
         props:
@@ -460,13 +476,11 @@ clusters:
     description: Keep the example set lean while still exercising the full system.
     group: roadmap
     layout: title-center
+    frame: { width: 520, height: 320 }
     anchor:
       relativeTo: phase-horizons
       direction: below
-      distance: 700
-    arrangement:
-      algorithm: tree
-      spacing: 280
+      distance: 220
     components:
       - type: label
         content: Demo strategy
@@ -481,8 +495,11 @@ clusters:
     description: Strengthen the runtime before inventing new surface area.
     group: roadmap
     layout: single-content
+    frame: { width: 340, height: 220 }
     anchor:
       relativeTo: roadmap-root
+      direction: lower-left
+      distance: 140
     components:
       - type: bullet-list
         props:
@@ -494,8 +511,11 @@ clusters:
     description: Keep the default primitives visible and testable.
     group: roadmap
     layout: single-content
+    frame: { width: 340, height: 220 }
     anchor:
       relativeTo: roadmap-root
+      direction: below
+      distance: 160
     components:
       - type: bullet-list
         props:
@@ -507,8 +527,11 @@ clusters:
     description: The growing library must stay discoverable.
     group: roadmap
     layout: single-content
+    frame: { width: 340, height: 220 }
     anchor:
       relativeTo: roadmap-root
+      direction: lower-right
+      distance: 140
     components:
       - type: bullet-list
         props:
@@ -520,8 +543,11 @@ clusters:
     description: Guardrails make agent output more trustworthy.
     group: roadmap
     layout: single-content
+    frame: { width: 340, height: 220 }
     anchor:
-      relativeTo: roadmap-root
+      relativeTo: runtime-node
+      direction: below
+      distance: 140
     components:
       - type: bullet-list
         props:
@@ -533,8 +559,11 @@ clusters:
     description: Presentations should travel with their useful dependencies.
     group: roadmap
     layout: single-content
+    frame: { width: 360, height: 240 }
     anchor:
-      relativeTo: roadmap-root
+      relativeTo: dashboard-node
+      direction: below
+      distance: 140
     components:
       - type: callout
         content: Export, import, and promotion are part of the platform story, not side scripts. The demos should keep reminding users that ownership and reuse matter here.

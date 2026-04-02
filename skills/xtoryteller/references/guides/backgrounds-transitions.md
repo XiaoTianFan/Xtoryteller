@@ -27,10 +27,11 @@ Shared preset references come from `references/registries/background-registry.js
 
 Optional legibility overlay for Paper Shader backgrounds:
 
-- `filter.mode`: `radial`, `linear-horizontal`, or `linear-vertical`
+- `filter.mode`: `radial`, `radial-reverse`, `linear-horizontal`, `linear-horizontal-reverse`, `linear-vertical`, or `linear-vertical-reverse`
 - `filter.opacity`: 0..1 overlay strength
 - `filter.radialSize.width` / `filter.radialSize.height`: center-clear ellipse size for `radial`
 - `filter.linearProportion`: center-clear band size for the two linear modes
+- Non-reverse modes keep the center clearer than the edges. Reverse modes invert that and put more of the overlay in the center.
 - The overlay color comes from the resolved preset/theme background color, so prefer it before replacing an otherwise-correct preset just for readability.
 
 Currently supported Paper shader targets:

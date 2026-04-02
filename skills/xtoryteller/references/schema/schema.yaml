@@ -23,11 +23,26 @@ map:
     clusters:
       - id: string
         layout: string
+        frame:
+          width: number > 0 ?
+          height: number > 0 ?
+        anchor:
+          x: number?
+          y: number?
+          relativeTo: string?
+          direction: left | right | above | below | upper-right | upper-left | lower-right | lower-left
+          distance: number?
+        arrangement: deprecated legacy fallback object?
         components:
           - type: string
             props: object?
     canvas:
       spacing: number?
+      arrangement:
+        algorithm: flow | radial | grid | tree
+        columns: number > 0 ?
+        radius: number > 0 ?
+        spacing: number > 0 ?
     navigation:
       sequence: string[]?
 shared:
@@ -52,7 +67,7 @@ shared:
       speed: number?
       opacity: number?
       filter:
-        mode: radial | linear-horizontal | linear-vertical
+        mode: radial | radial-reverse | linear-horizontal | linear-horizontal-reverse | linear-vertical | linear-vertical-reverse
         opacity: number?
         radialSize:
           width: number?
@@ -66,7 +81,7 @@ shared:
           presetRef: string?
           type: paper-shader | css | none | legacy paper?
           filter:
-            mode: radial | linear-horizontal | linear-vertical
+            mode: radial | radial-reverse | linear-horizontal | linear-horizontal-reverse | linear-vertical | linear-vertical-reverse
             opacity: number?
             radialSize:
               width: number?
@@ -78,7 +93,7 @@ shared:
           presetRef: string?
           type: paper-shader | css | none | legacy paper?
           filter:
-            mode: radial | linear-horizontal | linear-vertical
+            mode: radial | radial-reverse | linear-horizontal | linear-horizontal-reverse | linear-vertical | linear-vertical-reverse
             opacity: number?
             radialSize:
               width: number?

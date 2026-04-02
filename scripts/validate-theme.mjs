@@ -140,8 +140,17 @@ function validateBackgroundFilterConfig(filter, label, issues) {
     }
   }
 
-  if (!['radial', 'linear-horizontal', 'linear-vertical'].includes(value.mode)) {
-    issues.push(`${label}.mode must be "radial", "linear-horizontal", or "linear-vertical".`);
+  if (
+    ![
+      'radial',
+      'radial-reverse',
+      'linear-horizontal',
+      'linear-horizontal-reverse',
+      'linear-vertical',
+      'linear-vertical-reverse'
+    ].includes(value.mode)
+  ) {
+    issues.push(`${label}.mode must be "radial", "radial-reverse", "linear-horizontal", "linear-horizontal-reverse", "linear-vertical", or "linear-vertical-reverse".`);
   }
 
   if (value.opacity != null && (!Number.isFinite(value.opacity) || value.opacity < 0 || value.opacity > 1)) {

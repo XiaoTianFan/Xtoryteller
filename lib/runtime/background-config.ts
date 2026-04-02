@@ -34,7 +34,13 @@ export interface ResolvedBackgroundAppearance {
 }
 
 export interface ResolvedBackgroundFilter {
-  mode: 'radial' | 'linear-horizontal' | 'linear-vertical';
+  mode:
+    | 'radial'
+    | 'radial-reverse'
+    | 'linear-horizontal'
+    | 'linear-horizontal-reverse'
+    | 'linear-vertical'
+    | 'linear-vertical-reverse';
   opacity: number;
   radialSize: {
     width: number;
@@ -293,14 +299,25 @@ function buildBackgroundFilterValue(filter: {
 }): string {
   const overlayColor = colorWithOpacity(filter.color, filter.opacity);
 
-  if (filter.mode === 'radial') {
+  if (filter.mode === 'radial' || filter.mode === 'radial-reverse') {
+    const isReverse = filter.mode === 'radial-reverse';
+    if (isReverse) {
+      return `radial-gradient(ellipse ${(filter.radialSize.width * 100).toFixed(1)}% ${(filter.radialSize.height * 100).toFixed(1)}% at center, ${overlayColor} 0%, ${overlayColor} 54%, transparent 100%)`;
+    }
     return `radial-gradient(ellipse ${(filter.radialSize.width * 100).toFixed(1)}% ${(filter.radialSize.height * 100).toFixed(1)}% at center, transparent 0%, transparent 54%, ${overlayColor} 100%)`;
   }
 
   const edgeSize = Math.max(0, (1 - filter.linearProportion) / 2);
   const edgeStop = (edgeSize * 100).toFixed(1);
   const centerStop = ((1 - edgeSize) * 100).toFixed(1);
-  const angle = filter.mode === 'linear-horizontal' ? '90deg' : '180deg';
+  const isHorizontal =
+    filter.mode === 'linear-horizontal' || filter.mode === 'linear-horizontal-reverse';
+  const isReverse =
+    filter.mode === 'linear-horizontal-reverse' || filter.mode === 'linear-vertical-reverse';
+  const angle = isHorizontal ? '90deg' : '180deg';
+  if (isReverse) {
+    return `linear-gradient(${angle}, transparent 0%, ${overlayColor} ${edgeStop}%, ${overlayColor} ${centerStop}%, transparent 100%)`;
+  }
   return `linear-gradient(${angle}, ${overlayColor} 0%, transparent ${edgeStop}%, transparent ${centerStop}%, ${overlayColor} 100%)`;
 }
 
@@ -315,8 +332,11 @@ function normalizeBackgroundFilterConfig(
 
   if (
     filter.mode !== 'radial' &&
+    filter.mode !== 'radial-reverse' &&
     filter.mode !== 'linear-horizontal' &&
-    filter.mode !== 'linear-vertical'
+    filter.mode !== 'linear-horizontal-reverse' &&
+    filter.mode !== 'linear-vertical' &&
+    filter.mode !== 'linear-vertical-reverse'
   ) {
     return null;
   }

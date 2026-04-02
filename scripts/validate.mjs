@@ -199,11 +199,20 @@ function validateBackgroundFilterConfig(filter, label, issues) {
     }
   }
 
-  if (!['radial', 'linear-horizontal', 'linear-vertical'].includes(value.mode)) {
+  if (
+    ![
+      'radial',
+      'radial-reverse',
+      'linear-horizontal',
+      'linear-horizontal-reverse',
+      'linear-vertical',
+      'linear-vertical-reverse'
+    ].includes(value.mode)
+  ) {
     issues.push(
       createIssue(
         'error',
-        `${label}.mode must be "radial", "linear-horizontal", or "linear-vertical".`
+        `${label}.mode must be "radial", "radial-reverse", "linear-horizontal", "linear-horizontal-reverse", "linear-vertical", or "linear-vertical-reverse".`
       )
     );
   }
@@ -869,6 +878,77 @@ function validateStage(config, layoutMap, componentSet, transitionSet, issues, b
   }
 }
 
+function validateClusterFrame(cluster, issues) {
+  const frame = asObject(cluster.frame);
+  if (!frame) {
+    return;
+  }
+
+  for (const key of ['width', 'height']) {
+    if (frame[key] != null && (!Number.isFinite(frame[key]) || frame[key] <= 0)) {
+      issues.push(createIssue('error', `Cluster "${cluster.id}".frame.${key} must be greater than 0.`));
+    }
+  }
+}
+
+function validateClusterAnchor(cluster, issues) {
+  const anchor = asObject(cluster.anchor);
+  if (!anchor) {
+    return;
+  }
+
+  const hasX = anchor.x != null;
+  const hasY = anchor.y != null;
+  const hasAbsolute = hasX || hasY;
+  const hasRelativeTo = anchor.relativeTo != null;
+  const hasDirection = anchor.direction != null;
+  const hasDistance = anchor.distance != null;
+
+  if (hasX !== hasY) {
+    issues.push(createIssue('error', `Cluster "${cluster.id}" absolute anchors must provide both x and y.`));
+  }
+
+  if (hasAbsolute && (hasRelativeTo || hasDirection || hasDistance)) {
+    issues.push(
+      createIssue(
+        'error',
+        `Cluster "${cluster.id}" cannot mix absolute anchor coordinates with relative anchor fields.`
+      )
+    );
+  }
+
+  if (!hasAbsolute && !hasRelativeTo && (hasDirection || hasDistance)) {
+    issues.push(
+      createIssue(
+        'error',
+        `Cluster "${cluster.id}" relative anchors require relativeTo when direction or distance is provided.`
+      )
+    );
+  }
+
+  if (typeof anchor.relativeTo === 'string' && !anchor.relativeTo.trim()) {
+    issues.push(createIssue('error', `Cluster "${cluster.id}" anchor.relativeTo must not be empty.`));
+  }
+}
+
+function pushClusterLayoutSizingWarnings(cluster, issues) {
+  const layoutProps = asObject(cluster.layoutProps);
+  if (!layoutProps) {
+    return;
+  }
+
+  for (const key of ['width', 'height', 'minHeight']) {
+    if (layoutProps[key] != null) {
+      issues.push(
+        createIssue(
+          'warning',
+          `Cluster "${cluster.id}" uses deprecated layoutProps.${key} for map sizing. Move outer cluster size to frame.${key === 'minHeight' ? 'height' : key}.`
+        )
+      );
+    }
+  }
+}
+
 function validateMap(config, layoutMap, componentSet, transitionSet, issues, backgroundPresetMap) {
   const clusters = config.clusters ?? [];
   const clusterIds = new Set();
@@ -887,6 +967,21 @@ function validateMap(config, layoutMap, componentSet, transitionSet, issues, bac
 
     if (cluster.transition && !transitionSet.has(cluster.transition)) {
       issues.push(createIssue('error', `Unknown transition "${cluster.transition}" in cluster "${cluster.id}".`));
+    }
+
+    validateClusterFrame(cluster, issues);
+    validateClusterAnchor(cluster, issues);
+    pushClusterLayoutSizingWarnings(cluster, issues);
+
+    if (cluster.arrangement) {
+      issues.push(
+        createIssue(
+          'warning',
+          config.canvas?.arrangement
+            ? `Cluster "${cluster.id}" uses deprecated cluster.arrangement. canvas.arrangement takes precedence.`
+            : `Cluster "${cluster.id}" uses deprecated cluster.arrangement. Move it to canvas.arrangement.`
+        )
+      );
     }
 
     validateBackgroundConfig(cluster.background, `Cluster "${cluster.id}".background`, config, issues, backgroundPresetMap);

@@ -233,13 +233,13 @@ describe('background layer integration', () => {
     expect(document.querySelector('[data-background-shader="waves"]')).toBeTruthy();
 
     await act(async () => {
-      mapMachine!.goToCluster('detail-a');
+      mapMachine!.flyToCluster('detail-a');
       await vi.advanceTimersByTimeAsync(750);
     });
     expect(getBackgroundLayers().at(-1)).toHaveAttribute('data-background-shader', 'waves');
 
     await act(async () => {
-      mapMachine!.goToCluster('detail-b');
+      mapMachine!.flyToCluster('detail-b');
       await vi.advanceTimersByTimeAsync(750);
     });
     expect(getBackgroundLayers().at(-1)).toHaveAttribute('data-background-kind', 'css');

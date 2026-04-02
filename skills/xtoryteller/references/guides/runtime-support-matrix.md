@@ -11,7 +11,7 @@ Read this file when you need a quick truth source for what Xtoryteller currently
 - `background`, APRD-style `background.stages` / `background.regions`, and legacy `backgroundSections`
 - `presetRef` inside object-form backgrounds, including top-level, stage/map overrides, step backgrounds, cluster backgrounds, and legacy `backgroundSections[].shader`
 - Dual background renderers: CSS plus `@paper-design/shaders-react`
-- Optional Paper Shader legibility overlays through `background.filter` with `radial`, `linear-horizontal`, and `linear-vertical` modes
+- Optional Paper Shader legibility overlays through `background.filter` with forward and reverse `radial`, `linear-horizontal`, and `linear-vertical` modes
 - Theme-owned dashboard and viewer background rendering
 - Portability workflows for export, import, and component promotion
 - Markdown hover annotations through `{{hover:key|Label}}` plus `component.annotations`

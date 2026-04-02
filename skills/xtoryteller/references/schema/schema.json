@@ -52,7 +52,8 @@
         "spacing": { "type": "number" },
         "minZoom": { "type": "number" },
         "maxZoom": { "type": "number" },
-        "initialZoom": { "type": "number" }
+        "initialZoom": { "type": "number" },
+        "arrangement": { "$ref": "#/$defs/clusterArrangement" }
       },
       "additionalProperties": true
     },
@@ -228,7 +229,14 @@
       "type": "object",
       "properties": {
         "mode": {
-          "enum": ["radial", "linear-horizontal", "linear-vertical"]
+          "enum": [
+            "radial",
+            "radial-reverse",
+            "linear-horizontal",
+            "linear-horizontal-reverse",
+            "linear-vertical",
+            "linear-vertical-reverse"
+          ]
         },
         "opacity": { "type": "number" },
         "radialSize": {
@@ -300,6 +308,46 @@
       },
       "additionalProperties": false
     },
+    "clusterFrame": {
+      "type": "object",
+      "properties": {
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "clusterAnchor": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "relativeTo": { "type": "string" },
+        "direction": {
+          "enum": [
+            "left",
+            "right",
+            "above",
+            "below",
+            "upper-right",
+            "upper-left",
+            "lower-right",
+            "lower-left"
+          ]
+        },
+        "distance": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "clusterArrangement": {
+      "type": "object",
+      "properties": {
+        "algorithm": { "enum": ["flow", "radial", "grid", "tree"] },
+        "columns": { "type": "number", "exclusiveMinimum": 0 },
+        "radius": { "type": "number", "exclusiveMinimum": 0 },
+        "spacing": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
     "cluster": {
       "type": "object",
       "required": ["id", "layout", "components"],
@@ -309,11 +357,12 @@
         "description": { "type": "string" },
         "group": { "type": "string" },
         "layout": { "type": "string" },
+        "frame": { "$ref": "#/$defs/clusterFrame" },
         "layoutProps": { "type": "object" },
         "transition": { "type": "string" },
         "background": { "$ref": "#/$defs/background" },
-        "anchor": { "type": "object", "additionalProperties": true },
-        "arrangement": { "type": "object", "additionalProperties": true },
+        "anchor": { "$ref": "#/$defs/clusterAnchor" },
+        "arrangement": { "$ref": "#/$defs/clusterArrangement" },
         "components": {
           "type": "array",
           "minItems": 1,

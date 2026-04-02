@@ -1,6 +1,6 @@
 ﻿/** @vitest-environment jsdom */
 import { createElement } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@paper-design/shaders-react', () => {
@@ -34,7 +34,7 @@ vi.mock('@paper-design/shaders-react', () => {
 
 import { loadPresentationBySlug } from '@/lib/engine/presentation-loader';
 import { loadThemeWithFallback } from '@/lib/engine/theme-registry';
-import { PresentationProvider } from '@/lib/runtime/providers/presentation-provider';
+import { PresentationProvider, usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
 import { ThemeProvider } from '@/lib/runtime/providers/theme-provider';
 import { ComponentRenderer } from '@/lib/runtime/renderers/component-renderer';
 import { LayoutRenderer } from '@/lib/runtime/renderers/layout-renderer';
@@ -50,6 +50,17 @@ describe('runtime renderers', () => {
   let mapPresentation: Awaited<ReturnType<typeof loadPresentationBySlug>>;
   let stageTheme: Awaited<ReturnType<typeof loadThemeWithFallback>>['theme'];
   let mapTheme: Awaited<ReturnType<typeof loadThemeWithFallback>>['theme'];
+
+  function MapHarness({
+    onReady
+  }: {
+    onReady: (machine: ReturnType<typeof usePresentationRuntime>['machine']) => void;
+  }) {
+    const { machine } = usePresentationRuntime();
+
+    onReady(machine);
+    return createElement(MapRenderer);
+  }
 
   beforeAll(async () => {
     [stagePresentation, mapPresentation] = await Promise.all([
@@ -191,5 +202,111 @@ describe('runtime renderers', () => {
 
     expect(screen.getByRole('button', { name: /1\. north-star/i })).toBeInTheDocument();
     await waitFor(() => expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent('north-star'));
+
+    const clusterSizes = Array.from(document.querySelectorAll('.clusterCard'))
+      .map((element) => {
+        const node = element as HTMLElement;
+        return `${node.style.width}x${node.style.height}`;
+      })
+      .filter(Boolean);
+
+    expect(new Set(clusterSizes).size).toBeGreaterThan(1);
+  });
+
+  it('switches between immediate interaction and flight camera behavior', async () => {
+    let mapMachine: ReturnType<typeof usePresentationRuntime>['machine'] | null = null;
+
+    render(
+      createElement(
+        ThemeProvider,
+        { theme: mapTheme, overrides: mapPresentation.themeOverrides },
+        createElement(
+          PresentationProvider,
+          { presentation: mapPresentation, theme: mapTheme },
+          createElement(MapHarness, {
+            onReady: (machine) => {
+              mapMachine = machine;
+            }
+          })
+        )
+      )
+    );
+
+    await screen.findByRole('button', { name: 'Guided' });
+    const mapCanvas = document.querySelector('.mapCanvas') as HTMLElement;
+    expect(mapCanvas).toHaveAttribute('data-camera-behavior', 'interactive');
+
+    await act(async () => {
+      mapMachine!.beginDirectManipulation();
+      mapMachine!.zoomAtViewportPoint(2.1, { x: 980, y: 240 }, { width: 1280, height: 720 });
+      mapMachine!.endDirectManipulation();
+    });
+
+    expect(mapCanvas).toHaveAttribute('data-camera-behavior', 'interactive');
+    await waitFor(() => expect(mapCanvas.style.transform).toContain('scale(2.1)'));
+
+    vi.useFakeTimers();
+    await act(async () => {
+      mapMachine!.flyToCluster('philosophy');
+    });
+
+    expect(mapCanvas).toHaveAttribute('data-camera-behavior', 'flight');
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(710);
+    });
+
+    expect(mapCanvas).toHaveAttribute('data-camera-behavior', 'interactive');
+    expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent('philosophy');
+
+    vi.useRealTimers();
+  });
+
+  it('resets the overview camera through a flight without leaving guided mode', async () => {
+    let mapMachine: ReturnType<typeof usePresentationRuntime>['machine'] | null = null;
+
+    render(
+      createElement(
+        ThemeProvider,
+        { theme: mapTheme, overrides: mapPresentation.themeOverrides },
+        createElement(
+          PresentationProvider,
+          { presentation: mapPresentation, theme: mapTheme },
+          createElement(MapHarness, {
+            onReady: (machine) => {
+              mapMachine = machine;
+            }
+          })
+        )
+      )
+    );
+
+    await screen.findByRole('button', { name: 'Guided' });
+
+    vi.useFakeTimers();
+    await act(async () => {
+      mapMachine!.enterGuided();
+      mapMachine!.next();
+      await vi.advanceTimersByTimeAsync(710);
+    });
+
+    await act(async () => {
+      mapMachine!.beginDirectManipulation();
+      mapMachine!.zoomAtViewportPoint(3.2, { x: 860, y: 260 }, { width: 1280, height: 720 });
+      mapMachine!.endDirectManipulation();
+    });
+
+    expect(mapMachine!.state.context.guided).toBe(true);
+    expect(mapMachine!.state.context.camera.zoom).toBeGreaterThan(mapMachine!.cameraFrame.zoom);
+
+    await act(async () => {
+      mapMachine!.resetOverview();
+      await vi.advanceTimersByTimeAsync(710);
+    });
+
+    expect(mapMachine!.state.context.guided).toBe(true);
+    expect(mapMachine!.state.context.camera.zoom).toBeCloseTo(mapMachine!.cameraFrame.zoom, 6);
+
+    vi.useRealTimers();
   });
 });

@@ -18,6 +18,7 @@ clusters:
     description: The high-level framing cluster for the map runtime.
     group: intro
     layout: title-center
+    frame: { width: 620, height: 400 }
     anchor: { x: 0, y: 0 }
     components:
       - type: headline
@@ -35,10 +36,11 @@ clusters:
     description: Why spatial storytelling matters in this project.
     group: intro
     layout: sidebar-main
+    frame: { width: 560, height: 420 }
     anchor:
       relativeTo: overview
       direction: right
-      distance: 660
+      distance: 140
     components:
       - type: callout
         content: Map mode is for systems, relationships, workshops, and any story where *orientation* matters as much as sequence.
@@ -56,10 +58,11 @@ clusters:
     description: The compounding logic behind Xtoryteller.
     group: analysis
     layout: single-content
+    frame: { width: 480, height: 360 }
     anchor:
       relativeTo: overview
       direction: below
-      distance: 520
+      distance: 180
     components:
       - type: mind-map
         props:
@@ -75,10 +78,11 @@ clusters:
     description: The simplest mental model for when to use Stage vs Map.
     group: analysis
     layout: two-column
+    frame: { width: 640, height: 380 }
     anchor:
       relativeTo: philosophy
       direction: below
-      distance: 520
+      distance: 160
     components:
       - type: body-text
         content: |
@@ -99,10 +103,11 @@ clusters:
     description: Pull the map back into one memorable idea.
     group: synthesis
     layout: single-content
+    frame: { width: 460, height: 300 }
     anchor:
       relativeTo: system-loop
       direction: right
-      distance: 660
+      distance: 180
     components:
       - type: blockquote
         content: >-

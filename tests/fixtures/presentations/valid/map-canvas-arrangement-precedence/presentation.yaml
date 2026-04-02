@@ -1,0 +1,23 @@
+meta:
+  title: Canvas arrangement precedence
+  slug: map-canvas-arrangement-precedence
+mode: map
+canvas:
+  arrangement:
+    algorithm: flow
+    columns: 2
+    spacing: 120
+clusters:
+  - id: root
+    layout: single-content
+    arrangement:
+      algorithm: tree
+      spacing: 500
+    components:
+      - type: headline
+        content: Root
+  - id: child
+    layout: single-content
+    components:
+      - type: headline
+        content: Child

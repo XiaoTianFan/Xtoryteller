@@ -1,0 +1,14 @@
+meta:
+  title: Invalid cluster frame
+  slug: non-positive-cluster-frame
+mode: map
+clusters:
+  - id: root
+    layout: single-content
+    frame:
+      width: 0
+      height: 320
+    anchor: { x: 0, y: 0 }
+    components:
+      - type: headline
+        content: Broken frame

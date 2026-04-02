@@ -27,7 +27,13 @@ export interface BackgroundTransitionConfig {
 }
 
 export type BackgroundRendererType = 'paper-shader' | 'css' | 'none';
-export type BackgroundFilterMode = 'radial' | 'linear-horizontal' | 'linear-vertical';
+export type BackgroundFilterMode =
+  | 'radial'
+  | 'radial-reverse'
+  | 'linear-horizontal'
+  | 'linear-horizontal-reverse'
+  | 'linear-vertical'
+  | 'linear-vertical-reverse';
 
 export interface BackgroundFilterConfig {
   mode: BackgroundFilterMode;
@@ -196,22 +202,30 @@ export interface ClusterAnchor {
   distance?: number;
 }
 
+export interface ClusterFrame {
+  width?: number;
+  height?: number;
+}
+
+export interface ClusterArrangementConfig {
+  algorithm?: 'flow' | 'radial' | 'grid' | 'tree';
+  columns?: number;
+  radius?: number;
+  spacing?: number;
+}
+
 export interface ClusterDefinition {
   id: string;
   title?: string;
   description?: string;
   group?: string;
   layout: string;
+  frame?: ClusterFrame;
   layoutProps?: Record<string, unknown>;
   transition?: string;
   background?: BackgroundShaderConfig;
   anchor?: ClusterAnchor;
-  arrangement?: {
-    algorithm?: 'flow' | 'radial' | 'grid' | 'tree';
-    columns?: number;
-    radius?: number;
-    spacing?: number;
-  };
+  arrangement?: ClusterArrangementConfig;
   components: ComponentInstance[];
 }
 
@@ -222,6 +236,7 @@ export interface MapCanvasConfig {
   minZoom?: number;
   maxZoom?: number;
   initialZoom?: number;
+  arrangement?: ClusterArrangementConfig;
 }
 
 export interface MapNavigationConfig {

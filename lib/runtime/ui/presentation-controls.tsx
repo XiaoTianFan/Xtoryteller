@@ -155,6 +155,9 @@ function ViewerHotkeys({
       }
 
       if (mapMode) {
+        const viewportCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        const panStepX = Math.round(window.innerWidth * 0.12);
+        const panStepY = Math.round(window.innerHeight * 0.12);
         const clusterIds = machine.state.context.guided
           ? presentation.navigation?.sequence ?? presentation.clusters?.map((cluster) => cluster.id) ?? []
           : presentation.clusters?.map((cluster) => cluster.id) ?? [];
@@ -164,7 +167,7 @@ function ViewerHotkeys({
           const requestedIndex = pushDigit(event.key);
           const clusterId = clusterIds[Math.min(clusterIds.length - 1, requestedIndex - 1)];
           if (clusterId) {
-            machine.goToCluster(clusterId);
+            machine.flyToCluster(clusterId);
           }
           return;
         }
@@ -184,7 +187,9 @@ function ViewerHotkeys({
             if (machine.state.context.guided) {
               machine.next();
             } else {
-              machine.pan(-90, 0);
+              machine.beginDirectManipulation();
+              machine.panBy(-panStepX, 0);
+              machine.endDirectManipulation();
             }
             return;
           case 'ArrowLeft':
@@ -192,7 +197,9 @@ function ViewerHotkeys({
             if (machine.state.context.guided) {
               machine.prev();
             } else {
-              machine.pan(90, 0);
+              machine.beginDirectManipulation();
+              machine.panBy(panStepX, 0);
+              machine.endDirectManipulation();
             }
             return;
           case 'ArrowUp':
@@ -200,7 +207,9 @@ function ViewerHotkeys({
             if (machine.state.context.guided) {
               machine.prev();
             } else {
-              machine.pan(0, 90);
+              machine.beginDirectManipulation();
+              machine.panBy(0, panStepY);
+              machine.endDirectManipulation();
             }
             return;
           case 'ArrowDown':
@@ -208,7 +217,9 @@ function ViewerHotkeys({
             if (machine.state.context.guided) {
               machine.next();
             } else {
-              machine.pan(0, -90);
+              machine.beginDirectManipulation();
+              machine.panBy(0, -panStepY);
+              machine.endDirectManipulation();
             }
             return;
           case ' ':
@@ -227,16 +238,26 @@ function ViewerHotkeys({
           case '+':
           case '=':
             event.preventDefault();
-            machine.zoom(machine.state.context.camera.zoom + 0.12);
+            machine.beginDirectManipulation();
+            machine.zoomAtViewportPoint(machine.state.context.camera.zoom * 1.18, viewportCenter, {
+              width: window.innerWidth,
+              height: window.innerHeight
+            });
+            machine.endDirectManipulation();
             return;
           case '-':
           case '_':
             event.preventDefault();
-            machine.zoom(machine.state.context.camera.zoom - 0.12);
+            machine.beginDirectManipulation();
+            machine.zoomAtViewportPoint(machine.state.context.camera.zoom / 1.18, viewportCenter, {
+              width: window.innerWidth,
+              height: window.innerHeight
+            });
+            machine.endDirectManipulation();
             return;
           case '0':
             event.preventDefault();
-            machine.send({ type: 'SET_CAMERA', camera: machine.cameraFrame });
+            machine.resetOverview();
             clearDigitBuffer();
             return;
           case 'Escape':

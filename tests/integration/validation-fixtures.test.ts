@@ -172,6 +172,32 @@ describe('validation fixtures', () => {
         ),
         message: 'linearProportion must be between 0 and 1',
       },
+      {
+        name: 'non-positive cluster frame',
+        file: path.join(
+          process.cwd(),
+          'tests',
+          'fixtures',
+          'presentations',
+          'invalid',
+          'non-positive-cluster-frame',
+          'presentation.yaml'
+        ),
+        message: 'frame/width must be > 0',
+      },
+      {
+        name: 'mixed cluster anchor',
+        file: path.join(
+          process.cwd(),
+          'tests',
+          'fixtures',
+          'presentations',
+          'invalid',
+          'mixed-cluster-anchor',
+          'presentation.yaml'
+        ),
+        message: 'cannot mix absolute anchor coordinates',
+      },
     ] as const;
 
     for (const fixture of fixtures) {
@@ -213,6 +239,47 @@ describe('validation fixtures', () => {
         result.issues.filter((issue) => issue.severity === 'error')
       ).toEqual([]);
     }
+  });
+
+  it('emits map migration warnings without failing valid fixtures', async () => {
+    const legacySizing = await validatePresentation(
+      path.join(
+        process.cwd(),
+        'tests',
+        'fixtures',
+        'presentations',
+        'valid',
+        'map-layout-props-warning',
+        'presentation.yaml'
+      ),
+      { report: false, throwOnError: false }
+    );
+
+    expect(legacySizing.valid).toBe(true);
+    expect(
+      legacySizing.issues.some((issue) => issue.message.includes('deprecated layoutProps.width'))
+    ).toBe(true);
+    expect(
+      legacySizing.issues.some((issue) => issue.message.includes('deprecated layoutProps.minHeight'))
+    ).toBe(true);
+
+    const arrangementPrecedence = await validatePresentation(
+      path.join(
+        process.cwd(),
+        'tests',
+        'fixtures',
+        'presentations',
+        'valid',
+        'map-canvas-arrangement-precedence',
+        'presentation.yaml'
+      ),
+      { report: false, throwOnError: false }
+    );
+
+    expect(arrangementPrecedence.valid).toBe(true);
+    expect(
+      arrangementPrecedence.issues.some((issue) => issue.message.includes('canvas.arrangement takes precedence'))
+    ).toBe(true);
   });
 
   it('rejects invalid theme fixtures', async () => {

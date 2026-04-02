@@ -3,7 +3,14 @@
 import { useMachine } from '@xstate/react';
 import { useEffect, useMemo } from 'react';
 
-import { frameCluster, frameClusters, resolveClusterPositions } from '@/lib/engine/arrangement';
+import {
+  CameraState,
+  frameCluster,
+  frameClusters,
+  resolveClusterPositions,
+  ViewportPoint,
+  ViewportSize
+} from '@/lib/engine/arrangement';
 import { presentationMachine } from '@/lib/machines/presentation-machine';
 import { PresentationConfig } from '@/lib/types/presentation';
 
@@ -12,11 +19,14 @@ export function usePresentationMachine(presentation: PresentationConfig) {
     () => resolveClusterPositions(presentation.clusters ?? [], presentation.canvas),
     [presentation.canvas, presentation.clusters]
   );
-  const clusterFrames = useMemo(
-    () => new Map(positionedClusters.map((cluster) => [cluster.id, frameCluster(cluster, presentation.canvas)])),
+  const clusterCameras = useMemo(
+    () =>
+      Object.fromEntries(
+        positionedClusters.map((cluster) => [cluster.id, frameCluster(cluster, presentation.canvas)])
+      ) as Record<string, CameraState>,
     [positionedClusters, presentation.canvas]
   );
-  const initialCamera = useMemo(
+  const overviewCamera = useMemo(
     () =>
       presentation.mode === 'map'
         ? frameClusters(positionedClusters, presentation.canvas)
@@ -29,59 +39,30 @@ export function usePresentationMachine(presentation: PresentationConfig) {
   );
   const machine = useMemo(() => presentationMachine.provide({}), []);
   const [state, send] = useMachine(machine, {
-    input: { presentation, initialCamera }
+    input: { presentation, initialCamera: overviewCamera, overviewCamera, clusterCameras }
   });
 
   useEffect(() => {
     send({ type: 'BACKGROUND_UPDATE' });
   }, [send, state.context.currentStepIndex, state.context.currentClusterId]);
 
-  const guidedSequence = useMemo(
-    () => presentation.navigation?.sequence ?? presentation.clusters?.map((cluster) => cluster.id) ?? [],
-    [presentation.clusters, presentation.navigation?.sequence]
-  );
-  const cameraFrame = useMemo(() => frameClusters(positionedClusters, presentation.canvas), [positionedClusters, presentation.canvas]);
-
-  const focusCluster = (clusterId: string | null) => {
-    if (!clusterId) {
-      return;
-    }
-
-    const camera = clusterFrames.get(clusterId);
-    if (!camera) {
-      return;
-    }
-
-    send({ type: 'SET_CAMERA', camera });
-  };
-
   return {
     state,
     send,
     positionedClusters,
-    cameraFrame,
-    next: () => {
-      if (presentation.mode === 'map' && state.context.guided) {
-        focusCluster(guidedSequence[Math.min(guidedSequence.length - 1, state.context.guidedIndex + 1)] ?? null);
-      }
-
-      send({ type: 'NEXT' });
-    },
-    prev: () => {
-      if (presentation.mode === 'map' && state.context.guided) {
-        focusCluster(guidedSequence[Math.max(0, state.context.guidedIndex - 1)] ?? null);
-      }
-
-      send({ type: 'PREV' });
-    },
+    cameraFrame: overviewCamera,
+    next: () => send({ type: 'NEXT' }),
+    prev: () => send({ type: 'PREV' }),
     goToStep: (stepIndex: number) => send({ type: 'GO_TO_STEP', stepIndex }),
-    goToCluster: (clusterId: string) => {
-      focusCluster(clusterId);
-      send({ type: 'GO_TO_CLUSTER', clusterId });
-    },
+    flyToCluster: (clusterId: string) => send({ type: 'FLY_TO_CLUSTER', clusterId }),
+    flyToCamera: (camera: CameraState, preserveCluster?: boolean) => send({ type: 'FLY_TO_CAMERA', camera, preserveCluster }),
     enterGuided: () => send({ type: 'ENTER_GUIDED' }),
     exitGuided: () => send({ type: 'EXIT_GUIDED' }),
-    pan: (deltaX: number, deltaY: number) => send({ type: 'PAN', deltaX, deltaY }),
-    zoom: (zoom: number) => send({ type: 'ZOOM', zoom })
+    beginDirectManipulation: () => send({ type: 'BEGIN_INTERACTION' }),
+    endDirectManipulation: () => send({ type: 'END_INTERACTION' }),
+    panBy: (deltaX: number, deltaY: number) => send({ type: 'PAN_BY', deltaX, deltaY }),
+    zoomAtViewportPoint: (zoom: number, point: ViewportPoint, viewport: ViewportSize) =>
+      send({ type: 'ZOOM_TO_POINT', zoom, point, viewport }),
+    resetOverview: () => send({ type: 'RESET_OVERVIEW' })
   };
 }

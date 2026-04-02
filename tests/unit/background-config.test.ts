@@ -297,6 +297,52 @@ describe('background config', () => {
     expect(verticalState.appearance.filter?.value).toContain('linear-gradient(180deg');
   });
 
+  it('builds reverse filter gradients that cover the center instead of the edges', () => {
+    const radialReverseState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        filter: {
+          mode: 'radial-reverse'
+        }
+      }),
+      0,
+      null
+    );
+    expect(radialReverseState.appearance.filter?.value).toContain('rgba(');
+    expect(radialReverseState.appearance.filter?.value).toContain('transparent 100%');
+
+    const horizontalReverseState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        filter: {
+          mode: 'linear-horizontal-reverse',
+          linearProportion: 0.5
+        }
+      }),
+      0,
+      null
+    );
+    expect(horizontalReverseState.appearance.filter?.value).toContain('linear-gradient(90deg');
+    expect(horizontalReverseState.appearance.filter?.value).toContain('transparent 0%');
+
+    const verticalReverseState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        filter: {
+          mode: 'linear-vertical-reverse',
+          linearProportion: 0.5
+        }
+      }),
+      0,
+      null
+    );
+    expect(verticalReverseState.appearance.filter?.value).toContain('linear-gradient(180deg');
+    expect(verticalReverseState.appearance.filter?.value).toContain('transparent 0%');
+  });
+
   it('supports preset refs in stage overrides, step backgrounds, and legacy sections', async () => {
     const basePresentation = createStagePresentation(
       {

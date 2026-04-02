@@ -1,0 +1,22 @@
+meta:
+  title: Mixed cluster anchor
+  slug: mixed-cluster-anchor
+mode: map
+clusters:
+  - id: root
+    layout: single-content
+    anchor: { x: 0, y: 0 }
+    components:
+      - type: headline
+        content: Root
+  - id: child
+    layout: single-content
+    anchor:
+      x: 120
+      y: 40
+      relativeTo: root
+      direction: right
+      distance: 100
+    components:
+      - type: headline
+        content: Mixed anchor

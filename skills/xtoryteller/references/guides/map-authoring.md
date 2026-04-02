@@ -30,6 +30,7 @@ Good fits:
 
 - Give every cluster a stable `id`.
 - Add titles and descriptions so the dashboard and map shell stay legible.
+- Use `frame.width` and `frame.height` for outer cluster size when clusters should not share the default footprint.
 - Choose either:
   - manual relative anchors, or
   - a supported arrangement algorithm.
@@ -45,11 +46,15 @@ Current runtime support includes:
 - `grid`
 - `tree`
 
+Put global automatic layout settings under `canvas.arrangement`. Cluster-level `arrangement` is only a deprecated fallback for older decks.
+
 ## Cluster Rules
 
 - Keep clusters far enough apart to avoid overlap.
+- Treat `anchor.x`/`anchor.y` as absolute placement and `relativeTo`/`direction`/`distance` as relative placement. Do not mix those forms in one anchor.
 - Make anchor references resolvable and acyclic.
 - Prefer one strong layout per cluster rather than many tiny fragments.
+- Keep `layoutProps` focused on the internal layout. Do not use `layoutProps.width` or `layoutProps.height` for outer map card sizing in new decks.
 - Use built-in diagram components when the map is expressing relationships, processes, or structure.
 - Treat annotations as markdown-only unless you have verified a component-specific implementation.
 
