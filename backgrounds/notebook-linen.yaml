@@ -1,0 +1,19 @@
+name: Notebook Linen
+description: Quiet cream stock with mint fibers for tabbed notebook layouts.
+tags: [paper, notebook, light]
+shader: paper-texture
+preset: default
+speed: 0.035
+params:
+  colorBack: '#fffaf2'
+  colorFront: '#d8efe4'
+  contrast: 0.18
+  crumpleSize: 0.3
+  crumples: 0.14
+  drops: 0.04
+  fiber: 0.35
+  fiberSize: 0.18
+  foldCount: 3
+  folds: 0.06
+  roughness: 0.28
+  scale: 0.72

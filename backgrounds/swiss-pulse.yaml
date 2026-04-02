@@ -1,0 +1,21 @@
+name: Swiss Pulse
+description: Restrained radial energy with poster-red tension for Swiss layouts.
+tags: [radial, swiss, minimal]
+shader: static-radial-gradient
+preset: cross-section
+colorStops:
+  - '#ffffff'
+  - '#f5f5f5'
+  - '#ff3300'
+grain: 0.06
+contrast: 0.82
+intensity: 0.05
+speed: 0.035
+params:
+  distortionFreq: 1.4
+  falloff: 0.62
+  focalAngle: 0.2
+  focalDistance: 0.15
+  mixing: 0.84
+  radius: 0.7
+  scale: 0.88

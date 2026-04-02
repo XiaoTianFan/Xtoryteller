@@ -270,7 +270,11 @@ function isExplicitPaperShader(config: PresentationBackgroundLike): boolean {
   );
 }
 
-function normalizeAppearance(input: unknown, slug: string, theme?: ThemeConfig): ResolvedBackgroundAppearance | null {
+export function resolveBackgroundAppearance(
+  input: unknown,
+  slug: string,
+  theme?: ThemeConfig
+): ResolvedBackgroundAppearance | null {
   if (typeof input === 'string') {
     const normalizedString = normalizeKey(input);
     if (normalizedString === 'none') {
@@ -369,6 +373,21 @@ function normalizeAppearance(input: unknown, slug: string, theme?: ThemeConfig):
   };
 }
 
+function buildDefaultBackgroundAppearance(slug: string, theme?: ThemeConfig): ResolvedBackgroundAppearance {
+  return (
+    resolveBackgroundAppearance(
+      { type: 'css', colorStops: getThemeColorStops(theme) ?? undefined } satisfies BackgroundConfigObject,
+      slug,
+      theme
+    ) ?? {
+      kind: 'css' as const,
+      key: 'css:default',
+      ...buildCssBackgroundValue({}, theme),
+      opacity: 1
+    }
+  );
+}
+
 function matchLegacyBackgroundSection(
   section: BackgroundSectionLike,
   presentation: PresentationConfig,
@@ -449,6 +468,25 @@ export function getBackgroundTransition(
   };
 }
 
+export function getThemeBackgroundTransition(theme?: ThemeConfig): ResolvedBackgroundTransition {
+  return {
+    duration: getThemeSceneDuration(theme),
+    easing: getThemeSceneEasing(theme)
+  };
+}
+
+export function resolveThemeBackgroundState(
+  theme: ThemeConfig,
+  slug = 'dashboard'
+): ResolvedBackgroundState {
+  return {
+    appearance:
+      resolveBackgroundAppearance(theme.background, slug, theme) ??
+      buildDefaultBackgroundAppearance(slug, theme),
+    transition: getThemeBackgroundTransition(theme)
+  };
+}
+
 export function resolveBackgroundState(
   presentation: PresentationConfig,
   currentStepIndex: number,
@@ -458,23 +496,16 @@ export function resolveBackgroundState(
   const step = presentation.steps?.[currentStepIndex];
   const cluster = presentation.clusters?.find((entry) => entry.id === currentClusterId);
   const override = findBackgroundOverride(presentation, currentStepIndex, currentClusterId);
-  const defaultAppearance =
-    normalizeAppearance(
-      { type: 'css', colorStops: getThemeColorStops(theme) ?? undefined } satisfies BackgroundConfigObject,
-      presentation.meta.slug,
-      theme
-    ) ??
-    {
-      kind: 'css' as const,
-      key: 'css:default',
-      ...buildCssBackgroundValue({}, theme),
-      opacity: 1
-    };
+  const defaultAppearance = buildDefaultBackgroundAppearance(presentation.meta.slug, theme);
+  const themeAppearance = theme?.background
+    ? resolveBackgroundAppearance(theme.background, presentation.meta.slug, theme)
+    : null;
   const appearance =
-    normalizeAppearance(override, presentation.meta.slug, theme) ??
-    normalizeAppearance(step?.background, presentation.meta.slug, theme) ??
-    normalizeAppearance(cluster?.background, presentation.meta.slug, theme) ??
-    normalizeAppearance(presentation.background, presentation.meta.slug, theme) ??
+    resolveBackgroundAppearance(override, presentation.meta.slug, theme) ??
+    resolveBackgroundAppearance(step?.background, presentation.meta.slug, theme) ??
+    resolveBackgroundAppearance(cluster?.background, presentation.meta.slug, theme) ??
+    resolveBackgroundAppearance(presentation.background, presentation.meta.slug, theme) ??
+    themeAppearance ??
     defaultAppearance;
 
   return {

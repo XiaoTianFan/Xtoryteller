@@ -296,6 +296,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Paper And Ink
+background:
+  type: paper-shader
+  presetRef: ink-bloom
 fonts:
   heading:
     family: Cormorant Garamond

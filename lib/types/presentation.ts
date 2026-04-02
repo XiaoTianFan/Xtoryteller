@@ -29,12 +29,14 @@ export interface BackgroundTransitionConfig {
 export type BackgroundRendererType = 'paper-shader' | 'css' | 'none';
 
 export type SupportedPaperShaderName =
+  | 'dithering'
   | 'grain-gradient'
   | 'mesh-gradient'
   | 'paper-texture'
   | 'static-mesh-gradient'
   | 'static-radial-gradient'
   | 'water'
+  | 'warp'
   | 'waves';
 
 export interface CssGradientConfig {

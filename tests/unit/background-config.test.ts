@@ -1,5 +1,6 @@
 import { loadBackgroundPresetMap } from '@/lib/engine/background-preset-registry';
 import { resolvePresentationBackgroundPresetRefs } from '@/lib/engine/background-preset-resolver';
+import { loadThemeBySlug } from '@/lib/engine/theme-registry';
 import { resolveBackgroundState } from '@/lib/runtime/background-config';
 import type { PresentationConfig } from '@/lib/types/presentation';
 
@@ -264,6 +265,19 @@ describe('background config', () => {
     expect(resolveBackgroundState(presentation, 0, 'detail').appearance).toMatchObject({
       kind: 'paper-shader',
       shader: 'grain-gradient'
+    });
+  });
+
+  it('falls back to the active theme background when the presentation does not define one', async () => {
+    const paperTheme = await loadThemeBySlug('xinimalist-paper');
+    const presentation = createStagePresentation();
+
+    const state = resolveBackgroundState(presentation, 0, null, paperTheme);
+
+    expect(state.appearance).toMatchObject({
+      kind: 'paper-shader',
+      shader: 'paper-texture',
+      preset: 'abstract'
     });
   });
 });

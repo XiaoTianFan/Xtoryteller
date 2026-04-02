@@ -1,3 +1,5 @@
+import type { BackgroundShaderConfig } from '@/lib/types/presentation';
+
 export interface FontRoleConfig {
   family: string;
   weights?: number[];
@@ -71,6 +73,7 @@ export interface ThemeMotionConfig extends ThemeTokenGroup {
 
 export interface ThemeConfig {
   name: string;
+  background?: BackgroundShaderConfig;
   fonts: {
     heading: FontRoleConfig;
     body: FontRoleConfig;

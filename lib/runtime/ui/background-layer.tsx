@@ -5,16 +5,21 @@ import { animate, useReducedMotion } from 'framer-motion';
 
 import {
   ResolvedBackgroundAppearance,
+  ResolvedBackgroundTransition,
   ResolvedCssGradientConfig,
   buildCssBackgroundValue,
-  resolveBackgroundState
+  resolveBackgroundState,
+  resolveThemeBackgroundState
 } from '@/lib/runtime/background-config';
 import {
+  getPaperShaderSupport,
   isPaperShaderParamInterpolable,
+  normalizePaperShaderName,
   resolvePaperShaderDefinition
 } from '@/lib/runtime/paper-shaders';
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
 import { resolveMotionEasing } from '@/lib/runtime/transition-presets';
+import { ThemeConfig } from '@/lib/types/theme';
 
 const surfaceStyle: CSSProperties = {
   position: 'absolute',
@@ -161,6 +166,11 @@ function canInterpolatePaperAppearance(
     return false;
   }
 
+  const normalizedShader = normalizePaperShaderName(from.shader);
+  if (!normalizedShader) {
+    return false;
+  }
+
   const keys = new Set([
     ...Object.keys(from.params ?? {}),
     ...Object.keys(to.params ?? {})
@@ -174,7 +184,7 @@ function canInterpolatePaperAppearance(
       continue;
     }
 
-    if (!isPaperShaderParamInterpolable(from.shader as Parameters<typeof isPaperShaderParamInterpolable>[0], key)) {
+    if (!isPaperShaderParamInterpolable(normalizedShader, key)) {
       return false;
     }
 
@@ -239,43 +249,107 @@ function interpolatePaperAppearance(
   };
 }
 
-export function getBackgroundTransitionMode(
-  from: ResolvedBackgroundAppearance,
-  to: ResolvedBackgroundAppearance
-): 'interpolate' | 'crossfade' {
-  if (canInterpolatePaperAppearance(from, to) || canInterpolateCssAppearance(from, to)) {
-    return 'interpolate';
-  }
-
-  return 'crossfade';
+function toFiniteNumber(value: unknown, fallback: number): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 }
 
-export function getInterpolatedBackgroundAppearance(
-  from: ResolvedBackgroundAppearance,
-  to: ResolvedBackgroundAppearance,
-  progress: number
-): ResolvedBackgroundAppearance {
-  if (canInterpolatePaperAppearance(from, to)) {
-    return interpolatePaperAppearance(from, to, progress);
+function resolveAnimatedPaperShaderParams(
+  shader: string | undefined,
+  params: Record<string, unknown> | undefined,
+  elapsedSeconds: number,
+  prefersReducedMotion: boolean
+): Record<string, unknown> {
+  if (!shader || prefersReducedMotion) {
+    return params ?? {};
   }
 
-  if (canInterpolateCssAppearance(from, to)) {
-    return interpolateCssAppearance(from, to, progress);
+  const normalizedShader = normalizePaperShaderName(shader);
+  if (!normalizedShader) {
+    return params ?? {};
   }
 
-  return to;
+  const support = getPaperShaderSupport(normalizedShader);
+  const allowedParams = new Set(support.allowedParams);
+  const baseParams = params ?? {};
+  const nextParams: Record<string, unknown> = { ...baseParams };
+  const baseSpeed = toFiniteNumber(baseParams.speed, 0);
+  const animationSpeed = Math.max(baseSpeed, 0.03);
+  const drift = elapsedSeconds * (0.22 + animationSpeed * 0.4);
+  const baseOffsetX = toFiniteNumber(baseParams.offsetX, 0);
+  const baseOffsetY = toFiniteNumber(baseParams.offsetY, 0);
+
+  if (allowedParams.has('speed') && baseSpeed <= 0) {
+    nextParams.speed = animationSpeed;
+  }
+
+  if (allowedParams.has('frame')) {
+    nextParams.frame = elapsedSeconds;
+  }
+
+  if (allowedParams.has('offsetX')) {
+    nextParams.offsetX = baseOffsetX + Math.sin(drift * 0.8) * 0.018;
+  }
+
+  if (allowedParams.has('offsetY')) {
+    nextParams.offsetY = baseOffsetY + Math.cos(drift * 0.65) * 0.014;
+  }
+
+  if (!allowedParams.has('frame') && allowedParams.has('rotation')) {
+    nextParams.rotation = toFiniteNumber(baseParams.rotation, 0) + Math.sin(drift * 0.4) * 0.03;
+  }
+
+  return nextParams;
+}
+
+function useBackgroundAnimationClock(active: boolean, prefersReducedMotion: boolean) {
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+  useEffect(() => {
+    if (!active || prefersReducedMotion) {
+      setElapsedSeconds(0);
+      return;
+    }
+
+    let animationFrameId = 0;
+    let startTime = 0;
+    let lastCommitTime = 0;
+
+    const step = (now: number) => {
+      if (startTime === 0) {
+        startTime = now;
+      }
+
+      if (now - lastCommitTime >= 1000 / 24) {
+        setElapsedSeconds((now - startTime) / 1000);
+        lastCommitTime = now;
+      }
+
+      animationFrameId = window.requestAnimationFrame(step);
+    };
+
+    animationFrameId = window.requestAnimationFrame(step);
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [active, prefersReducedMotion]);
+
+  return elapsedSeconds;
 }
 
 function BackgroundSurface({
   kind,
   value,
   shader,
-  params
+  params,
+  elapsedSeconds,
+  prefersReducedMotion
 }: {
   kind: 'css' | 'none' | 'paper-shader';
   value?: string;
   shader?: string;
   params?: Record<string, unknown>;
+  elapsedSeconds: number;
+  prefersReducedMotion: boolean;
 }) {
   if (kind === 'none') {
     return null;
@@ -303,7 +377,12 @@ function BackgroundSurface({
   }
 
   const ShaderComponent = definition.component;
-  const shaderProps = params ?? {};
+  const shaderProps = resolveAnimatedPaperShaderParams(
+    shader,
+    params,
+    elapsedSeconds,
+    prefersReducedMotion
+  );
   const mergedStyle =
     shaderProps.style && typeof shaderProps.style === 'object'
       ? {
@@ -343,10 +422,14 @@ function BackgroundSurface({
 
 function BackgroundAppearanceLayer({
   appearance,
-  opacity
+  opacity,
+  elapsedSeconds,
+  prefersReducedMotion
 }: {
   appearance: ResolvedBackgroundAppearance;
   opacity: number;
+  elapsedSeconds: number;
+  prefersReducedMotion: boolean;
 }) {
   return (
     <div
@@ -363,21 +446,48 @@ function BackgroundAppearanceLayer({
         value={appearance.value}
         shader={appearance.shader}
         params={appearance.params}
+        elapsedSeconds={elapsedSeconds}
+        prefersReducedMotion={prefersReducedMotion}
       />
     </div>
   );
 }
 
-export function BackgroundLayer() {
-  const { presentation, theme, machine } = usePresentationRuntime();
+export function getBackgroundTransitionMode(
+  from: ResolvedBackgroundAppearance,
+  to: ResolvedBackgroundAppearance
+): 'interpolate' | 'crossfade' {
+  if (canInterpolatePaperAppearance(from, to) || canInterpolateCssAppearance(from, to)) {
+    return 'interpolate';
+  }
+
+  return 'crossfade';
+}
+
+export function getInterpolatedBackgroundAppearance(
+  from: ResolvedBackgroundAppearance,
+  to: ResolvedBackgroundAppearance,
+  progress: number
+): ResolvedBackgroundAppearance {
+  if (canInterpolatePaperAppearance(from, to)) {
+    return interpolatePaperAppearance(from, to, progress);
+  }
+
+  if (canInterpolateCssAppearance(from, to)) {
+    return interpolateCssAppearance(from, to, progress);
+  }
+
+  return to;
+}
+
+export function ResolvedBackgroundLayer({
+  targetAppearance,
+  transition
+}: {
+  targetAppearance: ResolvedBackgroundAppearance;
+  transition: ResolvedBackgroundTransition;
+}) {
   const prefersReducedMotion = useReducedMotion();
-  const backgroundState = resolveBackgroundState(
-    presentation,
-    machine.state.context.currentStepIndex,
-    machine.state.context.currentClusterId,
-    theme
-  );
-  const targetAppearance = backgroundState.appearance;
   const [renderState, setRenderState] = useState<BackgroundRenderState>({
     mode: 'stable',
     appearance: targetAppearance
@@ -387,6 +497,11 @@ export function BackgroundLayer() {
     [renderState]
   );
   const activeAppearanceRef = useRef(activeAppearance);
+  const isPaperShaderActive =
+    renderState.mode === 'stable'
+      ? renderState.appearance.kind === 'paper-shader'
+      : renderState.from.kind === 'paper-shader' || renderState.to.kind === 'paper-shader';
+  const elapsedSeconds = useBackgroundAnimationClock(isPaperShaderActive, Boolean(prefersReducedMotion));
 
   useEffect(() => {
     activeAppearanceRef.current = activeAppearance;
@@ -413,8 +528,8 @@ export function BackgroundLayer() {
     });
 
     const controls = animate(0, 1, {
-      duration: backgroundState.transition.duration / 1000,
-      ease: resolveMotionEasing(backgroundState.transition.easing),
+      duration: transition.duration / 1000,
+      ease: resolveMotionEasing(transition.easing),
       onUpdate: (progress) => {
         setRenderState((current) =>
           current.mode === mode &&
@@ -434,14 +549,21 @@ export function BackgroundLayer() {
       controls.stop();
     };
   }, [
-    backgroundState.transition.duration,
-    backgroundState.transition.easing,
     prefersReducedMotion,
-    targetAppearance
+    targetAppearance,
+    transition.duration,
+    transition.easing
   ]);
 
   if (renderState.mode === 'stable') {
-    return <BackgroundAppearanceLayer appearance={renderState.appearance} opacity={renderState.appearance.opacity} />;
+    return (
+      <BackgroundAppearanceLayer
+        appearance={renderState.appearance}
+        opacity={renderState.appearance.opacity}
+        elapsedSeconds={elapsedSeconds}
+        prefersReducedMotion={Boolean(prefersReducedMotion)}
+      />
+    );
   }
 
   if (renderState.mode === 'interpolate') {
@@ -450,7 +572,14 @@ export function BackgroundLayer() {
       renderState.to,
       renderState.progress
     );
-    return <BackgroundAppearanceLayer appearance={interpolated} opacity={interpolated.opacity} />;
+    return (
+      <BackgroundAppearanceLayer
+        appearance={interpolated}
+        opacity={interpolated.opacity}
+        elapsedSeconds={elapsedSeconds}
+        prefersReducedMotion={Boolean(prefersReducedMotion)}
+      />
+    );
   }
 
   return (
@@ -458,11 +587,52 @@ export function BackgroundLayer() {
       <BackgroundAppearanceLayer
         appearance={renderState.from}
         opacity={(1 - renderState.progress) * renderState.from.opacity}
+        elapsedSeconds={elapsedSeconds}
+        prefersReducedMotion={Boolean(prefersReducedMotion)}
       />
       <BackgroundAppearanceLayer
         appearance={renderState.to}
         opacity={renderState.progress * renderState.to.opacity}
+        elapsedSeconds={elapsedSeconds}
+        prefersReducedMotion={Boolean(prefersReducedMotion)}
       />
     </>
+  );
+}
+
+export function BackgroundLayer() {
+  const { presentation, theme, machine } = usePresentationRuntime();
+  const backgroundState = resolveBackgroundState(
+    presentation,
+    machine.state.context.currentStepIndex,
+    machine.state.context.currentClusterId,
+    theme
+  );
+
+  return (
+    <ResolvedBackgroundLayer
+      targetAppearance={backgroundState.appearance}
+      transition={backgroundState.transition}
+    />
+  );
+}
+
+export function ThemeBackgroundLayer({
+  theme,
+  slug = 'dashboard'
+}: {
+  theme: ThemeConfig;
+  slug?: string;
+}) {
+  const backgroundState = useMemo(
+    () => resolveThemeBackgroundState(theme, slug),
+    [slug, theme]
+  );
+
+  return (
+    <ResolvedBackgroundLayer
+      targetAppearance={backgroundState.appearance}
+      transition={backgroundState.transition}
+    />
   );
 }

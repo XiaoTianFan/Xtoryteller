@@ -296,6 +296,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Vintage Editorial
+background:
+  type: paper-shader
+  presetRef: editorial-paper
 fonts:
   heading:
     family: Fraunces

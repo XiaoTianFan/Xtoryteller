@@ -1,0 +1,20 @@
+name: Pastel Orbit
+description: Soft radial color orbit for geometric and split-pastel themes.
+tags: [radial, pastel, light]
+shader: static-radial-gradient
+preset: radial
+colorStops:
+  - '#f7f4ef'
+  - '#c8d9e6'
+  - '#f0b4d4'
+grain: 0.12
+intensity: 0.1
+contrast: 0.68
+speed: 0.045
+params:
+  distortionFreq: 1.2
+  distortionShift: 0.1
+  falloff: 0.58
+  mixing: 0.7
+  radius: 0.82
+  scale: 0.92

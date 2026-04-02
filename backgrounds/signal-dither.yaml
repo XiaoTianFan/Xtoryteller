@@ -1,0 +1,16 @@
+name: Signal Dither
+description: Slow warp dithering with ember-orange signal breaks.
+tags: [dithering, signal, bold]
+shader: dithering
+preset: warp
+speed: 0.03
+params:
+  colorBack: '#1c0f0b'
+  colorFront: '#ff7a45'
+  offsetX: -1
+  offsetY: 0.46
+  pxSize: 1
+  rotation: 0.5
+  scale: 1
+  shape: warp
+  type: 8x8

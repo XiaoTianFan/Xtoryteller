@@ -292,6 +292,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Neon Cyber
+background:
+  type: paper-shader
+  presetRef: cyber-mesh
 fonts:
   heading:
     family: Clash Display

@@ -17,6 +17,12 @@ Required core sections:
 - `borders`
 - `motion`
 
+Optional shared default surface:
+
+- `background`: a theme-owned default background using the same `BackgroundShaderConfig` shape as presentations.
+- Prefer `background: { type: paper-shader, presetRef: <shared-preset> }` when the theme should carry a reusable Paper Shader look.
+- Presentations can still override the theme default with their own top-level `background`, step backgrounds, cluster backgrounds, or legacy `backgroundSections`.
+
 Presentations select a theme with `theme: <slug>` and can add `themeOverrides` for targeted adjustments.
 
 ## Decision Rule

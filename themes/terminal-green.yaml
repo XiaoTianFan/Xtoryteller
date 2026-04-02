@@ -292,6 +292,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Terminal Green
+background:
+  type: paper-shader
+  presetRef: terminal-phosphor
 fonts:
   heading:
     family: JetBrains Mono

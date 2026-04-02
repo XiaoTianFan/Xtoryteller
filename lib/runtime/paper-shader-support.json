@@ -1,14 +1,61 @@
 {
   "aliases": {
+    "dither": "dithering",
+    "dithering": "dithering",
     "grain": "paper-texture",
     "mesh": "mesh-gradient",
     "mesh-static": "static-mesh-gradient",
     "noise": "grain-gradient",
     "paper": "paper-texture",
     "radial": "static-radial-gradient",
-    "watercolor": "water"
+    "watercolor": "water",
+    "warp": "warp"
   },
   "shaders": {
+    "dithering": {
+      "componentName": "Dithering",
+      "presets": ["default", "warp", "sine-wave", "ripple", "bugs", "swirl"],
+      "defaultPreset": "default",
+      "allowedParams": [
+        "colorBack",
+        "colorFront",
+        "fit",
+        "frame",
+        "offsetX",
+        "offsetY",
+        "originX",
+        "originY",
+        "pxSize",
+        "rotation",
+        "scale",
+        "shape",
+        "size",
+        "speed",
+        "type",
+        "worldHeight",
+        "worldWidth"
+      ],
+      "interpolableParams": [
+        "colorBack",
+        "colorFront",
+        "frame",
+        "offsetX",
+        "offsetY",
+        "originX",
+        "originY",
+        "pxSize",
+        "rotation",
+        "scale",
+        "size",
+        "speed",
+        "worldHeight",
+        "worldWidth"
+      ],
+      "genericMappings": {
+        "speed": "speed",
+        "variant": "preset"
+      }
+    },
     "grain-gradient": {
       "componentName": "GrainGradient",
       "presets": ["default", "wave", "dots", "truchet", "ripple", "blob"],
@@ -336,6 +383,58 @@
       "genericMappings": {
         "colorStops": "waterColors",
         "intensity": "highlights",
+        "speed": "speed",
+        "variant": "preset"
+      }
+    },
+    "warp": {
+      "componentName": "Warp",
+      "presets": ["default", "cauldron-pot", "live-ink", "kelp", "nectar", "passion"],
+      "defaultPreset": "default",
+      "allowedParams": [
+        "colors",
+        "distortion",
+        "fit",
+        "frame",
+        "offsetX",
+        "offsetY",
+        "originX",
+        "originY",
+        "proportion",
+        "rotation",
+        "scale",
+        "shape",
+        "shapeScale",
+        "softness",
+        "speed",
+        "swirl",
+        "swirlIterations",
+        "worldHeight",
+        "worldWidth"
+      ],
+      "interpolableParams": [
+        "colors",
+        "distortion",
+        "frame",
+        "offsetX",
+        "offsetY",
+        "originX",
+        "originY",
+        "proportion",
+        "rotation",
+        "scale",
+        "shapeScale",
+        "softness",
+        "speed",
+        "swirl",
+        "swirlIterations",
+        "worldHeight",
+        "worldWidth"
+      ],
+      "genericMappings": {
+        "colorStops": "colors",
+        "contrast": "softness",
+        "intensity": "distortion",
         "speed": "speed",
         "variant": "preset"
       }

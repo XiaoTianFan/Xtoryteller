@@ -1,0 +1,19 @@
+name: Ink Bloom
+description: Fine paper texture with restrained ink pooling and tactile movement.
+tags: [paper, ink, editorial]
+shader: paper-texture
+preset: details
+speed: 0.04
+params:
+  colorBack: '#faf9f7'
+  colorFront: '#7a1f2f'
+  contrast: 0.24
+  crumpleSize: 0.2
+  crumples: 0.18
+  drops: 0.06
+  fiber: 0.18
+  fiberSize: 0.16
+  foldCount: 6
+  folds: 0.28
+  roughness: 0.72
+  scale: 1.35

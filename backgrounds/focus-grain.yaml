@@ -1,5 +1,5 @@
 name: Focus Grain
-description: Darker grain gradient for emphasis beats and focused sections.
+description: Dark grain gradient with low-motion emphasis for focused scenes.
 tags: [grain, focus, dramatic]
 shader: grain-gradient
 preset: wave
@@ -10,4 +10,7 @@ colorStops:
 intensity: 0.42
 grain: 0.18
 contrast: 0.66
-speed: 1.1
+speed: 0.08
+params:
+  scale: 0.96
+  rotation: 0.08

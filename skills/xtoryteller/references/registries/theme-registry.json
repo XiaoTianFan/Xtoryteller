@@ -51,6 +51,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "signal-dither"
       }
     },
     {
@@ -102,6 +106,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "voltage-warp"
       }
     },
     {
@@ -156,6 +164,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "botanical-current"
       }
     },
     {
@@ -209,6 +221,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "ember-truchet"
       }
     },
     {
@@ -246,6 +262,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "cyber-mesh"
       }
     },
     {
@@ -300,6 +320,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "notebook-linen"
       }
     },
     {
@@ -354,6 +378,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "ink-bloom"
       }
     },
     {
@@ -406,6 +434,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "pastel-orbit"
       }
     },
     {
@@ -458,6 +490,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "tidal-waves"
       }
     },
     {
@@ -508,6 +544,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "swiss-pulse"
       }
     },
     {
@@ -559,6 +599,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "terminal-phosphor"
       }
     },
     {
@@ -611,6 +655,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "editorial-paper"
       }
     },
     {
@@ -665,6 +713,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "focus-grain"
       }
     },
     {
@@ -719,6 +771,10 @@
             "monospace"
           ]
         }
+      },
+      "background": {
+        "type": "paper-shader",
+        "presetRef": "editorial-paper"
       }
     }
   ]

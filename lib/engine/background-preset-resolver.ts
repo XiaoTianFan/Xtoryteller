@@ -1,5 +1,6 @@
 import { BackgroundPresetConfig } from '@/lib/types/background-preset';
 import { PresentationConfig } from '@/lib/types/presentation';
+import type { ThemeConfig } from '@/lib/types/theme';
 
 type BackgroundObjectLike = {
   type?: string;
@@ -119,5 +120,19 @@ export function resolvePresentationBackgroundPresetRefs(
       ...cluster,
       background: resolveBackgroundConfigPresetRefs(cluster.background, presetMap) as typeof cluster.background
     }))
+  };
+}
+
+export function resolveThemeBackgroundPresetRefs(
+  theme: ThemeConfig,
+  presetMap: Map<string, BackgroundPresetConfig>
+): ThemeConfig {
+  if (!theme.background) {
+    return theme;
+  }
+
+  return {
+    ...theme,
+    background: resolveBackgroundConfigPresetRefs(theme.background, presetMap) as ThemeConfig['background']
   };
 }

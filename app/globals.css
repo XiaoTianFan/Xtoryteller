@@ -251,19 +251,16 @@ textarea {
 }
 
 .dashboardPage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   min-height: 100vh;
   padding: var(--spacing-chrome-page-padding);
-  background:
-    radial-gradient(
-      circle at top left,
-      var(--color-chrome-page-glow, rgba(216, 154, 79, 0.16)),
-      transparent 26%
-    ),
-    linear-gradient(
-      180deg,
-      var(--color-chrome-page-top, #f7f2ea) 0%,
-      var(--color-chrome-page-bottom, #efe6d8) 100%
-    );
+}
+
+.dashboardPageContent {
+  position: relative;
+  z-index: 1;
 }
 
 .dashboardHero {

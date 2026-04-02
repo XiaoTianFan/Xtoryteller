@@ -9,6 +9,10 @@ const MIN_CONTRAST = 4.5;
 const FONT_SOURCES = ['local', 'google', 'fontshare', 'system'];
 const FONT_DISPLAYS = ['auto', 'block', 'swap', 'fallback', 'optional'];
 const FONT_STYLES = ['normal', 'italic'];
+const PAPER_SHADER_SUPPORT = JSON.parse(
+  await fs.readFile(path.join(root, 'lib', 'runtime', 'paper-shader-support.json'), 'utf8')
+);
+const PAPER_SHADER_NAMES = new Set(Object.keys(PAPER_SHADER_SUPPORT.shaders));
 
 function parseHex(hex) {
   const normalized = hex.replace('#', '').trim();
@@ -53,6 +57,285 @@ function toRgb(input) {
   }
 
   return null;
+}
+
+function normalizeKey(value) {
+  return String(value)
+    .trim()
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase();
+}
+
+function normalizePaperShaderName(value) {
+  if (typeof value !== 'string' || !value.trim()) {
+    return null;
+  }
+
+  const normalized = normalizeKey(value);
+  return PAPER_SHADER_SUPPORT.aliases[normalized] ?? (PAPER_SHADER_NAMES.has(normalized) ? normalized : null);
+}
+
+function normalizePaperShaderPresetName(shaderName, value) {
+  if (!shaderName || typeof value !== 'string' || !value.trim()) {
+    return null;
+  }
+
+  const normalized = normalizeKey(value);
+  return (
+    PAPER_SHADER_SUPPORT.shaders[shaderName]?.presets.find(
+      (preset) => normalizeKey(preset) === normalized
+    ) ?? null
+  );
+}
+
+function asObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value : null;
+}
+
+function looksLikeCssBackground(value) {
+  return typeof value === 'string' && /(gradient\(|#|rgb\(|rgba\(|hsl\(|hsla\(|var\(|url\()/i.test(value);
+}
+
+function validateCssGradient(gradient, label, issues) {
+  if (!gradient) {
+    return;
+  }
+
+  const value = asObject(gradient);
+  if (!value) {
+    issues.push(`${label} must be an object.`);
+    return;
+  }
+
+  if (value.type != null && !['linear', 'radial'].includes(value.type)) {
+    issues.push(`${label}.type must be "linear" or "radial".`);
+  }
+
+  if (
+    !Array.isArray(value.stops) ||
+    value.stops.length < 2 ||
+    !value.stops.every((stop) => typeof stop === 'string')
+  ) {
+    issues.push(`${label}.stops must contain at least two color strings.`);
+  }
+}
+
+function validatePaperShaderConfig(value, label, issues, shaderName) {
+  const support = PAPER_SHADER_SUPPORT.shaders[shaderName];
+  if (!support) {
+    issues.push(`${label} references unsupported Paper shader "${shaderName}".`);
+    return;
+  }
+
+  const normalizedPreset =
+    normalizePaperShaderPresetName(shaderName, value.preset) ??
+    normalizePaperShaderPresetName(shaderName, value.variant);
+  const declaredPreset = typeof value.preset === 'string' ? value.preset : value.variant;
+  if (declaredPreset != null && !normalizedPreset) {
+    issues.push(
+      `${label} references unsupported preset "${declaredPreset}" for Paper shader "${shaderName}".`
+    );
+  }
+
+  const params = asObject(value.params) ?? {};
+  const allowedParams = new Set(support.allowedParams);
+  for (const key of Object.keys(params)) {
+    if (!allowedParams.has(key)) {
+      issues.push(`${label}.params.${key} is not supported for Paper shader "${shaderName}".`);
+    }
+  }
+
+  const genericFields = ['colorStops', 'intensity', 'grain', 'contrast', 'speed'];
+  for (const field of genericFields) {
+    if (value[field] == null) {
+      continue;
+    }
+
+    if (!support.genericMappings[field]) {
+      issues.push(`${label}.${field} is not supported for Paper shader "${shaderName}".`);
+    }
+  }
+
+  if (value.colorStops != null) {
+    if (
+      !Array.isArray(value.colorStops) ||
+      value.colorStops.length < 2 ||
+      !value.colorStops.every((entry) => typeof entry === 'string')
+    ) {
+      issues.push(`${label}.colorStops must contain at least two color strings.`);
+    }
+  }
+}
+
+async function loadBackgroundPresetMap() {
+  const presetPaths = await fg('backgrounds/*.yaml', { cwd: root, absolute: true });
+  const entries = await Promise.all(
+    presetPaths.map(async (presetPath) => [path.basename(presetPath, '.yaml'), await parseYaml(presetPath)])
+  );
+
+  return new Map(entries);
+}
+
+function resolvePresetBackedBackground(value, backgroundPresetMap) {
+  const presetRef =
+    typeof value.presetRef === 'string' && value.presetRef.trim()
+      ? value.presetRef.trim()
+      : null;
+  const preset = presetRef ? backgroundPresetMap.get(presetRef) ?? null : null;
+
+  if (!preset) {
+    return { presetRef, preset: null, effectiveValue: value };
+  }
+
+  return {
+    presetRef,
+    preset,
+    effectiveValue: {
+      ...preset,
+      ...value,
+      type: value.type ?? 'paper-shader',
+      shader: value.shader ?? preset.shader,
+      preset: value.preset ?? preset.preset,
+      params: {
+        ...(asObject(preset.params) ?? {}),
+        ...(asObject(value.params) ?? {})
+      },
+      colorStops: value.colorStops ?? preset.colorStops,
+      intensity: value.intensity ?? preset.intensity,
+      grain: value.grain ?? preset.grain,
+      contrast: value.contrast ?? preset.contrast,
+      speed: value.speed ?? preset.speed,
+      opacity: value.opacity ?? preset.opacity
+    }
+  };
+}
+
+function validateThemeBackground(background, issues, backgroundPresetMap) {
+  if (background == null) {
+    return;
+  }
+
+  if (typeof background === 'string') {
+    const normalized = normalizePaperShaderName(background);
+    if (
+      normalizeKey(background) === 'none' ||
+      looksLikeCssBackground(background) ||
+      (normalized && PAPER_SHADER_NAMES.has(normalized))
+    ) {
+      return;
+    }
+
+    issues.push(
+      'background must be "none", a CSS background string, or a supported Paper shader name.'
+    );
+    return;
+  }
+
+  const value = asObject(background);
+  if (!value) {
+    issues.push('background must be a string or object.');
+    return;
+  }
+
+  if (value.stages != null || value.regions != null || value.transition != null) {
+    issues.push(
+      'background on a theme cannot declare stages, regions, or transition overrides.'
+    );
+  }
+
+  const { presetRef, preset, effectiveValue } = resolvePresetBackedBackground(
+    value,
+    backgroundPresetMap
+  );
+  const normalizedType = normalizeKey(effectiveValue.type ?? '');
+  const explicitCss = normalizedType === 'css';
+  const explicitNone = normalizedType === 'none';
+  const shaderName =
+    normalizePaperShaderName(effectiveValue.shader) ??
+    (normalizedType === 'paper-shader' ? 'paper-texture' : null) ??
+    (normalizedType &&
+    !['css', 'none', 'paper', 'paper-shader'].includes(normalizedType)
+      ? normalizePaperShaderName(value.type)
+      : null);
+
+  if (value.presetRef != null && !presetRef) {
+    issues.push('background.presetRef must be a non-empty string.');
+  }
+
+  if (presetRef && !preset) {
+    issues.push(`background.presetRef references unknown background preset "${presetRef}".`);
+  }
+
+  if (presetRef && (value.value != null || value.gradient != null)) {
+    issues.push(
+      'background.presetRef cannot be combined with CSS-only fields like value or gradient.'
+    );
+  }
+
+  if (presetRef && (explicitCss || explicitNone)) {
+    issues.push(
+      `background.presetRef implies a Paper shader background and cannot be combined with type "${value.type}".`
+    );
+  }
+
+  if (
+    !explicitCss &&
+    !explicitNone &&
+    value.type != null &&
+    shaderName == null &&
+    normalizedType !== 'paper'
+  ) {
+    issues.push(
+      'background.type must be "css", "paper-shader", "none", legacy "paper", or a supported Paper shader alias.'
+    );
+  }
+
+  if (
+    !explicitCss &&
+    !explicitNone &&
+    normalizedType !== 'paper' &&
+    shaderName == null &&
+    effectiveValue.value == null &&
+    effectiveValue.gradient == null &&
+    effectiveValue.colorStops == null
+  ) {
+    issues.push(
+      'background must declare a CSS background, "none", or a supported Paper shader.'
+    );
+  }
+
+  if (
+    !explicitNone &&
+    (explicitCss ||
+      normalizedType === 'paper' ||
+      (!shaderName &&
+        (effectiveValue.value != null ||
+          effectiveValue.gradient != null ||
+          effectiveValue.colorStops != null)))
+  ) {
+    if (effectiveValue.value != null && typeof effectiveValue.value !== 'string') {
+      issues.push('background.value must be a string.');
+    }
+
+    if (effectiveValue.colorStops != null) {
+      if (
+        !Array.isArray(effectiveValue.colorStops) ||
+        effectiveValue.colorStops.length < 3 ||
+        !effectiveValue.colorStops.every((entry) => typeof entry === 'string')
+      ) {
+        issues.push('background.colorStops must contain at least three color strings for CSS backgrounds.');
+      }
+    }
+
+    validateCssGradient(effectiveValue.gradient, 'background.gradient', issues);
+    return;
+  }
+
+  if (!explicitNone && shaderName) {
+    validatePaperShaderConfig(effectiveValue, 'background', issues, shaderName);
+  }
 }
 
 function channelToLinear(value) {
@@ -365,6 +648,7 @@ async function validateFontRole(roleName, role, issues) {
 
 export async function validateTheme(filePath) {
   const theme = await parseYaml(filePath);
+  const backgroundPresetMap = await loadBackgroundPresetMap();
   const issues = [];
 
   await Promise.all([
@@ -401,6 +685,7 @@ export async function validateTheme(filePath) {
     issues
   );
   validateRequiredPaths('motion', theme.motion, REQUIRED_MOTION_PATHS, issues);
+  validateThemeBackground(theme.background, issues, backgroundPresetMap);
 
   const background = toRgb(theme.colors?.background);
   const surface = toRgb(theme.colors?.surface ?? theme.colors?.background);

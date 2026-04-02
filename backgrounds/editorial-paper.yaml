@@ -1,5 +1,5 @@
 name: Editorial Paper
-description: Warm paper texture for editorial or product storytelling.
+description: Warm editorial paper with a gentle lived-in drift.
 tags: [paper, warm, editorial]
 shader: paper-texture
 preset: abstract
@@ -10,8 +10,9 @@ colorStops:
 intensity: 0.42
 grain: 0.18
 contrast: 0.58
-speed: 0.85
+speed: 0.04
 params:
   fiberSize: 0.85
   folds: 0.22
   roughness: 0.2
+  scale: 0.68

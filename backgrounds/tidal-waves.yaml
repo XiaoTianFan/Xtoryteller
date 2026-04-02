@@ -1,5 +1,5 @@
 name: Tidal Waves
-description: Flowing wave background for map canvases and guided motion.
+description: Flowing wave field for maps and pastel motion systems.
 tags: [waves, map, fluid]
 shader: waves
 preset: groovy
@@ -10,5 +10,10 @@ colorStops:
 intensity: 0.38
 contrast: 0.56
 params:
+  amplitude: 0.22
+  offsetX: -0.08
+  offsetY: 0.04
+  proportion: 0.48
+  scale: 2.6
   spacing: 0.42
   frequency: 1.1

@@ -292,6 +292,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Split Pastel
+background:
+  type: paper-shader
+  presetRef: tidal-waves
 fonts:
   heading:
     family: Outfit

@@ -1,0 +1,23 @@
+name: Cyber Mesh
+description: Cyan-magenta mesh glow for neon system themes.
+tags: [mesh, neon, cyber]
+shader: mesh-gradient
+preset: purple
+colorStops:
+  - '#09101d'
+  - '#00ffcc'
+  - '#ff00aa'
+grain: 0.08
+intensity: 0.09
+speed: 0.045
+params:
+  colors:
+    - '#09101d'
+    - '#00ffcc'
+    - '#8be9fd'
+    - '#ff00aa'
+  distortion: 0.12
+  grainOverlay: 0.06
+  rotation: 0.15
+  scale: 1.08
+  swirl: 0.88

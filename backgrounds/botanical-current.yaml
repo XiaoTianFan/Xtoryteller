@@ -1,0 +1,19 @@
+name: Botanical Current
+description: A slow water wash for nocturnal botanical themes.
+tags: [water, botanical, dark]
+shader: water
+preset: slow-mo
+colorStops:
+  - '#0c0f0d'
+  - '#6a8a63'
+  - '#d4a574'
+intensity: 0.18
+speed: 0.05
+params:
+  caustic: 0.22
+  highlights: 0.18
+  layering: 0.55
+  offsetY: -0.08
+  scale: 1.08
+  size: 0.9
+  waves: 0.38

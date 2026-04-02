@@ -292,6 +292,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Pastel Geometry
+background:
+  type: paper-shader
+  presetRef: pastel-orbit
 fonts:
   heading:
     family: Plus Jakarta Sans

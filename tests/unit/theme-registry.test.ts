@@ -49,4 +49,14 @@ describe('theme registry resolution', () => {
       ])
     );
   });
+
+  it('resolves theme-owned background preset refs when loading themes', async () => {
+    const resolved = await loadThemeWithFallback('xinimalist-paper');
+
+    expect(resolved.theme.background).toMatchObject({
+      type: 'paper-shader',
+      shader: 'paper-texture',
+      preset: 'abstract'
+    });
+  });
 });

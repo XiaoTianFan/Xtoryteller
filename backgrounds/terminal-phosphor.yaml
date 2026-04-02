@@ -1,0 +1,18 @@
+name: Terminal Phosphor
+description: Dark phosphor grain glow with restrained motion for terminal themes.
+tags: [grain, terminal, dark]
+shader: grain-gradient
+preset: dots
+speed: 0.06
+params:
+  colorBack: '#08110d'
+  colors:
+    - '#123b28'
+    - '#39d353'
+    - '#7ee787'
+  intensity: 0.14
+  noise: 0.7
+  rotation: 0.08
+  scale: 0.9
+  shape: dots
+  softness: 0.9

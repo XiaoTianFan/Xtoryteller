@@ -1,0 +1,25 @@
+name: Voltage Warp
+description: Electric check-warp field with deliberate, slow-moving tension.
+tags: [warp, electric, bold]
+shader: warp
+preset: default
+colorStops:
+  - '#0e1024'
+  - '#4d8cff'
+  - '#d4ff00'
+  - '#f5f1da'
+intensity: 0.15
+contrast: 1
+speed: 0.04
+params:
+  distortion: 0.15
+  offsetX: 0
+  offsetY: 0
+  proportion: 0
+  rotation: 0.5
+  scale: 1.05
+  shape: checks
+  shapeScale: 0.15
+  softness: 1
+  swirl: 1
+  swirlIterations: 8

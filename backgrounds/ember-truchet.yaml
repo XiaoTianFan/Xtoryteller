@@ -1,0 +1,19 @@
+name: Ember Truchet
+description: Copper truchet grain field with a low, cinematic pulse.
+tags: [grain, studio, copper]
+shader: grain-gradient
+preset: truchet
+speed: 0.1
+params:
+  colorBack: '#000a0f'
+  colors:
+    - '#9c6430'
+  fit: contain
+  intensity: 0.15
+  noise: 0.77
+  offsetX: 0
+  offsetY: 0
+  rotation: 0
+  scale: 0.84
+  shape: truchet
+  softness: 1

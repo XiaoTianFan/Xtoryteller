@@ -292,6 +292,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Creative Voltage
+background:
+  type: paper-shader
+  presetRef: voltage-warp
 fonts:
   heading:
     family: Syne

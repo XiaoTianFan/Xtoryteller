@@ -1,10 +1,34 @@
 {
-  "count": 3,
+  "count": 13,
   "backgrounds": [
+    {
+      "slug": "botanical-current",
+      "name": "Botanical Current",
+      "description": "A slow water wash for nocturnal botanical themes.",
+      "tags": [
+        "water",
+        "botanical",
+        "dark"
+      ],
+      "shader": "water",
+      "preset": "slow-mo"
+    },
+    {
+      "slug": "cyber-mesh",
+      "name": "Cyber Mesh",
+      "description": "Cyan-magenta mesh glow for neon system themes.",
+      "tags": [
+        "mesh",
+        "neon",
+        "cyber"
+      ],
+      "shader": "mesh-gradient",
+      "preset": "purple"
+    },
     {
       "slug": "editorial-paper",
       "name": "Editorial Paper",
-      "description": "Warm paper texture for editorial or product storytelling.",
+      "description": "Warm editorial paper with a gentle lived-in drift.",
       "tags": [
         "paper",
         "warm",
@@ -14,9 +38,21 @@
       "preset": "abstract"
     },
     {
+      "slug": "ember-truchet",
+      "name": "Ember Truchet",
+      "description": "Copper truchet grain field with a low, cinematic pulse.",
+      "tags": [
+        "grain",
+        "studio",
+        "copper"
+      ],
+      "shader": "grain-gradient",
+      "preset": "truchet"
+    },
+    {
       "slug": "focus-grain",
       "name": "Focus Grain",
-      "description": "Darker grain gradient for emphasis beats and focused sections.",
+      "description": "Dark grain gradient with low-motion emphasis for focused scenes.",
       "tags": [
         "grain",
         "focus",
@@ -26,9 +62,81 @@
       "preset": "wave"
     },
     {
+      "slug": "ink-bloom",
+      "name": "Ink Bloom",
+      "description": "Fine paper texture with restrained ink pooling and tactile movement.",
+      "tags": [
+        "paper",
+        "ink",
+        "editorial"
+      ],
+      "shader": "paper-texture",
+      "preset": "details"
+    },
+    {
+      "slug": "notebook-linen",
+      "name": "Notebook Linen",
+      "description": "Quiet cream stock with mint fibers for tabbed notebook layouts.",
+      "tags": [
+        "paper",
+        "notebook",
+        "light"
+      ],
+      "shader": "paper-texture",
+      "preset": "default"
+    },
+    {
+      "slug": "pastel-orbit",
+      "name": "Pastel Orbit",
+      "description": "Soft radial color orbit for geometric and split-pastel themes.",
+      "tags": [
+        "radial",
+        "pastel",
+        "light"
+      ],
+      "shader": "static-radial-gradient",
+      "preset": "radial"
+    },
+    {
+      "slug": "signal-dither",
+      "name": "Signal Dither",
+      "description": "Slow warp dithering with ember-orange signal breaks.",
+      "tags": [
+        "dithering",
+        "signal",
+        "bold"
+      ],
+      "shader": "dithering",
+      "preset": "warp"
+    },
+    {
+      "slug": "swiss-pulse",
+      "name": "Swiss Pulse",
+      "description": "Restrained radial energy with poster-red tension for Swiss layouts.",
+      "tags": [
+        "radial",
+        "swiss",
+        "minimal"
+      ],
+      "shader": "static-radial-gradient",
+      "preset": "cross-section"
+    },
+    {
+      "slug": "terminal-phosphor",
+      "name": "Terminal Phosphor",
+      "description": "Dark phosphor grain glow with restrained motion for terminal themes.",
+      "tags": [
+        "grain",
+        "terminal",
+        "dark"
+      ],
+      "shader": "grain-gradient",
+      "preset": "dots"
+    },
+    {
       "slug": "tidal-waves",
       "name": "Tidal Waves",
-      "description": "Flowing wave background for map canvases and guided motion.",
+      "description": "Flowing wave field for maps and pastel motion systems.",
       "tags": [
         "waves",
         "map",
@@ -36,6 +144,18 @@
       ],
       "shader": "waves",
       "preset": "groovy"
+    },
+    {
+      "slug": "voltage-warp",
+      "name": "Voltage Warp",
+      "description": "Electric check-warp field with deliberate, slow-moving tension.",
+      "tags": [
+        "warp",
+        "electric",
+        "bold"
+      ],
+      "shader": "warp",
+      "preset": "default"
     }
   ]
 }

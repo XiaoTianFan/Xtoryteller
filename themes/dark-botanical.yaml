@@ -294,6 +294,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Dark Botanical
+background:
+  type: paper-shader
+  presetRef: botanical-current
 fonts:
   heading:
     family: Cormorant

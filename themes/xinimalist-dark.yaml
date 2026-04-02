@@ -1,4 +1,7 @@
 name: Xinimalist Dark
+background:
+  type: paper-shader
+  presetRef: focus-grain
 fonts:
   heading:
     family: 'EB Garamond'

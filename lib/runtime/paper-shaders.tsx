@@ -6,12 +6,14 @@ import * as PaperShaders from '@paper-design/shaders-react';
 import paperShaderSupportData from '@/lib/runtime/paper-shader-support.json';
 
 export type SupportedPaperShaderName =
+  | 'dithering'
   | 'grain-gradient'
   | 'mesh-gradient'
   | 'paper-texture'
   | 'static-mesh-gradient'
   | 'static-radial-gradient'
   | 'water'
+  | 'warp'
   | 'waves';
 
 type GenericMappingKey =
@@ -123,6 +125,14 @@ function applyColorStops(
       }
       if (target.colors == null) {
         target.colors = colorStops.slice(1);
+      }
+      break;
+    case 'dithering':
+      if (target.colorBack == null) {
+        target.colorBack = colorStops[0];
+      }
+      if (target.colorFront == null) {
+        target.colorFront = colorStops[1] ?? colorStops[0];
       }
       break;
     default:

@@ -2,9 +2,11 @@ import fg from 'fast-glob';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { loadBackgroundPresetMap } from '@/lib/engine/background-preset-registry';
+import { resolveThemeBackgroundPresetRefs } from '@/lib/engine/background-preset-resolver';
 import { THEMES_DIR } from '@/lib/engine/constants';
 import { parseYamlFile } from '@/lib/engine/yaml';
-import { ThemeConfig } from '@/lib/types/theme';
+import type { ThemeConfig } from '@/lib/types/theme';
 
 export const FALLBACK_THEME_SLUG = 'xinimalist-paper';
 export const GLOBAL_THEME_COOKIE_NAME = 'xtoryteller-active-theme';
@@ -13,9 +15,11 @@ export interface ThemeRegistryEntry {
   slug: string;
   name: string;
   fonts: ThemeConfig['fonts'];
+  background?: ThemeConfig['background'];
 }
 
 export async function loadThemeRegistry() {
+  const presetMap = await loadBackgroundPresetMap();
   const themePaths = await fg('*.yaml', {
     cwd: THEMES_DIR,
     absolute: true,
@@ -24,11 +28,15 @@ export async function loadThemeRegistry() {
 
   const themes = await Promise.all(
     themePaths.map(async (themePath) => {
-      const theme = await parseYamlFile<ThemeConfig>(themePath);
+      const theme = resolveThemeBackgroundPresetRefs(
+        await parseYamlFile<ThemeConfig>(themePath),
+        presetMap
+      );
       return {
         slug: path.basename(themePath, '.yaml'),
         name: theme.name,
-        fonts: theme.fonts
+        fonts: theme.fonts,
+        background: theme.background
       } satisfies ThemeRegistryEntry;
     })
   );
@@ -37,7 +45,12 @@ export async function loadThemeRegistry() {
 }
 
 export async function loadThemeBySlug(slug: string): Promise<ThemeConfig> {
-  return parseYamlFile<ThemeConfig>(path.join(THEMES_DIR, `${slug}.yaml`));
+  const [theme, presetMap] = await Promise.all([
+    parseYamlFile<ThemeConfig>(path.join(THEMES_DIR, `${slug}.yaml`)),
+    loadBackgroundPresetMap()
+  ]);
+
+  return resolveThemeBackgroundPresetRefs(theme, presetMap);
 }
 
 export async function themeExists(slug: string | null | undefined) {

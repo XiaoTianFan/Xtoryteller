@@ -292,6 +292,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Electric Studio
+background:
+  type: paper-shader
+  presetRef: ember-truchet
 fonts:
   heading:
     family: Manrope

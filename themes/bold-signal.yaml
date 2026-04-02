@@ -294,6 +294,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Bold Signal
+background:
+  type: paper-shader
+  presetRef: signal-dither
 fonts:
   heading:
     family: Archivo Black

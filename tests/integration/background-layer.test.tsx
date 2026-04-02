@@ -17,6 +17,21 @@ vi.mock('@paper-design/shaders-react', () => {
   };
 
   return {
+    Dithering: createShader('Dithering'),
+    ditheringPresets: [
+      {
+        name: 'Warp',
+        params: {
+          colorBack: '#1c0f0b',
+          colorFront: '#ff7a45',
+          frame: 0,
+          pxSize: 1,
+          scale: 1,
+          speed: 0.03,
+          type: '8x8'
+        }
+      }
+    ],
     GrainGradient: createShader('GrainGradient'),
     grainGradientPresets: [
       { name: 'Wave', params: { colors: ['#123456', '#abcdef'], intensity: 0.4, noise: 0.2, speed: 1 } }
@@ -31,6 +46,23 @@ vi.mock('@paper-design/shaders-react', () => {
     staticRadialGradientPresets: [{ name: 'Default', params: { colorBack: '#ffffff', colors: ['#123456'], distortion: 0.2, speed: 1 } }],
     Water: createShader('Water'),
     waterPresets: [{ name: 'Default', params: { colorBack: '#123456', colorHighlight: '#abcdef', highlights: 0.5, speed: 1 } }],
+    Warp: createShader('Warp'),
+    warpPresets: [
+      {
+        name: 'Default',
+        params: {
+          colors: ['#0e1024', '#4d8cff', '#d4ff00'],
+          distortion: 0.15,
+          frame: 0,
+          proportion: 0,
+          scale: 1,
+          softness: 1,
+          speed: 0.04,
+          swirl: 1,
+          swirlIterations: 8
+        }
+      }
+    ],
     Waves: createShader('Waves'),
     wavesPresets: [
       { name: 'Groovy', params: { colorBack: '#faf7f1', colorFront: '#315c8f', amplitude: 0.3, softness: 0.5 } }
@@ -102,6 +134,29 @@ describe('background layer integration', () => {
     );
 
     expect(getBackgroundLayers().at(-1)).toHaveAttribute('data-background-kind', 'css');
+  });
+
+  it('uses the theme-owned background when the presentation has no explicit background', () => {
+    const presentationWithoutBackground: PresentationConfig = {
+      meta: {
+        title: 'Theme default background',
+        slug: 'theme-default-background'
+      },
+      mode: 'stage',
+      theme: 'xinimalist-paper',
+      steps: [{ layout: 'single-content', components: [{ type: 'headline', content: 'Theme background' }] }]
+    };
+
+    render(
+      <ThemeProvider theme={paperTheme}>
+        <PresentationProvider presentation={presentationWithoutBackground} theme={paperTheme}>
+          <BackgroundHarness onReady={() => undefined} />
+        </PresentationProvider>
+      </ThemeProvider>
+    );
+
+    expect(getBackgroundLayers().at(-1)).toHaveAttribute('data-background-kind', 'paper-shader');
+    expect(getBackgroundLayers().at(-1)).toHaveAttribute('data-background-shader', 'paper-texture');
   });
 
   it('switches map backgrounds by group and cluster rules', async () => {

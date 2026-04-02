@@ -46,6 +46,7 @@ async function scanThemes() {
         slug: path.basename(themePath, '.yaml'),
         name: theme.name,
         fonts: theme.fonts,
+        background: theme.background,
       };
     })
   );

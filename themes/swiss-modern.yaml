@@ -292,6 +292,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Swiss Modern
+background:
+  type: paper-shader
+  presetRef: swiss-pulse
 fonts:
   heading:
     family: Archivo

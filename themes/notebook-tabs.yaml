@@ -299,6 +299,9 @@ motion:
     timeline:
       offset-y: 0.4rem
 name: Notebook Tabs
+background:
+  type: paper-shader
+  presetRef: notebook-linen
 fonts:
   heading:
     family: Bodoni Moda

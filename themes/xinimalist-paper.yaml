@@ -1,4 +1,7 @@
 name: Xinimalist Paper
+background:
+  type: paper-shader
+  presetRef: editorial-paper
 fonts:
   heading:
     family: 'EB Garamond'
