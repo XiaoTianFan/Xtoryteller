@@ -1,0 +1,21 @@
+{
+  "skillPackageVersion": "1.0.0",
+  "repoPackageVersion": "0.1.0",
+  "schemaPath": "references/schema/schema.json",
+  "registryArtifacts": {
+    "components": "references/registries/component-registry.json",
+    "layouts": "references/registries/layout-registry.json",
+    "transitions": "references/registries/transition-registry.json",
+    "themes": "references/registries/theme-registry.json",
+    "backgrounds": "references/registries/background-registry.json"
+  },
+  "lastRegistryGeneration": "2026-04-02T18:05:55.425Z",
+  "lastRegistryCounts": {
+    "components": 40,
+    "layouts": 21,
+    "transitions": 10,
+    "themes": 14,
+    "backgrounds": 13
+  },
+  "compatibilityNote": "Registries are snapshots from repo manifests and themes; run `npm run registries` or `npm run validate:all` after changing components, layouts, transitions, themes, or background presets. Skill package version is independent of the app semver in package.json."
+}

@@ -2,20 +2,22 @@ import { NextResponse } from 'next/server';
 
 import {
   ClusterLayoutGeometry,
+  SavedMapClusterLayoutDraft,
   PresentationLayoutSavePayload,
   PresentationLayoutSaveError,
+  SavedStageComponentLayoutDraft,
   StageComponentLayoutGeometry,
   savePresentationLayoutBySlug
 } from '@/lib/engine/presentation-layout-save';
 
 function readLayoutPayload(payload: unknown): PresentationLayoutSavePayload {
-  const clusters = (payload as { clusters?: ClusterLayoutGeometry[] } | null)?.clusters;
+  const clusters = (payload as { clusters?: Array<ClusterLayoutGeometry | SavedMapClusterLayoutDraft> } | null)?.clusters;
   if (!Array.isArray(clusters)) {
     const stepIndex = (payload as { stepIndex?: number } | null)?.stepIndex;
-    const components = (payload as { components?: StageComponentLayoutGeometry[] } | null)?.components;
+    const components = (payload as { components?: Array<StageComponentLayoutGeometry | SavedStageComponentLayoutDraft> } | null)?.components;
     if (Number.isInteger(stepIndex) && Array.isArray(components)) {
       return {
-        stepIndex,
+        stepIndex: Number(stepIndex),
         components
       };
     }

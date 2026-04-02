@@ -1105,6 +1105,85 @@ textarea {
   justify-content: flex-end;
 }
 
+.addComponentOverlay {
+  width: min(72rem, 100%);
+  max-height: min(78vh, 56rem);
+}
+
+.addComponentSearch {
+  display: block;
+}
+
+.addComponentResults {
+  display: grid;
+  gap: 1.25rem;
+  min-height: 0;
+  overflow: auto;
+}
+
+.addComponentSection {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.addComponentSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.addComponentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.addComponentCard {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.9rem;
+  border: var(--border-chrome-card);
+  background: var(--color-chrome-surface, rgba(255, 249, 240, 0.76));
+  text-align: left;
+  cursor: pointer;
+}
+
+.addComponentCard:hover {
+  transform: translateY(var(--motion-hover-rise, 0px))
+    scale(var(--motion-hover-scale, 1));
+}
+
+.addComponentCardHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.addComponentCardDescription {
+  margin: 0;
+  color: var(--color-chrome-text-soft, #60584f);
+  font-size: var(--text-components-shell-meta);
+  line-height: 1.45;
+}
+
+.addComponentPreview {
+  min-height: 180px;
+  overflow: hidden;
+  padding: 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--color-chrome-border-strong, rgba(141, 79, 45, 0.38)) 30%, transparent 70%);
+  background: color-mix(in srgb, var(--color-surface, rgba(255, 255, 255, 0.9)) 86%, transparent);
+}
+
+.clusterCard.componentEditing {
+  z-index: 8;
+}
+
+.clusterComponentEditCanvas {
+  overflow: visible;
+}
+
 .mapSequence {
   position: static;
   z-index: auto;

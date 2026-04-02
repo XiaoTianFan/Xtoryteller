@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 import fg from 'fast-glob';
 import YAML from 'yaml';
 
-import { XTORYTELLER_REGISTRIES_DIR } from './skill-paths.mjs';
+import { XTORYTELLER_REGISTRIES_DIR, XTORYTELLER_SKILL_MANIFEST_PATH } from './skill-paths.mjs';
 
 const root = process.cwd();
 
@@ -86,6 +86,50 @@ async function writeJson(fileName, data) {
   );
 }
 
+async function updateSkillManifest(counts) {
+  let existing = {};
+  try {
+    existing = JSON.parse(await fs.readFile(XTORYTELLER_SKILL_MANIFEST_PATH, 'utf8'));
+  } catch {
+    // first run or missing file
+  }
+
+  let repoPackageVersion = '0.0.0';
+  try {
+    const pkg = JSON.parse(await fs.readFile(path.join(root, 'package.json'), 'utf8'));
+    repoPackageVersion = pkg.version ?? repoPackageVersion;
+  } catch {
+    // ignore
+  }
+
+  const next = {
+    ...existing,
+    skillPackageVersion: existing.skillPackageVersion ?? '1.0.0',
+    repoPackageVersion,
+    schemaPath: 'references/schema/schema.json',
+    registryArtifacts: {
+      components: 'references/registries/component-registry.json',
+      layouts: 'references/registries/layout-registry.json',
+      transitions: 'references/registries/transition-registry.json',
+      themes: 'references/registries/theme-registry.json',
+      backgrounds: 'references/registries/background-registry.json'
+    },
+    lastRegistryGeneration: new Date().toISOString(),
+    lastRegistryCounts: {
+      components: counts.components,
+      layouts: counts.layouts,
+      transitions: counts.transitions,
+      themes: counts.themes,
+      backgrounds: counts.backgrounds
+    },
+    compatibilityNote:
+      'Registries are snapshots from repo manifests and themes; run `npm run registries` or `npm run validate:all` after changing components, layouts, transitions, themes, or background presets. Skill package version is independent of the app semver in package.json.'
+  };
+
+  await fs.mkdir(path.dirname(XTORYTELLER_SKILL_MANIFEST_PATH), { recursive: true });
+  await fs.writeFile(XTORYTELLER_SKILL_MANIFEST_PATH, `${JSON.stringify(next, null, 2)}\n`);
+}
+
 export async function generateRegistries() {
   const [components, layouts, transitions, themes, backgrounds] = await Promise.all([
     scanManifests('components'),
@@ -109,13 +153,17 @@ export async function generateRegistries() {
     writeJson('background-registry.json', { count: backgrounds.length, backgrounds }),
   ]);
 
-  return {
+  const counts = {
     components: components.length,
     layouts: layouts.length,
     transitions: transitions.length,
     themes: themes.length,
     backgrounds: backgrounds.length,
   };
+
+  await updateSkillManifest(counts);
+
+  return counts;
 }
 
 function isCliEntry() {

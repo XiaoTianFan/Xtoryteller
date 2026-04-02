@@ -12,6 +12,8 @@ Read this file when the task changes authoring data, runtime behavior, manifests
   `node scripts/validate-all.mjs`
 - Refresh registries and validate the repo:
   `node scripts/validate-all.mjs`
+- Skill bundle consistency (scaffold vs SKILL, manifest presence, quick-route matrix):
+  `npm run validate:skill` (also runs automatically at the end of `npm run validate:all`)
 
 ## Test Layers
 

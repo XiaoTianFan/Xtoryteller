@@ -5,6 +5,33 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { MouseEvent, PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { createBuildPlan, getSequentialRevealCount, isComponentVisible } from '@/lib/runtime/build-plan';
+import { getEditorClipboard, setEditorClipboard } from '@/lib/runtime/editor/clipboard';
+import { AddComponentOverlay } from '@/lib/runtime/editor/add-component-overlay';
+import {
+  commitEditorHistorySnapshot,
+  createEditorHistoryState,
+  EditorHistoryState,
+  redoEditorHistory,
+  replaceEditorHistoryPresent,
+  undoEditorHistory
+} from '@/lib/runtime/editor/history';
+import {
+  isCopyShortcut,
+  isDeleteShortcut,
+  isDuplicateShortcut,
+  isEditableEventTarget,
+  isPasteShortcut,
+  isRedoShortcut,
+  isUndoShortcut
+} from '@/lib/runtime/editor/keyboard';
+import { EditableComponentDraft } from '@/lib/runtime/editor/types';
+import {
+  buildStageDraftSignature,
+  cloneDeep,
+  createDraftComponentInstance,
+  createEditableComponentDraft,
+  offsetFreeformGeometry
+} from '@/lib/runtime/editor/utils';
 import { resolveRuntimeTransition } from '@/lib/runtime/primitive-resolver';
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
 import { ComponentRenderer } from '@/lib/runtime/renderers/component-renderer';
@@ -15,46 +42,29 @@ import { LiveRegion } from '@/lib/runtime/ui/live-region';
 import { PresentationControls, PresentationNavigationHandlers } from '@/lib/runtime/ui/presentation-controls';
 import { ComponentInstance } from '@/lib/types/presentation';
 
-interface EditableStageComponentGeometry {
-  index: number;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
 type StageEditPhase = 'idle' | 'measuring' | 'active';
 type StageEditInteractionMode = 'move' | 'resize-right' | 'resize-bottom' | 'resize-corner';
 
 interface StageEditInteraction {
-  componentIndex: number;
+  componentId: string;
   mode: StageEditInteractionMode;
   startClientX: number;
   startClientY: number;
-  startGeometry: EditableStageComponentGeometry;
+  startDrafts: EditableComponentDraft[];
   boundsWidth: number;
   boundsHeight: number;
+  changed: boolean;
 }
 
 const MIN_COMPONENT_WIDTH = 140;
 const MIN_COMPONENT_HEIGHT = 88;
-
-function getDraftSignature(draft: Record<number, EditableStageComponentGeometry>) {
-  return Object.keys(draft)
-    .map(Number)
-    .sort((left, right) => left - right)
-    .map((index) => {
-      const item = draft[index];
-      return `${index}:${item.x},${item.y},${item.width},${item.height}`;
-    })
-    .join('|');
-}
+const INSERT_OFFSET = 0.04;
 
 function clampStageGeometry(
-  geometry: EditableStageComponentGeometry,
+  geometry: Pick<EditableComponentDraft, 'x' | 'y' | 'width' | 'height'>,
   boundsWidth: number,
   boundsHeight: number
-): EditableStageComponentGeometry {
+) {
   const minWidth = Math.min(1, MIN_COMPONENT_WIDTH / Math.max(boundsWidth, 1));
   const minHeight = Math.min(1, MIN_COMPONENT_HEIGHT / Math.max(boundsHeight, 1));
   const width = Math.min(1, Math.max(minWidth, geometry.width));
@@ -63,7 +73,6 @@ function clampStageGeometry(
   const y = Math.min(Math.max(0, geometry.y), Math.max(0, 1 - height));
 
   return {
-    ...geometry,
     x: Number(x.toFixed(6)),
     y: Number(y.toFixed(6)),
     width: Number(width.toFixed(6)),
@@ -71,58 +80,76 @@ function clampStageGeometry(
   };
 }
 
-function updateGeometryFromPointer(
+function updateDraftFromPointer(
+  draft: EditableComponentDraft,
   interaction: StageEditInteraction,
   clientX: number,
   clientY: number
-): EditableStageComponentGeometry {
+) {
   const deltaX = (clientX - interaction.startClientX) / Math.max(interaction.boundsWidth, 1);
   const deltaY = (clientY - interaction.startClientY) / Math.max(interaction.boundsHeight, 1);
-  const start = interaction.startGeometry;
 
   if (interaction.mode === 'move') {
-    return clampStageGeometry(
-      {
-        ...start,
-        x: start.x + deltaX,
-        y: start.y + deltaY
-      },
-      interaction.boundsWidth,
-      interaction.boundsHeight
-    );
+    return {
+      ...draft,
+      ...clampStageGeometry(
+        {
+          x: draft.x + deltaX,
+          y: draft.y + deltaY,
+          width: draft.width,
+          height: draft.height
+        },
+        interaction.boundsWidth,
+        interaction.boundsHeight
+      )
+    };
   }
 
   if (interaction.mode === 'resize-right') {
-    return clampStageGeometry(
-      {
-        ...start,
-        width: start.width + deltaX
-      },
-      interaction.boundsWidth,
-      interaction.boundsHeight
-    );
+    return {
+      ...draft,
+      ...clampStageGeometry(
+        {
+          x: draft.x,
+          y: draft.y,
+          width: draft.width + deltaX,
+          height: draft.height
+        },
+        interaction.boundsWidth,
+        interaction.boundsHeight
+      )
+    };
   }
 
   if (interaction.mode === 'resize-bottom') {
-    return clampStageGeometry(
+    return {
+      ...draft,
+      ...clampStageGeometry(
+        {
+          x: draft.x,
+          y: draft.y,
+          width: draft.width,
+          height: draft.height + deltaY
+        },
+        interaction.boundsWidth,
+        interaction.boundsHeight
+      )
+    };
+  }
+
+  return {
+    ...draft,
+    ...clampStageGeometry(
       {
-        ...start,
-        height: start.height + deltaY
+        x: draft.x,
+        y: draft.y,
+        width: draft.width + deltaX,
+        height: draft.height + deltaY
       },
       interaction.boundsWidth,
       interaction.boundsHeight
-    );
-  }
-
-  return clampStageGeometry(
-    {
-      ...start,
-      width: start.width + deltaX,
-      height: start.height + deltaY
-    },
-    interaction.boundsWidth,
-    interaction.boundsHeight
-  );
+    )
+  };
 }
 
 function getComponentLabel(component: ComponentInstance, index: number) {
@@ -131,6 +158,55 @@ function getComponentLabel(component: ComponentInstance, index: number) {
       ? `. ${component.content.trim().slice(0, 80)}`
       : '';
   return `Component ${index + 1} (${component.type})${content}`;
+}
+
+function getInsertedGeometry(drafts: EditableComponentDraft[]) {
+  const width = 0.32;
+  const height = 0.24;
+  const x = Math.min(0.08 + drafts.length * INSERT_OFFSET, 1 - width - 0.04);
+  const y = Math.min(0.1 + drafts.length * INSERT_OFFSET, 1 - height - 0.04);
+
+  return { x, y, width, height };
+}
+
+function getNextSelectedDraftId(drafts: EditableComponentDraft[], removedIndex: number) {
+  return drafts[removedIndex]?.draftId ?? drafts[removedIndex - 1]?.draftId ?? null;
+}
+
+function measureStageDrafts(body: HTMLElement, components: ComponentInstance[]) {
+  const bodyRect = body.getBoundingClientRect();
+  if (bodyRect.width <= 0 || bodyRect.height <= 0) {
+    throw new Error('Could not measure the stage canvas.');
+  }
+
+  const measuredNodes = Array.from(body.querySelectorAll<HTMLElement>('[data-layout-item-index]'));
+  if (measuredNodes.length !== components.length) {
+    throw new Error('Could not measure all components on this step.');
+  }
+
+  return measuredNodes
+    .map((node) => {
+      const index = Number(node.dataset.layoutItemIndex);
+      const component = components[index];
+      if (!component) {
+        return null;
+      }
+
+      const rect = node.getBoundingClientRect();
+      const geometry = clampStageGeometry(
+        {
+          x: (rect.left - bodyRect.left) / bodyRect.width,
+          y: (rect.top - bodyRect.top) / bodyRect.height,
+          width: rect.width / bodyRect.width,
+          height: rect.height / bodyRect.height
+        },
+        bodyRect.width,
+        bodyRect.height
+      );
+
+      return createEditableComponentDraft(component, geometry, 'stage-component');
+    })
+    .filter((item): item is EditableComponentDraft => Boolean(item));
 }
 
 function UnsavedLayoutDialog({
@@ -197,21 +273,29 @@ export function StageRenderer() {
   const editInteractionRef = useRef<StageEditInteraction | null>(null);
   const pendingNavigationRef = useRef<(() => void) | null>(null);
   const [editPhase, setEditPhase] = useState<StageEditPhase>('idle');
-  const [draftComponents, setDraftComponents] = useState<Record<number, EditableStageComponentGeometry>>({});
-  const [initialDraftSignature, setInitialDraftSignature] = useState('');
-  const [selectedComponentIndex, setSelectedComponentIndex] = useState<number | null>(null);
+  const [history, setHistory] = useState<EditorHistoryState<EditableComponentDraft[]> | null>(null);
+  const [cleanDrafts, setCleanDrafts] = useState<EditableComponentDraft[]>([]);
+  const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null);
   const [isSavingLayout, setIsSavingLayout] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [showUnsavedPrompt, setShowUnsavedPrompt] = useState(false);
+  const [showAddComponentOverlay, setShowAddComponentOverlay] = useState(false);
+
+  const renderedDrafts = history?.present ?? [];
+  const draftSignature = buildStageDraftSignature(renderedDrafts);
+  const cleanDraftSignature = buildStageDraftSignature(cleanDrafts);
+  const layoutDraftIsDirty = editPhase === 'active' && draftSignature !== cleanDraftSignature;
+  const isEditing = editPhase !== 'idle';
 
   const resetEditorState = () => {
     editInteractionRef.current = null;
     setEditPhase('idle');
-    setDraftComponents({});
-    setInitialDraftSignature('');
-    setSelectedComponentIndex(null);
+    setHistory(null);
+    setCleanDrafts([]);
+    setSelectedComponentId(null);
     setIsSavingLayout(false);
     setSaveError(null);
+    setShowAddComponentOverlay(false);
   };
 
   useEffect(() => {
@@ -227,31 +311,49 @@ export function StageRenderer() {
         return;
       }
 
-      setDraftComponents((current) => {
-        const existing = current[interaction.componentIndex];
-        if (!existing) {
+      setHistory((current) => {
+        if (!current) {
           return current;
         }
 
-        const next = updateGeometryFromPointer(interaction, event.clientX, event.clientY);
-        if (
-          next.x === existing.x &&
-          next.y === existing.y &&
-          next.width === existing.width &&
-          next.height === existing.height
-        ) {
-          return current;
-        }
+        const nextPresent = current.present.map((draft) => {
+          if (draft.draftId !== interaction.componentId) {
+            return draft;
+          }
 
-        return {
-          ...current,
-          [interaction.componentIndex]: next
-        };
+          const baseDraft = interaction.startDrafts.find((item) => item.draftId === draft.draftId) ?? draft;
+          const nextDraft = updateDraftFromPointer(baseDraft, interaction, event.clientX, event.clientY);
+          if (
+            nextDraft.x === draft.x &&
+            nextDraft.y === draft.y &&
+            nextDraft.width === draft.width &&
+            nextDraft.height === draft.height
+          ) {
+            return draft;
+          }
+
+          interaction.changed = true;
+          return nextDraft;
+        });
+
+        return replaceEditorHistoryPresent(current, nextPresent);
       });
     };
 
     const finishInteraction = () => {
+      const interaction = editInteractionRef.current;
       editInteractionRef.current = null;
+      if (!interaction?.changed) {
+        return;
+      }
+
+      setHistory((current) => {
+        if (!current) {
+          return current;
+        }
+
+        return commitEditorHistorySnapshot(current, interaction.startDrafts, current.present);
+      });
     };
 
     window.addEventListener('pointermove', handlePointerMove);
@@ -277,69 +379,195 @@ export function StageRenderer() {
         return;
       }
 
-      const bodyRect = body.getBoundingClientRect();
-      if (bodyRect.width <= 0 || bodyRect.height <= 0) {
-        setSaveError('Could not measure the stage canvas.');
+      try {
+        const measuredDrafts = measureStageDrafts(body, step.components);
+        setHistory(createEditorHistoryState(measuredDrafts));
+        setCleanDrafts(measuredDrafts);
+        setSelectedComponentId(measuredDrafts[0]?.draftId ?? null);
+        setSaveError(null);
+        setEditPhase('active');
+      } catch (error) {
+        setSaveError(error instanceof Error ? error.message : 'Could not prepare the stage editor.');
         setEditPhase('idle');
-        return;
       }
-
-      const measuredNodes = Array.from(body.querySelectorAll<HTMLElement>('[data-layout-item-index]'));
-      if (measuredNodes.length !== step.components.length) {
-        setSaveError('Could not measure all components on this step.');
-        setEditPhase('idle');
-        return;
-      }
-
-      const nextDraft = measuredNodes.reduce<Record<number, EditableStageComponentGeometry>>((draft, node) => {
-        const index = Number(node.dataset.layoutItemIndex);
-        const rect = node.getBoundingClientRect();
-        draft[index] = clampStageGeometry(
-          {
-            index,
-            x: (rect.left - bodyRect.left) / bodyRect.width,
-            y: (rect.top - bodyRect.top) / bodyRect.height,
-            width: rect.width / bodyRect.width,
-            height: rect.height / bodyRect.height
-          },
-          bodyRect.width,
-          bodyRect.height
-        );
-        return draft;
-      }, {});
-
-      const signature = getDraftSignature(nextDraft);
-      setDraftComponents(nextDraft);
-      setInitialDraftSignature(signature);
-      setSelectedComponentIndex(0);
-      setSaveError(null);
-      setEditPhase('active');
     });
 
     return () => window.cancelAnimationFrame(frame);
   }, [editPhase, step]);
 
+  useEffect(() => {
+    if (!renderedDrafts.length) {
+      setSelectedComponentId(null);
+      return;
+    }
+
+    if (!selectedComponentId || !renderedDrafts.some((draft) => draft.draftId === selectedComponentId)) {
+      setSelectedComponentId(renderedDrafts[0]?.draftId ?? null);
+    }
+  }, [renderedDrafts, selectedComponentId]);
+
+  useEffect(() => {
+    if (editPhase !== 'active' || !history) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (isEditableEventTarget(event.target)) {
+        return;
+      }
+
+      if (isUndoShortcut(event)) {
+        event.preventDefault();
+        event.stopPropagation();
+        setHistory((current) => (current ? undoEditorHistory(current) : current));
+        return;
+      }
+
+      if (isRedoShortcut(event)) {
+        event.preventDefault();
+        event.stopPropagation();
+        setHistory((current) => (current ? redoEditorHistory(current) : current));
+        return;
+      }
+
+      if (isDeleteShortcut(event)) {
+        const selectedIndex = history.present.findIndex((draft) => draft.draftId === selectedComponentId);
+        if (selectedIndex < 0) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        setHistory((current) => {
+          if (!current) {
+            return current;
+          }
+
+          const currentIndex = current.present.findIndex((draft) => draft.draftId === selectedComponentId);
+          if (currentIndex < 0) {
+            return current;
+          }
+
+          const nextDrafts = current.present.filter((draft) => draft.draftId !== selectedComponentId);
+          setSelectedComponentId(getNextSelectedDraftId(nextDrafts, currentIndex));
+          return commitEditorHistorySnapshot(current, current.present, nextDrafts);
+        });
+        return;
+      }
+
+      if (isDuplicateShortcut(event)) {
+        const selectedIndex = history.present.findIndex((draft) => draft.draftId === selectedComponentId);
+        if (selectedIndex < 0) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        setHistory((current) => {
+          if (!current) {
+            return current;
+          }
+
+          const currentIndex = current.present.findIndex((draft) => draft.draftId === selectedComponentId);
+          const selectedDraft = currentIndex >= 0 ? current.present[currentIndex] : null;
+          if (!selectedDraft) {
+            return current;
+          }
+
+          const nextDraft = createEditableComponentDraft(
+            cloneDeep(selectedDraft.component),
+            offsetFreeformGeometry(selectedDraft, INSERT_OFFSET, INSERT_OFFSET),
+            'stage-component'
+          );
+          const nextDrafts = [
+            ...current.present.slice(0, currentIndex + 1),
+            nextDraft,
+            ...current.present.slice(currentIndex + 1)
+          ];
+
+          setSelectedComponentId(nextDraft.draftId);
+          return commitEditorHistorySnapshot(current, current.present, nextDrafts);
+        });
+        return;
+      }
+
+      if (isCopyShortcut(event)) {
+        const selectedDraft = history.present.find((draft) => draft.draftId === selectedComponentId);
+        if (!selectedDraft) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        setEditorClipboard({
+          kind: 'stage-component',
+          item: {
+            component: cloneDeep(selectedDraft.component),
+            x: selectedDraft.x,
+            y: selectedDraft.y,
+            width: selectedDraft.width,
+            height: selectedDraft.height
+          }
+        });
+        return;
+      }
+
+      if (isPasteShortcut(event)) {
+        const clipboard = getEditorClipboard();
+        if (clipboard?.kind !== 'stage-component') {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        setHistory((current) => {
+          if (!current) {
+            return current;
+          }
+
+          const nextDraft = createEditableComponentDraft(
+            clipboard.item.component,
+            offsetFreeformGeometry(clipboard.item, INSERT_OFFSET, INSERT_OFFSET),
+            'stage-component'
+          );
+          setSelectedComponentId(nextDraft.draftId);
+          return commitEditorHistorySnapshot(current, current.present, [...current.present, nextDraft]);
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
+  }, [editPhase, history, selectedComponentId]);
+
+  useEffect(() => {
+    if (!layoutDraftIsDirty) {
+      return;
+    }
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [layoutDraftIsDirty]);
+
   const buildPlan = step ? createBuildPlan(step) : [];
   const visibleEntries = buildPlan.filter((entry) => isComponentVisible(entry, machine.state.context.currentBuildIndex));
-  const allEditableEntries = step?.components.map((component) => ({
-    component,
-    revealCount: Number.MAX_SAFE_INTEGER
-  })) ?? [];
+  const allEditableEntries =
+    step?.components.map((component) => ({
+      component,
+      revealCount: Number.MAX_SAFE_INTEGER
+    })) ?? [];
   const sceneMotion = getStageSceneMotion(
     resolveRuntimeTransition(presentation.meta.slug, step?.transition),
     theme,
     Boolean(prefersReducedMotion)
   );
-  const draftSignature = getDraftSignature(draftComponents);
-  const layoutDraftIsDirty = editPhase === 'active' && draftSignature !== initialDraftSignature;
-  const isEditing = editPhase !== 'idle';
-  const renderedDrafts = useMemo(
-    () =>
-      Object.values(draftComponents)
-        .sort((left, right) => left.index - right.index)
-        .map((item) => item),
-    [draftComponents]
-  );
+  const canUndo = Boolean(history?.past.length);
+  const canRedo = Boolean(history?.future.length);
 
   if (!step) {
     return null;
@@ -391,8 +619,9 @@ export function StageRenderer() {
         },
         body: JSON.stringify({
           stepIndex,
-          components: renderedDrafts.map((item) => ({
-            index: item.index,
+          components: renderedDrafts.map((item, index) => ({
+            ...cloneDeep(item.component),
+            index,
             x: item.x,
             y: item.y,
             width: item.width,
@@ -449,30 +678,31 @@ export function StageRenderer() {
 
   const startComponentInteraction = (
     event: ReactPointerEvent<HTMLElement>,
-    componentIndex: number,
+    componentId: string,
     mode: StageEditInteractionMode
   ) => {
-    if (editPhase !== 'active' || isSavingLayout || event.button !== 0) {
+    if (editPhase !== 'active' || isSavingLayout || event.button !== 0 || !history) {
       return;
     }
 
-    const geometry = draftComponents[componentIndex];
+    const geometry = history.present.find((draft) => draft.draftId === componentId);
     const body = stepSceneBodyRef.current;
     if (!geometry || !body) {
       return;
     }
 
     const bodyRect = body.getBoundingClientRect();
-    setSelectedComponentIndex(componentIndex);
+    setSelectedComponentId(componentId);
     setSaveError(null);
     editInteractionRef.current = {
-      componentIndex,
+      componentId,
       mode,
       startClientX: event.clientX,
       startClientY: event.clientY,
-      startGeometry: geometry,
+      startDrafts: history.present,
       boundsWidth: bodyRect.width,
-      boundsHeight: bodyRect.height
+      boundsHeight: bodyRect.height,
+      changed: false
     };
     event.preventDefault();
     event.stopPropagation();
@@ -480,26 +710,25 @@ export function StageRenderer() {
 
   const handleComponentSelect = (
     event: Pick<MouseEvent<HTMLElement>, 'preventDefault' | 'stopPropagation'>,
-    componentIndex: number
+    componentId: string
   ) => {
     event.preventDefault();
     event.stopPropagation();
-    setSelectedComponentIndex(componentIndex);
+    setSelectedComponentId(componentId);
   };
 
-  useEffect(() => {
-    if (!layoutDraftIsDirty) {
-      return;
-    }
+  const handleAddComponent = (component: ComponentInstance) => {
+    setHistory((current) => {
+      if (!current) {
+        return current;
+      }
 
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = '';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [layoutDraftIsDirty]);
+      const nextDraft = createEditableComponentDraft(component, getInsertedGeometry(current.present), 'stage-component');
+      setSelectedComponentId(nextDraft.draftId);
+      return commitEditorHistorySnapshot(current, current.present, [...current.present, nextDraft]);
+    });
+    setShowAddComponentOverlay(false);
+  };
 
   return (
     <main className="viewerShell">
@@ -522,16 +751,11 @@ export function StageRenderer() {
           <div ref={stepSceneBodyRef} className="stepSceneBody" data-editing={isEditing ? 'true' : 'false'}>
             {editPhase === 'active' ? (
               <div className="stageEditCanvas" aria-label="Stage layout editor">
-                {renderedDrafts.map((item) => {
-                  const component = step.components[item.index];
-                  if (!component) {
-                    return null;
-                  }
-
-                  const isSelected = item.index === selectedComponentIndex;
+                {renderedDrafts.map((item, index) => {
+                  const isSelected = item.draftId === selectedComponentId;
                   return (
                     <div
-                      key={`${component.type}-${item.index}`}
+                      key={item.draftId}
                       className={`stageEditItem ${isSelected ? 'selected' : ''}`}
                       style={{
                         left: `${item.x * 100}%`,
@@ -541,18 +765,18 @@ export function StageRenderer() {
                       }}
                       role="button"
                       tabIndex={0}
-                      aria-label={getComponentLabel(component, item.index)}
+                      aria-label={getComponentLabel(item.component, index)}
                       aria-pressed={isSelected}
-                      onClick={(event) => handleComponentSelect(event, item.index)}
-                      onPointerDown={(event) => startComponentInteraction(event, item.index, 'move')}
+                      onClick={(event) => handleComponentSelect(event, item.draftId)}
+                      onPointerDown={(event) => startComponentInteraction(event, item.draftId, 'move')}
                     >
                       <div className="stageEditItemHeader" aria-hidden="true">
-                        <span className="clusterBadge">{component.type}</span>
-                        <span className="stageEditItemLabel">{item.index + 1}</span>
+                        <span className="clusterBadge">{item.component.type}</span>
+                        <span className="stageEditItemLabel">{index + 1}</span>
                       </div>
                       <div className="stageEditItemContent">
                         <ComponentRenderer
-                          component={component}
+                          component={createDraftComponentInstance(item)}
                           revealCount={Number.MAX_SAFE_INTEGER}
                           slug={presentation.meta.slug}
                         />
@@ -562,32 +786,32 @@ export function StageRenderer() {
                           <button
                             type="button"
                             className="clusterResizeHandle clusterResizeHandleEast"
-                            aria-label={`Resize component ${item.index + 1} width`}
+                            aria-label={`Resize component ${index + 1} width`}
                             onClick={(event) => {
                               event.preventDefault();
                               event.stopPropagation();
                             }}
-                            onPointerDown={(event) => startComponentInteraction(event, item.index, 'resize-right')}
+                            onPointerDown={(event) => startComponentInteraction(event, item.draftId, 'resize-right')}
                           />
                           <button
                             type="button"
                             className="clusterResizeHandle clusterResizeHandleSouth"
-                            aria-label={`Resize component ${item.index + 1} height`}
+                            aria-label={`Resize component ${index + 1} height`}
                             onClick={(event) => {
                               event.preventDefault();
                               event.stopPropagation();
                             }}
-                            onPointerDown={(event) => startComponentInteraction(event, item.index, 'resize-bottom')}
+                            onPointerDown={(event) => startComponentInteraction(event, item.draftId, 'resize-bottom')}
                           />
                           <button
                             type="button"
                             className="clusterResizeHandle clusterResizeHandleCorner"
-                            aria-label={`Resize component ${item.index + 1} width and height`}
+                            aria-label={`Resize component ${index + 1} width and height`}
                             onClick={(event) => {
                               event.preventDefault();
                               event.stopPropagation();
                             }}
-                            onPointerDown={(event) => startComponentInteraction(event, item.index, 'resize-corner')}
+                            onPointerDown={(event) => startComponentInteraction(event, item.draftId, 'resize-corner')}
                           />
                         </>
                       ) : null}
@@ -631,7 +855,16 @@ export function StageRenderer() {
                       ? 'Unsaved edits'
                       : 'Editing layout'}
                 </span>
+                <span className="mapMeta">Undo {canUndo ? 'available' : 'empty'} | Redo {canRedo ? 'available' : 'empty'}</span>
                 {saveError ? <span className="mapEditError">{saveError}</span> : null}
+                <button
+                  type="button"
+                  className="ghostButton"
+                  onClick={() => setShowAddComponentOverlay(true)}
+                  disabled={editPhase !== 'active' || isSavingLayout}
+                >
+                  Add component
+                </button>
                 <button
                   type="button"
                   className="ghostButton"
@@ -678,6 +911,12 @@ export function StageRenderer() {
           pendingNavigationRef.current = null;
           setShowUnsavedPrompt(false);
         }}
+      />
+      <AddComponentOverlay
+        open={showAddComponentOverlay}
+        title="Add component to stage"
+        onClose={() => setShowAddComponentOverlay(false)}
+        onAdd={(definition) => handleAddComponent(definition.component)}
       />
       <LiveRegion
         message={`Step ${stepIndex + 1} of ${presentation.steps?.length ?? 0}: ${step.title ?? presentation.meta.title}`}

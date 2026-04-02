@@ -4,7 +4,7 @@ import path from 'node:path';
 import YAML, { isMap, isSeq, YAMLMap } from 'yaml';
 
 import { PRESENTATIONS_DIR } from '@/lib/engine/constants';
-import { PresentationConfig } from '@/lib/types/presentation';
+import { ClusterDefinition, ComponentInstance, PresentationConfig } from '@/lib/types/presentation';
 
 const PRESENTATION_FILE_NAME = 'presentation.yaml';
 
@@ -24,13 +24,28 @@ export interface StageComponentLayoutGeometry {
   height: number;
 }
 
+export interface SavedStageComponentLayoutDraft extends StageComponentLayoutGeometry, ComponentInstance {}
+
+export interface SavedMapClusterComponentDraft extends ComponentInstance {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
+
+export interface SavedMapClusterLayoutDraft
+  extends Omit<ClusterDefinition, 'anchor' | 'arrangement' | 'components' | 'frame'>,
+    ClusterLayoutGeometry {
+  components: SavedMapClusterComponentDraft[];
+}
+
 export interface MapPresentationLayoutSavePayload {
-  clusters: ClusterLayoutGeometry[];
+  clusters: Array<ClusterLayoutGeometry | SavedMapClusterLayoutDraft>;
 }
 
 export interface StagePresentationLayoutSavePayload {
   stepIndex: number;
-  components: StageComponentLayoutGeometry[];
+  components: Array<StageComponentLayoutGeometry | SavedStageComponentLayoutDraft>;
 }
 
 export type PresentationLayoutSavePayload =
@@ -38,9 +53,17 @@ export type PresentationLayoutSavePayload =
   | StagePresentationLayoutSavePayload;
 
 type MapGeometryById = Map<string, ClusterLayoutGeometry>;
-type StageGeometryByIndex = Map<number, StageComponentLayoutGeometry>;
 
-const GENERIC_STAGE_LAYOUT_PROP_KEYS = ['gap', 'maxWidth', 'width', 'minHeight'] as const;
+interface ValidatedStageSave {
+  stepIndex: number;
+  components: ComponentInstance[];
+}
+
+interface ValidatedMapFullCluster extends Omit<SavedMapClusterLayoutDraft, 'components'> {
+  components: ComponentInstance[];
+}
+
+const GENERIC_FREEFORM_LAYOUT_PROP_KEYS = ['gap', 'maxWidth', 'width', 'minHeight'] as const;
 
 export class PresentationLayoutSaveError extends Error {
   status: number;
@@ -64,6 +87,10 @@ function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value);
 }
 
+function isFiniteInteger(value: unknown): value is number {
+  return Number.isInteger(value);
+}
+
 function ensureMapNode(parent: YAMLMap<unknown, unknown>, key: string) {
   const existing = parent.get(key, true);
   if (isMap(existing)) {
@@ -73,10 +100,6 @@ function ensureMapNode(parent: YAMLMap<unknown, unknown>, key: string) {
   const next = new YAMLMap();
   parent.set(key, next);
   return next;
-}
-
-function isFiniteInteger(value: unknown): value is number {
-  return Number.isInteger(value);
 }
 
 function validateUnitInterval(
@@ -98,6 +121,84 @@ function validateUnitInterval(
   if (value > 1) {
     throw new PresentationLayoutSaveError(400, `${label} must be between 0 and 1.`);
   }
+}
+
+function cloneJson<T>(value: T): T {
+  if (value == null) {
+    return value;
+  }
+
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
+function filterFreeformLayoutProps(layoutProps: Record<string, unknown> | undefined) {
+  if (!layoutProps) {
+    return undefined;
+  }
+
+  const nextLayoutProps = Object.fromEntries(
+    Object.entries(layoutProps).filter(([key]) => GENERIC_FREEFORM_LAYOUT_PROP_KEYS.includes(key as (typeof GENERIC_FREEFORM_LAYOUT_PROP_KEYS)[number]))
+  );
+
+  return Object.keys(nextLayoutProps).length ? nextLayoutProps : undefined;
+}
+
+function createSerializableComponent(
+  component: ComponentInstance,
+  geometry?: { x: number; y: number; width?: number; height?: number }
+) {
+  const nextComponent = cloneJson(component);
+  if (geometry) {
+    nextComponent.position = {
+      x: Number(geometry.x.toFixed(6)),
+      y: Number(geometry.y.toFixed(6)),
+      ...(geometry.width != null ? { width: Number(geometry.width.toFixed(6)) } : {}),
+      ...(geometry.height != null ? { height: Number(geometry.height.toFixed(6)) } : {})
+    };
+  }
+
+  return nextComponent;
+}
+
+function validateOptionalPosition(position: ComponentInstance['position'], label: string) {
+  if (!position) {
+    return;
+  }
+
+  validateUnitInterval(position.x, `${label} x`);
+  validateUnitInterval(position.y, `${label} y`);
+  if (position.width != null) {
+    validateUnitInterval(position.width, `${label} width`, { exclusiveMinimum: true });
+  }
+  if (position.height != null) {
+    validateUnitInterval(position.height, `${label} height`, { exclusiveMinimum: true });
+  }
+}
+
+function normalizeMapComponentDraft(component: SavedMapClusterComponentDraft, index: number): ComponentInstance {
+  if (!component || typeof component.type !== 'string' || !component.type.trim()) {
+    throw new PresentationLayoutSaveError(400, `Cluster component ${index} must include a non-empty type.`);
+  }
+
+  const { x, y, width, height, ...componentFields } = component;
+  const normalizedComponent = cloneJson(componentFields as ComponentInstance);
+  validateOptionalPosition(normalizedComponent.position, `Cluster component ${index} position`);
+
+  const hasFlatGeometry = [x, y, width, height].some((value) => value != null);
+  if (hasFlatGeometry) {
+    validateUnitInterval(x, `Cluster component ${index} x`);
+    validateUnitInterval(y, `Cluster component ${index} y`);
+    validateUnitInterval(width, `Cluster component ${index} width`, { exclusiveMinimum: true });
+    validateUnitInterval(height, `Cluster component ${index} height`, { exclusiveMinimum: true });
+    normalizedComponent.position = {
+      x: Number(x.toFixed(6)),
+      y: Number(y.toFixed(6)),
+      width: Number(width.toFixed(6)),
+      height: Number(height.toFixed(6))
+    };
+  }
+
+  return normalizedComponent;
 }
 
 function validateMapGeometryPayload(
@@ -160,20 +261,86 @@ function validateMapGeometryPayload(
     }
   }
 
-  for (const clusterId of geometryById.keys()) {
-    if (!clusters.some((cluster) => cluster.id === clusterId)) {
-      throw new PresentationLayoutSaveError(400, `Layout payload references unknown cluster "${clusterId}".`);
-    }
-  }
-
   return geometryById;
 }
 
-function validateStageGeometryPayload(
+function isFullMapClusterDraft(
+  cluster: ClusterLayoutGeometry | SavedMapClusterLayoutDraft
+): cluster is SavedMapClusterLayoutDraft {
+  return typeof (cluster as SavedMapClusterLayoutDraft).layout === 'string' || Array.isArray((cluster as SavedMapClusterLayoutDraft).components);
+}
+
+function validateMapFullPayload(
+  presentation: PresentationConfig,
+  clusterList: Array<ClusterLayoutGeometry | SavedMapClusterLayoutDraft>
+) {
+  if (presentation.mode !== 'map') {
+    throw new PresentationLayoutSaveError(400, 'Only map presentations support manual layout saves.');
+  }
+
+  if (!Array.isArray(clusterList) || clusterList.length === 0) {
+    throw new PresentationLayoutSaveError(400, 'Layout payload must include clusters.');
+  }
+
+  const validatedClusters: ValidatedMapFullCluster[] = [];
+  const seenIds = new Set<string>();
+
+  for (const [index, cluster] of clusterList.entries()) {
+    if (!isFullMapClusterDraft(cluster)) {
+      throw new PresentationLayoutSaveError(
+        400,
+        `Cluster payload at index ${index} must include full cluster definition fields.`
+      );
+    }
+
+    if (typeof cluster.id !== 'string' || !cluster.id.trim()) {
+      throw new PresentationLayoutSaveError(400, `Cluster payload at index ${index} must include a non-empty id.`);
+    }
+    if (seenIds.has(cluster.id)) {
+      throw new PresentationLayoutSaveError(400, `Cluster payload includes duplicate id "${cluster.id}".`);
+    }
+    seenIds.add(cluster.id);
+
+    if (!isFiniteNumber(cluster.x) || !isFiniteNumber(cluster.y)) {
+      throw new PresentationLayoutSaveError(400, `Cluster "${cluster.id}" must include finite x/y coordinates.`);
+    }
+    if (!isFiniteNumber(cluster.width) || cluster.width <= 0) {
+      throw new PresentationLayoutSaveError(400, `Cluster "${cluster.id}" width must be greater than 0.`);
+    }
+    if (!isFiniteNumber(cluster.height) || cluster.height <= 0) {
+      throw new PresentationLayoutSaveError(400, `Cluster "${cluster.id}" height must be greater than 0.`);
+    }
+    if (typeof cluster.layout !== 'string' || !cluster.layout.trim()) {
+      throw new PresentationLayoutSaveError(400, `Cluster "${cluster.id}" must include a layout.`);
+    }
+    if (!Array.isArray(cluster.components)) {
+      throw new PresentationLayoutSaveError(400, `Cluster "${cluster.id}" must include its components array.`);
+    }
+
+    validatedClusters.push({
+      ...cloneJson(cluster),
+      x: Math.round(cluster.x),
+      y: Math.round(cluster.y),
+      width: Math.round(cluster.width),
+      height: Math.round(cluster.height),
+      layoutProps:
+        cluster.layout === 'scattered'
+          ? filterFreeformLayoutProps(cluster.layoutProps)
+          : cloneJson(cluster.layoutProps),
+      components: cluster.components.map((component, componentIndex) =>
+        normalizeMapComponentDraft(component, componentIndex)
+      )
+    });
+  }
+
+  return validatedClusters;
+}
+
+function validateStagePayload(
   presentation: PresentationConfig,
   stepIndex: number,
-  geometryList: StageComponentLayoutGeometry[]
-): StageGeometryByIndex {
+  componentList: Array<StageComponentLayoutGeometry | SavedStageComponentLayoutDraft>
+): ValidatedStageSave {
   const steps = presentation.steps ?? [];
   if (presentation.mode !== 'stage') {
     throw new PresentationLayoutSaveError(400, 'Only stage presentations support stage layout saves.');
@@ -184,66 +351,81 @@ function validateStageGeometryPayload(
   }
 
   const step = steps[stepIndex];
-  const components = step?.components ?? [];
-  if (!Array.isArray(geometryList) || geometryList.length === 0) {
+  const existingComponents = step?.components ?? [];
+  if (!Array.isArray(componentList) || componentList.length === 0) {
     throw new PresentationLayoutSaveError(400, 'Layout payload must include component geometry.');
   }
 
   const seenIndexes = new Set<number>();
-  const geometryByIndex = new Map<number, StageComponentLayoutGeometry>();
+  const normalizedComponents: ComponentInstance[] = Array.from({ length: componentList.length });
 
-  for (const geometry of geometryList) {
-    if (!geometry || !isFiniteInteger(geometry.index) || geometry.index < 0) {
-      throw new PresentationLayoutSaveError(400, 'Each component geometry entry must include a non-negative index.');
+  for (const component of componentList) {
+    if (!component || !isFiniteInteger(component.index) || component.index < 0) {
+      throw new PresentationLayoutSaveError(400, 'Each component layout entry must include a non-negative index.');
+    }
+    if (seenIndexes.has(component.index)) {
+      throw new PresentationLayoutSaveError(400, `Component geometry includes duplicate index "${component.index}".`);
+    }
+    seenIndexes.add(component.index);
+
+    validateUnitInterval(component.x, `Component ${component.index} x`);
+    validateUnitInterval(component.y, `Component ${component.index} y`);
+    validateUnitInterval(component.width, `Component ${component.index} width`, { exclusiveMinimum: true });
+    validateUnitInterval(component.height, `Component ${component.index} height`, { exclusiveMinimum: true });
+
+    if (component.x + component.width > 1.0001) {
+      throw new PresentationLayoutSaveError(400, `Component ${component.index} exceeds the step width.`);
     }
 
-    if (seenIndexes.has(geometry.index)) {
-      throw new PresentationLayoutSaveError(400, `Component geometry includes duplicate index "${geometry.index}".`);
-    }
-    seenIndexes.add(geometry.index);
-
-    validateUnitInterval(geometry.x, `Component ${geometry.index} x`);
-    validateUnitInterval(geometry.y, `Component ${geometry.index} y`);
-    validateUnitInterval(geometry.width, `Component ${geometry.index} width`, { exclusiveMinimum: true });
-    validateUnitInterval(geometry.height, `Component ${geometry.index} height`, { exclusiveMinimum: true });
-
-    if (geometry.x + geometry.width > 1.0001) {
-      throw new PresentationLayoutSaveError(400, `Component ${geometry.index} exceeds the step width.`);
+    if (component.y + component.height > 1.0001) {
+      throw new PresentationLayoutSaveError(400, `Component ${component.index} exceeds the step height.`);
     }
 
-    if (geometry.y + geometry.height > 1.0001) {
-      throw new PresentationLayoutSaveError(400, `Component ${geometry.index} exceeds the step height.`);
+    const hasFullDefinition = typeof (component as SavedStageComponentLayoutDraft).type === 'string';
+    const baseComponent =
+      hasFullDefinition
+        ? cloneJson((() => {
+            const { index, x, y, width, height, ...componentFields } = component as SavedStageComponentLayoutDraft;
+            return componentFields as ComponentInstance;
+          })())
+        : cloneJson(existingComponents[component.index]);
+
+    if (!baseComponent || typeof baseComponent.type !== 'string' || !baseComponent.type.trim()) {
+      throw new PresentationLayoutSaveError(
+        400,
+        `Component ${component.index} must include a full definition when saving a new or replaced component.`
+      );
     }
 
-    geometryByIndex.set(geometry.index, {
-      index: geometry.index,
-      x: Number(geometry.x.toFixed(6)),
-      y: Number(geometry.y.toFixed(6)),
-      width: Number(geometry.width.toFixed(6)),
-      height: Number(geometry.height.toFixed(6))
+    normalizedComponents[component.index] = createSerializableComponent(baseComponent, {
+      x: component.x,
+      y: component.y,
+      width: component.width,
+      height: component.height
     });
   }
 
-  if (geometryByIndex.size !== components.length) {
-    throw new PresentationLayoutSaveError(
-      400,
-      `Layout payload must include geometry for all ${components.length} components in step ${stepIndex}.`
-    );
+  if (seenIndexes.size !== componentList.length) {
+    throw new PresentationLayoutSaveError(400, 'Stage component indexes must be unique.');
   }
 
-  for (let index = 0; index < components.length; index += 1) {
-    if (!geometryByIndex.has(index)) {
-      throw new PresentationLayoutSaveError(400, `Layout payload is missing component index "${index}".`);
+  for (let index = 0; index < normalizedComponents.length; index += 1) {
+    if (!normalizedComponents[index]) {
+      throw new PresentationLayoutSaveError(
+        400,
+        `Layout payload must include a contiguous component definition for index "${index}".`
+      );
     }
   }
 
-  for (const index of geometryByIndex.keys()) {
-    if (index >= components.length) {
-      throw new PresentationLayoutSaveError(400, `Layout payload references unknown component index "${index}".`);
-    }
-  }
+  return {
+    stepIndex,
+    components: normalizedComponents
+  };
+}
 
-  return geometryByIndex;
+function stripUndefinedEntries<T extends Record<string, unknown>>(value: T) {
+  return Object.fromEntries(Object.entries(value).filter(([, entry]) => entry !== undefined)) as T;
 }
 
 export function resolvePresentationYamlPath(slug: string, presentationsDir = PRESENTATIONS_DIR) {
@@ -287,40 +469,85 @@ export async function savePresentationLayoutAtPath(
   metaNode.set('updatedAt', updatedAt);
 
   if ('clusters' in resolvedPayload) {
-    const geometryById = validateMapGeometryPayload(presentation, resolvedPayload.clusters);
-    const clustersNode = document.get('clusters', true);
-    if (!isSeq(clustersNode)) {
-      throw new PresentationLayoutSaveError(400, 'Presentation YAML does not contain a writable cluster sequence.');
+    const shouldRewriteFullClusters = resolvedPayload.clusters.some((cluster) => isFullMapClusterDraft(cluster));
+
+    if (!shouldRewriteFullClusters) {
+      const geometryById = validateMapGeometryPayload(presentation, resolvedPayload.clusters as ClusterLayoutGeometry[]);
+      const clustersNode = document.get('clusters', true);
+      if (!isSeq(clustersNode)) {
+        throw new PresentationLayoutSaveError(400, 'Presentation YAML does not contain a writable cluster sequence.');
+      }
+
+      for (const item of clustersNode.items) {
+        if (!isMap(item)) {
+          continue;
+        }
+
+        const clusterId = item.get('id');
+        if (typeof clusterId !== 'string') {
+          continue;
+        }
+
+        const geometry = geometryById.get(clusterId);
+        if (!geometry) {
+          throw new PresentationLayoutSaveError(400, `Presentation YAML contains unexpected cluster "${clusterId}".`);
+        }
+
+        const anchorNode = ensureMapNode(item, 'anchor');
+        anchorNode.set('x', geometry.x);
+        anchorNode.set('y', geometry.y);
+        anchorNode.delete('relativeTo');
+        anchorNode.delete('direction');
+        anchorNode.delete('distance');
+
+        const frameNode = ensureMapNode(item, 'frame');
+        frameNode.set('width', geometry.width);
+        frameNode.set('height', geometry.height);
+
+        item.delete('arrangement');
+      }
+
+      const canvasNode = document.get('canvas', true);
+      if (isMap(canvasNode)) {
+        canvasNode.delete('arrangement');
+        if (canvasNode.items.length === 0) {
+          document.deleteIn(['canvas']);
+        }
+      }
+
+      await fs.writeFile(presentationPath, String(document), 'utf8');
+
+      return {
+        filePath: presentationPath,
+        updatedAt,
+        clusterCount: geometryById.size
+      };
     }
 
-    for (const item of clustersNode.items) {
-      if (!isMap(item)) {
-        continue;
-      }
+    const validatedClusters = validateMapFullPayload(presentation, resolvedPayload.clusters);
+    const serializedClusters = validatedClusters.map((cluster) =>
+      stripUndefinedEntries({
+        id: cluster.id,
+        title: cluster.title,
+        description: cluster.description,
+        group: cluster.group,
+        layout: cluster.layout,
+        layoutProps: cluster.layout === 'scattered' ? filterFreeformLayoutProps(cluster.layoutProps) : cluster.layoutProps,
+        transition: cluster.transition,
+        background: cluster.background,
+        anchor: {
+          x: cluster.x,
+          y: cluster.y
+        },
+        frame: {
+          width: cluster.width,
+          height: cluster.height
+        },
+        components: cluster.components
+      })
+    );
 
-      const clusterId = item.get('id');
-      if (typeof clusterId !== 'string') {
-        continue;
-      }
-
-      const geometry = geometryById.get(clusterId);
-      if (!geometry) {
-        throw new PresentationLayoutSaveError(400, `Presentation YAML contains unexpected cluster "${clusterId}".`);
-      }
-
-      const anchorNode = ensureMapNode(item, 'anchor');
-      anchorNode.set('x', geometry.x);
-      anchorNode.set('y', geometry.y);
-      anchorNode.delete('relativeTo');
-      anchorNode.delete('direction');
-      anchorNode.delete('distance');
-
-      const frameNode = ensureMapNode(item, 'frame');
-      frameNode.set('width', geometry.width);
-      frameNode.set('height', geometry.height);
-
-      item.delete('arrangement');
-    }
+    document.set('clusters', serializedClusters);
 
     const canvasNode = document.get('canvas', true);
     if (isMap(canvasNode)) {
@@ -335,73 +562,51 @@ export async function savePresentationLayoutAtPath(
     return {
       filePath: presentationPath,
       updatedAt,
-      clusterCount: geometryById.size
+      clusterCount: validatedClusters.length
     };
   }
 
-  const geometryByIndex = validateStageGeometryPayload(
-    presentation,
-    resolvedPayload.stepIndex,
-    resolvedPayload.components
-  );
+  const validatedStage = validateStagePayload(presentation, resolvedPayload.stepIndex, resolvedPayload.components);
   const stepsNode = document.get('steps', true);
   if (!isSeq(stepsNode)) {
     throw new PresentationLayoutSaveError(400, 'Presentation YAML does not contain a writable step sequence.');
   }
 
-  const stepNode = stepsNode.items[resolvedPayload.stepIndex];
+  const stepNode = stepsNode.items[validatedStage.stepIndex];
   if (!isMap(stepNode)) {
-    throw new PresentationLayoutSaveError(400, `Step ${resolvedPayload.stepIndex} is not writable.`);
+    throw new PresentationLayoutSaveError(400, `Step ${validatedStage.stepIndex} is not writable.`);
   }
 
   stepNode.set('layout', 'scattered');
 
-  const nextLayoutProps = new YAMLMap();
   const existingLayoutProps = stepNode.get('layoutProps', true);
   if (isMap(existingLayoutProps)) {
-    for (const key of GENERIC_STAGE_LAYOUT_PROP_KEYS) {
+    const nextLayoutProps = new YAMLMap();
+    for (const key of GENERIC_FREEFORM_LAYOUT_PROP_KEYS) {
       const value = existingLayoutProps.get(key, true);
       if (value !== undefined) {
         nextLayoutProps.set(key, value);
       }
     }
-  }
 
-  if (nextLayoutProps.items.length > 0) {
-    stepNode.set('layoutProps', nextLayoutProps);
+    if (nextLayoutProps.items.length > 0) {
+      stepNode.set('layoutProps', nextLayoutProps);
+    } else {
+      stepNode.delete('layoutProps');
+    }
   } else {
     stepNode.delete('layoutProps');
   }
 
-  const componentsNode = stepNode.get('components', true);
-  if (!isSeq(componentsNode)) {
-    throw new PresentationLayoutSaveError(400, `Step ${resolvedPayload.stepIndex} does not contain a writable component sequence.`);
-  }
-
-  for (const [index, item] of componentsNode.items.entries()) {
-    if (!isMap(item)) {
-      continue;
-    }
-
-    const geometry = geometryByIndex.get(index);
-    if (!geometry) {
-      throw new PresentationLayoutSaveError(400, `Step ${resolvedPayload.stepIndex} contains unexpected component index "${index}".`);
-    }
-
-    const positionNode = ensureMapNode(item, 'position');
-    positionNode.set('x', geometry.x);
-    positionNode.set('y', geometry.y);
-    positionNode.set('width', geometry.width);
-    positionNode.set('height', geometry.height);
-  }
+  stepNode.set('components', validatedStage.components);
 
   await fs.writeFile(presentationPath, String(document), 'utf8');
 
   return {
     filePath: presentationPath,
     updatedAt,
-    stepIndex: resolvedPayload.stepIndex,
-    componentCount: geometryByIndex.size
+    stepIndex: validatedStage.stepIndex,
+    componentCount: validatedStage.components.length
   };
 }
 

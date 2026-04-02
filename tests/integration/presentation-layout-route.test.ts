@@ -216,4 +216,198 @@ steps:
     });
     expect(saved.steps[1].layout).toBe('single-content');
   });
+
+  it('accepts full stage component definitions so added components can be persisted', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 3, 2, 12, 0, 0));
+
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'xtoryteller-stage-layout-route-full-'));
+    const presentationsDir = path.join(tempRoot, 'presentations');
+    const slug = 'stage-route-full-save';
+    const deckDir = path.join(presentationsDir, slug);
+    const deckPath = path.join(deckDir, 'presentation.yaml');
+
+    await fs.mkdir(deckDir, { recursive: true });
+    await fs.writeFile(
+      deckPath,
+      `meta:
+  title: Stage route save fixture
+  slug: stage-route-full-save
+  updatedAt: '2026-01-10'
+mode: stage
+steps:
+  - id: intro
+    title: Intro
+    layout: two-column
+    components:
+      - type: headline
+        content: Intro title
+      - type: body-text
+        content: Intro body
+`,
+      'utf8'
+    );
+
+    vi.doMock('@/lib/engine/constants', async () => {
+      const actual = await vi.importActual<typeof import('@/lib/engine/constants')>('@/lib/engine/constants');
+      return {
+        ...actual,
+        PRESENTATIONS_DIR: presentationsDir
+      };
+    });
+
+    const { POST } = await import('@/app/api/presentations/[slug]/layout/route');
+    const response = await POST(
+      new Request('http://localhost/api/presentations/stage-route-full-save/layout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          stepIndex: 0,
+          components: [
+            { index: 0, type: 'headline', content: 'Intro title', x: 0.08, y: 0.12, width: 0.36, height: 0.28 },
+            { index: 1, type: 'body-text', content: 'Intro body', x: 0.52, y: 0.18, width: 0.3, height: 0.3 },
+            { index: 2, type: 'subtitle', content: 'Added subtitle', x: 0.14, y: 0.56, width: 0.28, height: 0.18 }
+          ]
+        })
+      }),
+      { params: Promise.resolve({ slug }) }
+    );
+
+    expect(response.status).toBe(200);
+
+    const saved = YAML.parse(await fs.readFile(deckPath, 'utf8')) as {
+      steps: Array<{
+        layout?: string;
+        components: Array<{ type: string; content?: string; position?: Record<string, unknown> }>;
+      }>;
+    };
+
+    expect(saved.steps[0].layout).toBe('scattered');
+    expect(saved.steps[0].components).toHaveLength(3);
+    expect(saved.steps[0].components[2].type).toBe('subtitle');
+    expect(saved.steps[0].components[2].content).toBe('Added subtitle');
+    expect(saved.steps[0].components[2].position).toEqual({
+      x: 0.14,
+      y: 0.56,
+      width: 0.28,
+      height: 0.18
+    });
+  });
+
+  it('accepts full cluster definitions so map content edits and duplicated clusters can be persisted', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 3, 2, 12, 0, 0));
+
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'xtoryteller-map-layout-route-full-'));
+    const presentationsDir = path.join(tempRoot, 'presentations');
+    const slug = 'map-route-full-save';
+    const deckDir = path.join(presentationsDir, slug);
+    const deckPath = path.join(deckDir, 'presentation.yaml');
+
+    await fs.mkdir(deckDir, { recursive: true });
+    await fs.writeFile(
+      deckPath,
+      `meta:
+  title: Route save fixture
+  slug: map-route-full-save
+  updatedAt: '2026-01-10'
+mode: map
+clusters:
+  - id: root
+    layout: single-content
+    components:
+      - type: headline
+        content: Root
+  - id: child
+    layout: single-content
+    components:
+      - type: headline
+        content: Child
+`,
+      'utf8'
+    );
+
+    vi.doMock('@/lib/engine/constants', async () => {
+      const actual = await vi.importActual<typeof import('@/lib/engine/constants')>('@/lib/engine/constants');
+      return {
+        ...actual,
+        PRESENTATIONS_DIR: presentationsDir
+      };
+    });
+
+    const { POST } = await import('@/app/api/presentations/[slug]/layout/route');
+    const response = await POST(
+      new Request('http://localhost/api/presentations/map-route-full-save/layout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          clusters: [
+            {
+              id: 'root',
+              title: 'Root',
+              layout: 'scattered',
+              x: 12,
+              y: 18,
+              width: 610,
+              height: 390,
+              components: [
+                { type: 'headline', content: 'Root', x: 0.08, y: 0.12, width: 0.34, height: 0.22 },
+                { type: 'body-text', content: 'Expanded detail', x: 0.5, y: 0.2, width: 0.3, height: 0.24 }
+              ]
+            },
+            {
+              id: 'child',
+              title: 'Child',
+              layout: 'single-content',
+              x: 742,
+              y: 148,
+              width: 440,
+              height: 280,
+              components: [{ type: 'headline', content: 'Child' }]
+            },
+            {
+              id: 'root-copy',
+              title: 'Root copy',
+              layout: 'single-content',
+              x: 860,
+              y: 440,
+              width: 500,
+              height: 300,
+              components: [{ type: 'headline', content: 'Root copy' }]
+            }
+          ]
+        })
+      }),
+      { params: Promise.resolve({ slug }) }
+    );
+
+    expect(response.status).toBe(200);
+
+    const saved = YAML.parse(await fs.readFile(deckPath, 'utf8')) as {
+      clusters: Array<{
+        id: string;
+        layout?: string;
+        anchor?: Record<string, unknown>;
+        frame?: Record<string, unknown>;
+        components: Array<{ type: string; position?: Record<string, unknown> }>;
+      }>;
+    };
+
+    expect(saved.clusters).toHaveLength(3);
+    expect(saved.clusters[0].layout).toBe('scattered');
+    expect(saved.clusters[0].components[1].type).toBe('body-text');
+    expect(saved.clusters[0].components[1].position).toEqual({
+      x: 0.5,
+      y: 0.2,
+      width: 0.3,
+      height: 0.24
+    });
+    expect(saved.clusters[2].id).toBe('root-copy');
+    expect(saved.clusters[2].anchor).toEqual({ x: 860, y: 440 });
+    expect(saved.clusters[2].frame).toEqual({ width: 500, height: 300 });
+  });
 });

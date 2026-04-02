@@ -12,6 +12,7 @@
     "validate": "node scripts/validate.mjs",
     "validate:theme": "node scripts/validate-theme.mjs",
     "validate:all": "node scripts/run-with-tracked-file-guard.mjs validate:all node scripts/validate-all.mjs",
+    "validate:skill": "node scripts/validate-skill-consistency.mjs",
     "registries": "node scripts/generate-registries.mjs",
     "presentation:export": "node scripts/export.mjs",
     "presentation:import": "node scripts/import.mjs",

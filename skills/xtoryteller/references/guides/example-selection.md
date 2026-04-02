@@ -35,3 +35,5 @@ Use the scaffold script instead of copying YAML by hand:
   `node skills/xtoryteller/scripts/init-presentation.mjs --slug my-map --mode map --example simple`
 - Complex seed:
   add `--example complex`
+
+By default the scaffold **does not** set `theme` in `presentation.yaml`, so the new deck inherits the dashboard-selected global theme. Pass `--theme <slug>` only when locking the presentation to a named reusable theme.

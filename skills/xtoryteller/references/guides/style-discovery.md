@@ -10,27 +10,32 @@ Read this file when the user does not know the final look yet and would benefit 
 
 ## Preferred Flow
 
-1. Determine the broad mood:
+1. **Mood (single choice or short list)** — Map the user’s intent to one or two of:
    - `confident`
    - `energetic`
    - `calm`
    - `inspired`
-2. Generate three preview presentations with the helper script.
-3. Ask the user to review the previews in the browser.
-4. Carry the winning direction into the real presentation through the theme or `themeOverrides`.
-5. Prefer preset families first. Reach for ad-hoc `themeOverrides` only when the winning direction is intentionally local and not worth naming.
+2. **Generate three previews** — Run the helper once so outputs are deterministic and comparable:
+   `node skills/xtoryteller/scripts/create-style-previews.mjs --mood <mood> --topic "<short topic>" --force`
+3. **Acceptance gate** — Before touching the real deck, confirm the user has seen **three visibly distinct** options (different typography, layout motif, surface/background behavior—not only hue shifts). If two previews look interchangeable, regenerate with a stronger spread or adjust topic/mood inputs.
+4. **User pick** — Ask explicitly which direction wins:
+   - Preview A, B, or C by label, **or**
+   - **Mix elements** — Ask what to take from which preview (e.g. “typography from B, background from A”).
+5. **Apply to the real presentation** — Carry the winning direction via `theme`, `themeOverrides`, and/or background `presetRef` as appropriate. Prefer preset families from [preset-families.md](preset-families.md) first; use ad-hoc `themeOverrides` when the look should stay local and is not worth naming as a theme.
+6. **Optional URLs** — The preview script prints viewer URLs when it finishes. With `npm run dev`, you can also run `node skills/xtoryteller/scripts/print-preview-urls.mjs` (same default prefix `preview`; use `--prefix` if you overrode it when generating).
 
 ## Deterministic Helper
 
 Command:
 `node skills/xtoryteller/scripts/create-style-previews.mjs --mood calm --topic "Systems Story" --force`
 
-This writes:
-- `presentations/_preview-a/presentation.yaml`
-- `presentations/_preview-b/presentation.yaml`
-- `presentations/_preview-c/presentation.yaml`
+This writes (default prefix `preview`):
 
-You can change the prefix with `--prefix my-preview`.
+- `presentations/preview-a/presentation.yaml`
+- `presentations/preview-b/presentation.yaml`
+- `presentations/preview-c/presentation.yaml`
+
+You can change the prefix with `--prefix my-preview` (slugs become `my-preview-a`, etc.).
 
 ## Rules
 

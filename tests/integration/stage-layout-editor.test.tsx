@@ -178,12 +178,23 @@ describe('stage layout editor', () => {
 
     await act(async () => {
       fireEvent.pointerDown(firstComponent, { button: 0, clientX: 120, clientY: 120 });
+      fireEvent.pointerMove(window, { clientX: 180, clientY: 150 });
+    });
+
+    const intermediateLeft = parseFloat((firstComponent as HTMLElement).style.left);
+    const intermediateTop = parseFloat((firstComponent as HTMLElement).style.top);
+
+    await act(async () => {
       fireEvent.pointerMove(window, { clientX: 260, clientY: 210 });
       fireEvent.pointerUp(window, { clientX: 260, clientY: 210 });
     });
 
-    expect(parseFloat((firstComponent as HTMLElement).style.left)).not.toBe(beforeLeft);
-    expect(parseFloat((firstComponent as HTMLElement).style.top)).not.toBe(beforeTop);
+    const finalLeft = parseFloat((firstComponent as HTMLElement).style.left);
+    const finalTop = parseFloat((firstComponent as HTMLElement).style.top);
+    expect(finalLeft).toBeCloseTo(beforeLeft + 14, 3);
+    expect(finalTop).toBeCloseTo(beforeTop + (90 / 560) * 100, 3);
+    expect(finalLeft - beforeLeft).toBeCloseTo((intermediateLeft - beforeLeft) * 140 / 60, 3);
+    expect(finalTop - beforeTop).toBeCloseTo((intermediateTop - beforeTop) * 90 / 30, 3);
     expect(screen.getByText('Unsaved edits')).toBeInTheDocument();
     expect(saveButton).toBeEnabled();
 
@@ -195,12 +206,23 @@ describe('stage layout editor', () => {
 
     await act(async () => {
       fireEvent.pointerDown(resizeHandle, { button: 0, clientX: 420, clientY: 280 });
+      fireEvent.pointerMove(window, { clientX: 480, clientY: 320 });
+    });
+
+    const intermediateWidth = parseFloat((firstComponent as HTMLElement).style.width);
+    const intermediateHeight = parseFloat((firstComponent as HTMLElement).style.height);
+
+    await act(async () => {
       fireEvent.pointerMove(window, { clientX: 560, clientY: 390 });
       fireEvent.pointerUp(window, { clientX: 560, clientY: 390 });
     });
 
-    expect(parseFloat((firstComponent as HTMLElement).style.width)).toBeGreaterThan(beforeWidth);
-    expect(parseFloat((firstComponent as HTMLElement).style.height)).toBeGreaterThan(beforeHeight);
+    const finalWidth = parseFloat((firstComponent as HTMLElement).style.width);
+    const finalHeight = parseFloat((firstComponent as HTMLElement).style.height);
+    expect(finalWidth).toBeCloseTo(beforeWidth + 14, 3);
+    expect(finalHeight).toBeCloseTo(beforeHeight + (110 / 560) * 100, 3);
+    expect(finalWidth - beforeWidth).toBeCloseTo((intermediateWidth - beforeWidth) * 140 / 60, 3);
+    expect(finalHeight - beforeHeight).toBeCloseTo((intermediateHeight - beforeHeight) * 110 / 40, 3);
 
     fireEvent.click(saveButton);
 
@@ -326,5 +348,76 @@ describe('stage layout editor', () => {
       expect(pushSpy).toHaveBeenCalledWith('/');
     });
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('supports delete duplicate undo redo copy paste and add-component insertion while editing a stage', async () => {
+    installStageMeasurementRects();
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({ updatedAt: '2026-04-02', stepIndex: 0, componentCount: 4 })
+    } as Response);
+
+    render(
+      createElement(
+        ThemeProvider,
+        { theme: stageTheme, overrides: presentation.themeOverrides },
+        createElement(
+          PresentationProvider,
+          { presentation, theme: stageTheme },
+          createElement(StageRenderer)
+        )
+      )
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Edit layout' }));
+    const firstComponent = await screen.findByRole('button', {
+      name: /Component 1 \(headline\)/i
+    });
+
+    fireEvent.click(firstComponent);
+    fireEvent.keyDown(window, { metaKey: true, key: 'd' });
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: /Component \d+ \(/i })).toHaveLength(3);
+    });
+
+    fireEvent.keyDown(window, { key: 'Backspace' });
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: /Component \d+ \(/i })).toHaveLength(2);
+    });
+
+    fireEvent.keyDown(window, { metaKey: true, key: 'z' });
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: /Component \d+ \(/i })).toHaveLength(3);
+    });
+
+    fireEvent.keyDown(window, { metaKey: true, key: 'y' });
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: /Component \d+ \(/i })).toHaveLength(2);
+    });
+
+    fireEvent.keyDown(window, { metaKey: true, key: 'c' });
+    fireEvent.keyDown(window, { metaKey: true, key: 'v' });
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: /Component \d+ \(/i })).toHaveLength(3);
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add component' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Add Subtitle' }));
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: /Component \d+ \(/i })).toHaveLength(4);
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    const [, options] = fetchMock.mock.calls[0];
+    const payload = JSON.parse(String(options?.body)) as {
+      components: Array<{ type: string }>;
+    };
+    expect(payload.components).toHaveLength(4);
+    expect(payload.components.some((component) => component.type === 'subtitle')).toBe(true);
   });
 });

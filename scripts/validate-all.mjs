@@ -3,6 +3,7 @@ import fg from 'fast-glob';
 import { generateRegistries } from './generate-registries.mjs';
 import { validateTheme } from './validate-theme.mjs';
 import { validateBackgroundPreset, validatePresentation } from './validate.mjs';
+import { validateSkillConsistency } from './validate-skill-consistency.mjs';
 
 const counts = await generateRegistries();
 console.log(
@@ -52,3 +53,5 @@ for (const [slug, files] of slugToFiles.entries()) {
 if (hasErrors) {
   process.exit(1);
 }
+
+await validateSkillConsistency();

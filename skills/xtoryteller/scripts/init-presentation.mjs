@@ -18,13 +18,17 @@ const { options } = parseArgs(process.argv.slice(2));
 const slug = String(options.slug ?? '').trim();
 
 if (!slug) {
-  console.error('Usage: node skills/xtoryteller/scripts/init-presentation.mjs --slug my-talk [--mode stage|map] [--example simple|complex] [--theme default] [--title "My Talk"] [--description "..."] [--author "..."] [--tags a,b] [--force]');
+  console.error('Usage: node skills/xtoryteller/scripts/init-presentation.mjs --slug my-talk [--mode stage|map] [--example simple|complex] [--theme <slug>] [--title "My Talk"] [--description "..."] [--author "..."] [--tags a,b] [--force]');
+  console.error('Omit --theme so the presentation inherits the dashboard-selected global theme (matches SKILL guidance). Pass --theme <slug> only when locking to a reusable theme.');
   process.exit(1);
 }
 
 const mode = options.mode === 'map' ? 'map' : 'stage';
 const exampleFamily = options.example === 'complex' ? 'complex' : 'simple';
-const theme = String(options.theme ?? 'default');
+const themeArg =
+  typeof options.theme === 'string' && String(options.theme).trim()
+    ? String(options.theme).trim()
+    : undefined;
 const root = resolveWorkspaceRoot(import.meta.url);
 const targetDir = path.join(root, 'presentations', slug);
 const templateFile = path.join(XTORYTELLER_EXAMPLES_DIR, `${exampleFamily}-${mode}.yaml`);
@@ -62,14 +66,21 @@ const output = {
     tags,
     createdAt: today,
     updatedAt: today
-  },
-  theme
+  }
 };
+
+if (themeArg !== undefined) {
+  output.theme = themeArg;
+}
 
 await ensureDir(targetDir);
 await writeYaml(path.join(targetDir, 'presentation.yaml'), output);
 await copyDirIfExists(path.join(sourcePresentationDir, 'assets'), path.join(targetDir, 'assets'));
 
 console.log(`Initialized presentations/${slug}/presentation.yaml from ${exampleFamily}-${mode}.yaml`);
-console.log(`Theme: ${theme}`);
+console.log(
+  themeArg !== undefined
+    ? `Theme: ${themeArg} (locked in YAML)`
+    : 'Theme: (omit — inherits dashboard global theme)'
+);
 console.log(`Next: node scripts/validate.mjs presentations/${slug}/presentation.yaml`);

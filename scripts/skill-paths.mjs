@@ -9,3 +9,4 @@ export const XTORYTELLER_GUIDES_DIR = path.join(XTORYTELLER_REFERENCES_DIR, 'gui
 export const XTORYTELLER_REGISTRIES_DIR = path.join(XTORYTELLER_REFERENCES_DIR, 'registries');
 export const XTORYTELLER_SCHEMA_DIR = path.join(XTORYTELLER_REFERENCES_DIR, 'schema');
 export const XTORYTELLER_EXAMPLES_DIR = path.join(XTORYTELLER_REFERENCES_DIR, 'examples');
+export const XTORYTELLER_SKILL_MANIFEST_PATH = path.join(XTORYTELLER_SKILL_DIR, 'skill-manifest.json');
