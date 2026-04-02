@@ -113,7 +113,7 @@ export function DashboardShell({
           <p className="eyebrow">Xtoryteller</p>
           <h1>Agent-first storytelling infrastructure/.</h1>
           <p className="dashboardLead">
-            Browse file-backed presentations, open them instantly, and use the YAML + registry system as the source of truth.
+            Browse and open your YAML + registry backed presentations instantly.
           </p>
         </section>
 
