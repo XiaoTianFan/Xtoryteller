@@ -30,6 +30,9 @@ pnpm-debug.log*
 /output/
 /playwright-report/
 /test-results/
+.playwright-cli/
 
 #presentation refs
 /presentations/human-ai-and-music/ref
+/presentations/human-ai-and-music-insight-brief/ref
+

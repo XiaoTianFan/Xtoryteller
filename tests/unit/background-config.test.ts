@@ -188,6 +188,7 @@ describe('background config', () => {
           filter: {
             mode: 'radial',
             opacity: 0.18,
+            steepness: 0.7,
             radialSize: {
               width: 0.6,
               height: 0.42
@@ -204,6 +205,7 @@ describe('background config', () => {
         filter: {
           mode: 'radial',
           opacity: 0.3,
+          steepness: 0.25,
           radialSize: {
             width: 0.72
           }
@@ -217,6 +219,7 @@ describe('background config', () => {
     expect(state.appearance.filter).toMatchObject({
       mode: 'radial',
       opacity: 0.3,
+      steepness: 0.25,
       radialSize: {
         width: 0.72,
         height: 0.42
@@ -267,6 +270,83 @@ describe('background config', () => {
     });
   });
 
+  it('preserves the current filter gradient strings when steepness is omitted', () => {
+    const radialState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        params: {
+          colorBack: '#112233'
+        },
+        filter: {
+          mode: 'radial',
+          opacity: 0.2
+        }
+      }),
+      0,
+      null
+    );
+    expect(radialState.appearance.filter).toMatchObject({
+      steepness: 0
+    });
+    expect(radialState.appearance.filter?.value).toBe(
+      'radial-gradient(ellipse 70.0% 55.0% at center, transparent 0%, transparent 54%, rgba(17, 34, 51, 0.200) 100%)'
+    );
+
+    const linearState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        params: {
+          colorBack: '#112233'
+        },
+        filter: {
+          mode: 'linear-horizontal',
+          opacity: 0.2,
+          linearProportion: 0.5
+        }
+      }),
+      0,
+      null
+    );
+    expect(linearState.appearance.filter).toMatchObject({
+      steepness: 0
+    });
+    expect(linearState.appearance.filter?.value).toBe(
+      'linear-gradient(90deg, rgba(17, 34, 51, 0.200) 0%, transparent 25.0%, transparent 75.0%, rgba(17, 34, 51, 0.200) 100%)'
+    );
+  });
+
+  it('supports configurable radial filter steepness', () => {
+    const state = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        params: {
+          colorBack: '#112233'
+        },
+        filter: {
+          mode: 'radial',
+          opacity: 0.2,
+          steepness: 0.5,
+          radialSize: {
+            width: 0.72,
+            height: 0.56
+          }
+        }
+      }),
+      0,
+      null
+    );
+
+    expect(state.appearance.filter).toMatchObject({
+      steepness: 0.5
+    });
+    expect(state.appearance.filter?.value).toBe(
+      'radial-gradient(ellipse 72.0% 56.0% at center, transparent 0%, transparent 77.0%, rgba(17, 34, 51, 0.200) 100%)'
+    );
+  });
+
   it('builds horizontal and vertical linear filter gradients with the expected direction', () => {
     const horizontalState = resolveBackgroundState(
       createStagePresentation({
@@ -295,6 +375,56 @@ describe('background config', () => {
       null
     );
     expect(verticalState.appearance.filter?.value).toContain('linear-gradient(180deg');
+  });
+
+  it('supports configurable linear filter steepness in forward and reverse modes', () => {
+    const forwardState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        params: {
+          colorBack: '#112233'
+        },
+        filter: {
+          mode: 'linear-horizontal',
+          opacity: 0.2,
+          linearProportion: 0.5,
+          steepness: 0.5
+        }
+      }),
+      0,
+      null
+    );
+    expect(forwardState.appearance.filter).toMatchObject({
+      steepness: 0.5
+    });
+    expect(forwardState.appearance.filter?.value).toBe(
+      'linear-gradient(90deg, rgba(17, 34, 51, 0.200) 0%, rgba(17, 34, 51, 0.200) 12.5%, transparent 25.0%, transparent 75.0%, rgba(17, 34, 51, 0.200) 87.5%, rgba(17, 34, 51, 0.200) 100%)'
+    );
+
+    const reverseState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        params: {
+          colorBack: '#112233'
+        },
+        filter: {
+          mode: 'linear-horizontal-reverse',
+          opacity: 0.2,
+          linearProportion: 0.5,
+          steepness: 0.5
+        }
+      }),
+      0,
+      null
+    );
+    expect(reverseState.appearance.filter).toMatchObject({
+      steepness: 0.5
+    });
+    expect(reverseState.appearance.filter?.value).toBe(
+      'linear-gradient(90deg, transparent 0%, transparent 12.5%, rgba(17, 34, 51, 0.200) 25.0%, rgba(17, 34, 51, 0.200) 75.0%, transparent 87.5%, transparent 100%)'
+    );
   });
 
   it('builds reverse filter gradients that cover the center instead of the edges', () => {

@@ -66,6 +66,7 @@ describe('background transitions', () => {
           height: 0.55
         },
         linearProportion: 0.45,
+        steepness: 0,
         color: '#101820',
         value: 'radial-gradient(...)'
       }

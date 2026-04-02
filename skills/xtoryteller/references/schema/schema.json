@@ -247,7 +247,8 @@
           },
           "additionalProperties": false
         },
-        "linearProportion": { "type": "number" }
+        "linearProportion": { "type": "number" },
+        "steepness": { "type": "number" }
       },
       "required": ["mode"],
       "additionalProperties": false
@@ -296,6 +297,7 @@
       "properties": {
         "id": { "type": "string" },
         "title": { "type": "string" },
+        "description": { "type": "string" },
         "layout": { "type": "string" },
         "layoutProps": { "type": "object" },
         "transition": { "type": "string" },

@@ -5,7 +5,7 @@
   padding: var(--spacing-components-callout-padding);
   border-radius: var(--radius-components-callout);
   border: 1px solid color-mix(in srgb, var(--tone) 26%, transparent 74%);
-  background: color-mix(in srgb, var(--tone) 13%, white 87%);
+  background: color-mix(in srgb, var(--tone) 14%, var(--color-surface) 86%);
   box-shadow: var(--shadow-components-card);
 }
 
@@ -14,7 +14,7 @@
   font-size: var(--text-small);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: color-mix(in srgb, var(--tone) 68%, black 32%);
+  color: color-mix(in srgb, var(--tone) 68%, var(--color-foreground) 32%);
 }
 
 .content {

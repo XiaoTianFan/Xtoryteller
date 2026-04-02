@@ -73,6 +73,7 @@ shared:
           width: number?
           height: number?
         linearProportion: number?
+        steepness: number?
       transition:
         duration: number?
         easing: string?
@@ -87,6 +88,7 @@ shared:
               width: number?
               height: number?
             linearProportion: number?
+            steepness: number?
       regions:
         - clusters: string[]?
           group: string?
@@ -99,6 +101,7 @@ shared:
               width: number?
               height: number?
             linearProportion: number?
+            steepness: number?
   backgroundSections:
     - match:
         stepRange: [number, number]?

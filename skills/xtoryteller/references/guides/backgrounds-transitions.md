@@ -31,6 +31,7 @@ Optional legibility overlay for Paper Shader backgrounds:
 - `filter.opacity`: 0..1 overlay strength
 - `filter.radialSize.width` / `filter.radialSize.height`: center-clear ellipse size for `radial`
 - `filter.linearProportion`: center-clear band size for the two linear modes
+- `filter.steepness`: 0..1 falloff sharpness, where higher values keep more of the filter solid before it fades; default `0` preserves the current shipped curve
 - Non-reverse modes keep the center clearer than the edges. Reverse modes invert that and put more of the overlay in the center.
 - The overlay color comes from the resolved preset/theme background color, so prefer it before replacing an otherwise-correct preset just for readability.
 

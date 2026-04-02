@@ -1,14 +1,28 @@
 name: causal-diagram
 displayName: Causal Diagram
-description: Directed graph showing causal relationships with polarity labels.
+description: Directed causal graph with ELK-based layout, theme-aware styling, loop grouping, and legacy positioned-node support.
 category: diagram
 content: false
 props:
-  variables:
+  canvas:
+    type: object
+    description: Optional SVG view box size or minimum layout footprint.
+  layout:
+    type: object
+    description: Optional ELK layout settings such as direction, spacing, edge routing, and custom layout options.
+  nodes:
     type: array
-    required: true
-    description: Diagram nodes.
+    description: ELK-oriented graph nodes with label, optional detail, size, tone, and optional grouping or ordering hints.
   edges:
     type: array
     required: true
-    description: Directed edges with polarity.
+    description: Directed edges using source and target ids. Visible polarity badges normalize to S or O only.
+  groups:
+    type: array
+    description: Optional loop or region labels anchored to the bounds of member nodes after layout.
+  annotations:
+    type: array
+    description: Optional absolute labels layered over the diagram.
+  variables:
+    type: array
+    description: Legacy node format retained for backwards compatibility. Explicit x/y positions render a manual system map.

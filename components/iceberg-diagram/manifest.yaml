@@ -12,3 +12,7 @@ props:
     type: number
     default: 0.25
     description: Waterline fraction.
+  showLabels:
+    type: boolean
+    default: true
+    description: Whether to render the left-side layer labels.

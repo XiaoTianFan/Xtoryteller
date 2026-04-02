@@ -1,8 +1,20 @@
+import fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 
 import { validateBackgroundPreset, validatePresentation } from '@/scripts/validate.mjs';
 import { validateTheme } from '@/scripts/validate-theme.mjs';
 import { vi } from 'vitest';
+
+async function withTempDir(callback: (directory: string) => Promise<void>) {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'xtoryteller-validation-'));
+
+  try {
+    await callback(directory);
+  } finally {
+    await fs.rm(directory, { recursive: true, force: true });
+  }
+}
 
 describe('validation fixtures', () => {
   it('accepts the global fallback theme', async () => {
@@ -326,5 +338,151 @@ describe('validation fixtures', () => {
         { report: false }
       )
     ).resolves.toMatchObject({ valid: true });
+  });
+
+  it('validates background filter steepness across presentations, themes, and presets', async () => {
+    const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    try {
+      await withTempDir(async (directory) => {
+        for (const value of [0, 0.5, 1]) {
+          const presentationPath = path.join(directory, `presentation-${value}.yaml`);
+          await fs.writeFile(
+            presentationPath,
+            `meta:
+  title: Steepness Presentation ${value}
+  slug: steepness-presentation-${String(value).replace('.', '-')}
+mode: stage
+background:
+  type: paper-shader
+  presetRef: editorial-paper
+  filter:
+    mode: radial
+    steepness: ${value}
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Steepness ${value}
+`,
+            'utf8'
+          );
+
+          const result = await validatePresentation(presentationPath, {
+            report: false,
+            throwOnError: false,
+          });
+          expect(result.valid).toBe(true);
+        }
+
+        const invalidPresentationPath = path.join(directory, 'presentation-invalid.yaml');
+        await fs.writeFile(
+          invalidPresentationPath,
+          `meta:
+  title: Invalid Steepness Presentation
+  slug: steepness-presentation-invalid
+mode: stage
+background:
+  type: paper-shader
+  presetRef: editorial-paper
+  filter:
+    mode: radial
+    steepness: 1.4
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Invalid steepness
+`,
+          'utf8'
+        );
+
+        const invalidPresentation = await validatePresentation(invalidPresentationPath, {
+          report: false,
+          throwOnError: false,
+        });
+        expect(invalidPresentation.valid).toBe(false);
+        expect(
+          invalidPresentation.issues.some((issue) =>
+            issue.message.includes('steepness must be between 0 and 1')
+          )
+        ).toBe(true);
+
+        const splitPastelPath = path.join(process.cwd(), 'themes', 'split-pastel.yaml');
+        const baseTheme = await fs.readFile(splitPastelPath, 'utf8');
+
+        for (const value of [0, 0.5, 1]) {
+          const themePath = path.join(directory, `theme-${value}.yaml`);
+          await fs.writeFile(
+            themePath,
+            baseTheme.replace(
+              /    opacity: 0\.2\r?\n/,
+              `    opacity: 0.2\n    steepness: ${value}\n`
+            ),
+            'utf8'
+          );
+
+          await expect(validateTheme(themePath)).resolves.toBeUndefined();
+        }
+
+        const invalidThemePath = path.join(directory, 'theme-invalid.yaml');
+        await fs.writeFile(
+          invalidThemePath,
+          baseTheme.replace(
+            /    opacity: 0\.2\r?\n/,
+            '    opacity: 0.2\n    steepness: 1.4\n'
+          ),
+          'utf8'
+        );
+        await expect(validateTheme(invalidThemePath)).rejects.toThrow('Theme validation failed');
+
+        for (const value of [0, 0.5, 1]) {
+          const presetPath = path.join(directory, `preset-${value}.yaml`);
+          await fs.writeFile(
+            presetPath,
+            `name: Steepness Preset ${value}
+shader: paper-texture
+preset: default
+filter:
+  mode: radial
+  steepness: ${value}
+`,
+            'utf8'
+          );
+
+          await expect(
+            validateBackgroundPreset(presetPath, { report: false })
+          ).resolves.toMatchObject({ valid: true });
+        }
+
+        const invalidPresetPath = path.join(directory, 'preset-invalid.yaml');
+        await fs.writeFile(
+          invalidPresetPath,
+          `name: Invalid Steepness Preset
+shader: paper-texture
+preset: default
+filter:
+  mode: radial
+  steepness: -0.1
+`,
+          'utf8'
+        );
+
+        const invalidPreset = await validateBackgroundPreset(invalidPresetPath, {
+          report: false,
+          throwOnError: false,
+        });
+        expect(invalidPreset.valid).toBe(false);
+        expect(
+          invalidPreset.issues.some((issue) =>
+            issue.message.includes('steepness must be between 0 and 1')
+          )
+        ).toBe(true);
+      });
+    } finally {
+      consoleLog.mockRestore();
+      consoleError.mockRestore();
+    }
   });
 });

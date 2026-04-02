@@ -47,6 +47,7 @@ export interface ResolvedBackgroundFilter {
     height: number;
   };
   linearProportion: number;
+  steepness: number;
   color: string;
   value: string;
 }
@@ -295,16 +296,25 @@ function buildBackgroundFilterValue(filter: {
   opacity: number;
   radialSize: { width: number; height: number };
   linearProportion: number;
+  steepness: number;
   color: string;
 }): string {
   const overlayColor = colorWithOpacity(filter.color, filter.opacity);
 
   if (filter.mode === 'radial' || filter.mode === 'radial-reverse') {
     const isReverse = filter.mode === 'radial-reverse';
-    if (isReverse) {
-      return `radial-gradient(ellipse ${(filter.radialSize.width * 100).toFixed(1)}% ${(filter.radialSize.height * 100).toFixed(1)}% at center, ${overlayColor} 0%, ${overlayColor} 54%, transparent 100%)`;
+    if (filter.steepness <= 0) {
+      if (isReverse) {
+        return `radial-gradient(ellipse ${(filter.radialSize.width * 100).toFixed(1)}% ${(filter.radialSize.height * 100).toFixed(1)}% at center, ${overlayColor} 0%, ${overlayColor} 54%, transparent 100%)`;
+      }
+      return `radial-gradient(ellipse ${(filter.radialSize.width * 100).toFixed(1)}% ${(filter.radialSize.height * 100).toFixed(1)}% at center, transparent 0%, transparent 54%, ${overlayColor} 100%)`;
     }
-    return `radial-gradient(ellipse ${(filter.radialSize.width * 100).toFixed(1)}% ${(filter.radialSize.height * 100).toFixed(1)}% at center, transparent 0%, transparent 54%, ${overlayColor} 100%)`;
+
+    const fadeStart = (54 + (100 - 54) * filter.steepness).toFixed(1);
+    if (isReverse) {
+      return `radial-gradient(ellipse ${(filter.radialSize.width * 100).toFixed(1)}% ${(filter.radialSize.height * 100).toFixed(1)}% at center, ${overlayColor} 0%, ${overlayColor} ${fadeStart}%, transparent 100%)`;
+    }
+    return `radial-gradient(ellipse ${(filter.radialSize.width * 100).toFixed(1)}% ${(filter.radialSize.height * 100).toFixed(1)}% at center, transparent 0%, transparent ${fadeStart}%, ${overlayColor} 100%)`;
   }
 
   const edgeSize = Math.max(0, (1 - filter.linearProportion) / 2);
@@ -315,10 +325,19 @@ function buildBackgroundFilterValue(filter: {
   const isReverse =
     filter.mode === 'linear-horizontal-reverse' || filter.mode === 'linear-vertical-reverse';
   const angle = isHorizontal ? '90deg' : '180deg';
-  if (isReverse) {
-    return `linear-gradient(${angle}, transparent 0%, ${overlayColor} ${edgeStop}%, ${overlayColor} ${centerStop}%, transparent 100%)`;
+  if (filter.steepness <= 0) {
+    if (isReverse) {
+      return `linear-gradient(${angle}, transparent 0%, ${overlayColor} ${edgeStop}%, ${overlayColor} ${centerStop}%, transparent 100%)`;
+    }
+    return `linear-gradient(${angle}, ${overlayColor} 0%, transparent ${edgeStop}%, transparent ${centerStop}%, ${overlayColor} 100%)`;
   }
-  return `linear-gradient(${angle}, ${overlayColor} 0%, transparent ${edgeStop}%, transparent ${centerStop}%, ${overlayColor} 100%)`;
+
+  const fadeInset = (edgeSize * filter.steepness * 100).toFixed(1);
+  const fadeOutset = ((1 - edgeSize * filter.steepness) * 100).toFixed(1);
+  if (isReverse) {
+    return `linear-gradient(${angle}, transparent 0%, transparent ${fadeInset}%, ${overlayColor} ${edgeStop}%, ${overlayColor} ${centerStop}%, transparent ${fadeOutset}%, transparent 100%)`;
+  }
+  return `linear-gradient(${angle}, ${overlayColor} 0%, ${overlayColor} ${fadeInset}%, transparent ${edgeStop}%, transparent ${centerStop}%, ${overlayColor} ${fadeOutset}%, ${overlayColor} 100%)`;
 }
 
 function normalizeBackgroundFilterConfig(
@@ -349,6 +368,7 @@ function normalizeBackgroundFilterConfig(
       height: clampUnit(filter.radialSize?.height, 0.55)
     },
     linearProportion: clampUnit(filter.linearProportion, 0.45),
+    steepness: clampUnit(filter.steepness, 0),
     color: resolveBackgroundFilterColor(params, theme),
     value: ''
   };

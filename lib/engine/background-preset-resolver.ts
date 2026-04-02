@@ -25,6 +25,7 @@ type BackgroundObjectLike = {
       height?: number;
     };
     linearProportion?: number;
+    steepness?: number;
   };
   transition?: {
     duration?: number;

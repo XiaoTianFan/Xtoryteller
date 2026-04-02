@@ -1,0 +1,143 @@
+.figure {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.board {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: 1092 / 1206;
+}
+
+.svg {
+  display: block;
+}
+
+.iceberg {
+  stroke: color-mix(in srgb, var(--color-foreground) 72%, var(--color-surface) 28%);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.underwaterTint {
+  fill: color-mix(in srgb, var(--color-secondary) 14%, transparent 86%);
+}
+
+.divider,
+.waterline {
+  stroke: color-mix(in srgb, var(--color-foreground) 18%, transparent 82%);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+  vector-effect: non-scaling-stroke;
+}
+
+.waterline {
+  stroke: color-mix(in srgb, var(--color-foreground) 24%, transparent 76%);
+  stroke-width: 2.4;
+}
+
+.contours path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-foreground) 16%, transparent 84%);
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+}
+
+.overlay,
+.noteLayer {
+  position: absolute;
+  inset: 0;
+}
+
+.overlay {
+  pointer-events: none;
+}
+
+.labelBlock {
+  position: absolute;
+  left: 3.2%;
+  width: 27%;
+  transform: translateY(-50%);
+  color: color-mix(in srgb, var(--color-foreground) 88%, black 12%);
+}
+
+.labelTitle,
+.labelSubtitle {
+  margin: 0;
+}
+
+.labelTitle {
+  font-family: var(--font-heading);
+  font-size: clamp(1rem, 1.15vw, 1.4rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+}
+
+.labelSubtitle {
+  margin-top: 0.18rem;
+  font-size: clamp(0.8rem, 0.85vw, 0.98rem);
+  line-height: 1.12;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--color-foreground) 70%, transparent 30%);
+}
+
+.noteLayer {
+  pointer-events: none;
+}
+
+.note {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.62rem;
+  border: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent 28%);
+  border-radius: var(--radius-components-card);
+  background: color-mix(in srgb, var(--color-surface) 88%, var(--color-panel, var(--color-background)) 12%);
+  box-shadow: var(--shadow-components-card);
+  color: var(--color-foreground);
+  text-align: center;
+  line-height: 1.18;
+  pointer-events: auto;
+  cursor: default;
+  transition:
+    transform var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    box-shadow var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    border-color var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    background var(--motion-hover-duration, 180ms) var(--motion-hover-easing, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.note span {
+  display: block;
+  width: 100%;
+}
+
+.note:hover,
+.note:focus-visible {
+  transform: translateY(-2px) scale(1.01);
+  border-color: color-mix(in srgb, var(--color-primary) 48%, var(--color-border) 52%);
+  background: color-mix(in srgb, var(--color-surface) 80%, var(--color-primary) 20%);
+  box-shadow: var(--shadow-strong);
+  outline: none;
+}
+
+.note:focus-visible {
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-primary) 28%, transparent 72%),
+    var(--shadow-strong);
+}
+
+@media (max-width: 900px) {
+  .labelBlock {
+    width: 29%;
+  }
+
+  .note {
+    padding: 0.42rem 0.48rem;
+  }
+}

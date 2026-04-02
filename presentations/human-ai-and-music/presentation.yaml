@@ -1,0 +1,935 @@
+meta:
+  title: Human, AI, and Music
+  slug: human-ai-and-music
+  description: A systems-thinking landscape map of generative AI's impact on music ecosystems, moving from extraction toward creative co-evolution.
+  author: Xtoryteller
+  tags: [map, ai, music, systems, transition-design]
+  createdAt: '2026-04-02'
+  updatedAt: '2026-04-02'
+mode: map
+theme: creative-voltage
+background:
+  type: paper-shader
+  presetRef: voltage-warp
+  filter:
+    mode: linear-vertical-reverse
+    opacity: 0.64
+    linearProportion: 0.76
+canvas:
+  spacing: 420
+  minZoom: 0.08
+  maxZoom: 2.2
+  initialZoom: 0.13
+navigation:
+  sequence:
+    - overview
+    - abstract
+    - context-crisis
+    - research-approach
+    - iceberg-questions
+    - system-dynamics
+    - ecosystem-loops
+    - transition-map
+    - h1-under-pressure
+    - h2-bridge
+    - h3-future
+    - critical-insights
+    - roadmap-musicians
+    - roadmap-platforms
+    - roadmap-policy
+clusters:
+  - id: overview
+    title: Overview
+    description: The project reframes AI music as a system transition rather than a single legal or technical controversy.
+    group: intro
+    layout: title-center
+    frame: { width: 760, height: 380 }
+    anchor: { x: 0, y: 0 }
+    components:
+      - type: label
+        content: Systems synthesis map
+      - type: headline
+        content: Recalibrating the Music System
+        props:
+          align: center
+          level: 2
+        style:
+          maxWidth: 7ch
+          fontSize: clamp(4rem, 5.6vw, 5.8rem)
+          lineHeight: 0.94
+      - type: subtitle
+        content: From extractive AI monoculture toward a pluralistic music ecosystem built around provenance, consent, and co-evolution.
+        props: { align: center }
+        style:
+          maxWidth: 40rem
+          fontSize: 1.1rem
+          lineHeight: 1.28
+
+  - id: abstract
+    title: Abstract
+    description: The core argument is that generative AI music disrupts the music system through interlocking feedback loops, not isolated incidents.
+    group: intro
+    layout: stack
+    frame: { width: 700, height: 360 }
+    anchor: { x: 0, y: 470 }
+    components:
+      - type: body-text
+        content: |
+          The rapid emergence of generative AI music tools between 2023 and 2025
+          is not merely a product innovation. It is a systemic shock to the
+          economic, cultural, and psychological foundations of music-making.
+        props:
+          maxWidth: 58ch
+      - type: body-text
+        content: |
+          Across interviews, causal mapping, and transition modeling, the pattern
+          is consistent: more synthetic output intensifies royalty dilution,
+          cultural homogenization, and platform dependence, while only small
+          pockets of the future currently point toward healthier alternatives.
+        props:
+          maxWidth: 58ch
+
+  - id: context-crisis
+    title: Context
+    description: The context combines streaming precarity, dataset bias, artist identity strain, and slow-moving governance.
+    group: intro
+    layout: stack
+    frame: { width: 720, height: 700 }
+    anchor: { x: 0, y: 900 }
+    components:
+      - type: body-text
+        content: |
+          Generative music tools moved from research prototypes to public-facing
+          platforms with unusual speed between 2023 and 2024. They entered an
+          ecosystem already shaped by streaming logics, algorithmic curation,
+          low artist payouts, and concentrated infrastructure power.
+        props:
+          maxWidth: 60ch
+      - type: body-text
+        content: |
+          By early 2025, the reference research describes a music economy facing
+          three simultaneous structural vulnerabilities. Economically, infinite
+          synthetic supply threatens the pro-rata payout model. Culturally,
+          heavily Global North training data risks flattening musical diversity.
+          Psychologically, musicians face the pressure to adopt tools that may
+          further devalue the conditions of their own work.
+        props:
+          maxWidth: 60ch
+      - type: body-text
+        content: |
+          Legal and policy responses remain behind the speed of deployment. The
+          Suno and Udio lawsuits, voice-likeness laws such as Tennessee's ELVIS
+          Act, and ongoing copyright disputes all point to the same condition:
+          governance is reacting after the infrastructure has already scaled.
+        props:
+          maxWidth: 60ch
+      - type: bullet-list
+        props:
+          items:
+            - "Economic context: platform economics were built for scarce human-speed production, not infinite synthetic output."
+            - "Cultural context: 94.8% Global North training bias makes non-Western traditions easier to erase digitally."
+            - "Political context: copyright, research, and likeness governance are all lagging behind commercial deployment."
+        style:
+          gap: 0.34rem
+          lineHeight: 1.24
+          fontSize: 0.95rem
+      - type: callout
+        content: |
+          How can the system move from extraction and efficiency-first scaling to
+          a regenerative ecology that protects human creativity, musical
+          diversity, and sustainable infrastructure?
+        props:
+          title: Motivating question
+          variant: note
+        style:
+          background: rgba(16, 20, 37, 0.9)
+          border: 1px solid rgba(212, 255, 0, 0.2)
+          padding: 1rem
+
+  - id: research-approach
+    title: Research Approach
+    description: The method moves from litany to structures, worldview, and myth to expose the deeper system logic around AI music.
+    group: method
+    layout: stack
+    frame: { width: 660, height: 430 }
+    anchor: { x: 880, y: 0 }
+    components:
+      - type: callout
+        content: |
+          The inquiry combines Causal Layered Analysis, stakeholder interviews,
+          causal loop mapping, and transition design instead of treating the
+          problem as purely technical or purely legal.
+        props:
+          title: Method stance
+          variant: important
+        style:
+          background: rgba(16, 20, 37, 0.9)
+          border: 1px solid rgba(63, 123, 255, 0.28)
+      - type: bullet-list
+        props:
+          items:
+            - 9 semi-structured interviews across listeners, musicians, and MIR researchers.
+            - Iceberg prompts spanning litany, structures, worldview, and myths.
+            - Causal loop mapping of reinforcing and balancing dynamics.
+            - Three Horizons modeling for the 2025-2040 transition pathway.
+        style:
+          gap: 0.42rem
+          lineHeight: 1.32
+
+  - id: iceberg-questions
+    title: Iceberg Questions
+    description: The method descends from visible events into hidden structures, value systems, and deep metaphors.
+    group: method
+    layout: single-content
+    frame: { width: 980, height: 1080 }
+    anchor: { x: 680, y: 500 }
+    components:
+      - type: iceberg-diagram
+        props:
+          showLabels: false
+          waterlinePosition: 0.23
+          layers:
+            - depth: litany
+              label: LITANY
+              items:
+                - "Walk me through the last time you discovered a new song or artist you loved. Where did you find it, and what made you press play?"
+                - "Do you ever check who created a song you're listening to, or do you mostly focus on the vibe or playlist it's in?"
+                - "If I told you that some songs in your Chill Vibes or Focus Flow playlist were made entirely by AI, how would that make you feel?"
+                - "Can you describe a specific moment when you first felt AI music tools were affecting your career, positively or negatively?"
+                - "What are your musician peers saying about AI right now: panic, excitement, denial, adaptation?"
+                - "From your research perspective, what observable trends or case studies in AI-generated music have surprised you, things that didn't fit initial predictions?"
+            - depth: structures
+              label: STRUCTURES & SYSTEMS
+              items:
+                - "Do you listen to music differently than you did a couple of years ago, such as albums versus playlists or active versus background listening?"
+                - "Do you know how songs get recommended to you on Spotify or Apple Music? Do you trust the algorithm to understand your taste?"
+                - "Who do you think has the most power in the music industry today: labels, streaming platforms, tech companies like Google or Nvidia, or artists themselves?"
+                - "What percentage of your income comes from streaming versus other sources like live shows, sync, or teaching? Which has changed most dramatically in the past 3 years?"
+                - "Do you feel pressure to release music more frequently now than in the past? Where does that pressure come from?"
+                - "Who truly controls the infrastructure of music now: labels, platforms, cloud providers, or GPU manufacturers? How has power shifted?"
+                - "Is the streaming pro-rata royalty model sustainable in an age of infinite AI content, or does it need fundamental redesign?"
+                - "What are the key legal or policy questions being grappled with right now: training data consent, voice cloning rights, AI copyrightability?"
+            - depth: worldview
+              label: WORLDVIEW & VALUES
+              items:
+                - "If a song was created entirely by AI but made you cry or gave you chills, would you value it less? Why or why not?"
+                - "What makes a song good to you: the technical skill, the emotional impact, the story behind it, or just how it makes you feel?"
+                - "What does being a musician mean to you at the deepest level: skill, expression, connection, identity, craft?"
+                - "If you used AI to create a track that became your biggest hit, would you feel proud or conflicted? Why?"
+                - "What paradigm shift do you see happening regarding the definition of authorship, creativity, or artistic value?"
+                - "Is the belief that human-made art is inherently more valuable than machine-made output a cultural construct or a psychological universal?"
+            - depth: myths
+              label: DEEP MYTHS
+              items:
+                - "If you had to describe music using a metaphor, what would it be: fuel for your day, a companion, a mirror, background noise, something else?"
+                - "How would you describe the music industry right now using a metaphor: a battlefield, a lottery, a garden, a factory, a collapsing building, something else?"
+                - "There's a myth that scarcity creates value. If AI shatters that by creating abundance, what new organizing principle might replace it?"
+                - "If music becomes post-scarce, infinitely abundant at near-zero cost, what does that reveal about the nature of art, labor, and meaning?"
+
+  - id: system-dynamics
+    title: System Dynamics
+    description: The diagnosis reads the merged graph as an interacting system of supply expansion, data concentration, attention capture, and emergent counterweights.
+    group: diagnosis
+    layout: two-column
+    frame: { width: 1600, height: 420 }
+    anchor:
+      relativeTo: ecosystem-loops
+      direction: below
+      distance: 110
+    components:
+      - type: body-text
+        content: |
+          Read the merged causal map as a system of compounding asymmetries.
+          On the left, data access, training intensity, and compute power shape
+          which music traditions become legible to models at all. In the
+          center, model quality and generation speed turn technical advantage
+          into platform-scale output and revenue. On the right, that abundance
+          collides with finite listening time, thin royalty pools, and the
+          growing pressure on musicians to adapt to the very tools that weaken
+          their position.
+
+          The key interpretation is not that one loop dominates, but that the
+          loops stack. R2 helps explain why the system keeps reproducing
+          cultural hierarchy. R1 shows why individual adaptation by artists
+          often worsens collective outcomes. R3 explains why platform logics
+          drift toward functional, low-friction content. B1 and B2 matter
+          because they are early counterforces: regulation can slow extraction,
+          while authenticity markets can redirect value toward human presence,
+          live context, and verified provenance.
+        props:
+          maxWidth: 66ch
+      - type: bullet-list
+        props:
+          items:
+            - "R2 Data concentration: Western-heavy datasets, stronger model performance, and higher usage reinforce each other and keep underrepresented traditions digitally marginal."
+            - "R1 Race to the Bottom: faster generation and lower barriers to entry expand uploads, dilute payouts, and intensify pressure on artists to produce more."
+            - "R3 Attention trap: once music supply becomes effectively infinite, the scarce resource shifts to attention, making algorithmic utility more valuable than depth or surprise."
+            - "B1 Regulatory Brake: lawsuits, compliance costs, and licensing fees can slow extractive scaling, but usually after infrastructure and habits are already in place."
+            - "B2 Authenticity Premium: fatigue with generic AI output can create demand for live, verified, and context-rich music that restores value outside stream-count logic."
+        style:
+          gap: 0.34rem
+          lineHeight: 1.24
+          fontSize: 0.96rem
+
+  - id: ecosystem-loops
+    title: Merged Causal Graph
+    description: One integrated map of feedback loops, balancing forces, and relationship directions across the AI music ecosystem.
+    group: diagnosis
+    layout: single-content
+    frame: { width: 1600, height: 1080 }
+    anchor: { x: 1600, y: 0 }
+    components:
+      - type: causal-diagram
+        props:
+          canvas:
+            width: 1900
+            height: 1180
+          layout:
+            direction: RIGHT
+            edgeRouting: POLYLINE
+            nodeSpacing: 52
+            layerSpacing: 94
+            edgeNodeSpacing: 38
+            padding: 72
+            layoutOptions:
+              elk.layered.nodePlacement.strategy: BRANDES_KOEPF
+              elk.layered.crossingMinimization.strategy: LAYER_SWEEP
+              elk.layered.layering.strategy: NETWORK_SIMPLEX
+              elk.layered.thoroughness: 7
+          groups:
+            - id: r2
+              label: R2 Data concentration
+              members:
+                - western-dataset-dominance
+                - western-data-generation
+                - model-performance-western
+                - global-north-adoption
+                - global-south-representation
+                - global-south-data-generation
+                - model-performance-nonwestern
+                - global-south-adoption
+                - available-training-data
+                - training-amount
+                - training-power
+                - model-quality
+              tone: secondary
+              position: top-left
+              offsetX: -16
+              offsetY: -18
+            - id: b1
+              label: B1 Regulatory brake
+              members:
+                - ai-output-quality
+                - threat-to-labels
+                - legal-action
+                - compliance-cost
+                - license-fee
+                - ai-development-speed
+              tone: warning
+              position: bottom-left
+              offsetY: 6
+            - id: r1
+              label: R1 Race to the bottom
+              members:
+                - ai-tools-accessibility
+                - ai-tool-adoption
+                - barrier-to-entry
+                - total-uploads
+                - royalty-dilution
+                - royalty-payout
+                - economic-pressure
+                - pressure-to-increase-output
+              tone: accent
+              position: bottom-left
+              offsetY: 8
+            - id: r3
+              label: R3 Attention trap
+              members:
+                - ai-music-saturation
+                - attention-competition
+                - algorithmic-curation
+                - safe-content-preference
+                - ai-functional-music
+              tone: primary
+              position: top-right
+              offsetX: 28
+              offsetY: -14
+            - id: b2
+              label: B2 Authenticity premium
+              members:
+                - audience-fatigue
+                - human-certified-demand
+                - live-performance-demand
+                - premium-pricing
+                - economic-pressure
+              tone: success
+              position: bottom-right
+              offsetX: 26
+              offsetY: 10
+          nodes:
+            - id: western-dataset-dominance
+              label: Western dataset dominance
+              detail: Global North bias
+              tone: secondary
+              width: 214
+              order: 10
+            - id: available-training-data
+              label: Available training data
+              tone: secondary
+              width: 196
+              order: 12
+            - id: global-south-representation
+              label: Global South representation
+              tone: secondary
+              width: 210
+              order: 14
+            - id: training-power
+              label: Training power
+              tone: secondary
+              width: 176
+              order: 18
+            - id: legal-action
+              label: Legal action
+              detail: Label lawsuits
+              tone: warning
+              width: 184
+              order: 20
+            - id: training-amount
+              label: Training amount
+              tone: secondary
+              width: 180
+              order: 24
+            - id: western-data-generation
+              label: Western data generation
+              tone: secondary
+              width: 204
+              order: 26
+            - id: global-south-data-generation
+              label: Global South data generation
+              tone: secondary
+              width: 222
+              order: 28
+            - id: compliance-cost
+              label: Compliance cost
+              tone: warning
+              width: 178
+              order: 30
+            - id: license-fee
+              label: License fee
+              tone: warning
+              width: 164
+              order: 32
+            - id: model-performance-western
+              label: Western genre performance
+              tone: secondary
+              width: 214
+              order: 34
+            - id: model-performance-nonwestern
+              label: Non-Western genre performance
+              tone: secondary
+              width: 236
+              order: 36
+            - id: model-quality
+              label: Model quality
+              tone: secondary
+              width: 170
+              order: 38
+            - id: ai-development-speed
+              label: AI development speed
+              tone: warning
+              width: 196
+              order: 40
+            - id: global-north-adoption
+              label: Global North adoption
+              tone: secondary
+              width: 194
+              order: 44
+            - id: global-south-adoption
+              label: Global South adoption
+              tone: secondary
+              width: 194
+              order: 46
+            - id: ai-output-quality
+              label: AI output quality
+              tone: primary
+              width: 182
+              order: 48
+            - id: ai-output-speed
+              label: AI output speed
+              tone: primary
+              width: 176
+              order: 50
+            - id: threat-to-labels
+              label: Threat to incumbent labels
+              tone: warning
+              width: 224
+              order: 52
+            - id: ai-company-revenue
+              label: AI company revenue
+              tone: primary
+              width: 194
+              order: 54
+            - id: ai-tool-adoption
+              label: AI tool adoption
+              detail: Generative AI usage
+              tone: accent
+              width: 198
+              order: 58
+            - id: ai-tools-accessibility
+              label: AI tools accessibility
+              tone: accent
+              width: 204
+              order: 60
+            - id: barrier-to-entry
+              label: Barrier to entry
+              tone: accent
+              width: 186
+              order: 62
+            - id: pressure-to-increase-output
+              label: Pressure to increase output
+              tone: accent
+              width: 226
+              order: 64
+            - id: total-uploads
+              label: Total uploads to platforms
+              detail: Volume of uploads
+              tone: accent
+              width: 228
+              order: 68
+            - id: ai-music-saturation
+              label: AI music saturation
+              detail: Infinite supply
+              tone: primary
+              width: 204
+              order: 72
+            - id: royalty-dilution
+              label: Streaming royalty dilution
+              tone: accent
+              width: 214
+              order: 74
+            - id: attention-competition
+              label: Competition for attention
+              tone: primary
+              width: 208
+              order: 76
+            - id: audience-fatigue
+              label: Audience fatigue
+              tone: success
+              width: 178
+              order: 78
+            - id: royalty-payout
+              label: Royalty payout
+              detail: Artist income per stream
+              tone: accent
+              width: 194
+              order: 80
+            - id: algorithmic-curation
+              label: Algorithmic curation dominance
+              tone: primary
+              width: 236
+              order: 82
+            - id: human-certified-demand
+              label: Human Certified demand
+              detail: Humanish demand
+              tone: success
+              width: 220
+              order: 84
+            - id: safe-content-preference
+              label: Safe content preference
+              tone: primary
+              width: 202
+              order: 88
+            - id: live-performance-demand
+              label: Live performance demand
+              tone: success
+              width: 208
+              order: 90
+            - id: economic-pressure
+              label: Economic pressure on artists
+              tone: accent
+              width: 224
+              order: 92
+            - id: premium-pricing
+              label: Premium pricing
+              detail: Ticket price / verified content
+              tone: success
+              width: 216
+              order: 94
+            - id: ai-functional-music
+              label: AI functional music
+              detail: Safe predictable content
+              tone: primary
+              width: 202
+              order: 96
+          edges:
+            - source: available-training-data
+              target: training-amount
+              polarity: S
+            - source: training-power
+              target: training-amount
+              polarity: S
+            - source: available-training-data
+              target: model-quality
+              polarity: S
+            - source: training-amount
+              target: model-quality
+              polarity: S
+            - source: western-dataset-dominance
+              target: model-performance-western
+              polarity: S
+              tone: secondary
+            - source: model-performance-western
+              target: global-north-adoption
+              polarity: S
+              tone: secondary
+            - source: global-north-adoption
+              target: western-data-generation
+              polarity: S
+              tone: secondary
+            - source: western-data-generation
+              target: western-dataset-dominance
+              polarity: S
+              tone: secondary
+            - source: western-dataset-dominance
+              target: global-south-representation
+              polarity: O
+              tone: secondary
+            - source: global-south-representation
+              target: model-performance-nonwestern
+              polarity: S
+              tone: secondary
+            - source: model-performance-nonwestern
+              target: global-south-adoption
+              polarity: S
+              tone: secondary
+            - source: global-south-adoption
+              target: global-south-data-generation
+              polarity: S
+              tone: secondary
+            - source: global-south-data-generation
+              target: global-south-representation
+              polarity: S
+              tone: secondary
+            - source: model-quality
+              target: ai-output-quality
+              polarity: S
+            - source: ai-development-speed
+              target: ai-output-quality
+              polarity: S
+            - source: ai-development-speed
+              target: ai-output-speed
+              polarity: S
+            - source: ai-output-quality
+              target: ai-tool-adoption
+              polarity: S
+              tone: primary
+            - source: ai-output-speed
+              target: total-uploads
+              polarity: S
+              tone: primary
+            - source: ai-output-speed
+              target: ai-company-revenue
+              polarity: S
+              tone: primary
+            - source: ai-company-revenue
+              target: training-power
+              polarity: S
+              tone: primary
+            - source: ai-output-quality
+              target: threat-to-labels
+              polarity: S
+              tone: warning
+            - source: threat-to-labels
+              target: legal-action
+              polarity: S
+              tone: warning
+            - source: legal-action
+              target: compliance-cost
+              polarity: S
+              tone: warning
+            - source: compliance-cost
+              target: license-fee
+              polarity: S
+              tone: warning
+            - source: compliance-cost
+              target: ai-development-speed
+              polarity: O
+              tone: warning
+            - source: license-fee
+              target: ai-output-speed
+              polarity: O
+              tone: warning
+            - source: ai-tool-adoption
+              target: ai-tools-accessibility
+              polarity: S
+              tone: accent
+            - source: ai-tool-adoption
+              target: barrier-to-entry
+              polarity: O
+              tone: accent
+            - source: barrier-to-entry
+              target: total-uploads
+              polarity: O
+              tone: accent
+            - source: ai-tools-accessibility
+              target: total-uploads
+              polarity: S
+              tone: accent
+            - source: total-uploads
+              target: royalty-dilution
+              polarity: S
+              tone: accent
+            - source: royalty-dilution
+              target: royalty-payout
+              polarity: O
+              tone: accent
+            - source: royalty-payout
+              target: economic-pressure
+              polarity: O
+              tone: accent
+            - source: economic-pressure
+              target: pressure-to-increase-output
+              polarity: S
+              tone: accent
+            - source: pressure-to-increase-output
+              target: ai-tool-adoption
+              polarity: S
+              tone: accent
+            - source: total-uploads
+              target: ai-music-saturation
+              polarity: S
+              tone: primary
+            - source: ai-music-saturation
+              target: attention-competition
+              polarity: S
+              tone: primary
+            - source: attention-competition
+              target: algorithmic-curation
+              polarity: S
+              tone: primary
+            - source: algorithmic-curation
+              target: safe-content-preference
+              polarity: S
+              tone: primary
+            - source: safe-content-preference
+              target: ai-functional-music
+              polarity: S
+              tone: primary
+            - source: ai-functional-music
+              target: ai-music-saturation
+              polarity: S
+              tone: primary
+            - source: ai-music-saturation
+              target: audience-fatigue
+              polarity: S
+              tone: success
+            - source: audience-fatigue
+              target: human-certified-demand
+              polarity: S
+              tone: success
+            - source: human-certified-demand
+              target: live-performance-demand
+              polarity: S
+              tone: success
+            - source: live-performance-demand
+              target: premium-pricing
+              polarity: S
+              tone: success
+            - source: premium-pricing
+              target: economic-pressure
+              polarity: O
+              tone: success
+
+  - id: transition-map
+    title: Transition Map
+    description: The Three Horizons frame translates diagnosis into a strategic transition between 2025 and 2040.
+    group: transition
+    layout: single-content
+    frame: { width: 780, height: 660 }
+    anchor: { x: 3280, y: 0 }
+    components:
+      - type: three-horizons
+        props:
+          horizon1:
+            label: Horizon 1
+            color: var(--color-warning)
+            items:
+              - Pro-rata royalties
+              - Unregulated scraping
+              - Algorithm opacity
+              - Western data monopoly
+          horizon2:
+            label: Horizon 2
+            color: var(--color-primary)
+            items:
+              - Human certification
+              - Licensing co-ops
+              - Disclosure standards
+              - Carbon accounting
+          horizon3:
+            label: Horizon 3
+            color: var(--color-success)
+            items:
+              - Consent-first training
+              - Representational parity
+              - Provenance by default
+              - Net-zero infrastructure
+          timeLabels:
+            start: 2025
+            mid: 2030
+            end: 2040
+
+  - id: h1-under-pressure
+    title: Horizon 1
+    description: The current regime remains dominant, but its legitimacy and resilience are declining.
+    group: transition
+    layout: stack
+    frame: { width: 780, height: 260 }
+    anchor: { x: 3280, y: 720 }
+    components:
+      - type: bullet-list
+        props:
+          items:
+            - "Declining concerns: pro-rata royalties, opaque curation, uncompensated training, Western data lock-in."
+            - "Retain and adapt: attribution, consent, PRO infrastructure, live performance ecosystems, open research norms."
+        style:
+          gap: 0.34rem
+          lineHeight: 1.28
+
+  - id: h2-bridge
+    title: Horizon 2
+    description: Transitional innovations are necessary bridges, not endpoints.
+    group: transition
+    layout: stack
+    frame: { width: 780, height: 300 }
+    anchor: { x: 3280, y: 1030 }
+    components:
+      - type: body-text
+        content: |
+          Horizon 2 holds the pragmatic bridge mechanisms that create pressure,
+          test feasibility, and move norms before deep institutional change is complete.
+        props:
+          maxWidth: 62ch
+      - type: bullet-list
+        props:
+          items:
+            - Voluntary Human Certified labels and sync disclosure.
+            - Artist licensing co-ops and AI training registries.
+            - Carbon reporting and offset schemes as stepping stones to harder standards.
+        style:
+          gap: 0.34rem
+          lineHeight: 1.28
+
+  - id: h3-future
+    title: Horizon 3
+    description: The desired future is co-existence architecture, not anti-technology nostalgia.
+    group: transition
+    layout: stack
+    frame: { width: 780, height: 290 }
+    anchor: { x: 3280, y: 1390 }
+    components:
+      - type: bullet-list
+        props:
+          items:
+            - Provenance, compensation, and diversity shape the rules of coexistence.
+            - Pockets of the future already exist in Holly+, Spawning.ai, C2PA, Bandcamp Fridays, and PEFT diversity research.
+            - Long-term value shifts toward context, meaning labor, and renewable compute.
+        style:
+          gap: 0.34rem
+          lineHeight: 1.28
+
+  - id: critical-insights
+    title: Seven Critical Insights
+    description: The synthesis points toward infrastructural and cultural leverage points rather than purely aesthetic fixes.
+    group: action
+    layout: two-column
+    frame: { width: 1020, height: 330 }
+    anchor: { x: 1730, y: 1670 }
+    components:
+      - type: bullet-list
+        props:
+          items:
+            - Infrastructure power now matters as much as label power.
+            - The royalty pool behaves like a tragedy of the commons.
+            - Data colonialism compounds economic colonialism.
+            - Causal reasoning and context remain key human strengths.
+        style:
+          gap: 0.28rem
+          lineHeight: 1.22
+          fontSize: 0.94rem
+      - type: bullet-list
+        props:
+          items:
+            - Authenticity is socially constructed but still economically consequential.
+            - Voluntary markets often prefigure later regulation.
+            - The system will not self-correct without coordinated intervention.
+        style:
+          gap: 0.28rem
+          lineHeight: 1.22
+          fontSize: 0.94rem
+
+  - id: roadmap-musicians
+    title: Roadmap for Musicians
+    description: Artists need collective leverage, transparent tools, and diversified value beyond streaming.
+    group: action
+    layout: single-content
+    frame: { width: 680, height: 560 }
+    anchor: { x: 820, y: 2140 }
+    components:
+      - type: timeline
+        props:
+          orientation: vertical
+          events:
+            - date: 2025-2027
+              title: Short term
+              description: Join data co-ops, track scraping, adopt provenance badges, and reduce dependence on streaming-only income.
+            - date: 2028-2032
+              title: Medium term
+              description: Support training-rights legislation, build guild norms, and fund cross-regional cultural dataset work.
+            - date: 2033-2040
+              title: Long term
+              description: Shift toward meaning labor, governance participation, and cultural public-good models.
+
+  - id: roadmap-platforms
+    title: Roadmap for Platforms
+    description: Platforms and toolmakers need to redesign for co-evolution rather than extraction and opacity.
+    group: action
+    layout: single-content
+    frame: { width: 680, height: 560 }
+    anchor: { x: 1870, y: 2140 }
+    components:
+      - type: timeline
+        props:
+          orientation: vertical
+          events:
+            - date: 2025-2027
+              title: Short term
+              description: Add mandatory AI disclosure, publish transparency reports, and pilot alternatives to pure stream-count payouts.
+            - date: 2028-2032
+              title: Medium term
+              description: Integrate provenance standards, fund human creator development, and reward diversity and context more explicitly.
+            - date: 2033-2040
+              title: Long term
+              description: Operate as stewards of a musical commons with parity metrics, shared governance, and renewable infrastructure.
+
+  - id: roadmap-policy
+    title: Roadmap for Policymakers
+    description: Public institutions can create the enabling conditions for consent, research, diversity, and sustainable infrastructure.
+    group: action
+    layout: single-content
+    frame: { width: 680, height: 560 }
+    anchor: { x: 2920, y: 2140 }
+    components:
+      - type: timeline
+        props:
+          orientation: vertical
+          events:
+            - date: 2025-2027
+              title: Short term
+              description: Pass Right to Research protections, extend training rights, fund Global South digitization, and require carbon reporting.
+            - date: 2028-2032
+              title: Medium term
+              description: Build international AI music governance standards, subsidize public compute, and test Cultural UBI pilots.
+            - date: 2033-2040
+              title: Long term
+              description: Enforce representational parity in public deployments and protect endangered musical traditions as digital heritage.

@@ -43,6 +43,7 @@ export interface BackgroundFilterConfig {
     height?: number;
   };
   linearProportion?: number;
+  steepness?: number;
 }
 
 export type SupportedPaperShaderName =
@@ -177,6 +178,7 @@ export interface ComponentInstance {
 export interface StepDefinition {
   id?: string;
   title?: string;
+  description?: string;
   layout: string;
   layoutProps?: Record<string, unknown>;
   transition?: string;

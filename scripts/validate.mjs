@@ -192,7 +192,7 @@ function validateBackgroundFilterConfig(filter, label, issues) {
     return;
   }
 
-  const allowedKeys = new Set(['mode', 'opacity', 'radialSize', 'linearProportion']);
+  const allowedKeys = new Set(['mode', 'opacity', 'radialSize', 'linearProportion', 'steepness']);
   for (const key of Object.keys(value)) {
     if (!allowedKeys.has(key)) {
       issues.push(createIssue('error', `${label}.${key} is not supported.`));
@@ -223,6 +223,10 @@ function validateBackgroundFilterConfig(filter, label, issues) {
 
   if (value.linearProportion != null && (!Number.isFinite(value.linearProportion) || value.linearProportion < 0 || value.linearProportion > 1)) {
     issues.push(createIssue('error', `${label}.linearProportion must be between 0 and 1.`));
+  }
+
+  if (value.steepness != null && (!Number.isFinite(value.steepness) || value.steepness < 0 || value.steepness > 1)) {
+    issues.push(createIssue('error', `${label}.steepness must be between 0 and 1.`));
   }
 
   if (value.radialSize != null) {

@@ -42,17 +42,25 @@ export function StageRenderer() {
           exit={sceneMotion.exit}
           transition={sceneMotion.transition}
         >
-          <LayoutRenderer
-            layout={step.layout}
-            layoutProps={step.layoutProps}
-            items={visibleEntries.map((entry) => ({
-              component: entry.component,
-              revealCount:
-                entry.component.build === 'sequential'
-                  ? getSequentialRevealCount(entry, machine.state.context.currentBuildIndex)
-                  : Number.MAX_SAFE_INTEGER
-            }))}
-          />
+          {step.title || step.description ? (
+            <header className="stepSceneHeader">
+              {step.title ? <p className="stepSceneTitle">{step.title}</p> : null}
+              {step.description ? <p className="stepSceneDescription">{step.description}</p> : null}
+            </header>
+          ) : null}
+          <div className="stepSceneBody">
+            <LayoutRenderer
+              layout={step.layout}
+              layoutProps={step.layoutProps}
+              items={visibleEntries.map((entry) => ({
+                component: entry.component,
+                revealCount:
+                  entry.component.build === 'sequential'
+                    ? getSequentialRevealCount(entry, machine.state.context.currentBuildIndex)
+                    : Number.MAX_SAFE_INTEGER
+              }))}
+            />
+          </div>
         </motion.section>
       </AnimatePresence>
       <PresentationControls
