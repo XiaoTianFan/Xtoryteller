@@ -666,6 +666,11 @@ textarea {
   cursor: pointer;
 }
 
+.ghostButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
 .viewerHud {
   position: absolute;
   left: 0;
@@ -827,6 +832,22 @@ textarea {
   white-space: nowrap;
 }
 
+.mapEditStatus {
+  white-space: nowrap;
+  color: var(--color-chrome-text-soft, #60584f);
+  font-size: var(--text-components-shell-meta);
+}
+
+.mapEditStatus.dirty {
+  color: var(--color-warning, #b35c00);
+}
+
+.mapEditError {
+  color: var(--color-error, #9f2d2d);
+  font-size: var(--text-components-shell-meta);
+  max-width: min(26rem, 100%);
+}
+
 .mapViewport {
   position: relative;
   width: 100%;
@@ -851,6 +872,18 @@ textarea {
   text-align: left;
   cursor: pointer;
   outline: none;
+}
+
+.clusterCard.editing {
+  cursor: grab;
+}
+
+.clusterCard.editing.selected {
+  z-index: 6;
+}
+
+.clusterCard.editing.selected:active {
+  cursor: grabbing;
 }
 
 .clusterCardBounds {
@@ -891,10 +924,19 @@ textarea {
   position: absolute;
   inset: 0;
   display: grid;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .clusterCardContent > * {
   min-height: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.clusterCardContent :is(h1, h2, h3, h4, h5, h6, p, li, span) {
+  overflow-wrap: anywhere;
 }
 
 .clusterCardHeader {
@@ -926,6 +968,46 @@ textarea {
   z-index: 4;
   border-color: var(--color-chrome-border-strong);
   background: var(--color-chrome-surface-active);
+}
+
+.clusterCard.selected .clusterCardHeader {
+  border-color: color-mix(in srgb, var(--color-warning, #ffb703) 58%, var(--color-chrome-border-strong, rgba(141, 79, 45, 0.38)) 42%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-warning, #ffb703) 44%, transparent 56%);
+}
+
+.clusterResizeHandle {
+  position: absolute;
+  z-index: 6;
+  border: 1px solid color-mix(in srgb, var(--color-warning, #ffb703) 72%, black 28%);
+  background: color-mix(in srgb, var(--color-warning, #ffb703) 92%, white 8%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+  padding: 0;
+}
+
+.clusterResizeHandleEast {
+  top: 50%;
+  right: -6px;
+  width: 12px;
+  height: 64px;
+  transform: translateY(-50%);
+  cursor: ew-resize;
+}
+
+.clusterResizeHandleSouth {
+  left: 50%;
+  bottom: -6px;
+  width: 64px;
+  height: 12px;
+  transform: translateX(-50%);
+  cursor: ns-resize;
+}
+
+.clusterResizeHandleCorner {
+  right: -8px;
+  bottom: -8px;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
 }
 
 .mapSequence {

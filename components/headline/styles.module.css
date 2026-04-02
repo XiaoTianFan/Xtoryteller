@@ -1,6 +1,7 @@
 .component {
   margin: 0;
   width: 100%;
+  min-width: 0;
 }
 
 .level1,
@@ -11,6 +12,8 @@
   line-height: 0.94;
   letter-spacing: -0.03em;
   margin: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .level1 {

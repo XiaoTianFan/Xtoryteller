@@ -1,6 +1,7 @@
 .callout {
   display: grid;
   height: 100%;
+  min-width: 0;
   align-content: start;
   padding: var(--spacing-components-callout-padding);
   border-radius: var(--radius-components-callout);
@@ -15,11 +16,13 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: color-mix(in srgb, var(--tone) 68%, var(--color-foreground) 32%);
+  overflow-wrap: anywhere;
 }
 
 .content {
   color: var(--color-foreground);
   font-size: var(--text-body);
+  overflow-wrap: anywhere;
 }
 
 .content p {

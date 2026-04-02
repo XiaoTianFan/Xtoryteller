@@ -1,8 +1,10 @@
 .subtitle {
   margin: 0;
+  max-width: 100%;
   font-size: var(--text-lead);
   line-height: 1.45;
   color: color-mix(in srgb, var(--color-foreground) 72%, white 28%);
+  overflow-wrap: anywhere;
 }
 
 .left {
