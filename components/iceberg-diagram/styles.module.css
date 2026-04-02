@@ -18,6 +18,17 @@
   margin-left: 0;
   margin-right: auto;
   aspect-ratio: 842 / 1206;
+  overflow: hidden;
+}
+
+.canvasViewport {
+  position: absolute;
+  inset: 0;
+}
+
+.boardLabelsHidden .canvasViewport {
+  height: calc(100% + var(--iceberg-top-trim, 0%));
+  transform: translateY(calc(-1 * var(--iceberg-top-trim, 0%)));
 }
 
 .svg {

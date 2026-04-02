@@ -12,6 +12,7 @@ theme: creative-voltage
 background:
   type: paper-shader
   presetRef: voltage-warp
+  speed: 0.5
   filter:
     mode: linear-vertical-reverse
     opacity: 0.64
@@ -45,8 +46,8 @@ clusters:
       single legal or technical controversy.
     group: intro
     layout: title-center
-    frame: { width: 760, height: 539 }
-    anchor: { x: -47, y: -29 }
+    frame: { width: 964, height: 539 }
+    anchor: { x: -132, y: 22 }
     components:
       - type: label
         content: Systems synthesis map
@@ -74,8 +75,8 @@ clusters:
       system through interlocking feedback loops, not isolated incidents.
     group: intro
     layout: stack
-    frame: { width: 712, height: 360 }
-    anchor: { x: -2, y: 645 }
+    frame: { width: 755, height: 360 }
+    anchor: { x: -53, y: 598 }
     components:
       - type: body-text
         content: |
@@ -100,7 +101,7 @@ clusters:
     group: intro
     layout: stack
     frame: { width: 742, height: 1174 }
-    anchor: { x: -7, y: 1093 }
+    anchor: { x: -42, y: 1058 }
     components:
       - type: body-text
         content: |
@@ -160,8 +161,8 @@ clusters:
       expose the deeper system logic around AI music.
     group: method
     layout: stack
-    frame: { width: 801, height: 483 }
-    anchor: { x: 843, y: 722 }
+    frame: { width: 896, height: 483 }
+    anchor: { x: 753, y: 520 }
     components:
       - type: callout
         content: |
@@ -192,8 +193,8 @@ clusters:
       value systems, and deep metaphors.
     group: method
     layout: single-content
-    frame: { width: 980, height: 1420 }
-    anchor: { x: 734, y: 1248 }
+    frame: { width: 912, height: 1249 }
+    anchor: { x: 745, y: 1037 }
     components:
       - type: iceberg-diagram
         props:
@@ -284,10 +285,10 @@ clusters:
       counterweights.
     group: diagnosis
     layout: two-column
-    frame: { width: 1406, height: 420 }
+    frame: { width: 1311, height: 632 }
     anchor:
-      x: 1677
-      y: 705
+      x: 1693
+      y: 595
     components:
       - type: body-text
         content: |
@@ -340,7 +341,7 @@ clusters:
     group: diagnosis
     layout: single-content
     frame: { width: 2219, height: 756 }
-    anchor: { x: 850, y: -112 }
+    anchor: { x: 802, y: -155 }
     components:
       - type: causal-diagram
         props:
@@ -810,7 +811,7 @@ clusters:
     group: transition
     layout: single-content
     frame: { width: 1822, height: 1167 }
-    anchor: { x: 3099, y: 351 }
+    anchor: { x: 2986, y: 390 }
     components:
       - type: three-horizons
         props:
@@ -1129,7 +1130,7 @@ clusters:
     group: transition
     layout: stack
     frame: { width: 560, height: 280 }
-    anchor: { x: 3133, y: 12 }
+    anchor: { x: 3026, y: 39 }
     components:
       - type: bullet-list
         props:
@@ -1148,7 +1149,7 @@ clusters:
     group: transition
     layout: stack
     frame: { width: 560, height: 330 }
-    anchor: { x: 3742, y: 9 }
+    anchor: { x: 3631, y: 18 }
     components:
       - type: body-text
         content: |
@@ -1174,7 +1175,7 @@ clusters:
     group: transition
     layout: stack
     frame: { width: 560, height: 320 }
-    anchor: { x: 4353, y: 10 }
+    anchor: { x: 4229, y: 13 }
     components:
       - type: bullet-list
         props:
@@ -1195,8 +1196,8 @@ clusters:
       points rather than purely aesthetic fixes.
     group: action
     layout: two-column
-    frame: { width: 1192, height: 330 }
-    anchor: { x: 1798, y: 1193 }
+    frame: { width: 1246, height: 233 }
+    anchor: { x: 1719, y: 1290 }
     components:
       - type: bullet-list
         props:
@@ -1227,8 +1228,8 @@ clusters:
       diversified value beyond streaming.
     group: action
     layout: single-content
-    frame: { width: 680, height: 560 }
-    anchor: { x: 1744, y: 1646 }
+    frame: { width: 680, height: 621 }
+    anchor: { x: 1856, y: 1608 }
     components:
       - type: timeline
         props:
@@ -1253,8 +1254,8 @@ clusters:
       than extraction and opacity.
     group: action
     layout: single-content
-    frame: { width: 680, height: 560 }
-    anchor: { x: 2558, y: 1648 }
+    frame: { width: 680, height: 625 }
+    anchor: { x: 2639, y: 1604 }
     components:
       - type: timeline
         props:
@@ -1279,8 +1280,8 @@ clusters:
       research, diversity, and sustainable infrastructure.
     group: action
     layout: single-content
-    frame: { width: 680, height: 560 }
-    anchor: { x: 3371, y: 1651 }
+    frame: { width: 680, height: 637 }
+    anchor: { x: 3399, y: 1596 }
     components:
       - type: timeline
         props:

@@ -50,11 +50,15 @@ import { MapRenderer } from '@/lib/runtime/renderers/map-renderer';
 describe('map layout editor', () => {
   let mapPresentation: Awaited<ReturnType<typeof loadPresentationBySlug>>;
   let mapTheme: Awaited<ReturnType<typeof loadThemeWithFallback>>['theme'];
+  let humanAiPresentation: Awaited<ReturnType<typeof loadPresentationBySlug>>;
+  let humanAiTheme: Awaited<ReturnType<typeof loadThemeWithFallback>>['theme'];
   const fetchMock = vi.fn<typeof fetch>();
 
   beforeAll(async () => {
     mapPresentation = await loadPresentationBySlug('simple-map');
     mapTheme = await loadThemeWithFallback(mapPresentation.theme).then((result) => result.theme);
+    humanAiPresentation = await loadPresentationBySlug('human-ai-and-music');
+    humanAiTheme = await loadThemeWithFallback(humanAiPresentation.theme).then((result) => result.theme);
   });
 
   beforeEach(() => {
@@ -148,5 +152,43 @@ describe('map layout editor', () => {
       expect(screen.getByRole('button', { name: 'Edit layout' })).toBeInTheDocument();
     });
     expect(refreshSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('relaxes authored text width caps inside compact map clusters so wider cards can reflow text', async () => {
+    render(
+      createElement(
+        ThemeProvider,
+        { theme: humanAiTheme, overrides: humanAiPresentation.themeOverrides },
+        createElement(
+          PresentationProvider,
+          { presentation: humanAiPresentation, theme: humanAiTheme },
+          createElement(MapRenderer)
+        )
+      )
+    );
+
+    const overviewHeading = await screen.findByRole('heading', {
+      name: 'Recalibrating the Music System'
+    });
+    expect(overviewHeading).toHaveStyle({
+      maxWidth: '100%',
+      width: '100%'
+    });
+
+    const overviewSubtitle = screen.getByText(
+      /From extractive AI monoculture toward a pluralistic music ecosystem/i
+    );
+    expect(overviewSubtitle).toHaveStyle({
+      maxWidth: '100%',
+      width: '100%'
+    });
+
+    const abstractParagraph = screen.getByText(
+      /The rapid emergence of generative AI music tools between 2023 and 2025/i
+    );
+    expect(abstractParagraph.parentElement).toHaveStyle({
+      maxWidth: '100%',
+      width: '100%'
+    });
   });
 });

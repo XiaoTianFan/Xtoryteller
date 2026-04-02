@@ -47,6 +47,7 @@ export function LayoutRenderer({
             component={item.component}
             revealCount={item.revealCount}
             slug={presentation.meta.slug}
+            compact={compact}
           />
         </motion.div>
       )

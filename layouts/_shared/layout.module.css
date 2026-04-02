@@ -416,6 +416,10 @@
   margin: 0;
 }
 
+.compact.singleContent {
+  align-content: start;
+}
+
 @media (max-width: 900px) {
   .twoColumn,
   .contentLeftMediaRight,

@@ -1,4 +1,4 @@
-import { MouseEvent, useId } from 'react';
+import { CSSProperties, MouseEvent, useId } from 'react';
 
 import styles from '@/components/_shared/diagram.module.css';
 
@@ -31,6 +31,7 @@ const VIEWBOX_WIDTH = 1092;
 const VIEWBOX_HEIGHT = 1206;
 const HIDDEN_VIEWBOX_X = 250;
 const HIDDEN_VIEWBOX_WIDTH = 842;
+const LABELS_HIDDEN_TOP_TRIM = 100;
 
 const ICEBERG_PATH = `
   M742 76
@@ -257,6 +258,7 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
   const labelsHidden = !showLabels;
   const visibleX = labelsHidden ? HIDDEN_VIEWBOX_X : 0;
   const visibleWidth = labelsHidden ? HIDDEN_VIEWBOX_WIDTH : VIEWBOX_WIDTH;
+  const topTrimPercent = labelsHidden ? (LABELS_HIDDEN_TOP_TRIM / VIEWBOX_HEIGHT) * 100 : 0;
   const waterline = clamp(Number(props?.waterlinePosition ?? 0.23), 0.18, 0.32);
   const waterY = waterline * VIEWBOX_HEIGHT;
   const [waterDivider, structuresDivider, worldviewDivider] = dividerPositions(waterY);
@@ -290,7 +292,15 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
 
   return (
     <figure className={`${styles.shell} ${localStyles.figure}`}>
-      <div className={`${localStyles.board} ${labelsHidden ? localStyles.boardLabelsHidden : ''}`}>
+      <div
+        className={`${localStyles.board} ${labelsHidden ? localStyles.boardLabelsHidden : ''}`}
+        style={
+          {
+            ['--iceberg-top-trim' as string]: `${topTrimPercent}%`
+          } as CSSProperties
+        }
+      >
+        <div className={localStyles.canvasViewport}>
         <svg
           viewBox={`${visibleX} 0 ${visibleWidth} ${VIEWBOX_HEIGHT}`}
           role="img"
@@ -369,6 +379,7 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
               </button>
             ))
           )}
+        </div>
         </div>
       </div>
     </figure>

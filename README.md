@@ -33,6 +33,7 @@ The system combines:
 
 - **Stage mode** for sequential, speaker-led narratives with step and build progression
 - **Map mode** for spatial storytelling with clusters, guided sequences, and free-roam navigation
+- **Manual Map editing** in local/dev mode with cluster drag, resize, and save back to YAML
 - **Reusable primitives** in `components/`, `layouts/`, `transitions/`, and `themes/`
 - **Agent-readable registries** generated from manifests and theme files
 - **Shared background preset library** under `backgrounds/*.yaml`
@@ -130,6 +131,9 @@ Use Map mode when the material benefits from spatial exploration, systems views,
 - Keep `pyramid-layout` rows compact and concise.
 - Treat markdown hover annotations as supported inside markdown-rendered content, not as a universal `annotation anywhere` surface.
 - Verify advanced motion or component-level animation hints in the browser.
+- In local/dev mode, Map presentations can be adjusted directly in the viewer with `Edit layout`, then saved back into YAML as absolute anchors plus cluster frames.
+- Saving a manually edited Map deck removes arrangement-driven positioning and writes the current geometry to each cluster's `anchor.x/y` and `frame.width/height`.
+- Compact Map cards relax narrow text-width caps for text-like components so widened clusters can actually reflow their copy.
 
 ### Helpful Commands
 
