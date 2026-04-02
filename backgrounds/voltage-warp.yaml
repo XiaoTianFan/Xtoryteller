@@ -10,7 +10,7 @@ colorStops:
   - '#f5f1da'
 intensity: 0.15
 contrast: 1
-speed: 0.04
+speed: 0.5
 params:
   distortion: 0.15
   offsetX: 0
