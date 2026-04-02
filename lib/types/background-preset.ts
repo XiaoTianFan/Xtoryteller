@@ -24,3 +24,7 @@ export interface BackgroundPresetRegistryEntry {
   shader: string;
   preset?: string;
 }
+
+export interface BackgroundPresetDefinitionEntry extends BackgroundPresetRegistryEntry {
+  config: BackgroundPresetConfig;
+}

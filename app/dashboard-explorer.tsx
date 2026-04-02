@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { startTransition, useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { startTransition, useDeferredValue, useMemo, useState } from 'react';
 
-import type { ThemeRegistryEntry } from '@/lib/engine/theme-registry';
-import { PresentationIndexEntry } from '@/lib/types/presentation';
+import { DASHBOARD_THEME_SPECIFIC_VALUE, type DashboardThemeEntry } from '@/lib/types/dashboard-background';
+import { type BackgroundPresetDefinitionEntry } from '@/lib/types/background-preset';
+import type { PresentationIndexEntry } from '@/lib/types/presentation';
 
 function isVideoAsset(asset: string | undefined) {
   return Boolean(asset && /\.(mp4|webm)$/i.test(asset));
@@ -31,24 +31,31 @@ function sortPresentations(items: PresentationIndexEntry[], sortMode: SortMode) 
 export function DashboardExplorer({
   presentations,
   themes,
-  activeThemeSlug
+  selectedThemeSlug,
+  onThemeChange,
+  isSavingTheme,
+  backgroundPresets,
+  selectedBackgroundPresetSlug,
+  onBackgroundChange,
+  isSavingBackground,
+  onOpenCreatePreset
 }: {
   presentations: PresentationIndexEntry[];
-  themes: ThemeRegistryEntry[];
-  activeThemeSlug: string;
+  themes: DashboardThemeEntry[];
+  selectedThemeSlug: string;
+  onThemeChange: (themeSlug: string) => Promise<void>;
+  isSavingTheme: boolean;
+  backgroundPresets: BackgroundPresetDefinitionEntry[];
+  selectedBackgroundPresetSlug: string | null;
+  onBackgroundChange: (presetSlug: string | null) => Promise<void>;
+  isSavingBackground: boolean;
+  onOpenCreatePreset: () => void;
 }) {
-  const router = useRouter();
   const [query, setQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState('all');
   const [sortMode, setSortMode] = useState<SortMode>('updated');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [selectedThemeSlug, setSelectedThemeSlug] = useState(activeThemeSlug);
-  const [isSavingTheme, setIsSavingTheme] = useState(false);
   const deferredQuery = useDeferredValue(query.trim().toLowerCase());
-
-  useEffect(() => {
-    setSelectedThemeSlug(activeThemeSlug);
-  }, [activeThemeSlug]);
 
   const tags = useMemo(
     () => ['all', ...new Set(presentations.flatMap((presentation) => presentation.tags).sort((left, right) => left.localeCompare(right)))],
@@ -116,34 +123,8 @@ export function DashboardExplorer({
             aria-label="Global theme"
             value={selectedThemeSlug}
             disabled={isSavingTheme}
-            onChange={async (event) => {
-              const nextThemeSlug = event.target.value;
-              setSelectedThemeSlug(nextThemeSlug);
-              setIsSavingTheme(true);
-
-              try {
-                const response = await fetch('/api/theme', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({ themeSlug: nextThemeSlug })
-                });
-
-                if (!response.ok) {
-                  throw new Error('Failed to save theme preference.');
-                }
-
-                const payload = (await response.json()) as { themeSlug?: string };
-                setSelectedThemeSlug(payload.themeSlug ?? nextThemeSlug);
-                startTransition(() => {
-                  router.refresh();
-                });
-              } catch {
-                setSelectedThemeSlug(activeThemeSlug);
-              } finally {
-                setIsSavingTheme(false);
-              }
+            onChange={(event) => {
+              void onThemeChange(event.target.value);
             }}
           >
             {themes.map((theme) => (
@@ -153,6 +134,30 @@ export function DashboardExplorer({
             ))}
           </select>
         </label>
+        <label>
+          <span className="srOnly">Dashboard background preset</span>
+          <select
+            className="dashboardSelect"
+            aria-label="Dashboard background preset"
+            value={selectedBackgroundPresetSlug ?? DASHBOARD_THEME_SPECIFIC_VALUE}
+            disabled={isSavingBackground}
+            onChange={(event) => {
+              void onBackgroundChange(
+                event.target.value === DASHBOARD_THEME_SPECIFIC_VALUE ? null : event.target.value
+              );
+            }}
+          >
+            <option value={DASHBOARD_THEME_SPECIFIC_VALUE}>Theme Specific</option>
+            {backgroundPresets.map((preset) => (
+              <option key={preset.slug} value={preset.slug}>
+                {preset.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button type="button" className="ghostButton" onClick={onOpenCreatePreset}>
+          Create preset
+        </button>
         <div className="viewToggle" role="group" aria-label="View mode">
           <button
             type="button"

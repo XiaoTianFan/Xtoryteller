@@ -1,5 +1,5 @@
 import { BackgroundPresetConfig } from '@/lib/types/background-preset';
-import { PresentationConfig } from '@/lib/types/presentation';
+import { BackgroundShaderConfig, PresentationConfig } from '@/lib/types/presentation';
 import type { ThemeConfig } from '@/lib/types/theme';
 
 type BackgroundObjectLike = {
@@ -85,12 +85,12 @@ function mergePresetBackground(
   };
 }
 
-function resolveBackgroundConfigPresetRefs(
-  value: unknown,
+export function resolveBackgroundConfigPresetRefs<T = unknown>(
+  value: T,
   presetMap: Map<string, BackgroundPresetConfig>
-): unknown {
+): T {
   if (Array.isArray(value)) {
-    return value.map((entry) => resolveBackgroundConfigPresetRefs(entry, presetMap));
+    return value.map((entry) => resolveBackgroundConfigPresetRefs(entry, presetMap)) as T;
   }
 
   const config = asBackgroundObject(value);
@@ -111,7 +111,7 @@ function resolveBackgroundConfigPresetRefs(
   };
 
   if (!config.presetRef) {
-    return nextConfig;
+    return nextConfig as T;
   }
 
   const preset = presetMap.get(config.presetRef);
@@ -119,7 +119,18 @@ function resolveBackgroundConfigPresetRefs(
     throw new Error(`Unknown background preset "${config.presetRef}".`);
   }
 
-  return mergePresetBackground(nextConfig, preset);
+  return mergePresetBackground(nextConfig, preset) as T;
+}
+
+export function resolveBackgroundShaderConfigPresetRefs(
+  background: BackgroundShaderConfig | null | undefined,
+  presetMap: Map<string, BackgroundPresetConfig>
+) {
+  if (background == null) {
+    return background;
+  }
+
+  return resolveBackgroundConfigPresetRefs(background, presetMap);
 }
 
 export function resolvePresentationBackgroundPresetRefs(

@@ -1,38 +1,42 @@
 import { cookies } from 'next/headers';
 
-import { DashboardExplorer } from '@/app/dashboard-explorer';
+import { DashboardShell } from '@/app/dashboard-shell';
+import { loadBackgroundPresetDefinitionRegistry } from '@/lib/engine/background-preset-registry';
+import { resolveAvailableDashboardBackgroundSlug, DASHBOARD_BACKGROUND_COOKIE_NAME } from '@/lib/engine/dashboard-background-preferences';
 import { loadPresentationIndex } from '@/lib/engine/presentation-loader';
 import {
   GLOBAL_THEME_COOKIE_NAME,
-  loadThemeBySlug,
   loadThemeRegistry,
+  loadThemeBySlug,
   resolveAvailableThemeSlug
 } from '@/lib/engine/theme-registry';
-import { ThemeBackgroundLayer } from '@/lib/runtime/ui/background-layer';
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
   const preferredThemeSlug = cookieStore.get(GLOBAL_THEME_COOKIE_NAME)?.value;
-  const [presentations, themes, activeThemeSlug] = await Promise.all([
+  const preferredBackgroundPresetSlug = cookieStore.get(DASHBOARD_BACKGROUND_COOKIE_NAME)?.value;
+  const [presentations, themeRegistry, backgroundPresets, activeThemeSlug, initialBackgroundPresetSlug] = await Promise.all([
     loadPresentationIndex(),
     loadThemeRegistry(),
-    resolveAvailableThemeSlug(preferredThemeSlug)
+    loadBackgroundPresetDefinitionRegistry(),
+    resolveAvailableThemeSlug(preferredThemeSlug),
+    resolveAvailableDashboardBackgroundSlug(preferredBackgroundPresetSlug)
   ]);
-  const activeTheme = await loadThemeBySlug(activeThemeSlug);
+  const themes = await Promise.all(
+    themeRegistry.map(async (theme) => ({
+      slug: theme.slug,
+      name: theme.name,
+      theme: await loadThemeBySlug(theme.slug)
+    }))
+  );
 
   return (
-    <main className="dashboardPage">
-      <ThemeBackgroundLayer theme={activeTheme} slug="dashboard" />
-      <div className="dashboardPageContent">
-        <section className="dashboardHero">
-          <p className="eyebrow">Xtoryteller</p>
-          <h1>Agent-first storytelling infrastructure/.</h1>
-          <p className="dashboardLead">
-            Browse file-backed presentations, open them instantly, and use the YAML + registry system as the source of truth.
-          </p>
-        </section>
-        <DashboardExplorer presentations={presentations} themes={themes} activeThemeSlug={activeThemeSlug} />
-      </div>
-    </main>
+    <DashboardShell
+      presentations={presentations}
+      themes={themes}
+      initialThemeSlug={activeThemeSlug}
+      backgroundPresets={backgroundPresets}
+      initialBackgroundPresetSlug={initialBackgroundPresetSlug}
+    />
   );
 }
