@@ -1,3 +1,5 @@
+import type { BackgroundFilterConfig } from '@/lib/types/presentation';
+
 export interface BackgroundPresetConfig {
   name: string;
   description?: string;
@@ -11,6 +13,7 @@ export interface BackgroundPresetConfig {
   contrast?: number;
   speed?: number;
   opacity?: number;
+  filter?: BackgroundFilterConfig;
 }
 
 export interface BackgroundPresetRegistryEntry {

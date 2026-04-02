@@ -59,4 +59,21 @@ describe('theme registry resolution', () => {
       preset: 'abstract'
     });
   });
+
+  it('preserves theme-owned background filter overrides when loading themes', async () => {
+    const resolved = await loadThemeWithFallback('split-pastel');
+
+    expect(resolved.theme.background).toMatchObject({
+      type: 'paper-shader',
+      shader: 'waves',
+      filter: {
+        mode: 'radial',
+        opacity: 0.2,
+        radialSize: {
+          width: 0.72,
+          height: 0.56
+        }
+      }
+    });
+  });
 });

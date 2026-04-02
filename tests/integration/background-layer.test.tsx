@@ -88,9 +88,10 @@ describe('background layer integration', () => {
   let stagePresentation: PresentationConfig;
   let mapPresentation: PresentationConfig;
   let paperTheme: Awaited<ReturnType<typeof loadThemeBySlug>>;
+  let splitPastelTheme: Awaited<ReturnType<typeof loadThemeBySlug>>;
 
   beforeAll(async () => {
-    const [rawStagePresentation, rawMapPresentation, paperThemeValue, presetMap] = await Promise.all([
+    const [rawStagePresentation, rawMapPresentation, paperThemeValue, splitPastelThemeValue, presetMap] = await Promise.all([
       parseYamlFile<PresentationConfig>(
         path.join(process.cwd(), 'tests', 'fixtures', 'presentations', 'valid', 'background-stage-switch', 'presentation.yaml')
       ),
@@ -98,11 +99,13 @@ describe('background layer integration', () => {
         path.join(process.cwd(), 'tests', 'fixtures', 'presentations', 'valid', 'background-map-switch', 'presentation.yaml')
       ),
       loadThemeBySlug('xinimalist-paper'),
+      loadThemeBySlug('split-pastel'),
       loadBackgroundPresetMap()
     ]);
     stagePresentation = resolvePresentationBackgroundPresetRefs(rawStagePresentation, presetMap);
     mapPresentation = resolvePresentationBackgroundPresetRefs(rawMapPresentation, presetMap);
     paperTheme = paperThemeValue;
+    splitPastelTheme = splitPastelThemeValue;
   });
 
   afterEach(() => {
@@ -111,6 +114,10 @@ describe('background layer integration', () => {
 
   function getBackgroundLayers() {
     return Array.from(document.querySelectorAll<HTMLElement>('[data-background-key]'));
+  }
+
+  function getBackgroundFilter() {
+    return document.querySelector<HTMLElement>('[data-background-filter-mode]');
   }
 
   function BackgroundHarness({
@@ -157,6 +164,54 @@ describe('background layer integration', () => {
 
     expect(getBackgroundLayers().at(-1)).toHaveAttribute('data-background-kind', 'paper-shader');
     expect(getBackgroundLayers().at(-1)).toHaveAttribute('data-background-shader', 'paper-texture');
+  });
+
+  it('renders the paper-shader legibility filter overlay and skips it for css backgrounds', () => {
+    const filteredPresentation: PresentationConfig = {
+      meta: {
+        title: 'Filtered background',
+        slug: 'filtered-background'
+      },
+      mode: 'stage',
+      steps: [{ layout: 'single-content', components: [{ type: 'headline', content: 'Filtered' }] }]
+    };
+
+    const view = render(
+      <ThemeProvider theme={splitPastelTheme}>
+        <PresentationProvider presentation={filteredPresentation} theme={splitPastelTheme}>
+          <BackgroundHarness onReady={() => undefined} />
+        </PresentationProvider>
+      </ThemeProvider>
+    );
+
+    expect(getBackgroundFilter()).toHaveAttribute('data-background-filter-mode', 'radial');
+    expect(getBackgroundFilter()?.style.background).toContain('radial-gradient');
+
+    view.unmount();
+
+    render(
+      <ThemeProvider theme={paperTheme}>
+        <PresentationProvider
+          presentation={{
+            meta: {
+              title: 'Css background',
+              slug: 'css-background'
+            },
+            mode: 'stage',
+            background: {
+              type: 'css',
+              value: 'linear-gradient(180deg, #fff, #eee)'
+            },
+            steps: [{ layout: 'single-content', components: [{ type: 'headline', content: 'CSS' }] }]
+          }}
+          theme={paperTheme}
+        >
+          <BackgroundHarness onReady={() => undefined} />
+        </PresentationProvider>
+      </ThemeProvider>
+    );
+
+    expect(getBackgroundFilter()).toBeNull();
   });
 
   it('switches map backgrounds by group and cluster rules', async () => {

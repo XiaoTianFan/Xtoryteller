@@ -120,6 +120,58 @@ describe('validation fixtures', () => {
         ),
         message: 'params.image is not supported',
       },
+      {
+        name: 'css background filter',
+        file: path.join(
+          process.cwd(),
+          'tests',
+          'fixtures',
+          'presentations',
+          'invalid',
+          'background-filter-css',
+          'presentation.yaml'
+        ),
+        message: 'filter is only supported on Paper shader backgrounds',
+      },
+      {
+        name: 'background filter opacity',
+        file: path.join(
+          process.cwd(),
+          'tests',
+          'fixtures',
+          'presentations',
+          'invalid',
+          'background-filter-opacity',
+          'presentation.yaml'
+        ),
+        message: 'opacity must be between 0 and 1',
+      },
+      {
+        name: 'background filter radial size',
+        file: path.join(
+          process.cwd(),
+          'tests',
+          'fixtures',
+          'presentations',
+          'invalid',
+          'background-filter-radial-size',
+          'presentation.yaml'
+        ),
+        message: 'radialSize.width must be between 0 and 1',
+      },
+      {
+        name: 'background filter linear proportion',
+        file: path.join(
+          process.cwd(),
+          'tests',
+          'fixtures',
+          'presentations',
+          'invalid',
+          'background-filter-linear-proportion',
+          'presentation.yaml'
+        ),
+        message: 'linearProportion must be between 0 and 1',
+      },
     ] as const;
 
     for (const fixture of fixtures) {
@@ -139,6 +191,7 @@ describe('validation fixtures', () => {
       'local-runtime-overrides',
       'background-stage-switch',
       'background-map-switch',
+      'background-filter-paper',
     ] as const;
 
     for (const fixture of fixtures) {

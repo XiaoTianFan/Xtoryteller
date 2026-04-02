@@ -2,6 +2,7 @@ import { loadBackgroundPresetMap } from '@/lib/engine/background-preset-registry
 import { resolvePresentationBackgroundPresetRefs } from '@/lib/engine/background-preset-resolver';
 import { loadThemeBySlug } from '@/lib/engine/theme-registry';
 import { resolveBackgroundState } from '@/lib/runtime/background-config';
+import type { BackgroundPresetConfig } from '@/lib/types/background-preset';
 import type { PresentationConfig } from '@/lib/types/presentation';
 
 function createStagePresentation(background?: PresentationConfig['background'], backgroundSections?: PresentationConfig['backgroundSections']): PresentationConfig {
@@ -174,6 +175,126 @@ describe('background config', () => {
       fiber: 0.6,
       roughness: 0.2
     });
+  });
+
+  it('applies preset-backed filters and lets inline filter fields override shallowly', () => {
+    const presetMap = new Map<string, BackgroundPresetConfig>([
+      [
+        'filtered-paper',
+        {
+          name: 'Filtered Paper',
+          shader: 'paper-texture',
+          preset: 'default',
+          filter: {
+            mode: 'radial',
+            opacity: 0.18,
+            radialSize: {
+              width: 0.6,
+              height: 0.42
+            }
+          }
+        }
+      ]
+    ]);
+
+    const presentation = resolvePresentationBackgroundPresetRefs(
+      createStagePresentation({
+        type: 'paper-shader',
+        presetRef: 'filtered-paper',
+        filter: {
+          mode: 'radial',
+          opacity: 0.3,
+          radialSize: {
+            width: 0.72
+          }
+        }
+      }),
+      presetMap
+    );
+
+    const state = resolveBackgroundState(presentation, 0, null);
+
+    expect(state.appearance.filter).toMatchObject({
+      mode: 'radial',
+      opacity: 0.3,
+      radialSize: {
+        width: 0.72,
+        height: 0.42
+      }
+    });
+  });
+
+  it('resolves paper-shader filter color from shader params and theme fallbacks', async () => {
+    const theme = await loadThemeBySlug('split-pastel');
+
+    const explicitColorState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        params: {
+          colorBack: '#112233'
+        },
+        filter: {
+          mode: 'radial'
+        }
+      }),
+      0,
+      null,
+      theme
+    );
+    expect(explicitColorState.appearance.filter).toMatchObject({
+      color: '#112233'
+    });
+
+    const themeColorState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'warp',
+        params: {
+          colors: [],
+          distortion: 0.1
+        },
+        filter: {
+          mode: 'linear-horizontal'
+        }
+      }),
+      0,
+      null,
+      theme
+    );
+    expect(themeColorState.appearance.filter).toMatchObject({
+      color: '#f5ede7'
+    });
+  });
+
+  it('builds horizontal and vertical linear filter gradients with the expected direction', () => {
+    const horizontalState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        filter: {
+          mode: 'linear-horizontal',
+          linearProportion: 0.5
+        }
+      }),
+      0,
+      null
+    );
+    expect(horizontalState.appearance.filter?.value).toContain('linear-gradient(90deg');
+
+    const verticalState = resolveBackgroundState(
+      createStagePresentation({
+        type: 'paper-shader',
+        shader: 'paper-texture',
+        filter: {
+          mode: 'linear-vertical',
+          linearProportion: 0.5
+        }
+      }),
+      0,
+      null
+    );
+    expect(verticalState.appearance.filter?.value).toContain('linear-gradient(180deg');
   });
 
   it('supports preset refs in stage overrides, step backgrounds, and legacy sections', async () => {

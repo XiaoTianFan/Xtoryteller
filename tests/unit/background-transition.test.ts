@@ -47,6 +47,42 @@ describe('background transitions', () => {
     expect(getBackgroundTransitionMode(paperAppearance, paperAppearanceNext)).toBe('interpolate');
   });
 
+  it('cross-fades when the legibility filter changes', () => {
+    const from: ResolvedBackgroundAppearance = {
+      kind: 'paper-shader',
+      key: 'paper:from',
+      opacity: 1,
+      shader: 'grain-gradient',
+      preset: 'wave',
+      params: {
+        colorBack: '#101820',
+        colors: ['#3a506b', '#f4d35e']
+      },
+      filter: {
+        mode: 'radial',
+        opacity: 0.18,
+        radialSize: {
+          width: 0.7,
+          height: 0.55
+        },
+        linearProportion: 0.45,
+        color: '#101820',
+        value: 'radial-gradient(...)'
+      }
+    };
+    const to: ResolvedBackgroundAppearance = {
+      ...from,
+      key: 'paper:to',
+      filter: {
+        ...from.filter!,
+        opacity: 0.24,
+        value: 'radial-gradient(...changed)'
+      }
+    };
+
+    expect(getBackgroundTransitionMode(from, to)).toBe('crossfade');
+  });
+
   it('interpolates supported numeric and color paper shader props', () => {
     const from: ResolvedBackgroundAppearance = {
       kind: 'paper-shader',

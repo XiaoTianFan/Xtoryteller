@@ -51,6 +51,13 @@ shared:
       contrast: number?
       speed: number?
       opacity: number?
+      filter:
+        mode: radial | linear-horizontal | linear-vertical
+        opacity: number?
+        radialSize:
+          width: number?
+          height: number?
+        linearProportion: number?
       transition:
         duration: number?
         easing: string?
@@ -58,11 +65,25 @@ shared:
         - steps: [number, number]
           presetRef: string?
           type: paper-shader | css | none | legacy paper?
+          filter:
+            mode: radial | linear-horizontal | linear-vertical
+            opacity: number?
+            radialSize:
+              width: number?
+              height: number?
+            linearProportion: number?
       regions:
         - clusters: string[]?
           group: string?
           presetRef: string?
           type: paper-shader | css | none | legacy paper?
+          filter:
+            mode: radial | linear-horizontal | linear-vertical
+            opacity: number?
+            radialSize:
+              width: number?
+              height: number?
+            linearProportion: number?
   backgroundSections:
     - match:
         stepRange: [number, number]?

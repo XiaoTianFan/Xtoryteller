@@ -1,7 +1,7 @@
 import { resolveAssetPath } from '@/lib/engine/asset-resolver';
 import {
+  BackgroundFilterConfig,
   BackgroundConfigObject,
-  BackgroundShaderConfig,
   CssGradientConfig,
   PresentationConfig
 } from '@/lib/types/presentation';
@@ -25,11 +25,24 @@ export interface ResolvedBackgroundAppearance {
   kind: 'css' | 'none' | 'paper-shader';
   key: string;
   opacity: number;
+  filter?: ResolvedBackgroundFilter;
   shader?: string;
   preset?: string;
   params?: Record<string, unknown>;
   value?: string;
   cssConfig?: ResolvedCssGradientConfig;
+}
+
+export interface ResolvedBackgroundFilter {
+  mode: 'radial' | 'linear-horizontal' | 'linear-vertical';
+  opacity: number;
+  radialSize: {
+    width: number;
+    height: number;
+  };
+  linearProportion: number;
+  color: string;
+  value: string;
 }
 
 export interface ResolvedBackgroundTransition {
@@ -59,6 +72,7 @@ interface PresentationBackgroundLike {
   params?: Record<string, unknown>;
   value?: string;
   gradient?: CssGradientConfig;
+  filter?: BackgroundFilterConfig;
   variant?: string;
   colorStops?: string[];
   intensity?: number;
@@ -82,6 +96,7 @@ interface PresentationBackgroundLike {
     contrast?: number;
     speed?: number;
     opacity?: number;
+    filter?: BackgroundFilterConfig;
   }>;
   regions?: Array<{
     clusters?: string[];
@@ -100,6 +115,7 @@ interface PresentationBackgroundLike {
     contrast?: number;
     speed?: number;
     opacity?: number;
+    filter?: BackgroundFilterConfig;
   }>;
   transition?: {
     duration?: number;
@@ -139,6 +155,10 @@ function toFiniteNumber(value: unknown, fallback: number): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 }
 
+function clampUnit(value: unknown, fallback: number): number {
+  return Math.max(0, Math.min(1, toFiniteNumber(value, fallback)));
+}
+
 function normalizeKey(value: string): string {
   return value
     .trim()
@@ -161,6 +181,53 @@ function stableStringify(value: unknown): string {
   }
 
   return JSON.stringify(value);
+}
+
+function parseCssColor(value: string): [number, number, number, number] | null {
+  const trimmed = value.trim();
+  const hex = trimmed.match(/^#([\da-f]{3,8})$/i);
+  if (hex) {
+    const normalized = hex[1].length <= 4
+      ? hex[1]
+          .split('')
+          .map((part) => part + part)
+          .join('')
+      : hex[1];
+    if (normalized.length === 6 || normalized.length === 8) {
+      const red = Number.parseInt(normalized.slice(0, 2), 16);
+      const green = Number.parseInt(normalized.slice(2, 4), 16);
+      const blue = Number.parseInt(normalized.slice(4, 6), 16);
+      const alpha = normalized.length === 8 ? Number.parseInt(normalized.slice(6, 8), 16) / 255 : 1;
+      return [red, green, blue, alpha];
+    }
+  }
+
+  const rgb = trimmed.match(/^rgba?\((.+)\)$/i);
+  if (!rgb) {
+    return null;
+  }
+
+  const parts = rgb[1].split(',').map((part) => part.trim());
+  if (parts.length < 3 || parts.length > 4) {
+    return null;
+  }
+
+  const red = Number.parseFloat(parts[0]);
+  const green = Number.parseFloat(parts[1]);
+  const blue = Number.parseFloat(parts[2]);
+  const alpha = parts[3] == null ? 1 : Number.parseFloat(parts[3]);
+  return [red, green, blue, alpha].every((entry) => Number.isFinite(entry))
+    ? [red, green, blue, alpha]
+    : null;
+}
+
+function colorWithOpacity(color: string, opacity: number): string {
+  const parsed = parseCssColor(color);
+  if (!parsed) {
+    return `color-mix(in srgb, ${color} ${(opacity * 100).toFixed(1)}%, transparent)`;
+  }
+
+  return `rgba(${Math.round(parsed[0])}, ${Math.round(parsed[1])}, ${Math.round(parsed[2])}, ${(parsed[3] * opacity).toFixed(3)})`;
 }
 
 function looksLikeCssBackground(value: string): boolean {
@@ -195,6 +262,78 @@ function resolveShaderAssets(value: unknown, slug: string): unknown {
   }
 
   return value;
+}
+
+function getThemeBackgroundColor(theme?: ThemeConfig): string | null {
+  const resolved = getNestedValue(theme?.colors, ['background']);
+  return typeof resolved === 'string' && resolved.trim() ? resolved : null;
+}
+
+function resolveBackgroundFilterColor(params: Record<string, unknown>, theme?: ThemeConfig): string {
+  const colorBack = typeof params.colorBack === 'string' && params.colorBack.trim() ? params.colorBack : null;
+  if (colorBack) {
+    return colorBack;
+  }
+
+  const colors = Array.isArray(params.colors) ? params.colors : [];
+  const firstPaletteColor = colors.find((entry) => typeof entry === 'string' && entry.trim());
+  if (typeof firstPaletteColor === 'string') {
+    return firstPaletteColor;
+  }
+
+  return getThemeBackgroundColor(theme) ?? 'var(--color-background)';
+}
+
+function buildBackgroundFilterValue(filter: {
+  mode: ResolvedBackgroundFilter['mode'];
+  opacity: number;
+  radialSize: { width: number; height: number };
+  linearProportion: number;
+  color: string;
+}): string {
+  const overlayColor = colorWithOpacity(filter.color, filter.opacity);
+
+  if (filter.mode === 'radial') {
+    return `radial-gradient(ellipse ${(filter.radialSize.width * 100).toFixed(1)}% ${(filter.radialSize.height * 100).toFixed(1)}% at center, transparent 0%, transparent 54%, ${overlayColor} 100%)`;
+  }
+
+  const edgeSize = Math.max(0, (1 - filter.linearProportion) / 2);
+  const edgeStop = (edgeSize * 100).toFixed(1);
+  const centerStop = ((1 - edgeSize) * 100).toFixed(1);
+  const angle = filter.mode === 'linear-horizontal' ? '90deg' : '180deg';
+  return `linear-gradient(${angle}, ${overlayColor} 0%, transparent ${edgeStop}%, transparent ${centerStop}%, ${overlayColor} 100%)`;
+}
+
+function normalizeBackgroundFilterConfig(
+  filter: BackgroundFilterConfig | undefined,
+  params: Record<string, unknown>,
+  theme?: ThemeConfig
+): ResolvedBackgroundFilter | null {
+  if (!filter || typeof filter !== 'object') {
+    return null;
+  }
+
+  if (
+    filter.mode !== 'radial' &&
+    filter.mode !== 'linear-horizontal' &&
+    filter.mode !== 'linear-vertical'
+  ) {
+    return null;
+  }
+
+  const normalizedFilter: ResolvedBackgroundFilter = {
+    mode: filter.mode,
+    opacity: clampUnit(filter.opacity, 0.18),
+    radialSize: {
+      width: clampUnit(filter.radialSize?.width, 0.7),
+      height: clampUnit(filter.radialSize?.height, 0.55)
+    },
+    linearProportion: clampUnit(filter.linearProportion, 0.45),
+    color: resolveBackgroundFilterColor(params, theme),
+    value: ''
+  };
+  normalizedFilter.value = buildBackgroundFilterValue(normalizedFilter);
+  return normalizedFilter;
 }
 
 export function normalizeCssGradientConfig(
@@ -299,7 +438,7 @@ export function resolveBackgroundAppearance(
     const params = resolvePaperShaderProps(shader, preset, {});
     return {
       kind: 'paper-shader',
-      key: `paper-shader:${shader}:${stableStringify({ preset: preset ?? null, params, opacity: 1 })}`,
+      key: `paper-shader:${shader}:${stableStringify({ preset: preset ?? null, params, opacity: 1, filter: null })}`,
       shader,
       preset,
       params,
@@ -362,13 +501,15 @@ export function resolveBackgroundAppearance(
     }
   );
   const params = resolvePaperShaderProps(shader, preset, normalizedParams);
+  const filter = normalizeBackgroundFilterConfig(config.filter, params, theme);
 
   return {
     kind: 'paper-shader',
-    key: `paper-shader:${shader}:${stableStringify({ preset: preset ?? null, params, opacity: config.opacity ?? 1 })}`,
+    key: `paper-shader:${shader}:${stableStringify({ preset: preset ?? null, params, opacity: config.opacity ?? 1, filter })}`,
     shader,
     preset,
     params,
+    filter: filter ?? undefined,
     opacity: toFiniteNumber(config.opacity, 1)
   };
 }

@@ -1,0 +1,18 @@
+meta:
+  title: Background Filter Paper
+  slug: background-filter-paper
+mode: stage
+background:
+  type: paper-shader
+  presetRef: editorial-paper
+  filter:
+    mode: radial
+    opacity: 0.2
+    radialSize:
+      width: 0.72
+      height: 0.56
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Filtered paper shader

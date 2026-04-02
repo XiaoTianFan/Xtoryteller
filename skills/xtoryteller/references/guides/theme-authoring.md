@@ -21,6 +21,7 @@ Optional shared default surface:
 
 - `background`: a theme-owned default background using the same `BackgroundShaderConfig` shape as presentations.
 - Prefer `background: { type: paper-shader, presetRef: <shared-preset> }` when the theme should carry a reusable Paper Shader look.
+- Add `background.filter` when a theme-owned Paper Shader needs a softer center for text legibility without replacing the underlying preset.
 - Presentations can still override the theme default with their own top-level `background`, step backgrounds, cluster backgrounds, or legacy `backgroundSections`.
 
 Presentations can select a theme with `theme: <slug>` and can add `themeOverrides` for targeted adjustments.
@@ -39,6 +40,7 @@ If a presentation omits `theme`, the viewer inherits the dashboard-selected glob
 - Keep contrast strong enough to pass `validate-theme`.
 - Make motion settings deliberate instead of treating them as decorative defaults.
 - When theme backgrounds use Paper Shader presets with native animation, prefer tuning the preset's `speed` instead of adding extra wrapper-style drift.
+- Keep `background.filter` local to the theme or presentation unless the shared preset itself truly needs the same legibility treatment everywhere.
 
 ## Font Sources
 

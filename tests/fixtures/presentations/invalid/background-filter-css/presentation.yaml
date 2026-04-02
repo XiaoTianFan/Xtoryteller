@@ -1,0 +1,15 @@
+meta:
+  title: Invalid Background Filter CSS
+  slug: invalid-background-filter-css
+mode: stage
+background:
+  type: css
+  value: linear-gradient(180deg, #fff, #eee)
+  filter:
+    mode: radial
+    opacity: 0.2
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Invalid CSS filter

@@ -1,0 +1,16 @@
+meta:
+  title: Invalid Background Filter Radial Size
+  slug: invalid-background-filter-radial-size
+mode: stage
+background:
+  type: paper-shader
+  presetRef: editorial-paper
+  filter:
+    mode: radial
+    radialSize:
+      width: 1.2
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Invalid filter radial size

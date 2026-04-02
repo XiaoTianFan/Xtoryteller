@@ -5,6 +5,7 @@ import { animate, useReducedMotion } from 'framer-motion';
 
 import {
   ResolvedBackgroundAppearance,
+  ResolvedBackgroundFilter,
   ResolvedBackgroundTransition,
   ResolvedCssGradientConfig,
   buildCssBackgroundValue,
@@ -133,6 +134,10 @@ function canInterpolateCssAppearance(
   from: ResolvedBackgroundAppearance,
   to: ResolvedBackgroundAppearance
 ): boolean {
+  if (!valuesAreEqual(from.filter ?? null, to.filter ?? null)) {
+    return false;
+  }
+
   if (from.kind !== 'css' || to.kind !== 'css' || !from.cssConfig || !to.cssConfig) {
     return false;
   }
@@ -156,6 +161,10 @@ function canInterpolatePaperAppearance(
   from: ResolvedBackgroundAppearance,
   to: ResolvedBackgroundAppearance
 ): boolean {
+  if (!valuesAreEqual(from.filter ?? null, to.filter ?? null)) {
+    return false;
+  }
+
   if (
     from.kind !== 'paper-shader' ||
     to.kind !== 'paper-shader' ||
@@ -473,7 +482,37 @@ function BackgroundAppearanceLayer({
         elapsedSeconds={elapsedSeconds}
         prefersReducedMotion={prefersReducedMotion}
       />
+      <BackgroundFilterLayer
+        kind={appearance.kind}
+        filter={appearance.filter}
+      />
     </div>
+  );
+}
+
+function BackgroundFilterLayer({
+  kind,
+  filter
+}: {
+  kind: ResolvedBackgroundAppearance['kind'];
+  filter?: ResolvedBackgroundFilter;
+}) {
+  if (kind !== 'paper-shader' || !filter) {
+    return null;
+  }
+
+  return (
+    <div
+      aria-hidden="true"
+      className="backgroundFilter"
+      data-background-filter-mode={filter.mode}
+      data-background-filter-color={filter.color}
+      style={{
+        ...surfaceStyle,
+        background: filter.value,
+        pointerEvents: 'none'
+      }}
+    />
   );
 }
 

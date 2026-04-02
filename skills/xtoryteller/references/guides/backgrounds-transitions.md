@@ -18,11 +18,20 @@ Authoring choices:
 - `background: "linear-gradient(...)"` for a simple CSS background
 - `background: mesh-gradient` or another supported curated Paper shader
 - `background: { type: paper-shader, presetRef: editorial-paper }` for a shared repo preset
+- `background: { type: paper-shader, presetRef: tidal-waves, filter: { mode: radial, opacity: 0.2 } }` for a shared preset plus a legibility overlay
 - `background: { type: css, value: "..." }`
 - `background: { type: css, gradient: { type: linear, angle: 135, stops: [...] } }`
 - `background: { type: paper-shader, shader: waves, preset: groovy, colorStops: [...], intensity: 0.5 }`
 
 Shared preset references come from `references/registries/background-registry.json`. `presetRef` is Xtoryteller's reusable preset key; `preset` still means the upstream Paper Shader preset such as `groovy` or `wave`.
+
+Optional legibility overlay for Paper Shader backgrounds:
+
+- `filter.mode`: `radial`, `linear-horizontal`, or `linear-vertical`
+- `filter.opacity`: 0..1 overlay strength
+- `filter.radialSize.width` / `filter.radialSize.height`: center-clear ellipse size for `radial`
+- `filter.linearProportion`: center-clear band size for the two linear modes
+- The overlay color comes from the resolved preset/theme background color, so prefer it before replacing an otherwise-correct preset just for readability.
 
 Currently supported Paper shader targets:
 
@@ -51,6 +60,12 @@ Common pattern:
 background:
   type: paper-shader
   presetRef: tidal-waves
+  filter:
+    mode: radial
+    opacity: 0.2
+    radialSize:
+      width: 0.72
+      height: 0.56
   stages:
     - steps: [0, 1]
       type: css
@@ -83,8 +98,10 @@ Use `steps` inside `background.stages` for Stage mode. Use `clusters` or `group`
 ## Current Support Guidance
 
 - Named transitions, background switching, CSS backgrounds, Paper shader backgrounds, and reduced-motion behavior are shipped.
+- Paper Shader backgrounds can render an optional legibility filter overlay above the shader output.
 - Same-renderer compatible states interpolate supported numeric and color props.
 - Different renderer types, incompatible presets, and raw CSS background strings cross-fade between layers.
+- Filter changes currently cross-fade instead of interpolating independently.
 - Paper Shader presets with built-in animation use the library's own timing path; wrapper fallback motion is only used where the library has no native animation channel.
 - Reduced-motion mode short-circuits background changes to immediate swaps.
 - Unsupported shader names, presets, and params should fail validation instead of being passed through.

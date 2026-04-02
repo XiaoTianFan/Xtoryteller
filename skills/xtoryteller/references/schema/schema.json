@@ -115,6 +115,7 @@
             "contrast": { "type": "number" },
             "speed": { "type": "number" },
             "opacity": { "type": "number" },
+            "filter": { "$ref": "#/$defs/backgroundFilter" },
             "transition": {
               "type": "object",
               "properties": {
@@ -167,7 +168,8 @@
                   "grain": { "type": "number" },
                   "contrast": { "type": "number" },
                   "speed": { "type": "number" },
-                  "opacity": { "type": "number" }
+                  "opacity": { "type": "number" },
+                  "filter": { "$ref": "#/$defs/backgroundFilter" }
                 },
                 "additionalProperties": true
               }
@@ -211,7 +213,8 @@
                   "grain": { "type": "number" },
                   "contrast": { "type": "number" },
                   "speed": { "type": "number" },
-                  "opacity": { "type": "number" }
+                  "opacity": { "type": "number" },
+                  "filter": { "$ref": "#/$defs/backgroundFilter" }
                 },
                 "additionalProperties": true
               }
@@ -220,6 +223,26 @@
           "additionalProperties": true
         }
       ]
+    },
+    "backgroundFilter": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "enum": ["radial", "linear-horizontal", "linear-vertical"]
+        },
+        "opacity": { "type": "number" },
+        "radialSize": {
+          "type": "object",
+          "properties": {
+            "width": { "type": "number" },
+            "height": { "type": "number" }
+          },
+          "additionalProperties": false
+        },
+        "linearProportion": { "type": "number" }
+      },
+      "required": ["mode"],
+      "additionalProperties": false
     },
     "component": {
       "type": "object",

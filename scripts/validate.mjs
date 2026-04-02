@@ -181,6 +181,62 @@ function validateCssGradient(gradient, label, issues) {
   }
 }
 
+function validateBackgroundFilterConfig(filter, label, issues) {
+  if (filter == null) {
+    return;
+  }
+
+  const value = asObject(filter);
+  if (!value) {
+    issues.push(createIssue('error', `${label} must be an object.`));
+    return;
+  }
+
+  const allowedKeys = new Set(['mode', 'opacity', 'radialSize', 'linearProportion']);
+  for (const key of Object.keys(value)) {
+    if (!allowedKeys.has(key)) {
+      issues.push(createIssue('error', `${label}.${key} is not supported.`));
+    }
+  }
+
+  if (!['radial', 'linear-horizontal', 'linear-vertical'].includes(value.mode)) {
+    issues.push(
+      createIssue(
+        'error',
+        `${label}.mode must be "radial", "linear-horizontal", or "linear-vertical".`
+      )
+    );
+  }
+
+  if (value.opacity != null && (!Number.isFinite(value.opacity) || value.opacity < 0 || value.opacity > 1)) {
+    issues.push(createIssue('error', `${label}.opacity must be between 0 and 1.`));
+  }
+
+  if (value.linearProportion != null && (!Number.isFinite(value.linearProportion) || value.linearProportion < 0 || value.linearProportion > 1)) {
+    issues.push(createIssue('error', `${label}.linearProportion must be between 0 and 1.`));
+  }
+
+  if (value.radialSize != null) {
+    const radialSize = asObject(value.radialSize);
+    if (!radialSize) {
+      issues.push(createIssue('error', `${label}.radialSize must be an object.`));
+    } else {
+      const allowedRadialKeys = new Set(['width', 'height']);
+      for (const key of Object.keys(radialSize)) {
+        if (!allowedRadialKeys.has(key)) {
+          issues.push(createIssue('error', `${label}.radialSize.${key} is not supported.`));
+        }
+      }
+
+      for (const key of ['width', 'height']) {
+        if (radialSize[key] != null && (!Number.isFinite(radialSize[key]) || radialSize[key] < 0 || radialSize[key] > 1)) {
+          issues.push(createIssue('error', `${label}.radialSize.${key} must be between 0 and 1.`));
+        }
+      }
+    }
+  }
+}
+
 function validatePaperShaderConfig(value, label, issues, shaderName) {
   const support = getPaperShaderSupport(shaderName);
   if (!support) {
@@ -263,7 +319,17 @@ function resolvePresetBackedBackground(value, backgroundPresetMap) {
       grain: value.grain ?? preset.grain,
       contrast: value.contrast ?? preset.contrast,
       speed: value.speed ?? preset.speed,
-      opacity: value.opacity ?? preset.opacity
+      opacity: value.opacity ?? preset.opacity,
+      filter: preset.filter || value.filter
+        ? {
+            ...(asObject(preset.filter) ?? {}),
+            ...(asObject(value.filter) ?? {}),
+            radialSize: {
+              ...((asObject(preset.filter)?.radialSize && asObject(asObject(preset.filter).radialSize)) ?? {}),
+              ...((asObject(value.filter)?.radialSize && asObject(asObject(value.filter).radialSize)) ?? {})
+            }
+          }
+        : undefined
     }
   };
 }
@@ -287,7 +353,8 @@ function validateBackgroundPresetDefinition(value, label, issues) {
     'grain',
     'contrast',
     'speed',
-    'opacity'
+    'opacity',
+    'filter'
   ]);
 
   for (const key of Object.keys(preset)) {
@@ -315,6 +382,8 @@ function validateBackgroundPresetDefinition(value, label, issues) {
     issues.push(createIssue('error', `${label}.shader must reference a supported Paper shader.`));
     return;
   }
+
+  validateBackgroundFilterConfig(preset.filter, `${label}.filter`, issues);
 
   validatePaperShaderConfig(
     {
@@ -395,6 +464,15 @@ function validateBackgroundConfig(background, label, config, issues, backgroundP
   }
 
   if (!explicitNone && (explicitCss || normalizedType === 'paper' || (!shaderName && (effectiveValue.value != null || effectiveValue.gradient != null || effectiveValue.colorStops != null)))) {
+    if (effectiveValue.filter != null) {
+      issues.push(
+        createIssue(
+          'error',
+          `${label}.filter is only supported on Paper shader backgrounds or presetRef-backed Paper shader backgrounds.`
+        )
+      );
+    }
+
     if (effectiveValue.value != null && typeof effectiveValue.value !== 'string') {
       issues.push(createIssue('error', `${label}.value must be a string.`));
     }
@@ -407,7 +485,15 @@ function validateBackgroundConfig(background, label, config, issues, backgroundP
 
     validateCssGradient(effectiveValue.gradient, `${label}.gradient`, issues);
   } else if (!explicitNone) {
+    validateBackgroundFilterConfig(effectiveValue.filter, `${label}.filter`, issues);
     validatePaperShaderConfig(effectiveValue, label, issues, shaderName);
+  } else if (effectiveValue.filter != null) {
+    issues.push(
+      createIssue(
+        'error',
+        `${label}.filter is only supported on Paper shader backgrounds or presetRef-backed Paper shader backgrounds.`
+      )
+    );
   }
 
   if (Array.isArray(effectiveValue.stages)) {

@@ -295,6 +295,12 @@ name: Split Pastel
 background:
   type: paper-shader
   presetRef: tidal-waves
+  filter:
+    mode: radial
+    opacity: 0.2
+    radialSize:
+      width: 0.72
+      height: 0.56
 fonts:
   heading:
     family: Outfit

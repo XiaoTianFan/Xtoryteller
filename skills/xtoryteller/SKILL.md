@@ -30,18 +30,19 @@ Use this skill for work inside the Xtoryteller presentation system, not for one-
    [schema guide](references/schema/schema.yaml) and [JSON schema](references/schema/schema.json).
 3. Prefer built-in primitives and theme tokens before inventing new code.
 4. Prefer shared background presets from `references/registries/background-registry.json` via `presetRef` before inventing a new reusable Paper Shader look.
-5. Keep work YAML-first: author or edit `presentations/<slug>/presentation.yaml`, then validate.
-6. Omit `theme` when a presentation should inherit the dashboard-selected global theme. Add `theme: <slug>` only when the deck must lock itself to a specific reusable theme.
-7. Let the theme own the default background when possible. Add presentation-level `background` only when the deck needs a deliberate override that should not follow theme switching.
-8. Treat the four shipped demos as the canonical reference set: `simple-stage`, `simple-map`, `complex-stage`, and `complex-map`.
-9. Use the reference examples as workflow seeds, not as permission to duplicate stale one-off demo variants.
-10. Run validation before handoff:
+5. When a Paper Shader background needs extra text legibility, prefer the built-in `background.filter` overlay before replacing the preset or flattening the background to CSS.
+6. Keep work YAML-first: author or edit `presentations/<slug>/presentation.yaml`, then validate.
+7. Omit `theme` when a presentation should inherit the dashboard-selected global theme. Add `theme: <slug>` only when the deck must lock itself to a specific reusable theme.
+8. Let the theme own the default background when possible. Add presentation-level `background` only when the deck needs a deliberate override that should not follow theme switching.
+9. Treat the four shipped demos as the canonical reference set: `simple-stage`, `simple-map`, `complex-stage`, and `complex-map`.
+10. Use the reference examples as workflow seeds, not as permission to duplicate stale one-off demo variants.
+11. Run validation before handoff:
    `node scripts/validate.mjs presentations/<slug>/presentation.yaml`
-11. When shared manifests, themes, or background presets changed, refresh and validate broadly:
+12. When shared manifests, themes, or background presets changed, refresh and validate broadly:
    `node scripts/validate-all.mjs`
-12. When the task changes runtime behavior instead of only content, run the appropriate test layer from [guides/qa-workflows.md](references/guides/qa-workflows.md).
-13. For Stage mode, manually verify viewport fit after meaningful edits at both `1280x720` and `1920x1080`. The page height must stay locked to the viewport, with no vertical growth or rescue scrolling.
-14. When the user is unsure about art direction, prefer live preset-driven previews before abstract style debates.
+13. When the task changes runtime behavior instead of only content, run the appropriate test layer from [guides/qa-workflows.md](references/guides/qa-workflows.md).
+14. For Stage mode, manually verify viewport fit after meaningful edits at both `1280x720` and `1920x1080`. The page height must stay locked to the viewport, with no vertical growth or rescue scrolling.
+15. When the user is unsure about art direction, prefer live preset-driven previews before abstract style debates.
 
 ## Theme-System Route
 
@@ -87,6 +88,8 @@ Use these when repeated scaffolding would otherwise become manual and fragile.
 - Never rely on page growth, overflow, or scrolling to save a crowded Stage step.
 - Never solve repeated visual drift with scattered hardcoded CSS values when the design belongs in the theme token system.
 - Never use `preset` when you mean the shared Xtoryteller background preset name; use `presetRef` for the shared preset and keep `preset` for the upstream Paper Shader preset.
+- Never add `background.filter` to CSS or `none` backgrounds; it is only for Paper Shader surfaces and preset-backed Paper Shader backgrounds.
+- Never replace a reusable preset just to solve central text legibility until you have considered a theme- or presentation-level `background.filter` overlay first.
 - Never add wrapper-driven Paper Shader motion where the upstream shader already supports built-in animation through `speed` or `frame`.
 - Never turn intrinsic layout mechanics like `100vh`, `100%`, SVG geometry, or arrangement outputs into theme tokens unless they are clearly intended as reusable visual language.
 - Never settle for generic “AI default” styling when the task clearly needs character. Prefer a named preset family, a deliberate type pairing, and a repeated layout motif.

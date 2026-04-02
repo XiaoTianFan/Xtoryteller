@@ -27,6 +27,17 @@ export interface BackgroundTransitionConfig {
 }
 
 export type BackgroundRendererType = 'paper-shader' | 'css' | 'none';
+export type BackgroundFilterMode = 'radial' | 'linear-horizontal' | 'linear-vertical';
+
+export interface BackgroundFilterConfig {
+  mode: BackgroundFilterMode;
+  opacity?: number;
+  radialSize?: {
+    width?: number;
+    height?: number;
+  };
+  linearProportion?: number;
+}
 
 export type SupportedPaperShaderName =
   | 'dithering'
@@ -49,6 +60,7 @@ export interface CssGradientConfig {
 interface BackgroundConfigBase {
   presetRef?: string;
   opacity?: number;
+  filter?: BackgroundFilterConfig;
   transition?: BackgroundTransitionConfig;
   stages?: Array<{
     steps: [number, number];
@@ -66,6 +78,7 @@ interface BackgroundConfigBase {
     contrast?: number;
     speed?: number;
     opacity?: number;
+    filter?: BackgroundFilterConfig;
   }>;
   regions?: Array<{
     clusters?: string[];
@@ -84,6 +97,7 @@ interface BackgroundConfigBase {
     contrast?: number;
     speed?: number;
     opacity?: number;
+    filter?: BackgroundFilterConfig;
   }>;
 }
 

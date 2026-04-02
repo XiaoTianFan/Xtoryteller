@@ -17,6 +17,15 @@ type BackgroundObjectLike = {
   contrast?: number;
   speed?: number;
   opacity?: number;
+  filter?: {
+    mode?: string;
+    opacity?: number;
+    radialSize?: {
+      width?: number;
+      height?: number;
+    };
+    linearProportion?: number;
+  };
   transition?: {
     duration?: number;
     easing?: string;
@@ -39,6 +48,7 @@ function mergePresetBackground(
   const {
     presetRef: _presetRef,
     params: inlineParams,
+    filter: inlineFilter,
     stages,
     regions,
     ...inlineRest
@@ -58,6 +68,16 @@ function mergePresetBackground(
     contrast: inlineRest.contrast ?? preset.contrast,
     speed: inlineRest.speed ?? preset.speed,
     opacity: inlineRest.opacity ?? preset.opacity,
+    filter: preset.filter || inlineFilter
+      ? {
+          ...((preset.filter as Record<string, unknown> | undefined) ?? {}),
+          ...((inlineFilter as Record<string, unknown> | undefined) ?? {}),
+          radialSize: {
+            ...(((preset.filter as { radialSize?: Record<string, unknown> } | undefined)?.radialSize) ?? {}),
+            ...(((inlineFilter as { radialSize?: Record<string, unknown> } | undefined)?.radialSize) ?? {})
+          }
+        }
+      : undefined,
     ...inlineRest,
     stages,
     regions

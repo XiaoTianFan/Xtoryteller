@@ -1,0 +1,15 @@
+meta:
+  title: Invalid Background Filter Linear Proportion
+  slug: invalid-background-filter-linear-proportion
+mode: stage
+background:
+  type: paper-shader
+  presetRef: editorial-paper
+  filter:
+    mode: linear-horizontal
+    linearProportion: 1.4
+steps:
+  - layout: single-content
+    components:
+      - type: headline
+        content: Invalid filter linear proportion
