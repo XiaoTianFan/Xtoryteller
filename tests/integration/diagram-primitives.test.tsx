@@ -1,8 +1,9 @@
 /** @vitest-environment jsdom */
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import CausalDiagram from '@/components/causal-diagram';
 import IcebergDiagram from '@/components/iceberg-diagram';
+import ThreeHorizons from '@/components/three-horizons';
 
 describe('diagram primitives', () => {
   it('renders ELK-backed causal diagrams with grouped labels and S/O-only edge badges', async () => {
@@ -88,5 +89,108 @@ describe('diagram primitives', () => {
     expect(screen.getByRole('button', { name: /If abundance destroys scarcity/i })).toBeInTheDocument();
     expect(container.querySelectorAll('[data-iceberg-note="true"]')).toHaveLength(12);
     expect(container.querySelectorAll('line')).toHaveLength(3);
+  });
+
+  it('renders rich three-horizons note boxes with hover tooltips and markdown detail', async () => {
+    render(
+      <ThreeHorizons
+        props={{
+          horizon1: {
+            label: 'Horizon 1',
+            color: 'var(--color-warning)',
+            boxes: [
+              {
+                title: '3 - Current System Concerns',
+                notes: [{ label: 'Pro-Rata Streaming Royalty Model', detail: 'Current failure mode.' }]
+              },
+              {
+                title: '4 - Elements of the Current System to Retain',
+                notes: [{ label: 'Metadata Standards', detail: 'Keep tags, but add provenance.' }]
+              }
+            ]
+          },
+          horizon2: {
+            label: 'Horizon 2',
+            color: 'var(--color-primary)',
+            boxes: [
+              {
+                title: '5 - Intermediate Innovations (Temporary)',
+                notes: [{ label: 'Human Music Certification Labels', detail: 'Voluntary labels create market pressure.' }]
+              },
+              {
+                title: '6 - Elements of the Current System to Repurpose',
+                notes: [
+                  {
+                    label: 'Repurpose PROs (ASCAP/BMI) as AI Training Registries',
+                    detail: 'Current function. **New use:** Track training datasets and distribute royalties.'
+                  }
+                ]
+              }
+            ]
+          },
+          horizon3: {
+            label: 'Horizon 3',
+            color: 'var(--color-success)',
+            boxes: [
+              {
+                title: '1 - Vision of the (Ideal) Future',
+                notes: [{ label: 'Consent-First AI Training Economy', detail: 'Creators opt in and receive royalties.' }]
+              },
+              {
+                title: '2 - Pockets of the Future in the Present',
+                notes: [{ label: 'C2PA Content Provenance Standard', detail: 'Cryptographic origin labels.' }]
+              }
+            ]
+          },
+          timeLabels: {
+            start: '2025',
+            mid: '2030',
+            end: '2040'
+          }
+        }}
+      />
+    );
+
+    expect(screen.getByText('3 - Current System Concerns')).toBeInTheDocument();
+    expect(screen.getByText('5 - Intermediate Innovations (Temporary)')).toBeInTheDocument();
+    expect(screen.getByText('1 - Vision of the (Ideal) Future')).toBeInTheDocument();
+
+    fireEvent.mouseEnter(screen.getByRole('button', { name: /repurpose pros/i }));
+
+    const tooltip = await screen.findByRole('tooltip');
+    expect(tooltip).toHaveTextContent('Repurpose PROs');
+    expect(tooltip).toHaveTextContent('Track training datasets and distribute royalties.');
+    expect(tooltip.querySelector('strong')).toHaveTextContent('New use:');
+  });
+
+  it('keeps legacy three-horizons rendering summary columns', () => {
+    render(
+      <ThreeHorizons
+        props={{
+          horizon1: {
+            label: 'Foundation',
+            items: ['Stage runtime', 'YAML loader']
+          },
+          horizon2: {
+            label: 'Expansion',
+            items: ['Map mode']
+          },
+          horizon3: {
+            label: 'Portable system',
+            items: ['Export/import']
+          },
+          timeLabels: {
+            start: 'Phase 1',
+            mid: 'Phase 2',
+            end: 'Next'
+          }
+        }}
+      />
+    );
+
+    expect(screen.getAllByText('Foundation')).toHaveLength(2);
+    expect(screen.getByText('Stage runtime')).toBeInTheDocument();
+    expect(screen.getAllByText('Portable system')).toHaveLength(2);
+    expect(screen.getByText('Export/import')).toBeInTheDocument();
   });
 });

@@ -27,7 +27,7 @@ steps:
     transition: fade
     components:
       - type: label
-        content: System insight research
+        content: System insight brief
         props: { tone: primary }
       - type: headline
         content: Recalibrating the Music System
@@ -255,23 +255,23 @@ steps:
         props:
           center: AI music system
           rings:
-            - label: High power / high knowledge
+            - label: 
               stakeholders:
                 - { label: Cloud, angle: 10 }
                 - { label: GPU, angle: 95 }
                 - { label: DSPs, angle: 190 }
                 - { label: Regulators, angle: 285 }
-            - label: Pressured intermediaries
+            - label: 
               stakeholders:
                 - { label: Labels, angle: 35 }
                 - { label: Startups, angle: 160 }
                 - { label: PROs, angle: 300 }
-            - label: Fragmented actors
+            - label: 
               stakeholders:
                 - { label: Artists, angle: 30 }
                 - { label: Unions, angle: 150 }
                 - { label: Fans, angle: 275 }
-            - label: Niche innovators
+            - label: 
               stakeholders:
                 - { label: Holly+, angle: 60 }
                 - { label: MIR, angle: 180 }
@@ -447,58 +447,6 @@ steps:
             - Declining regime
             - Bridge mechanisms
             - Emerging future
-
-  - id: iceberg-lens
-    title: Iceberg Interview Lens
-    description: The layered framework used to move from visible symptoms to structural and mythic causes.
-    layout: grid-2x2
-    transition: blur
-    components:
-      - type: iceberg-diagram
-        props:
-          waterlinePosition: 0.23
-          layers:
-            - depth: litany
-              label: Litany
-              items:
-                - AI saturation
-                - Falling income
-                - Playlist displacement
-            - depth: structures
-              label: Structures
-              items:
-                - Platform economics
-                - Data extraction
-                - STEEP forces
-            - depth: worldview
-              label: Worldviews
-              items:
-                - Authenticity
-                - Creativity
-                - Human exceptionalism
-            - depth: myths
-              label: Myths
-              items:
-                - Scarcity creates value
-                - Music as utility
-                - Artist as alchemist
-      - type: bullet-list
-        props:
-          items:
-            - "Litany: what people directly see and feel in the market."
-            - "Structures: systems and institutional arrangements beneath the events."
-            - "Worldviews: the values people carry about music, authorship, and labor."
-            - "Myths: deep cultural stories that quietly organize what counts as value."
-        style:
-          lineHeight: 1.3
-      - type: callout
-        content: |
-          The iceberg matters because visible symptoms are produced by hidden
-          structures and even deeper assumptions. Intervening only at the top
-          rarely changes the system trajectory.
-        props:
-          title: Why this lens matters
-          variant: note
 
   - id: fixes-that-backfire
     title: Pattern 1 - Fixes That Backfire
@@ -1090,50 +1038,6 @@ steps:
         props:
           title: Cultural horizon
           variant: note
-
-  - id: three-horizons
-    title: Transition Pathway - Three Horizons
-    description: The movement from declining regime, through bridge mechanisms, toward a pluralistic future.
-    layout: single-content
-    transition: blur
-    components:
-      - type: three-horizons
-        props:
-          horizon1:
-            label: Horizon 1
-            color: var(--color-warning)
-            items:
-              - Unregulated scraping
-              - Pro-rata royalties
-              - Algorithm opacity
-              - Western data monopoly
-          horizon2:
-            label: Horizon 2
-            color: var(--color-primary)
-            items:
-              - Human certification
-              - Two-tier royalties
-              - Training co-ops
-              - Carbon disclosure
-          horizon3:
-            label: Horizon 3
-            color: var(--color-success)
-            items:
-              - Consent-first training
-              - Provenance by default
-              - Representational parity
-              - Net-zero infrastructure
-          timeLabels:
-            start: 2025
-            mid: 2030
-            end: 2040
-      - type: callout
-        content: |
-          Horizon 2 must not become a resting place. Voluntary measures need
-          sunset clauses that push the system toward mandatory standards.
-        props:
-          title: Transition design principle
-          variant: important
 
   - id: tipping-points
     title: Tipping Points On The Roadmap

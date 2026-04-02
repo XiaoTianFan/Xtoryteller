@@ -13,6 +13,13 @@
   aspect-ratio: 1092 / 1206;
 }
 
+.boardLabelsHidden {
+  width: 100%;
+  margin-left: 0;
+  margin-right: auto;
+  aspect-ratio: 842 / 1206;
+}
+
 .svg {
   display: block;
 }
@@ -95,7 +102,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 0.62rem;
+  padding: 0.36rem 0.44rem;
   border: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent 28%);
   border-radius: var(--radius-components-card);
   background: color-mix(in srgb, var(--color-surface) 88%, var(--color-panel, var(--color-background)) 12%);
@@ -113,8 +120,11 @@
 }
 
 .note span {
-  display: block;
+  display: -webkit-box;
   width: 100%;
+  overflow: hidden;
+  -webkit-line-clamp: var(--iceberg-line-clamp, 4);
+  -webkit-box-orient: vertical;
 }
 
 .note:hover,
@@ -138,6 +148,6 @@
   }
 
   .note {
-    padding: 0.42rem 0.48rem;
+    padding: 0.28rem 0.34rem;
   }
 }

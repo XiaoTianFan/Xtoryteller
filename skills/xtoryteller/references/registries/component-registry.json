@@ -488,6 +488,11 @@
           "type": "number",
           "default": 0.25,
           "description": "Waterline fraction."
+        },
+        "showLabels": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to render the left-side layer labels."
         }
       }
     },
@@ -872,15 +877,18 @@
       "props": {
         "horizon1": {
           "type": "object",
-          "required": true
+          "required": true,
+          "description": "Legacy shape {label,color,items[]} or rich shape {label,color,boxes:[{title,notes:[{label,detail}]}]}"
         },
         "horizon2": {
           "type": "object",
-          "required": true
+          "required": true,
+          "description": "Legacy shape {label,color,items[]} or rich shape {label,color,boxes:[{title,notes:[{label,detail}]}]}"
         },
         "horizon3": {
           "type": "object",
-          "required": true
+          "required": true,
+          "description": "Legacy shape {label,color,items[]} or rich shape {label,color,boxes:[{title,notes:[{label,detail}]}]}"
         },
         "timeLabels": {
           "type": "object"

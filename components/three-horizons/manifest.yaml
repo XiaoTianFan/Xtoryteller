@@ -6,11 +6,14 @@ props:
   horizon1:
     type: object
     required: true
+    description: Legacy shape {label,color,items[]} or rich shape {label,color,boxes:[{title,notes:[{label,detail}]}]}
   horizon2:
     type: object
     required: true
+    description: Legacy shape {label,color,items[]} or rich shape {label,color,boxes:[{title,notes:[{label,detail}]}]}
   horizon3:
     type: object
     required: true
+    description: Legacy shape {label,color,items[]} or rich shape {label,color,boxes:[{title,notes:[{label,detail}]}]}
   timeLabels:
     type: object

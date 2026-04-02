@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { KeyboardEvent, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
@@ -15,6 +15,22 @@ function isEditableTarget(target: EventTarget | null) {
   }
 
   return Boolean(target.closest('input, textarea, select, button, a, [role="button"], [contenteditable="true"]'));
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function getStepIndexFromClientX(clientX: number, element: HTMLElement, total: number) {
+  if (total <= 0) {
+    return 0;
+  }
+
+  const rect = element.getBoundingClientRect();
+  const width = Math.max(rect.width, 1);
+  const relativeX = clamp(clientX - rect.left, 0, width);
+  const progress = relativeX / width;
+  return clamp(Math.floor(progress * total), 0, total - 1);
 }
 
 function ShortcutOverlay({
@@ -354,6 +370,44 @@ export function PresentationControls({
   const [showShortcuts, setShowShortcuts] = useState(false);
   const progress = total > 0 ? (current / total) * 100 : 0;
   const unitLabel = mapMode ? 'Cluster' : 'Step';
+  const canScrubSteps = !mapMode && total > 0;
+
+  const jumpToProgressPosition = (clientX: number, element: HTMLElement) => {
+    if (!canScrubSteps) {
+      return;
+    }
+
+    machine.goToStep(getStepIndexFromClientX(clientX, element, total));
+  };
+
+  const onProgressKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (!canScrubSteps) {
+      return;
+    }
+
+    switch (event.key) {
+      case 'ArrowLeft':
+      case 'ArrowDown':
+        event.preventDefault();
+        machine.goToStep(clamp(current - 2, 0, total - 1));
+        return;
+      case 'ArrowRight':
+      case 'ArrowUp':
+        event.preventDefault();
+        machine.goToStep(clamp(current, 0, total - 1));
+        return;
+      case 'Home':
+        event.preventDefault();
+        machine.goToStep(0);
+        return;
+      case 'End':
+        event.preventDefault();
+        machine.goToStep(total - 1);
+        return;
+      default:
+        return;
+    }
+  };
 
   return (
     <>
@@ -395,18 +449,37 @@ export function PresentationControls({
               </div>
             </div>
           </div>
-          <div
-            className="viewerRail"
-            role="progressbar"
-            aria-label="Presentation progress"
-            aria-valuemin={1}
-            aria-valuemax={Math.max(total, 1)}
-            aria-valuenow={Math.max(current, 1)}
-          >
-            <div className="progressWrap">
-              <div className="progressBar" style={{ width: `${progress}%` }} />
+          {canScrubSteps ? (
+            <button
+              type="button"
+              className="viewerRail viewerRailInteractive"
+              role="slider"
+              aria-label={`Jump to a step. Currently on ${unitLabel.toLowerCase()} ${Math.max(current, 1)} of ${total}.`}
+              aria-valuemin={1}
+              aria-valuemax={Math.max(total, 1)}
+              aria-valuenow={Math.max(current, 1)}
+              aria-valuetext={`${unitLabel} ${Math.max(current, 1)} of ${total}`}
+              onClick={(event) => jumpToProgressPosition(event.clientX, event.currentTarget)}
+              onKeyDown={onProgressKeyDown}
+            >
+              <div className="progressWrap">
+                <div className="progressBar" style={{ width: `${progress}%` }} />
+              </div>
+            </button>
+          ) : (
+            <div
+              className="viewerRail"
+              role="progressbar"
+              aria-label="Presentation progress"
+              aria-valuemin={1}
+              aria-valuemax={Math.max(total, 1)}
+              aria-valuenow={Math.max(current, 1)}
+            >
+              <div className="progressWrap">
+                <div className="progressBar" style={{ width: `${progress}%` }} />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

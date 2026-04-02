@@ -18,6 +18,8 @@ Read this file when you need a quick truth source for what Xtoryteller currently
 - Presentation-scoped primitive resolution in the runtime viewer
 - Component-level `enter` / `exit` transitions with registry validation
 - Dashboard search, filtering, sorting, and viewer navigation
+- Stage-step `description` support rendered as orientation copy above the active scene
+- Clickable Stage progress rail for direct step jumps
 
 ## Partial Or Verify Manually
 
@@ -30,3 +32,8 @@ Read this file when you need a quick truth source for what Xtoryteller currently
 ## Practical Rule
 
 If a feature sits in the second section, call out the limitation plainly, use the nearest supported path when possible, and verify in the browser before promising the result.
+
+## Polishing Takeaways
+
+- Validation can confirm structure, but it will not tell you when a long deck feels under-structured. Use browser review to judge chaptering, subtitle clarity, and navigation comfort.
+- When a long Stage deck grows beyond a short talk, navigation affordances become part of the reading experience. Treat interactive progress and clear step orientation as core runtime UX, not optional chrome.

@@ -38,9 +38,11 @@ If a presentation omits `theme`, the viewer inherits the dashboard-selected glob
 - Prefer theme tokens over repeated inline style objects.
 - Keep font roles explicit for heading, body, and mono.
 - Keep contrast strong enough to pass `validate-theme`.
+- Check component surfaces in both light and dark theme conditions when a component blends token colors. A surface that looks correct on paper-like themes may wash out on dark themes if it mixes against raw white or black.
 - Make motion settings deliberate instead of treating them as decorative defaults.
 - When theme backgrounds use Paper Shader presets with native animation, prefer tuning the preset's `speed` instead of adding extra wrapper-style drift.
 - Keep `background.filter` local to the theme or presentation unless the shared preset itself truly needs the same legibility treatment everywhere.
+- When a contrast issue repeats across many slides, move the fix into the shared component or theme token path instead of stacking local slide overrides.
 
 ## Font Sources
 
@@ -123,6 +125,11 @@ Supporting color groups still include:
 - Theme YAML controls reusable visual language through CSS variables.
 - Runtime code owns behavior, content, layout algorithms, breakpoints, viewport mechanics, and intrinsic rendering math.
 - Keep values hard-coded only when they are structural mechanics like `100vh`, `100%`, SVG math, or algorithmic placement outputs rather than theme language.
+
+## Polishing Takeaways
+
+- Repeated callout contrast failures are usually infrastructure problems, not authoring mistakes. Fix the shared component surface so the visual language stays reliable across all decks.
+- Avoid direct white-mix or black-mix assumptions inside shared components when the runtime supports multiple theme families. Blend against semantic surfaces and foreground tokens instead.
 
 ## Validation
 

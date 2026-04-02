@@ -24,10 +24,13 @@ interface PositionedNote {
   width: number;
   height: number;
   fontSize: number;
+  lineClamp: number;
 }
 
 const VIEWBOX_WIDTH = 1092;
 const VIEWBOX_HEIGHT = 1206;
+const HIDDEN_VIEWBOX_X = 250;
+const HIDDEN_VIEWBOX_WIDTH = 842;
 
 const ICEBERG_PATH = `
   M742 76
@@ -143,10 +146,10 @@ function estimateLineCount(text: string, width: number, fontSize: number) {
 }
 
 function fitFontSize(text: string, width: number, height: number) {
-  const innerWidth = Math.max(width - 20, 60);
-  const innerHeight = Math.max(height - 18, 44);
+  const innerWidth = Math.max(width - 16, 52);
+  const innerHeight = Math.max(height - 14, 38);
 
-  for (let fontSize = 18; fontSize >= 10; fontSize -= 1) {
+  for (let fontSize = 18; fontSize >= 8; fontSize -= 1) {
     const lineCount = estimateLineCount(text, innerWidth, fontSize);
     const totalHeight = lineCount * fontSize * 1.22;
     if (totalHeight <= innerHeight) {
@@ -154,7 +157,7 @@ function fitFontSize(text: string, width: number, height: number) {
     }
   }
 
-  return 10;
+  return 8;
 }
 
 function resolveColumns(area: AreaBox, itemCount: number, preferredColumns = 2) {
@@ -173,28 +176,29 @@ function resolveColumns(area: AreaBox, itemCount: number, preferredColumns = 2) 
   return Math.min(preferredColumns, 2);
 }
 
-function noteAreaForLayer(index: number, waterY: number): AreaBox {
+function noteAreaForLayer(index: number, waterY: number, labelsHidden: boolean): AreaBox {
   const structuresBottom = waterY + (VIEWBOX_HEIGHT - waterY) * 0.38;
   const worldviewBottom = waterY + (VIEWBOX_HEIGHT - waterY) * 0.73;
+  const horizontalShift = labelsHidden ? 18 : 0;
 
   switch (index) {
     case 0:
       return {
-        left: 520,
+        left: 520 + horizontalShift,
         top: 104,
         width: 398,
         height: Math.max(waterY - 132, 110)
       };
     case 1:
       return {
-        left: 386,
+        left: 386 + horizontalShift,
         top: waterY + 28,
         width: 622,
         height: Math.max(structuresBottom - waterY - 54, 180)
       };
     case 2:
       return {
-        left: 448,
+        left: 448 + horizontalShift,
         top: structuresBottom + 24,
         width: 516,
         height: Math.max(worldviewBottom - structuresBottom - 50, 180)
@@ -202,7 +206,7 @@ function noteAreaForLayer(index: number, waterY: number): AreaBox {
     case 3:
     default:
       return {
-        left: 560,
+        left: 560 + horizontalShift,
         top: worldviewBottom + 28,
         width: 276,
         height: Math.max(1116 - worldviewBottom, 160)
@@ -225,13 +229,15 @@ function buildNotes(items: string[], area: AreaBox, preferredColumns = 2): Posit
   return items.map((item, index) => {
     const row = Math.floor(index / columns);
     const column = index % columns;
+    const fontSize = fitFontSize(item, width, height);
     return {
       text: item,
       left: area.left + column * (width + gapX),
       top: area.top + row * (height + gapY),
       width,
       height,
-      fontSize: fitFontSize(item, width, height)
+      fontSize,
+      lineClamp: Math.max(2, Math.floor((height - 10) / Math.max(fontSize * 1.22, 1)))
     };
   });
 }
@@ -248,13 +254,18 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
   const gradientId = `${clipPathId}-gradient`;
   const resolvedLayers = Array.isArray(props?.layers) ? (props.layers as Layer[]).slice(0, 4) : [];
   const showLabels = props?.showLabels !== false;
+  const labelsHidden = !showLabels;
+  const visibleX = labelsHidden ? HIDDEN_VIEWBOX_X : 0;
+  const visibleWidth = labelsHidden ? HIDDEN_VIEWBOX_WIDTH : VIEWBOX_WIDTH;
   const waterline = clamp(Number(props?.waterlinePosition ?? 0.23), 0.18, 0.32);
   const waterY = waterline * VIEWBOX_HEIGHT;
   const [waterDivider, structuresDivider, worldviewDivider] = dividerPositions(waterY);
+  const guideX1 = labelsHidden ? 300 : 22;
+  const guideX2 = labelsHidden ? 1008 : VIEWBOX_WIDTH - 22;
 
   const layerNotes = resolvedLayers.map((layer, index) => ({
     copy: resolveCopy(layer, index),
-    notes: buildNotes(layer.items ?? [], noteAreaForLayer(index, waterY), index === 3 ? 2 : 2),
+    notes: buildNotes(layer.items ?? [], noteAreaForLayer(index, waterY, labelsHidden), 2),
     bandTop:
       index === 0
         ? 0
@@ -279,8 +290,13 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
 
   return (
     <figure className={`${styles.shell} ${localStyles.figure}`}>
-      <div className={localStyles.board}>
-        <svg viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} role="img" aria-label="Iceberg diagram" className={localStyles.svg}>
+      <div className={`${localStyles.board} ${labelsHidden ? localStyles.boardLabelsHidden : ''}`}>
+        <svg
+          viewBox={`${visibleX} 0 ${visibleWidth} ${VIEWBOX_HEIGHT}`}
+          role="img"
+          aria-label="Iceberg diagram"
+          className={localStyles.svg}
+        >
           <defs>
             <clipPath id={clipPathId}>
               <path d={ICEBERG_PATH} />
@@ -296,7 +312,7 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
           <rect x="0" y="0" width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT} fill="transparent" />
 
           {[waterDivider, structuresDivider, worldviewDivider].map((dividerY, index) => (
-            <line key={index} x1="22" x2={VIEWBOX_WIDTH - 22} y1={dividerY} y2={dividerY} className={index === 0 ? localStyles.waterline : localStyles.divider} />
+            <line key={index} x1={guideX1} x2={guideX2} y1={dividerY} y2={dividerY} className={index === 0 ? localStyles.waterline : localStyles.divider} />
           ))}
 
           <path d={ICEBERG_PATH} fill={`url(#${gradientId})`} className={localStyles.iceberg} />
@@ -341,11 +357,12 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
                 onClick={stopClusterNavigation}
                 onMouseDown={stopClusterNavigation}
                 style={{
-                  left: `${(note.left / VIEWBOX_WIDTH) * 100}%`,
+                  left: `${((note.left - visibleX) / visibleWidth) * 100}%`,
                   top: `${(note.top / VIEWBOX_HEIGHT) * 100}%`,
-                  width: `${(note.width / VIEWBOX_WIDTH) * 100}%`,
+                  width: `${(note.width / visibleWidth) * 100}%`,
                   height: `${(note.height / VIEWBOX_HEIGHT) * 100}%`,
-                  fontSize: `${note.fontSize}px`
+                  fontSize: `${note.fontSize}px`,
+                  ['--iceberg-line-clamp' as string]: String(note.lineClamp)
                 }}
               >
                 <span>{note.text}</span>

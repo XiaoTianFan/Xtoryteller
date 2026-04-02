@@ -1,6 +1,7 @@
 .figure {
   display: grid;
   gap: var(--spacing-components-horizons-gap);
+  min-height: 100%;
 }
 
 .columns {
@@ -27,6 +28,284 @@
   display: grid;
   gap: var(--spacing-components-horizons-list-gap);
   color: var(--color-muted);
+}
+
+.richFigure {
+  height: 100%;
+}
+
+.richCanvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+.richCanvas :global(svg) {
+  width: 100%;
+  height: 100%;
+}
+
+.axisLine {
+  stroke: color-mix(in srgb, var(--color-foreground) 88%, transparent);
+  stroke-width: 4;
+}
+
+.guideLine {
+  stroke: color-mix(in srgb, var(--color-foreground) 34%, transparent);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+
+.curve {
+  color: inherit;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.16));
+}
+
+.transitionShape {
+  fill: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+  stroke: color-mix(in srgb, var(--color-foreground) 10%, transparent);
+  stroke-width: 1.5;
+}
+
+.axisLabel,
+.timeLabel,
+.axisBubbleLabel {
+  fill: var(--color-foreground);
+}
+
+.axisLabel {
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1vw, 18px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.timeLabel {
+  font-family: var(--font-body);
+  font-size: clamp(15px, 0.95vw, 17px);
+  font-weight: 600;
+}
+
+.axisBubbleLabel {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.noteBox {
+  position: absolute;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(0.4rem, 0.8vw, 0.7rem);
+  padding: clamp(0.55rem, 1vw, 0.95rem);
+  border: 1px solid color-mix(in srgb, var(--box-accent) 34%, var(--color-foreground) 22%);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--box-accent) 12%, var(--color-surface) 88%) 0%,
+      color-mix(in srgb, var(--color-panel) 86%, black 14%) 100%
+    );
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(6px);
+}
+
+.noteBox[data-slot='top-left'] {
+  left: 3.8%;
+  top: 3.8%;
+  width: 27%;
+  height: 24%;
+}
+
+.noteBox[data-slot='top-center'] {
+  left: 36.2%;
+  top: 3.8%;
+  width: 28%;
+  height: 24%;
+}
+
+.noteBox[data-slot='top-right'] {
+  left: 69.8%;
+  top: 3.8%;
+  width: 27%;
+  height: 24%;
+}
+
+.noteBox[data-slot='bottom-left'] {
+  left: 3.8%;
+  top: 69.6%;
+  width: 27%;
+  height: 22%;
+}
+
+.noteBox[data-slot='bottom-center'] {
+  left: 36.2%;
+  top: 69.6%;
+  width: 30%;
+  height: 22%;
+}
+
+.noteBox[data-slot='bottom-right'] {
+  left: 69.8%;
+  top: 69.6%;
+  width: 27%;
+  height: 22%;
+}
+
+.noteBoxHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  min-width: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--box-accent) 36%, transparent);
+  padding-bottom: 0.32rem;
+}
+
+.noteBoxNumber {
+  flex: 0 0 auto;
+  color: var(--box-accent);
+  font-family: var(--font-heading);
+  font-size: clamp(1rem, 1.25vw, 1.3rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.noteBoxTitle {
+  min-width: 0;
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+  font-size: clamp(0.68rem, 0.8vw, 0.82rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.18;
+  text-transform: uppercase;
+}
+
+.noteGrid {
+  display: grid;
+  grid-template-columns: repeat(var(--note-columns, 2), minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: clamp(0.3rem, 0.55vw, 0.5rem);
+  min-height: 0;
+}
+
+.note {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--note-accent) 48%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--note-accent) 16%, var(--color-surface) 84%) 0%,
+      color-mix(in srgb, var(--note-accent) 10%, var(--color-panel) 90%) 100%
+    );
+  color: var(--color-foreground);
+  cursor: help;
+  text-align: center;
+  transition:
+    transform var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease,
+    background var(--motion-fast) ease;
+}
+
+.note:hover,
+.note:focus-visible {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--note-accent) 80%, white 20%);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+}
+
+.note:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--note-accent) 84%, white 16%);
+  outline-offset: 1px;
+}
+
+.noteLabel {
+  display: block;
+  width: 100%;
+  line-height: 1.12;
+  font-family: var(--font-body);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 200;
+  width: min(28rem, calc(100vw - 1.5rem));
+  padding: 0.9rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--tooltip-accent) 44%, var(--color-foreground) 22%);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 94%, var(--tooltip-accent) 6%) 0%,
+      color-mix(in srgb, var(--color-panel) 92%, black 8%) 100%
+    );
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  border-left: inherit;
+  border-top: inherit;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.tooltip[data-placement='top']::after {
+  top: calc(100% - 6px);
+  border-left: none;
+  border-top: none;
+  border-right: inherit;
+  border-bottom: inherit;
+}
+
+.tooltip[data-placement='bottom']::after {
+  top: -6px;
+}
+
+.tooltip h5 {
+  margin: 0.25rem 0 0.55rem;
+  color: var(--color-foreground);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  line-height: 1.12;
+}
+
+.tooltipEyebrow {
+  display: inline-flex;
+  margin-bottom: 0.1rem;
+  color: var(--tooltip-accent);
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tooltipBody {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.tooltipBody :global(p) {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.45;
+}
+
+.tooltipBody :global(strong) {
+  color: var(--color-foreground);
 }
 
 @media (max-width: 720px) {

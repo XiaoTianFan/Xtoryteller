@@ -43,6 +43,7 @@ Use this skill for work inside the Xtoryteller presentation system, not for one-
 13. When the task changes runtime behavior instead of only content, run the appropriate test layer from [guides/qa-workflows.md](references/guides/qa-workflows.md).
 14. For Stage mode, manually verify viewport fit after meaningful edits at both `1280x720` and `1920x1080`. The page height must stay locked to the viewport, with no vertical growth or rescue scrolling.
 15. When the user is unsure about art direction, prefer live preset-driven previews before abstract style debates.
+16. For long Stage decks, treat structure as a first-class design task: add section reset steps, keep each step's purpose legible at a glance, and verify that navigation affordances still feel usable once the deck grows.
 
 ## Theme-System Route
 
@@ -96,8 +97,11 @@ Use these when repeated scaffolding would otherwise become manual and fragile.
 - Never settle for generic “AI default” styling when the task clearly needs character. Prefer a named preset family, a deliberate type pairing, and a repeated layout motif.
 - Keep `stat-card` values short and metric-like. If the value reads like a sentence fragment, use `card`, `feature-card`, or `callout` instead.
 - Split instead of cram, especially when a step is trying to carry both a strong motif and dense explanatory copy.
+- When a contrast or surface problem repeats across multiple steps, fix the shared component or theme token path instead of patching each slide with local overrides.
+- Long research decks need visible chaptering. Add section title steps and orientation copy before the deck starts to feel like an unbroken wall of content.
 - Prefer preset-family language such as `bold-signal`, `notebook-tabs`, or `paper-and-ink` over vague requests like “make it nicer” or “slightly more modern.”
 - Use `build: sequential` on bullet or numbered lists when the story expects one item per advance.
+- Do not use `build: sequential` just because a list is long. If the audience needs fast scanning or reference-style reading, reveal the list all at once.
 - Keep `pyramid-layout` rows compact: one short label plus one short sentence, not list-heavy cards.
 - Keep `org-chart` and `sankey-diagram` labels concise. Split dense structures instead of forcing long labels into one step.
 - Keep `meta.slug` aligned with the presentation folder.

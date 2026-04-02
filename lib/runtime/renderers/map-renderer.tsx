@@ -16,6 +16,7 @@ import { PresentationControls } from '@/lib/runtime/ui/presentation-controls';
 export function MapRenderer() {
   const router = useRouter();
   const { presentation, theme, machine } = usePresentationRuntime();
+  const isDev = process.env.NODE_ENV !== 'production';
   const prefersReducedMotion = useReducedMotion();
   const activeClusterId = machine.state.context.currentClusterId;
   const clusters = presentation.clusters ?? [];
@@ -25,6 +26,7 @@ export function MapRenderer() {
   const dragMovementRef = useRef({ x: 0, y: 0 });
   const pinchStartZoomRef = useRef<number | null>(null);
   const [viewportSize, setViewportSize] = useState({ width: 1280, height: 720 });
+  const [showClusterBounds, setShowClusterBounds] = useState(false);
 
   useEffect(() => {
     const element = viewportRef.current;
@@ -170,6 +172,7 @@ export function MapRenderer() {
       <div ref={viewportRef} className="mapViewport" {...bind()}>
         <motion.div
           className="mapCanvas"
+          data-show-bounds={showClusterBounds ? 'true' : 'false'}
           data-camera-behavior={cameraBehavior}
           initial={false}
           animate={{
@@ -190,7 +193,7 @@ export function MapRenderer() {
             return (
               <div
                 key={cluster.id}
-                className={`clusterCard ${cluster.id === activeClusterId ? 'active' : ''}`}
+                className={`clusterCard ${cluster.id === activeClusterId ? 'active' : ''} ${showClusterBounds ? 'showBounds' : ''}`}
                 style={{ left: position.x, top: position.y, width: position.width, height: position.height }}
                 role="button"
                 tabIndex={0}
@@ -198,6 +201,13 @@ export function MapRenderer() {
                 onClick={(event) => handleClusterSelect(event, cluster.id)}
                 onKeyDown={(event) => handleClusterKeyDown(event, cluster.id)}
               >
+                {showClusterBounds ? (
+                  <div className="clusterCardBounds" aria-hidden="true">
+                    <span className="clusterCardBoundsLabel">
+                      {cluster.id} {Math.round(position.width)}×{Math.round(position.height)}
+                    </span>
+                  </div>
+                ) : null}
                 <div className="clusterCardHeader">
                   <span className="clusterBadge">{cluster.group ?? 'Cluster'}</span>
                   <span className="clusterCardTitle">{cluster.title ?? cluster.id}</span>
@@ -236,6 +246,16 @@ export function MapRenderer() {
         rightActions={
           <>
             <span className="mapMeta">{mapStatus}</span>
+            {isDev ? (
+              <button
+                type="button"
+                className="ghostButton"
+                onClick={() => setShowClusterBounds((value) => !value)}
+                aria-pressed={showClusterBounds}
+              >
+                Bounds
+              </button>
+            ) : null}
             <button
               type="button"
               className="ghostButton"

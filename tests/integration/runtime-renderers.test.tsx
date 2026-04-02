@@ -1,6 +1,6 @@
 ﻿/** @vitest-environment jsdom */
 import { createElement } from 'react';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@paper-design/shaders-react', () => {
@@ -200,8 +200,12 @@ describe('runtime renderers', () => {
       expect(screen.getByRole('button', { name: 'Guided' })).toBeInTheDocument();
     });
 
+    expect(screen.getByRole('button', { name: 'Bounds' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /1\. north-star/i })).toBeInTheDocument();
     await waitFor(() => expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent('north-star'));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Bounds' }));
+    expect(document.querySelectorAll('.clusterCardBounds').length).toBeGreaterThan(0);
 
     const clusterSizes = Array.from(document.querySelectorAll('.clusterCard'))
       .map((element) => {
