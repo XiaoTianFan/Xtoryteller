@@ -114,7 +114,6 @@ async function updateSkillManifest(counts) {
       themes: 'references/registries/theme-registry.json',
       backgrounds: 'references/registries/background-registry.json'
     },
-    lastRegistryGeneration: new Date().toISOString(),
     lastRegistryCounts: {
       components: counts.components,
       layouts: counts.layouts,
