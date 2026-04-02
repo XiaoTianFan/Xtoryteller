@@ -1,6 +1,7 @@
-﻿'use client';
+'use client';
 
-import { KeyboardEvent, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
@@ -159,7 +160,7 @@ function ViewerHotkeys({
       }
     };
 
-    const onKeyDown = (event: KeyboardEvent) => {
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (isEditableTarget(event.target)) {
         return;
       }
@@ -380,7 +381,7 @@ export function PresentationControls({
     machine.goToStep(getStepIndexFromClientX(clientX, element, total));
   };
 
-  const onProgressKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+  const onProgressKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
     if (!canScrubSteps) {
       return;
     }
