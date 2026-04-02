@@ -280,6 +280,15 @@ export function StageRenderer() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [showUnsavedPrompt, setShowUnsavedPrompt] = useState(false);
   const [showAddComponentOverlay, setShowAddComponentOverlay] = useState(false);
+  const [presenterReady, setPresenterReady] = useState(false);
+
+  useEffect(() => {
+    setPresenterReady(false);
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setPresenterReady(true));
+    });
+    return () => cancelAnimationFrame(id);
+  }, [stepIndex]);
 
   const renderedDrafts = history?.present ?? [];
   const draftSignature = buildStageDraftSignature(renderedDrafts);
@@ -635,6 +644,14 @@ export function StageRenderer() {
         throw new Error(payload?.error ?? 'Failed to save layout.');
       }
 
+      if (process.env.NODE_ENV === 'development') {
+        void fetch(`/api/dev/presentations/${encodeURIComponent(presentation.meta.slug)}/thumbnail`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{}'
+        });
+      }
+
       exitEditMode();
       router.refresh();
       return true;
@@ -731,7 +748,7 @@ export function StageRenderer() {
   };
 
   return (
-    <main className="viewerShell">
+    <main className="viewerShell" data-xt-presenter-ready={presenterReady ? 'true' : 'false'}>
       <BackgroundLayer />
       <AnimatePresence mode="wait">
         <motion.section

@@ -8,6 +8,7 @@ meta:
   tags: [ stage, ai, music, systems, policy, insight-brief, long-form ]
   createdAt: '2026-04-02'
   updatedAt: '2026-04-02'
+  thumbnail: ./assets/thumbnail.png
 mode: stage
 theme: electric-studio
 background:

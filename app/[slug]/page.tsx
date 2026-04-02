@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
@@ -11,6 +12,23 @@ import { StageRenderer } from '@/lib/runtime/renderers/stage-renderer';
 export async function generateStaticParams() {
   const slugs = await listPresentationSlugs();
   return slugs.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const presentation = await loadPresentationBySlug(slug);
+    const modeLabel = presentation.mode === 'map' ? 'Map' : 'Stage';
+    return {
+      title: `${presentation.meta.title} (${modeLabel})`
+    };
+  } catch {
+    return { title: slug };
+  }
 }
 
 export default async function PresentationPage({ params }: { params: Promise<{ slug: string }> }) {

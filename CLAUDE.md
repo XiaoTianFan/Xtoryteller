@@ -222,6 +222,7 @@ npm run dev
 
 **Development:**
 - `npm run dev` - Start development server with hot reload (Next.js + watcher)
+- `npm run thumbnail -- --slug <slug>` - Capture viewer screenshot to `assets/thumbnail.png` (requires dev server; Playwright Chromium)
 - `npm run build` - Production build (runs validation first)
 - `npm run export` - Static export for simple hosting
 - `npm run start` - Start production server
@@ -686,11 +687,13 @@ npm run export  # Static export to out/
 ```bash
 # .env.local
 NEXT_PUBLIC_WS_PORT=3001          # WebSocket for hot reload
-SKIP_THUMBNAILS=false             # Skip thumbnail generation
+NEXT_PUBLIC_BASE_URL=http://localhost:3000  # Optional; used as default base URL for dev thumbnail capture
 
 # .env.production
 NEXT_PUBLIC_BASE_URL=https://your-domain.com
 ```
+
+Dashboard card previews use `meta.thumbnail` or the first image/video in the deck. To capture the live viewer to `presentations/<slug>/assets/thumbnail.png` (Playwright), run `npm run thumbnail -- --slug <slug>` while `npm run dev` is up. Build does not auto-generate thumbnails.
 
 ## Documentation References
 

@@ -9,7 +9,7 @@
     "themes": "references/registries/theme-registry.json",
     "backgrounds": "references/registries/background-registry.json"
   },
-  "lastRegistryGeneration": "2026-04-02T18:28:05.932Z",
+  "lastRegistryGeneration": "2026-04-02T18:57:29.613Z",
   "lastRegistryCounts": {
     "components": 40,
     "layouts": 21,

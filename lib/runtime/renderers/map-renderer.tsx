@@ -500,6 +500,14 @@ export function MapRenderer() {
   const [isSavingLayout, setIsSavingLayout] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [showAddComponentOverlay, setShowAddComponentOverlay] = useState(false);
+  const [presenterReady, setPresenterReady] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setPresenterReady(true));
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   useEffect(() => {
     const element = viewportRef.current;
@@ -1305,6 +1313,14 @@ export function MapRenderer() {
         throw new Error(payload?.error ?? 'Failed to save layout.');
       }
 
+      if (process.env.NODE_ENV === 'development') {
+        void fetch(`/api/dev/presentations/${encodeURIComponent(presentation.meta.slug)}/thumbnail`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{}'
+        });
+      }
+
       cancelEditMode();
       router.refresh();
     } catch (error) {
@@ -1440,7 +1456,7 @@ export function MapRenderer() {
   };
 
   return (
-    <main className="viewerShell mapViewer">
+    <main className="viewerShell mapViewer" data-xt-presenter-ready={presenterReady ? 'true' : 'false'}>
       <BackgroundLayer />
       <div ref={viewportRef} className="mapViewport" onClick={handleViewportClick} {...bind()}>
         <motion.div

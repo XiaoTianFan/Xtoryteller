@@ -18,6 +18,7 @@
     "presentation:import": "node scripts/import.mjs",
     "component:promote": "node scripts/promote-component.mjs",
     "watch": "node scripts/watch.mjs",
+    "thumbnail": "node scripts/generate-presentation-thumbnail.mjs",
     "test": "vitest run tests/contracts tests/unit tests/integration && npm run test:portability && npm run test:e2e",
     "test:contracts": "vitest run tests/contracts",
     "test:unit": "vitest run tests/unit",

@@ -14,6 +14,8 @@ Read this file when the task changes authoring data, runtime behavior, manifests
   `node scripts/validate-all.mjs`
 - Skill bundle consistency (scaffold vs SKILL, manifest presence, quick-route matrix):
   `npm run validate:skill` (also runs automatically at the end of `npm run validate:all`)
+- Dashboard thumbnail (viewer screenshot → `presentations/<slug>/assets/thumbnail.png` and `meta.thumbnail`; requires dev server):
+  `npm run thumbnail -- --slug <slug> [--base-url http://127.0.0.1:3000]`
 
 ## Test Layers
 
@@ -30,7 +32,7 @@ Read this file when the task changes authoring data, runtime behavior, manifests
 
 ## Which Layer To Run
 
-- YAML-only deck edit: `validate`
+- YAML-only deck edit: `validate`, and run `thumbnail` when the dashboard card should reflect the current viewer (not automatic on the server)
 - Shared background preset change: `validate:all`, and add `test:unit` / `test:integration` if runtime behavior or validation rules changed
 - Shared manifest or theme change: `validate:all`
 - Shared visual-token or reusable CSS refactor: `validate:all`, `test:unit`, and `test:integration`

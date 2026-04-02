@@ -64,9 +64,10 @@ See **Theme-System Route** and **Working Rules** below for styling constraints a
 ### Phase 5: Verify and handoff
 
 1. Run validation: `node scripts/validate.mjs presentations/<slug>/presentation.yaml`
-2. After shared manifests, themes, or background presets changed: `node scripts/validate-all.mjs`
-3. When behavior (not just content) changed, run the appropriate layer from [qa-workflows.md](references/guides/qa-workflows.md).
-4. For Stage mode, manually verify viewport fit at `1280×720` and `1920×1080`. The page height must stay locked; no vertical growth or rescue scrolling.
+2. After substantive YAML or layout-geometry edits, refresh the dashboard card preview by capturing the viewer (dev server must be reachable at the script base URL, default `http://127.0.0.1:3000`): `npm run thumbnail -- --slug <slug> [--base-url http://127.0.0.1:3000]`. In local dev, saving map/stage layout can trigger the same capture automatically.
+3. After shared manifests, themes, or background presets changed: `node scripts/validate-all.mjs`
+4. When behavior (not just content) changed, run the appropriate layer from [qa-workflows.md](references/guides/qa-workflows.md).
+5. For Stage mode, manually verify viewport fit at `1280×720` and `1920×1080`. The page height must stay locked; no vertical growth or rescue scrolling.
 
 ### Phase 6: Deploy (optional)
 

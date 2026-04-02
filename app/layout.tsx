@@ -5,8 +5,14 @@ import { GLOBAL_THEME_COOKIE_NAME, loadThemeWithFallback } from '@/lib/engine/th
 import { ThemeProvider } from '@/lib/runtime/providers/theme-provider';
 import { DevWatcher } from '@/lib/runtime/ui/dev-watcher';
 
+const siteUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+
 export const metadata: Metadata = {
-  title: 'Xtoryteller',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'Xtoryteller',
+    template: '%s | Xtoryteller'
+  },
   description: 'Self-hosted, agent-first presentation infrastructure.'
 };
 
