@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xtoryteller.dev/schema/presentation.json",
   "type": "object",
-  "required": ["meta", "mode", "theme"],
+  "required": ["meta", "mode"],
   "properties": {
     "meta": {
       "type": "object",

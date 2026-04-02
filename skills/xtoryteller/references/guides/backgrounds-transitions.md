@@ -6,6 +6,12 @@ Read this file when a task depends on presentation mood, scene shifts, or backgr
 
 Xtoryteller supports a top-level `background`, APRD-style `background.stages` / `background.regions`, and legacy `backgroundSections`.
 
+Default behavior:
+
+- If a presentation omits `background`, the active theme background renders instead.
+- If a presentation also omits `theme`, it inherits the dashboard-selected global theme and therefore that theme's background.
+- Use presentation-level `background` only when the deck truly needs to diverge from theme-owned background behavior.
+
 Authoring choices:
 
 - `background: none`
@@ -21,9 +27,11 @@ Shared preset references come from `references/registries/background-registry.js
 Currently supported Paper shader targets:
 
 - `paper-texture`
+- `dithering`
 - `mesh-gradient`
 - `grain-gradient`
 - `water`
+- `warp`
 - `waves`
 - `static-mesh-gradient`
 - `static-radial-gradient`
@@ -35,6 +43,7 @@ Aliases:
 - `noise` -> `grain-gradient`
 - `watercolor` -> `water`
 - `radial` -> `static-radial-gradient`
+- `dither` -> `dithering`
 
 Common pattern:
 
@@ -58,6 +67,13 @@ background:
 
 Use `steps` inside `background.stages` for Stage mode. Use `clusters` or `group` inside `background.regions` for Map mode. Keep `backgroundSections` only for backward-compatible legacy decks.
 
+## Motion Guidance
+
+- Prefer the upstream Paper Shader preset's built-in motion when the shader supports `speed` or `frame`.
+- Xtoryteller only adds wrapper-driven fallback drift for shaders that do not expose built-in animation channels, such as `waves`.
+- Keep motion slow for dashboard and viewer shell backgrounds unless the task explicitly calls for a more active look.
+- Reduced-motion still short-circuits the animated behavior.
+
 ## Transition Surface
 
 - Step and cluster transitions should come from `references/registries/transition-registry.json`.
@@ -69,6 +85,7 @@ Use `steps` inside `background.stages` for Stage mode. Use `clusters` or `group`
 - Named transitions, background switching, CSS backgrounds, Paper shader backgrounds, and reduced-motion behavior are shipped.
 - Same-renderer compatible states interpolate supported numeric and color props.
 - Different renderer types, incompatible presets, and raw CSS background strings cross-fade between layers.
+- Paper Shader presets with built-in animation use the library's own timing path; wrapper fallback motion is only used where the library has no native animation channel.
 - Reduced-motion mode short-circuits background changes to immediate swaps.
 - Unsupported shader names, presets, and params should fail validation instead of being passed through.
 - When a motion choice is critical to the experience, validate in the browser instead of trusting the schema alone.

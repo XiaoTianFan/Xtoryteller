@@ -358,7 +358,7 @@ colors:
     text-soft: "#bcc6ff"
     badge-bg: rgba(212, 255, 0, 0.14)
     badge-border: rgba(212, 255, 0, 0.24)
-    badge-text: "#101425"
+    badge-text: "#f8ffdd"
     accent-start: rgba(63, 123, 255, 0.22)
     accent-end: rgba(212, 255, 0, 0.22)
     thumbnail-start: rgba(16, 20, 37, 0.98)

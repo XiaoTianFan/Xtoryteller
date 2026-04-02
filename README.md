@@ -40,6 +40,7 @@ The system combines:
 - **Validation tooling** for presentations, themes, runtime parity, density guidance, and asset references
 - **Portability tooling** for export, import, and promotion of presentation-scoped components
 - **Canonical agent skill package** under `skills/xtoryteller/`
+- **Four canonical demos**: `simple-stage`, `simple-map`, `complex-stage`, and `complex-map`
 
 ## Architecture Overview
 
@@ -107,6 +108,8 @@ The root route shows the dashboard. Each presentation is routed by slug at `/<sl
 7. Validate the presentation.
 8. Review it in the browser while `npm run dev` is running.
 
+If a presentation should follow the dashboard's active theme switcher, omit `theme`. Add `theme: <slug>` only when the deck must lock itself to a specific reusable theme.
+
 ### Stage Or Map
 
 Use Stage mode when the presentation is mostly sequential.
@@ -121,6 +124,7 @@ Use Map mode when the material benefits from spatial exploration, systems views,
 - In Stage mode, the page must stay locked to the viewport. Never rely on scrolling or page-height growth to rescue dense content.
 - Keep assets relative to the presentation folder, usually under `assets/`.
 - Prefer theme tokens and `themeOverrides` over repeated inline style.
+- Prefer theme-owned backgrounds over presentation-level `background` when the deck should follow theme switching.
 - Keep `stat-card` values short and metric-like. Move sentence-like copy into `detail`, `feature-card`, `card`, or `callout`.
 - Add `build: sequential` explicitly when list items or numbered points should reveal one-by-one.
 - Keep `pyramid-layout` rows compact and concise.
@@ -143,6 +147,8 @@ node scripts/validate-all.mjs
 - Presentation-scoped `components/`, `layouts/`, and `transitions/` are valid runtime inputs for that presentation and override global libraries when names collide.
 - Backgrounds support both simple CSS values and Paper shaders. The runtime accepts object configs, APRD-style `background.stages` / `background.regions`, legacy `backgroundSections`, and short string forms such as `background: none` or `background: mesh-gradient`.
 - Reusable Paper Shader presets live in `backgrounds/*.yaml` and can be referenced from any object background with `presetRef`.
+- If a presentation omits `background`, the active theme background renders instead.
+- Paper Shader motion prefers the upstream shader library's built-in animation path when available; Xtoryteller only adds fallback wrapper drift for shaders without native motion channels.
 - Component-level animation hints are shipped and validated, but motion-heavy changes should still be reviewed in the browser.
 
 ## Extending The System
@@ -181,7 +187,7 @@ Common sections:
 - `borders`
 - `motion`
 
-Use `themeOverrides` for one-off presentation-specific adjustments. Create a full theme when the visual language should be reusable.
+Use `themeOverrides` for one-off presentation-specific adjustments. Create a full theme when the visual language should be reusable. If a presentation should inherit the dashboard-selected global theme, omit `theme` from its YAML entirely.
 
 Advanced theme support includes:
 

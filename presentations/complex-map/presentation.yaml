@@ -7,42 +7,10 @@
   createdAt: '2026-03-31'
   updatedAt: '2026-03-31'
 mode: map
-theme: xinimalist-dark
 themeOverrides:
   colors:
     primary: '#8d4f2d'
     secondary: '#2a6c64'
-background:
-  type: paper
-  colorStops:
-    - 'rgba(var(--color-background-rgb), 0.96)'
-    - 'rgba(var(--color-foreground-rgb), 0.10)'
-    - 'rgba(var(--color-foreground-rgb), 0.18)'
-backgroundSections:
-  - match:
-      group: vision
-    shader:
-      type: paper
-      colorStops:
-        - 'rgba(var(--color-background-rgb), 0.97)'
-        - 'rgba(var(--color-foreground-rgb), 0.10)'
-        - 'rgba(var(--color-foreground-rgb), 0.18)'
-  - match:
-      group: runtime
-    shader:
-      type: paper
-      colorStops:
-        - 'rgba(var(--color-background-rgb), 0.97)'
-        - 'rgba(var(--color-foreground-rgb), 0.12)'
-        - 'rgba(var(--color-foreground-rgb), 0.22)'
-  - match:
-      group: roadmap
-    shader:
-      type: paper
-      colorStops:
-        - 'rgba(var(--color-background-rgb), 0.97)'
-        - 'rgba(var(--color-foreground-rgb), 0.14)'
-        - 'rgba(var(--color-foreground-rgb), 0.20)'
 canvas:
   spacing: 420
   initialZoom: 0.78

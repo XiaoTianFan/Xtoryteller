@@ -4,6 +4,7 @@ required:
     title: string
     slug: string
   mode: stage | map
+optional:
   theme: string
 stage:
   requiredWhenModeIsStage:

@@ -169,6 +169,11 @@ export function getPaperShaderSupport(shader: SupportedPaperShaderName): PaperSh
   return paperShaderSupport.shaders[shader];
 }
 
+export function paperShaderSupportsBuiltInMotion(shader: SupportedPaperShaderName): boolean {
+  const support = getPaperShaderSupport(shader);
+  return support.allowedParams.includes('speed') || support.allowedParams.includes('frame');
+}
+
 export const supportedPaperShaderNames = Object.keys(paperShaderSupport.shaders).sort() as SupportedPaperShaderName[];
 
 export const paperShaderRegistry = Object.fromEntries(

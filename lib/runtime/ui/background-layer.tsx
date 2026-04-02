@@ -15,6 +15,7 @@ import {
   getPaperShaderSupport,
   isPaperShaderParamInterpolable,
   normalizePaperShaderName,
+  paperShaderSupportsBuiltInMotion,
   resolvePaperShaderDefinition
 } from '@/lib/runtime/paper-shaders';
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
@@ -253,7 +254,25 @@ function toFiniteNumber(value: unknown, fallback: number): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 }
 
-function resolveAnimatedPaperShaderParams(
+function paperShaderNeedsWrapperMotion(shader: string | undefined): boolean {
+  const normalizedShader = normalizePaperShaderName(shader);
+  if (!normalizedShader) {
+    return false;
+  }
+
+  const support = getPaperShaderSupport(normalizedShader);
+  if (paperShaderSupportsBuiltInMotion(normalizedShader)) {
+    return false;
+  }
+
+  return (
+    support.allowedParams.includes('offsetX') ||
+    support.allowedParams.includes('offsetY') ||
+    support.allowedParams.includes('rotation')
+  );
+}
+
+export function resolveAnimatedPaperShaderParams(
   shader: string | undefined,
   params: Record<string, unknown> | undefined,
   elapsedSeconds: number,
@@ -274,16 +293,21 @@ function resolveAnimatedPaperShaderParams(
   const nextParams: Record<string, unknown> = { ...baseParams };
   const baseSpeed = toFiniteNumber(baseParams.speed, 0);
   const animationSpeed = Math.max(baseSpeed, 0.03);
-  const drift = elapsedSeconds * (0.22 + animationSpeed * 0.4);
+
+  if (paperShaderSupportsBuiltInMotion(normalizedShader)) {
+    if (allowedParams.has('speed') && baseSpeed <= 0) {
+      nextParams.speed = animationSpeed;
+    }
+
+    return nextParams;
+  }
+
+  const drift = elapsedSeconds * 0.22;
   const baseOffsetX = toFiniteNumber(baseParams.offsetX, 0);
   const baseOffsetY = toFiniteNumber(baseParams.offsetY, 0);
 
   if (allowedParams.has('speed') && baseSpeed <= 0) {
     nextParams.speed = animationSpeed;
-  }
-
-  if (allowedParams.has('frame')) {
-    nextParams.frame = elapsedSeconds;
   }
 
   if (allowedParams.has('offsetX')) {
@@ -497,11 +521,17 @@ export function ResolvedBackgroundLayer({
     [renderState]
   );
   const activeAppearanceRef = useRef(activeAppearance);
-  const isPaperShaderActive =
-    renderState.mode === 'stable'
-      ? renderState.appearance.kind === 'paper-shader'
-      : renderState.from.kind === 'paper-shader' || renderState.to.kind === 'paper-shader';
-  const elapsedSeconds = useBackgroundAnimationClock(isPaperShaderActive, Boolean(prefersReducedMotion));
+  const needsWrapperMotion = useMemo(() => {
+    if (renderState.mode === 'stable') {
+      return renderState.appearance.kind === 'paper-shader' && paperShaderNeedsWrapperMotion(renderState.appearance.shader);
+    }
+
+    return (
+      (renderState.from.kind === 'paper-shader' && paperShaderNeedsWrapperMotion(renderState.from.shader)) ||
+      (renderState.to.kind === 'paper-shader' && paperShaderNeedsWrapperMotion(renderState.to.shader))
+    );
+  }, [renderState]);
+  const elapsedSeconds = useBackgroundAnimationClock(needsWrapperMotion, Boolean(prefersReducedMotion));
 
   useEffect(() => {
     activeAppearanceRef.current = activeAppearance;

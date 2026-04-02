@@ -1,19 +1,21 @@
-name: Ember Truchet
-description: Copper truchet grain field with a low, cinematic pulse.
-tags: [grain, studio, copper]
+name: Electric Truchet
+description: Indigo truchet grain field with a restrained studio-electric pulse.
+tags: [grain, studio, electric]
 shader: grain-gradient
 preset: truchet
-speed: 0.1
+speed: 0.055
 params:
-  colorBack: '#000a0f'
+  colorBack: '#090d16'
   colors:
-    - '#9c6430'
-  fit: contain
-  intensity: 0.15
-  noise: 0.77
+    - '#6d8cff'
+    - '#7dd3fc'
+    - '#dbe6ff'
+  fit: cover
+  intensity: 0.09
+  noise: 0.5
   offsetX: 0
   offsetY: 0
   rotation: 0
-  scale: 0.84
+  scale: 1.04
   shape: truchet
-  softness: 1
+  softness: 0.9

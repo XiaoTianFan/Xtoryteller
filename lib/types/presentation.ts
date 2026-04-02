@@ -223,7 +223,7 @@ export interface MapNavigationConfig {
 export interface PresentationConfig {
   meta: PresentationMeta;
   mode: PresentationMode;
-  theme: string;
+  theme?: string;
   themeOverrides?: Record<string, unknown>;
   data?: Record<string, unknown>;
   background?: BackgroundShaderConfig;

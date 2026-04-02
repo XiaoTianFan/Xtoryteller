@@ -39,12 +39,12 @@
     },
     {
       "slug": "ember-truchet",
-      "name": "Ember Truchet",
-      "description": "Copper truchet grain field with a low, cinematic pulse.",
+      "name": "Electric Truchet",
+      "description": "Indigo truchet grain field with a restrained studio-electric pulse.",
       "tags": [
         "grain",
         "studio",
-        "copper"
+        "electric"
       ],
       "shader": "grain-gradient",
       "preset": "truchet"
@@ -52,14 +52,14 @@
     {
       "slug": "focus-grain",
       "name": "Focus Grain",
-      "description": "Dark grain gradient with low-motion emphasis for focused scenes.",
+      "description": "Moss-and-parchment truchet grain for dark editorial focus themes.",
       "tags": [
         "grain",
         "focus",
-        "dramatic"
+        "editorial"
       ],
       "shader": "grain-gradient",
-      "preset": "wave"
+      "preset": "truchet"
     },
     {
       "slug": "ink-bloom",

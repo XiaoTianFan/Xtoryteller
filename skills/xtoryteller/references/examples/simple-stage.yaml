@@ -7,10 +7,6 @@
   createdAt: 2026-03-31
   updatedAt: 2026-03-31
 mode: stage
-theme: xinimalist-paper
-background:
-  type: paper-shader
-  presetRef: editorial-paper
 steps:
   - id: intro
     title: Opening

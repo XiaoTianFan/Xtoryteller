@@ -925,7 +925,7 @@ export async function validatePresentation(targetPath, options = {}) {
     }
   }
 
-  if (!themeSet.has(config.theme)) {
+  if (config.theme != null && !themeSet.has(config.theme)) {
     issues.push(createIssue('error', `Unknown theme "${config.theme}".`));
   }
 

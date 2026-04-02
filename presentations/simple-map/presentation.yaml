@@ -7,10 +7,6 @@
   createdAt: '2026-03-31'
   updatedAt: '2026-03-31'
 mode: map
-theme: xinimalist-paper
-background:
-  type: paper-shader
-  presetRef: tidal-waves
 canvas:
   spacing: 380
   initialZoom: 0.88

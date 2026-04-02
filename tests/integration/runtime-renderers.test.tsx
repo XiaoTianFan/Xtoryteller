@@ -3,8 +3,37 @@ import { createElement } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
+vi.mock('@paper-design/shaders-react', () => {
+  const createShader = (label: string) => {
+    const Component = () => <div data-paper-shader={label} />;
+    Component.displayName = label;
+    return Component;
+  };
+
+  return {
+    Dithering: createShader('Dithering'),
+    ditheringPresets: [{ name: 'Warp', params: { frame: 0, speed: 0.03 } }],
+    GrainGradient: createShader('GrainGradient'),
+    grainGradientPresets: [{ name: 'Wave', params: { frame: 0, speed: 0.08 } }],
+    MeshGradient: createShader('MeshGradient'),
+    meshGradientPresets: [{ name: 'Purple', params: { frame: 0, speed: 0.045 } }],
+    PaperTexture: createShader('PaperTexture'),
+    paperTexturePresets: [{ name: 'Abstract', params: { frame: 0, speed: 0.04 } }],
+    StaticMeshGradient: createShader('StaticMeshGradient'),
+    staticMeshGradientPresets: [{ name: 'Sea', params: { frame: 0, speed: 0.04 } }],
+    StaticRadialGradient: createShader('StaticRadialGradient'),
+    staticRadialGradientPresets: [{ name: 'Cross Section', params: { frame: 0, speed: 0.035 } }],
+    Water: createShader('Water'),
+    waterPresets: [{ name: 'Slow-mo', params: { frame: 0, speed: 0.05 } }],
+    Warp: createShader('Warp'),
+    warpPresets: [{ name: 'Default', params: { frame: 0, speed: 0.04 } }],
+    Waves: createShader('Waves'),
+    wavesPresets: [{ name: 'Groovy', params: { amplitude: 0.25 } }]
+  };
+});
+
 import { loadPresentationBySlug } from '@/lib/engine/presentation-loader';
-import { loadThemeBySlug } from '@/lib/engine/theme-registry';
+import { loadThemeWithFallback } from '@/lib/engine/theme-registry';
 import { PresentationProvider } from '@/lib/runtime/providers/presentation-provider';
 import { ThemeProvider } from '@/lib/runtime/providers/theme-provider';
 import { ComponentRenderer } from '@/lib/runtime/renderers/component-renderer';
@@ -19,8 +48,8 @@ vi.mock('next/navigation', () => ({
 describe('runtime renderers', () => {
   let stagePresentation: Awaited<ReturnType<typeof loadPresentationBySlug>>;
   let mapPresentation: Awaited<ReturnType<typeof loadPresentationBySlug>>;
-  let stageTheme: Awaited<ReturnType<typeof loadThemeBySlug>>;
-  let mapTheme: Awaited<ReturnType<typeof loadThemeBySlug>>;
+  let stageTheme: Awaited<ReturnType<typeof loadThemeWithFallback>>['theme'];
+  let mapTheme: Awaited<ReturnType<typeof loadThemeWithFallback>>['theme'];
 
   beforeAll(async () => {
     [stagePresentation, mapPresentation] = await Promise.all([
@@ -28,8 +57,8 @@ describe('runtime renderers', () => {
       loadPresentationBySlug('complex-map')
     ]);
     [stageTheme, mapTheme] = await Promise.all([
-      loadThemeBySlug(stagePresentation.theme),
-      loadThemeBySlug(mapPresentation.theme)
+      loadThemeWithFallback(stagePresentation.theme).then((result) => result.theme),
+      loadThemeWithFallback('xinimalist-dark').then((result) => result.theme)
     ]);
   });
 

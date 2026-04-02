@@ -7,22 +7,10 @@
   createdAt: 2026-03-31
   updatedAt: 2026-03-31
 mode: map
-theme: xinimalist-dark
-background:
-  type: paper
-  colorStops:
-    - 'rgba(250, 245, 239, 0.96)'
-    - 'rgba(216, 154, 79, 0.18)'
-    - 'rgba(42, 108, 100, 0.16)'
-backgroundSections:
-  - match:
-      group: strategy
-    shader:
-      type: paper
-      colorStops:
-        - 'rgba(249, 243, 236, 0.96)'
-        - 'rgba(141, 79, 45, 0.22)'
-        - 'rgba(31, 106, 122, 0.18)'
+themeOverrides:
+  colors:
+    primary: '#8d4f2d'
+    secondary: '#2a6c64'
 canvas:
   spacing: 420
   initialZoom: 0.8

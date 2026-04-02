@@ -8,10 +8,11 @@ Xtoryteller is a file-system-first presentation runtime with an agent-facing orc
 - Components, layouts, and transitions are real code with manifest files that feed the agent registries.
 - Shared background presets live in `backgrounds/*.yaml` and feed the background registry.
 - Themes live in YAML and are resolved into CSS custom properties at runtime.
+- If a presentation omits `theme`, the viewer falls back to the persisted dashboard-selected global theme.
 - The viewer has two modes:
   - Stage mode for sequential step/build storytelling.
   - Map mode for cluster-based spatial storytelling with guided and free-roam navigation.
-- The dashboard reads the `presentations/` directory directly and exposes search, filtering, and sort controls.
+- The dashboard reads the `presentations/` directory directly and exposes search, filtering, sort controls, and the persisted global theme switcher.
 - Validation and registry generation live in `scripts/`.
 - Markdown hover annotations are available inside markdown-rendered content through `{{hover:key|Label}}` plus `component.annotations`.
 - Presentation-scoped `components/`, `layouts/`, and `transitions/` can override the global libraries for the active presentation.
@@ -22,9 +23,10 @@ Xtoryteller is a file-system-first presentation runtime with an agent-facing orc
 1. Read the registries and supporting docs.
 2. Decide whether the task is presentation work, style exploration, primitive/theme creation, or product/runtime work.
 3. For reusable Paper Shader backgrounds, check the background registry before hand-authoring a new shader config.
-4. Generate or edit YAML first.
-5. Touch code only when the registry truly lacks the needed primitive.
-6. Validate before asking the user to review.
+4. Decide whether the deck should inherit the global theme or explicitly pin its own `theme`.
+5. Generate or edit YAML first.
+6. Touch code only when the registry truly lacks the needed primitive.
+7. Validate before asking the user to review.
 
 ## Current Runtime Boundaries
 
@@ -33,6 +35,7 @@ These boundaries matter because the APRD is broader than the currently shipped r
 - Markdown hover annotations are shipped for markdown-rendered content, but the broader APRD-wide `annotation anywhere` model is still broader than the current runtime.
 - Component-level `enter` and `exit` animation props are supported, but motion-heavy storytelling changes should still be manually verified.
 - The theme system now owns reusable visual language through semantic token families in YAML; runtime code still owns behavior, viewport mechanics, responsive breakpoints, layout algorithms, and intrinsic rendering math.
+- Canonical demos should prefer theme-owned backgrounds so switching the dashboard theme also changes the demo viewer background.
 
 ## File Ownership
 
@@ -47,6 +50,7 @@ These boundaries matter because the APRD is broader than the currently shipped r
 
 - Prefer built-in primitives over new code.
 - Prefer `presetRef` for reusable Paper Shader looks and inline background objects for one-off variations.
+- Prefer no top-level `background` when the presentation should follow its theme's default background.
 - Prefer theme tokens over per-component styling.
 - When styling work is reusable, start in `themes/*.yaml` rather than scattering literals through CSS modules.
 - Keep folder names, slugs, and asset paths aligned.

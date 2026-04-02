@@ -7,9 +7,11 @@ Read this file when you need a quick truth source for what Xtoryteller currently
 - Stage mode and Map mode authoring
 - Generated registries for components, layouts, transitions, themes, and shared backgrounds
 - `themeOverrides`
+- Optional presentation `theme` with fallback to the dashboard-selected global theme
 - `background`, APRD-style `background.stages` / `background.regions`, and legacy `backgroundSections`
 - `presetRef` inside object-form backgrounds, including top-level, stage/map overrides, step backgrounds, cluster backgrounds, and legacy `backgroundSections[].shader`
 - Dual background renderers: CSS plus `@paper-design/shaders-react`
+- Theme-owned dashboard and viewer background rendering
 - Portability workflows for export, import, and component promotion
 - Markdown hover annotations through `{{hover:key|Label}}` plus `component.annotations`
 - Presentation-scoped primitive resolution in the runtime viewer
@@ -20,7 +22,7 @@ Read this file when you need a quick truth source for what Xtoryteller currently
 
 - APRD-wide `annotation anywhere` behavior beyond markdown-rendered content
 - Richer transition semantics than the current named transition surface guarantees
-- Background motion beyond the shipped same-preset interpolation plus cross-fade fallback
+- Subtle background motion choices whose quality depends on shader-specific browser rendering
 - Automatic CSS fallback generation for shared shader presets
 - Any feature whose value depends on subtle motion or nuanced layout behavior
 

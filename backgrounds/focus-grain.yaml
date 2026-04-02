@@ -1,16 +1,18 @@
 name: Focus Grain
-description: Dark grain gradient with low-motion emphasis for focused scenes.
-tags: [grain, focus, dramatic]
+description: Moss-and-parchment truchet grain for dark editorial focus themes.
+tags: [grain, focus, editorial]
 shader: grain-gradient
-preset: wave
-colorStops:
-  - '#101820'
-  - '#3a506b'
-  - '#f4d35e'
-intensity: 0.42
-grain: 0.18
-contrast: 0.66
-speed: 0.08
+preset: truchet
+speed: 0.045
 params:
-  scale: 0.96
+  colorBack: '#2d3227'
+  colors:
+    - '#46513f'
+    - '#9cb698'
+    - '#e9d7ba'
+  intensity: 0.12
+  noise: 0.34
   rotation: 0.08
+  scale: 1.2
+  shape: truchet
+  softness: 0.82

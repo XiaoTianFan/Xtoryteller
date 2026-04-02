@@ -17,7 +17,7 @@ describe('background preset registry', () => {
 
     expect(presetMap.get('focus-grain')).toMatchObject({
       shader: 'grain-gradient',
-      preset: 'wave'
+      preset: 'truchet'
     });
     await expect(backgroundPresetExists('editorial-paper')).resolves.toBe(true);
     await expect(backgroundPresetExists('missing-background-preset')).resolves.toBe(false);

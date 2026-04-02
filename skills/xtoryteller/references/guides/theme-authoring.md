@@ -23,11 +23,13 @@ Optional shared default surface:
 - Prefer `background: { type: paper-shader, presetRef: <shared-preset> }` when the theme should carry a reusable Paper Shader look.
 - Presentations can still override the theme default with their own top-level `background`, step backgrounds, cluster backgrounds, or legacy `backgroundSections`.
 
-Presentations select a theme with `theme: <slug>` and can add `themeOverrides` for targeted adjustments.
+Presentations can select a theme with `theme: <slug>` and can add `themeOverrides` for targeted adjustments.
+If a presentation omits `theme`, the viewer inherits the dashboard-selected global theme instead.
 
 ## Decision Rule
 
 - Use `themeOverrides` when the style change is local to one presentation.
+- Omit `theme` entirely when a deck should follow the operator's current global theme choice.
 - Create or edit a theme file when the visual language should be reusable across multiple presentations.
 
 ## Authoring Rules
@@ -36,6 +38,7 @@ Presentations select a theme with `theme: <slug>` and can add `themeOverrides` f
 - Keep font roles explicit for heading, body, and mono.
 - Keep contrast strong enough to pass `validate-theme`.
 - Make motion settings deliberate instead of treating them as decorative defaults.
+- When theme backgrounds use Paper Shader presets with native animation, prefer tuning the preset's `speed` instead of adding extra wrapper-style drift.
 
 ## Font Sources
 

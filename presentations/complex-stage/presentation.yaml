@@ -7,34 +7,10 @@
   createdAt: '2026-03-31'
   updatedAt: '2026-04-01'
 mode: stage
-theme: xinimalist-paper
 themeOverrides:
   colors:
     primary: '#7a3f63'
     secondary: '#1f6a7a'
-background:
-  type: paper
-  colorStops:
-    - 'rgba(252, 247, 243, 0.96)'
-    - 'rgba(122, 63, 99, 0.18)'
-    - 'rgba(31, 106, 122, 0.16)'
-backgroundSections:
-  - match:
-      stepRange: [2, 6]
-    shader:
-      type: paper
-      colorStops:
-        - 'rgba(247, 242, 234, 0.96)'
-        - 'rgba(216, 154, 79, 0.22)'
-        - 'rgba(42, 108, 100, 0.20)'
-  - match:
-      stepRange: [10, 14]
-    shader:
-      type: paper
-      colorStops:
-        - 'rgba(248, 242, 247, 0.96)'
-        - 'rgba(122, 63, 99, 0.20)'
-        - 'rgba(31, 106, 122, 0.22)'
 steps:
   - id: opening
     title: Opening
