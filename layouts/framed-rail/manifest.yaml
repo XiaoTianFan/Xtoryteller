@@ -1,0 +1,20 @@
+name: framed-rail
+displayName: Framed Rail
+description: Inset editorial frame with a decorative rail and optional accent panel.
+slots: [main, rail, accent]
+props:
+  railSide:
+    type: enum
+    values: [left, right]
+    default: right
+    description: Side that the decorative rail attaches to.
+  contentAlign:
+    type: enum
+    values: [left, center]
+    default: left
+    description: Alignment for the main content inside the frame.
+  frameMaxWidth:
+    type: string
+    description: Optional maximum width for the framed content surface.
+density:
+  recommendation: One primary narrative block, one decorative rail, and one optional accent.

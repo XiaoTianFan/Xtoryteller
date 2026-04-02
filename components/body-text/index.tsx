@@ -12,9 +12,23 @@ export default function BodyText({
 }) {
   const align = String(props?.align ?? 'left');
   const maxWidth = String(props?.maxWidth ?? '68ch');
+  const dropCap = Boolean(props?.dropCap);
+  const dropCapLines = typeof props?.dropCapLines === 'number' ? Number(props.dropCapLines) : 3;
 
   return (
-    <div className={[styles.body, styles[align as keyof typeof styles]].join(' ')} style={{ maxWidth, ...style }}>
+    <div
+      className={[
+        styles.body,
+        styles[align as keyof typeof styles],
+        dropCap ? styles.dropCap : ''
+      ].join(' ')}
+      data-drop-cap={dropCap ? 'true' : 'false'}
+      style={{
+        maxWidth,
+        ['--body-drop-cap-lines' as string]: String(Math.max(2, dropCapLines)),
+        ...style
+      }}
+    >
       <Markdown content={content ?? ''} />
     </div>
   );

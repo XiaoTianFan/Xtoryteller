@@ -1,0 +1,66 @@
+meta:
+  title: Preset Dark Hero
+  slug: preset-dark-hero
+  description: Stage fixture for dark high-contrast preset motifs.
+  author: Xtoryteller
+  tags: [stage, preset, dark, hero]
+  createdAt: 2026-04-01
+  updatedAt: 2026-04-01
+mode: stage
+theme: bold-signal
+background:
+  type: css
+  gradient:
+    type: linear
+    angle: 135
+    stops: ['#1a1a1a', '#2d2d2d', '#161616']
+steps:
+  - id: hero
+    title: Hero
+    layout: asymmetric-split
+    layoutProps: { ratio: 60-40, ornamentAnchor: top-right }
+    transition: fade
+    components:
+      - type: label
+        slot: main
+        content: confident
+        props: { tone: primary }
+      - type: headline
+        slot: main
+        content: Dark Signal Storytelling
+      - type: subtitle
+        slot: main
+        content: Strong type, chapter markers, and high-contrast surfaces make the direction read immediately.
+      - type: chapter-nav
+        slot: support
+        props:
+          items: [opening, framing, proof, close]
+          active: 0
+          orientation: vertical
+      - type: edge-rail
+        slot: ornament
+        props:
+          items:
+            - { label: '01', height: short, active: true }
+            - { label: '02', height: medium }
+            - { label: '03', height: tall }
+          variant: tabs
+          side: right
+          orientation: vertical
+  - id: structure
+    title: Structure
+    layout: two-column
+    layoutProps: { ratio: 60-40 }
+    transition: slide-left
+    components:
+      - type: bullet-list
+        props:
+          items:
+            - Typography carries the authority first.
+            - The chapter marker repeats the structure.
+            - Accent blocks do more than decoration.
+      - type: callout
+        content: Use this family when the user wants confidence, impact, and a deliberate dark presentation language.
+        props:
+          title: Best fit
+          variant: important

@@ -1,5 +1,223 @@
 :root {
   color-scheme: light;
+  --text-components-shell-eyebrow: 0.8rem;
+  --text-components-shell-hero: clamp(2.5rem, 5vw, 5rem);
+  --text-components-shell-lead: clamp(1rem, 1.5vw, 1.2rem);
+  --text-components-shell-meta: 0.92rem;
+  --text-components-shell-card-title: 1.5rem;
+  --text-components-shell-chip: 0.85rem;
+  --text-components-shell-thumbnail: 2rem;
+  --text-components-shell-cluster-title: 0.95rem;
+  --text-components-shell-shortcut-key: 0.9rem;
+  --text-components-feature-title: clamp(1.2rem, 2vw, 1.6rem);
+  --text-components-stat-value: clamp(2rem, 4vw, 3.2rem);
+  --text-components-comparison-divider: clamp(1.2rem, 2vw, 1.8rem);
+  --text-components-diagram-label: 14px;
+  --text-components-blockquote-large: clamp(1.6rem, 3vw, 2.7rem);
+  --text-components-edge-rail-label: var(--text-small, 0.88rem);
+  --text-components-chapter-nav-label: var(--text-small, 0.88rem);
+  --spacing-chrome-page-padding: clamp(1.5rem, 4vw, 3rem);
+  --spacing-chrome-hero-gap: 2rem;
+  --spacing-chrome-tools-gap: 0.85rem;
+  --spacing-chrome-control-height: 3rem;
+  --spacing-chrome-control-padding-y: 0.85rem;
+  --spacing-chrome-control-padding-x: 1rem;
+  --spacing-chrome-control-padding-inline-end: 3rem;
+  --spacing-chrome-toggle-gap: 0.3rem;
+  --spacing-chrome-toggle-padding: 0.3rem;
+  --spacing-chrome-toggle-button-padding-y: 0.65rem;
+  --spacing-chrome-toggle-button-padding-x: 0.95rem;
+  --spacing-chrome-card-grid-gap: 1.25rem;
+  --spacing-chrome-card-media-height: 180px;
+  --spacing-chrome-card-padding: 1.1rem;
+  --spacing-chrome-card-gap: 0.8rem;
+  --spacing-chrome-row-gap: 0.7rem;
+  --spacing-chrome-chip-gap: 0.35rem;
+  --spacing-chrome-chip-padding-y: 0.35rem;
+  --spacing-chrome-chip-padding-x: 0.7rem;
+  --spacing-chrome-button-padding-y: 0.7rem;
+  --spacing-chrome-button-padding-x: 1rem;
+  --spacing-chrome-dock-progress-height: 0.45rem;
+  --spacing-chrome-dock-hover-zone: 1.1rem;
+  --spacing-chrome-dock-open-height: 28rem;
+  --spacing-chrome-dock-panel-gap: 0.85rem;
+  --spacing-chrome-dock-panel-padding-y: 0.95rem;
+  --spacing-chrome-dock-panel-padding-x: 1rem;
+  --spacing-chrome-dock-panel-padding-bottom: 1rem;
+  --spacing-chrome-dock-row-gap: 0.85rem;
+  --spacing-chrome-dock-row-gap-inline: 1rem;
+  --spacing-chrome-cluster-header-offset: 2.8rem;
+  --spacing-chrome-cluster-header-gap: 0.5rem;
+  --spacing-chrome-cluster-header-padding-y: 0.4rem;
+  --spacing-chrome-cluster-header-padding-x: 0.65rem;
+  --spacing-chrome-cluster-sequence-padding-bottom: 0.25rem;
+  --spacing-chrome-empty-page-padding: 2rem;
+  --spacing-chrome-empty-panel-padding: 2rem;
+  --spacing-chrome-overlay-padding: 1.5rem;
+  --spacing-chrome-overlay-panel-gap: 1rem;
+  --spacing-chrome-overlay-panel-padding: 1.2rem;
+  --spacing-chrome-overlay-header-gap: 1rem;
+  --spacing-chrome-overlay-title-gap: 0.2rem;
+  --spacing-chrome-overlay-section-gap: 0.65rem;
+  --spacing-chrome-overlay-row-gap: 0.8rem;
+  --spacing-chrome-overlay-key-padding-y: 0.35rem;
+  --spacing-chrome-overlay-key-padding-x: 0.5rem;
+  --spacing-components-card-padding: clamp(1rem, 2vw, 1.5rem);
+  --spacing-components-card-gap: 0.7rem;
+  --spacing-components-card-title-gap: 0.65rem;
+  --spacing-components-card-footer-gap: 0.9rem;
+  --spacing-components-feature-gap: 0.7rem;
+  --spacing-components-feature-header-gap: 0.8rem;
+  --spacing-components-feature-headline-gap: 0.2rem;
+  --spacing-components-feature-list-gap: 0.45rem;
+  --spacing-components-profile-gap: 1rem;
+  --spacing-components-profile-header-gap: 0.9rem;
+  --spacing-components-profile-meta-gap: 0.2rem;
+  --spacing-components-stat-gap: 0.45rem;
+  --spacing-components-stat-trend-gap: 0.45rem;
+  --spacing-components-comparison-gap: 0.8rem;
+  --spacing-components-comparison-columns-gap: 1rem;
+  --spacing-components-callout-padding: clamp(1rem, 2vw, 1.5rem);
+  --spacing-components-callout-title-gap: 0.4rem;
+  --spacing-components-list-gap: 0.7rem;
+  --spacing-components-list-padding-start: 1.2rem;
+  --spacing-components-list-numbered-padding-start: 1.4rem;
+  --spacing-components-quote-padding: clamp(1rem, 2vw, 1.6rem);
+  --spacing-components-quote-caption-gap: 1rem;
+  --spacing-components-footnote-gap: 0.45rem;
+  --spacing-components-footnote-padding-top: 0.75rem;
+  --spacing-components-label-padding-y: 0.35rem;
+  --spacing-components-label-padding-x: 0.8rem;
+  --spacing-components-code-header-padding-y: 0.7rem;
+  --spacing-components-code-header-padding-x: 1rem;
+  --spacing-components-code-body-padding: 1rem;
+  --spacing-components-timeline-gap: 1rem;
+  --spacing-components-timeline-item-gap: 0.9rem;
+  --spacing-components-timeline-item-padding: 1rem;
+  --spacing-components-timeline-body-gap: 0.35rem;
+  --spacing-components-timeline-event-gap: 0.35rem;
+  --spacing-components-timeline-event-padding: 1rem;
+  --spacing-components-annotation-focus-outline-offset: 0.18rem;
+  --spacing-components-annotation-popover-offset: 0.65rem;
+  --spacing-components-annotation-popover-padding-y: 0.7rem;
+  --spacing-components-annotation-popover-padding-x: 0.85rem;
+  --spacing-components-media-figure-gap: 0.75rem;
+  --spacing-components-media-caption-gap: 0.75rem;
+  --spacing-components-spectrum-gap: 0.8rem;
+  --spacing-components-spectrum-marker-gap: 0.35rem;
+  --spacing-components-spectrum-legend-gap: 1rem;
+  --spacing-components-horizons-gap: 1rem;
+  --spacing-components-horizons-columns-gap: 1rem;
+  --spacing-components-horizons-column-padding: 0.9rem;
+  --spacing-components-horizons-list-padding-start: 1.1rem;
+  --spacing-components-horizons-list-gap: 0.35rem;
+  --spacing-components-diagram-caption-gap: 0.75rem;
+  --spacing-components-body-drop-cap-gap: 0.14em;
+  --spacing-components-edge-rail-gap: 0.55rem;
+  --spacing-components-chapter-nav-gap: 0.65rem;
+  --spacing-components-chapter-nav-padding-y: 0.45rem;
+  --spacing-components-chapter-nav-padding-x: 0.75rem;
+  --spacing-layouts-compact-padding: clamp(0.85rem, 1.4vw, 1.15rem);
+  --spacing-layouts-compact-gap: clamp(0.5rem, 1vw, 0.85rem);
+  --spacing-layouts-timeline-gap: clamp(1.1rem, 2vw, 1.9rem);
+  --spacing-layouts-timeline-track-offset: 1.2rem;
+  --spacing-layouts-comparison-arrow-gap: clamp(1.2rem, 2vw, 1.8rem);
+  --spacing-layouts-pyramid-gap: clamp(0.45rem, 0.8vw, 0.8rem);
+  --spacing-layouts-framed-rail-padding: clamp(1.2rem, 2vw, 1.8rem);
+  --spacing-layouts-framed-rail-main-padding: clamp(1rem, 2vw, 1.8rem);
+  --spacing-layouts-framed-rail-accent-inset: clamp(1rem, 2vw, 1.4rem);
+  --size-components-shell-hero-max-width: 60rem;
+  --size-components-shell-lead-max-width: 48rem;
+  --size-components-shell-empty-panel-max-width: 34rem;
+  --size-components-shell-filter-min-width: 160px;
+  --size-components-shell-filter-max-width: 220px;
+  --size-components-shell-card-grid-min-width: 260px;
+  --size-components-shell-list-media-min-width: 220px;
+  --size-components-shell-list-media-max-width: 320px;
+  --size-components-shell-shortcut-panel-width: 32rem;
+  --size-components-shell-shortcut-panel-max-height: 42rem;
+  --size-components-shell-shortcut-key-min-width: 7.5rem;
+  --size-components-shell-shortcut-key-max-width: 10rem;
+  --size-components-shell-scrollbar: 6px;
+  --size-components-feature-icon: 2.4rem;
+  --size-components-feature-icon-padding: 0.55rem;
+  --size-components-profile-avatar: 4rem;
+  --size-components-stat-trend-icon: 1rem;
+  --size-components-timeline-marker: 2.25rem;
+  --size-components-timeline-dot: 0.7rem;
+  --size-components-timeline-icon: 1rem;
+  --size-components-timeline-event-dot: 2rem;
+  --size-components-annotation-popover-width: 20rem;
+  --size-components-annotation-arrow: 0.8rem;
+  --size-components-media-image-max-height: 420px;
+  --size-components-media-iframe-min-height: 320px;
+  --size-components-spectrum-figure-min-height: 15rem;
+  --size-components-spectrum-bar-min-height: 5rem;
+  --size-components-spectrum-dot: 0.9rem;
+  --size-components-spectrum-vertical-bar-width: 1.1rem;
+  --size-components-spectrum-vertical-min-height: 18rem;
+  --size-components-edge-rail-width: clamp(0.9rem, 1.6vw, 1.25rem);
+  --size-components-edge-rail-short: clamp(2.8rem, 8vh, 4rem);
+  --size-components-edge-rail-medium: clamp(4rem, 12vh, 5.5rem);
+  --size-components-edge-rail-tall: clamp(5.2rem, 16vh, 7rem);
+  --size-components-edge-rail-horizontal: clamp(4rem, 10vw, 6rem);
+  --size-components-edge-rail-horizontal-height: clamp(2rem, 4vw, 2.8rem);
+  --size-components-edge-rail-active-shift: 0.15rem;
+  --size-layouts-title-left-accent-min-width: 220px;
+  --size-layouts-section-header-accent-max-width: 14rem;
+  --size-layouts-single-content-max-width: 78rem;
+  --size-layouts-content-media-min-width: 280px;
+  --size-layouts-sidebar-main-min-width: 220px;
+  --size-layouts-gallery-item-min-width: 220px;
+  --size-layouts-scattered-item-width: 320px;
+  --size-layouts-timeline-item-min-width: 180px;
+  --size-layouts-comparison-divider-min-width: 4rem;
+  --size-layouts-comparison-divider-badge-size: 3rem;
+  --size-layouts-pyramid-max-width: 52rem;
+  --size-layouts-pyramid-top-width: 18rem;
+  --size-layouts-pyramid-middle-width: 28rem;
+  --size-layouts-pyramid-base-width: 38rem;
+  --radius-components-card: 0;
+  --radius-components-callout: 0;
+  --radius-components-label: 0;
+  --radius-components-code: 10px;
+  --radius-components-tooltip: 0;
+  --radius-components-media: 0;
+  --radius-components-avatar: 999px;
+  --radius-components-marker: 999px;
+  --radius-components-spectrum: 999px;
+  --radius-layouts-divider-badge: 999px;
+  --radius-layouts-framed-rail: var(--radius-large, 0);
+  --shadow-components-card: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-components-code: 0 10px 24px rgba(0, 0, 0, 0.16);
+  --shadow-components-tooltip: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --border-components-card: 1px solid rgba(34, 33, 26, 0.14);
+  --border-components-callout: 1px solid rgba(34, 33, 26, 0.14);
+  --border-components-label: 1px solid rgba(34, 33, 26, 0.14);
+  --border-components-code: 1px solid rgba(34, 33, 26, 0.14);
+  --border-components-tooltip: 1px solid rgba(34, 33, 26, 0.28);
+  --motion-components-list-offset-y: 0.35rem;
+  --motion-components-timeline-offset-y: 0.4rem;
+  --color-decor-active: var(--color-primary, #8b5a2b);
+  --color-decor-inactive: rgba(34, 33, 26, 0.14);
+  --color-decor-muted: var(--color-muted, #5c5749);
+  --color-decor-text: var(--color-foreground, #22211a);
+  --color-decor-panel: var(--color-surface, #f8f5ea);
+  --color-decor-line: var(--color-secondary, #3a3124);
+  --color-decor-rail-1: #98d4bb;
+  --color-decor-rail-2: #c7b8ea;
+  --color-decor-rail-3: #f4b8c5;
+  --color-decor-rail-4: #a8d8ea;
+  --color-decor-rail-5: #ffe6a7;
+  --color-pattern-overlay: linear-gradient(135deg, transparent 0%, transparent 100%);
+  --color-pattern-grid: transparent;
+  --color-pattern-scanline: transparent;
+  --color-pattern-dot: transparent;
+  --color-pattern-glow: transparent;
+  --color-pattern-opacity: 0.45;
+  --color-split-left: color-mix(in srgb, var(--color-surface, #f8f5ea) 96%, transparent);
+  --color-split-right: color-mix(in srgb, var(--color-panel, #ebe4d2) 92%, transparent);
+  --color-split-band: color-mix(in srgb, var(--color-primary, #8b5a2b) 16%, transparent);
 }
 
 * {
@@ -312,6 +530,40 @@ textarea {
   background-size: 8px 8px;
   opacity: var(--color-chrome-noise-strength, 0.22);
   mix-blend-mode: multiply;
+}
+
+.backgroundPattern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    var(
+      --color-pattern-overlay,
+      linear-gradient(135deg, transparent 0%, transparent 100%)
+    ),
+    linear-gradient(
+      0deg,
+      var(--color-pattern-scanline, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      var(--color-pattern-grid, transparent) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 20% 20%,
+      var(--color-pattern-glow, transparent) 0%,
+      transparent 36%
+    ),
+    radial-gradient(
+      circle,
+      var(--color-pattern-dot, transparent) 0.7px,
+      transparent 0.8px
+    );
+  background-size: auto, 100% 4px, 48px 48px, auto, 12px 12px;
+  opacity: var(--color-pattern-opacity, 0.45);
+  mix-blend-mode: screen;
 }
 
 .stepScene {

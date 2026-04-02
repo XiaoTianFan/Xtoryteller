@@ -1,0 +1,24 @@
+name: edge-rail
+displayName: Edge Rail
+description: Decorative tab or pill rail for editorial and structured slide motifs.
+category: decorative
+props:
+  items:
+    type: array
+    required: true
+    description: Rail items with optional label, color, tone, height, and active state.
+  variant:
+    type: enum
+    values: [tabs, pills]
+    default: pills
+    description: Visual treatment for the rail items.
+  side:
+    type: enum
+    values: [left, right]
+    default: right
+    description: Preferred attachment side.
+  orientation:
+    type: enum
+    values: [vertical, horizontal]
+    default: vertical
+    description: Rail direction.

@@ -1,5 +1,6 @@
 import {
   FALLBACK_THEME_SLUG,
+  loadThemeRegistry,
   loadThemeWithFallback,
   resolveAvailableThemeSlug
 } from '@/lib/engine/theme-registry';
@@ -25,5 +26,27 @@ describe('theme registry resolution', () => {
     const resolved = await loadThemeWithFallback('missing-theme', 'another-missing-theme');
     expect(resolved.slug).toBe(FALLBACK_THEME_SLUG);
     expect(resolved.theme.name).toBe('Xinimalist Paper');
+  });
+
+  it('includes the frontend-slides preset theme families in the registry', async () => {
+    const registry = await loadThemeRegistry();
+    const slugs = registry.map((entry) => entry.slug);
+
+    expect(slugs).toEqual(
+      expect.arrayContaining([
+        'bold-signal',
+        'electric-studio',
+        'creative-voltage',
+        'dark-botanical',
+        'notebook-tabs',
+        'pastel-geometry',
+        'split-pastel',
+        'vintage-editorial',
+        'neon-cyber',
+        'terminal-green',
+        'swiss-modern',
+        'paper-and-ink'
+      ])
+    );
   });
 });

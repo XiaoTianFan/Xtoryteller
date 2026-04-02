@@ -9,6 +9,7 @@ import ComparisonCard from '@/components/comparison-card';
 import CoordinatePlot from '@/components/coordinate-plot';
 import CycleDiagram from '@/components/cycle-diagram';
 import Divider from '@/components/divider';
+import EdgeRail from '@/components/edge-rail';
 import FeatureCard from '@/components/feature-card';
 import Flowchart from '@/components/flowchart';
 import Footnote from '@/components/footnote';
@@ -19,6 +20,7 @@ import Icon from '@/components/icon';
 import IframeEmbed from '@/components/iframe-embed';
 import ImageComponent from '@/components/image';
 import Label from '@/components/label';
+import ChapterNav from '@/components/chapter-nav';
 import MindMap from '@/components/mind-map';
 import NumberedList from '@/components/numbered-list';
 import OrgChart from '@/components/org-chart';
@@ -61,6 +63,8 @@ export const runtimeComponentMap = {
   'timeline-item': TimelineItem,
   timeline: Timeline,
   divider: Divider,
+  'edge-rail': EdgeRail,
+  'chapter-nav': ChapterNav,
   'causal-diagram': CausalDiagram,
   'mind-map': MindMap,
   'iceberg-diagram': IcebergDiagram,

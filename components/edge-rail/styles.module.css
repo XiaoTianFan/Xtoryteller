@@ -1,0 +1,117 @@
+.rail {
+  display: inline-flex;
+  gap: var(--spacing-components-edge-rail-gap, 0.55rem);
+  align-items: center;
+  justify-content: center;
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.horizontal {
+  flex-direction: row;
+}
+
+.left {
+  justify-self: start;
+}
+
+.right {
+  justify-self: end;
+}
+
+.item {
+  --rail-width: var(--size-components-edge-rail-width, clamp(0.9rem, 1.6vw, 1.25rem));
+  --rail-height-short: var(--size-components-edge-rail-short, clamp(2.8rem, 8vh, 4rem));
+  --rail-height-medium: var(--size-components-edge-rail-medium, clamp(4rem, 12vh, 5.5rem));
+  --rail-height-tall: var(--size-components-edge-rail-tall, clamp(5.2rem, 16vh, 7rem));
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--rail-width);
+  color: var(--color-decor-text, var(--color-foreground));
+  background: var(--rail-item-color);
+  border: 1px solid color-mix(in srgb, var(--rail-item-color) 78%, var(--color-border) 22%);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.vertical .item {
+  width: var(--rail-width);
+}
+
+.horizontal .item {
+  min-height: var(--rail-width);
+  min-width: var(--size-components-edge-rail-horizontal, clamp(4rem, 10vw, 6rem));
+}
+
+.tabs .item {
+  border-radius: var(--radius-components-edge-rail-tab, 0.85rem 0.85rem 0 0);
+}
+
+.vertical.tabs .item {
+  border-radius: var(--radius-components-edge-rail-tab-vertical, 0.8rem 0 0 0.8rem);
+}
+
+.pills .item {
+  border-radius: var(--radius-pill);
+}
+
+.short {
+  height: var(--rail-height-short);
+}
+
+.medium {
+  height: var(--rail-height-medium);
+}
+
+.tall {
+  height: var(--rail-height-tall);
+}
+
+.horizontal .short,
+.horizontal .medium,
+.horizontal .tall {
+  height: var(--size-components-edge-rail-horizontal-height, clamp(2rem, 4vw, 2.8rem));
+}
+
+.horizontal .short {
+  width: clamp(4.2rem, 9vw, 5.2rem);
+}
+
+.horizontal .medium {
+  width: clamp(5.6rem, 11vw, 7rem);
+}
+
+.horizontal .tall {
+  width: clamp(7rem, 14vw, 8.8rem);
+}
+
+.label {
+  font-size: var(--text-components-edge-rail-label, var(--text-small));
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.vertical.tabs .label,
+.vertical.pills .label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.horizontal .label {
+  writing-mode: initial;
+  transform: none;
+}
+
+.active {
+  transform: translateX(calc(var(--size-components-edge-rail-active-shift, 0.15rem) * -1));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--rail-item-color) 70%, white 30%), var(--shadow-strong);
+}
+
+.horizontal.active {
+  transform: translateY(calc(var(--size-components-edge-rail-active-shift, 0.15rem) * -1));
+}

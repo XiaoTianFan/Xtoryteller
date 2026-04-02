@@ -245,6 +245,116 @@
   font-size: var(--text-components-comparison-divider);
 }
 
+.framedRail {
+  align-content: center;
+  justify-items: center;
+  padding: var(--spacing-page);
+}
+
+.framedRailFrame {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  width: min(100%, var(--framed-rail-max-width, min(92vw, 76rem)));
+  min-height: min(76vh, 42rem);
+  padding: var(--spacing-layouts-framed-rail-padding, clamp(1.2rem, 2vw, 1.8rem));
+  border-radius: var(--radius-layouts-framed-rail, var(--radius-large));
+  border: 1px solid var(--color-decor-line, var(--color-border));
+  background: linear-gradient(135deg, var(--color-split-left, color-mix(in srgb, var(--color-surface) 96%, transparent)) 0%, var(--color-split-right, color-mix(in srgb, var(--color-panel) 92%, transparent)) 100%);
+  box-shadow: var(--shadow-strong);
+  overflow: hidden;
+}
+
+.framedRailLeft {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.framedRailMain {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  gap: var(--spacing-section);
+  min-width: 0;
+  padding: var(--spacing-layouts-framed-rail-main-padding, clamp(1rem, 2vw, 1.8rem));
+}
+
+.framedRailCenter .framedRailMain {
+  justify-items: center;
+  text-align: center;
+}
+
+.framedRailRail {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-width: clamp(2.8rem, 4.5vw, 4.4rem);
+}
+
+.framedRailAccent {
+  position: absolute;
+  top: var(--spacing-layouts-framed-rail-accent-inset, clamp(1rem, 2vw, 1.4rem));
+  right: var(--spacing-layouts-framed-rail-accent-inset, clamp(1rem, 2vw, 1.4rem));
+  max-width: min(18rem, 36%);
+  z-index: 2;
+}
+
+.framedRailLeft .framedRailAccent {
+  right: auto;
+  left: var(--spacing-layouts-framed-rail-accent-inset, clamp(1rem, 2vw, 1.4rem));
+}
+
+.asymmetricSplit {
+  position: relative;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  align-items: stretch;
+  padding: var(--spacing-page);
+}
+
+.asymmetricSplitMain,
+.asymmetricSplitSupport {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+}
+
+.asymmetricSplitMain {
+  padding-right: clamp(0.8rem, 1.8vw, 1.8rem);
+}
+
+.asymmetricSplitSupport {
+  padding-left: clamp(0.8rem, 1.8vw, 1.8rem);
+}
+
+.asymmetricSplitOrnament {
+  position: absolute;
+  max-width: min(18rem, 28vw);
+  z-index: 2;
+}
+
+.topLeft {
+  top: clamp(1rem, 2vw, 1.6rem);
+  left: clamp(1rem, 2vw, 1.6rem);
+}
+
+.topRight {
+  top: clamp(1rem, 2vw, 1.6rem);
+  right: clamp(1rem, 2vw, 1.6rem);
+}
+
+.bottomLeft {
+  bottom: clamp(1rem, 2vw, 1.6rem);
+  left: clamp(1rem, 2vw, 1.6rem);
+}
+
+.bottomRight {
+  bottom: clamp(1rem, 2vw, 1.6rem);
+  right: clamp(1rem, 2vw, 1.6rem);
+}
+
 .pyramidLayout {
   height: 100%;
   grid-template-rows: repeat(var(--pyramid-rows, 1), minmax(0, 1fr));
@@ -315,12 +425,35 @@
   .grid3x2,
   .sidebarMain,
   .titleLeft,
-  .comparisonLayout {
+  .comparisonLayout,
+  .framedRailFrame,
+  .asymmetricSplit {
     grid-template-columns: 1fr;
   }
 
   .comparisonDividerLine {
     width: 100%;
     height: 1px;
+  }
+
+  .framedRailLeft {
+    grid-template-columns: 1fr;
+  }
+
+  .framedRailRail {
+    min-width: 0;
+    justify-items: start;
+  }
+
+  .framedRailAccent,
+  .framedRailLeft .framedRailAccent,
+  .asymmetricSplitOrnament {
+    position: static;
+    max-width: 100%;
+  }
+
+  .asymmetricSplitMain,
+  .asymmetricSplitSupport {
+    padding: 0;
   }
 }

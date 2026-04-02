@@ -1,5 +1,7 @@
+import AsymmetricSplitLayout from '@/layouts/asymmetric-split';
 import ContentLeftMediaRightLayout from '@/layouts/content-left-media-right';
 import ComparisonLayout from '@/layouts/comparison-layout';
+import FramedRailLayout from '@/layouts/framed-rail';
 import FullBleedLayout from '@/layouts/full-bleed';
 import GalleryLayout from '@/layouts/gallery';
 import Grid2x2Layout from '@/layouts/grid-2x2';
@@ -19,11 +21,13 @@ import TopBottomLayout from '@/layouts/top-bottom';
 import TwoColumnLayout from '@/layouts/two-column';
 
 export const runtimeLayoutMap = {
+  'asymmetric-split': AsymmetricSplitLayout,
   'title-center': TitleCenterLayout,
   'title-left': TitleLeftLayout,
   'section-header': SectionHeaderLayout,
   'single-content': SingleContentLayout,
   'two-column': TwoColumnLayout,
+  'framed-rail': FramedRailLayout,
   'content-left-media-right': ContentLeftMediaRightLayout,
   'full-bleed': FullBleedLayout,
   stack: StackLayout,

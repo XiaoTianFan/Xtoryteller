@@ -30,6 +30,7 @@ Good fits:
 
 - Outline the beats first.
 - Assign one layout per beat based on density and content shape.
+- Prefer a live preset-family direction before polishing edge cases. Distinctive decks usually begin with a strong theme-plus-layout motif, not last-minute color edits.
 - Use build sequencing for lists or progressive reveals.
 - Keep transitions consistent across most steps.
 - Put local assets in `presentations/<slug>/assets/`.
@@ -50,6 +51,7 @@ Good fits:
 ## Content Rules
 
 - Split instead of cram.
+- Split instead of cram, especially when a step tries to combine a strong motif, long copy, and dense supporting detail.
 - Keep list-heavy steps readable; use `build: sequential` when appropriate.
 - If you want list items or numbered points to reveal one-by-one, explicitly add `build: sequential`.
 - Keep `stat-card.value` short. Use it for compact metrics like `38`, `4 demos`, or `Automatic`, not long phrases.
@@ -57,6 +59,8 @@ Good fits:
 - Keep diagram labels concise, especially in `org-chart` and `sankey-diagram`.
 - Prefer built-in diagrams over forcing relationships into bullets.
 - Prefer `themeOverrides` for broad style shifts instead of repeated inline styles.
+- Prefer named preset families or reusable themes over vague palette nudges when the deck should feel intentionally designed.
+- Avoid generic styling patterns: repeated interchangeable card grids, default font stacks, or timid accent usage that does not reinforce the story mood.
 - Read [annotations.md](annotations.md) when the copy depends on hover annotations inside markdown-rendered content.
 - Read [current-runtime-limitations.md](current-runtime-limitations.md) and [runtime-support-matrix.md](runtime-support-matrix.md) before depending on advanced annotation or animation semantics.
 

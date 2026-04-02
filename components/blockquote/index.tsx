@@ -10,8 +10,14 @@ export default function BlockQuote({
   props?: Record<string, unknown>;
   style?: React.CSSProperties;
 }) {
+  const variant = String(props?.variant ?? 'default');
+
   return (
-    <figure className={styles.quote} style={style}>
+    <figure
+      className={[styles.quote, styles[variant as keyof typeof styles] ?? ''].join(' ')}
+      data-variant={variant}
+      style={style}
+    >
       <blockquote>
         <Markdown content={content ?? ''} />
       </blockquote>

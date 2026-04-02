@@ -286,6 +286,7 @@ function BackgroundSurface({
       <>
         <div className="backgroundSurface" style={{ ...surfaceStyle, background: value }} />
         <div className="backgroundNoise" />
+        <div className="backgroundPattern" />
       </>
     );
   }
@@ -296,6 +297,7 @@ function BackgroundSurface({
       <>
         <div className="backgroundSurface" style={{ ...surfaceStyle, background: value }} />
         <div className="backgroundNoise" />
+        <div className="backgroundPattern" />
       </>
     );
   }
@@ -319,20 +321,23 @@ function BackgroundSurface({
         };
 
   return (
-    <div className="backgroundSurface backgroundSurfaceShader" style={surfaceStyle}>
-      <ShaderComponent
-        {...shaderProps}
-        aria-hidden="true"
-        className={
-          typeof shaderProps.className === 'string'
-            ? `paperShaderCanvas ${shaderProps.className}`
-            : 'paperShaderCanvas'
-        }
-        width="100%"
-        height="100%"
-        style={mergedStyle}
-      />
-    </div>
+    <>
+      <div className="backgroundSurface backgroundSurfaceShader" style={surfaceStyle}>
+        <ShaderComponent
+          {...shaderProps}
+          aria-hidden="true"
+          className={
+            typeof shaderProps.className === 'string'
+              ? `paperShaderCanvas ${shaderProps.className}`
+              : 'paperShaderCanvas'
+          }
+          width="100%"
+          height="100%"
+          style={mergedStyle}
+        />
+      </div>
+      <div className="backgroundPattern" />
+    </>
   );
 }
 

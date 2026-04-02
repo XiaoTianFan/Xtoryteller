@@ -1,0 +1,18 @@
+name: chapter-nav
+displayName: Chapter Nav
+description: Compact breadcrumb-style chapter marker list for structured decks.
+category: navigation
+props:
+  items:
+    type: string[]
+    required: true
+    description: Ordered chapter labels.
+  active:
+    type: number
+    default: 0
+    description: Zero-based active chapter index.
+  orientation:
+    type: enum
+    values: [horizontal, vertical]
+    default: horizontal
+    description: Chapter list direction.

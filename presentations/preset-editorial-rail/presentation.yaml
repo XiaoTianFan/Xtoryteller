@@ -1,0 +1,62 @@
+meta:
+  title: Preset Editorial Rail
+  slug: preset-editorial-rail
+  description: Stage fixture for framed editorial rail motifs.
+  author: Xtoryteller
+  tags: [stage, preset, editorial, rail]
+  createdAt: 2026-04-01
+  updatedAt: 2026-04-01
+mode: stage
+theme: paper-and-ink
+background:
+  type: paper-shader
+  shader: paper-texture
+  preset: cardboard
+  colorStops: ['#faf9f7', '#efe3d3', '#fffdf8']
+steps:
+  - id: hero
+    title: Hero
+    layout: framed-rail
+    layoutProps: { railSide: right, contentAlign: left }
+    transition: fade
+    components:
+      - type: label
+        slot: main
+        content: calm
+        props: { tone: primary }
+      - type: headline
+        slot: main
+        content: Editorial Framing With Tactile Rhythm
+      - type: body-text
+        slot: main
+        content: The rail becomes part of the composition while the copy opens with a literary pace instead of a generic hero formula.
+        props: { dropCap: true, dropCapLines: 3 }
+      - type: edge-rail
+        slot: rail
+        props:
+          items:
+            - { label: intro, height: short, active: true }
+            - { label: story, height: medium }
+            - { label: proof, height: tall }
+            - { label: close, height: medium }
+          variant: tabs
+          side: right
+          orientation: vertical
+      - type: chapter-nav
+        slot: accent
+        props:
+          items: [setup, arc, evidence, finish]
+          active: 0
+          orientation: horizontal
+  - id: close
+    title: Close
+    layout: stack
+    transition: fade
+    components:
+      - type: blockquote
+        content: Let the form teach the mood before the explanation arrives.
+        props:
+          variant: large
+          attribution: Paper And Ink
+      - type: footnote
+        content: This fixture exercises `framed-rail`, `edge-rail`, drop-cap prose, and editorial quote styling.

@@ -19,6 +19,7 @@ Use this skill for work inside the Xtoryteller presentation system, not for one-
 - For YAML format rules, anti-patterns, and failure recovery, read [guides/yaml-conventions.md](references/guides/yaml-conventions.md), [guides/anti-patterns.md](references/guides/anti-patterns.md), and [guides/troubleshooting.md](references/guides/troubleshooting.md).
 - To choose a starting point before writing YAML, read [guides/example-selection.md](references/guides/example-selection.md) and inspect [examples/](references/examples/).
 - For visual option generation, read [guides/style-discovery.md](references/guides/style-discovery.md).
+- For curated reusable preset families, read [guides/preset-families.md](references/guides/preset-families.md).
 - For regression-style prompt checks, read [evals/coverage-prompts.md](evals/coverage-prompts.md).
 
 ## Core Workflow
@@ -36,6 +37,7 @@ Use this skill for work inside the Xtoryteller presentation system, not for one-
    `node scripts/validate-all.mjs`
 8. When the task changes runtime behavior instead of only content, run the appropriate test layer from [guides/qa-workflows.md](references/guides/qa-workflows.md).
 9. For Stage mode, manually verify viewport fit after meaningful edits at both `1280x720` and `1920x1080`. The page height must stay locked to the viewport, with no vertical growth or rescue scrolling.
+10. When the user is unsure about art direction, prefer live preset-driven previews before abstract style debates.
 
 ## Theme-System Route
 
@@ -80,7 +82,10 @@ Use these when repeated scaffolding would otherwise become manual and fragile.
 - Never solve repeated visual drift with scattered hardcoded CSS values when the design belongs in the theme token system.
 - Never use `preset` when you mean the shared Xtoryteller background preset name; use `presetRef` for the shared preset and keep `preset` for the upstream Paper Shader preset.
 - Never turn intrinsic layout mechanics like `100vh`, `100%`, SVG geometry, or arrangement outputs into theme tokens unless they are clearly intended as reusable visual language.
+- Never settle for generic “AI default” styling when the task clearly needs character. Prefer a named preset family, a deliberate type pairing, and a repeated layout motif.
 - Keep `stat-card` values short and metric-like. If the value reads like a sentence fragment, use `card`, `feature-card`, or `callout` instead.
+- Split instead of cram, especially when a step is trying to carry both a strong motif and dense explanatory copy.
+- Prefer preset-family language such as `bold-signal`, `notebook-tabs`, or `paper-and-ink` over vague requests like “make it nicer” or “slightly more modern.”
 - Use `build: sequential` on bullet or numbered lists when the story expects one item per advance.
 - Keep `pyramid-layout` rows compact: one short label plus one short sentence, not list-heavy cards.
 - Keep `org-chart` and `sankey-diagram` labels concise. Split dense structures instead of forcing long labels into one step.

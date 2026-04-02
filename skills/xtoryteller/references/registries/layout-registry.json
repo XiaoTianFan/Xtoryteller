@@ -1,6 +1,43 @@
 {
-  "count": 19,
+  "count": 21,
   "layouts": [
+    {
+      "name": "asymmetric-split",
+      "displayName": "Asymmetric Split",
+      "description": "Ratio-driven editorial split with optional anchored ornament.",
+      "slots": [
+        "main",
+        "support",
+        "ornament"
+      ],
+      "props": {
+        "ratio": {
+          "type": "enum",
+          "values": [
+            "60-40",
+            "40-60",
+            "70-30",
+            "30-70"
+          ],
+          "default": "60-40",
+          "description": "Main-to-support panel ratio."
+        },
+        "ornamentAnchor": {
+          "type": "enum",
+          "values": [
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right"
+          ],
+          "default": "top-right",
+          "description": "Corner for the optional ornament panel."
+        }
+      },
+      "density": {
+        "recommendation": "One dominant narrative panel, one support panel, and one small decorative accent."
+      }
+    },
     {
       "name": "comparison-layout",
       "displayName": "Comparison Layout",
@@ -23,6 +60,43 @@
       ],
       "density": {
         "recommendation": "Text on the left, visual on the right."
+      }
+    },
+    {
+      "name": "framed-rail",
+      "displayName": "Framed Rail",
+      "description": "Inset editorial frame with a decorative rail and optional accent panel.",
+      "slots": [
+        "main",
+        "rail",
+        "accent"
+      ],
+      "props": {
+        "railSide": {
+          "type": "enum",
+          "values": [
+            "left",
+            "right"
+          ],
+          "default": "right",
+          "description": "Side that the decorative rail attaches to."
+        },
+        "contentAlign": {
+          "type": "enum",
+          "values": [
+            "left",
+            "center"
+          ],
+          "default": "left",
+          "description": "Alignment for the main content inside the frame."
+        },
+        "frameMaxWidth": {
+          "type": "string",
+          "description": "Optional maximum width for the framed content surface."
+        }
+      },
+      "density": {
+        "recommendation": "One primary narrative block, one decorative rail, and one optional accent."
       }
     },
     {

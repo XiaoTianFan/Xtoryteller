@@ -1,6 +1,618 @@
 {
-  "count": 2,
+  "count": 14,
   "themes": [
+    {
+      "slug": "bold-signal",
+      "name": "Bold Signal",
+      "fonts": {
+        "heading": {
+          "family": "Archivo Black",
+          "source": "google",
+          "weights": [
+            400
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "Impact",
+            "sans-serif"
+          ]
+        },
+        "body": {
+          "family": "Space Grotesk",
+          "source": "google",
+          "weights": [
+            400,
+            500,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "Space Mono",
+          "source": "google",
+          "weights": [
+            400,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "creative-voltage",
+      "name": "Creative Voltage",
+      "fonts": {
+        "heading": {
+          "family": "Syne",
+          "source": "google",
+          "weights": [
+            700,
+            800
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "body": {
+          "family": "Space Mono",
+          "source": "google",
+          "weights": [
+            400,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        },
+        "mono": {
+          "family": "Space Mono",
+          "source": "google",
+          "weights": [
+            400,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "dark-botanical",
+      "name": "Dark Botanical",
+      "fonts": {
+        "heading": {
+          "family": "Cormorant",
+          "source": "google",
+          "weights": [
+            400,
+            600,
+            700
+          ],
+          "styles": [
+            "normal",
+            "italic"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "serif"
+          ]
+        },
+        "body": {
+          "family": "IBM Plex Sans",
+          "source": "google",
+          "weights": [
+            300,
+            400,
+            500
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "IBM Plex Mono",
+          "source": "google",
+          "weights": [
+            400,
+            500
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "electric-studio",
+      "name": "Electric Studio",
+      "fonts": {
+        "heading": {
+          "family": "Manrope",
+          "source": "google",
+          "weights": [
+            400,
+            700,
+            800
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "body": {
+          "family": "Manrope",
+          "source": "google",
+          "weights": [
+            400,
+            500,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "JetBrains Mono",
+          "source": "google",
+          "weights": [
+            400,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "neon-cyber",
+      "name": "Neon Cyber",
+      "fonts": {
+        "heading": {
+          "family": "Clash Display",
+          "source": "fontshare",
+          "cssUrl": "https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "body": {
+          "family": "Satoshi",
+          "source": "fontshare",
+          "cssUrl": "https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "JetBrains Mono",
+          "source": "google",
+          "weights": [
+            400,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "notebook-tabs",
+      "name": "Notebook Tabs",
+      "fonts": {
+        "heading": {
+          "family": "Bodoni Moda",
+          "source": "google",
+          "weights": [
+            400,
+            600,
+            700
+          ],
+          "styles": [
+            "normal",
+            "italic"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "serif"
+          ]
+        },
+        "body": {
+          "family": "DM Sans",
+          "source": "google",
+          "weights": [
+            400,
+            500,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "IBM Plex Mono",
+          "source": "google",
+          "weights": [
+            400,
+            500
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "paper-and-ink",
+      "name": "Paper And Ink",
+      "fonts": {
+        "heading": {
+          "family": "Cormorant Garamond",
+          "source": "google",
+          "weights": [
+            500,
+            600,
+            700
+          ],
+          "styles": [
+            "normal",
+            "italic"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "serif"
+          ]
+        },
+        "body": {
+          "family": "Source Serif 4",
+          "source": "google",
+          "weights": [
+            400,
+            600
+          ],
+          "styles": [
+            "normal",
+            "italic"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "serif"
+          ]
+        },
+        "mono": {
+          "family": "IBM Plex Mono",
+          "source": "google",
+          "weights": [
+            400,
+            500
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "pastel-geometry",
+      "name": "Pastel Geometry",
+      "fonts": {
+        "heading": {
+          "family": "Plus Jakarta Sans",
+          "source": "google",
+          "weights": [
+            700,
+            800
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "body": {
+          "family": "Plus Jakarta Sans",
+          "source": "google",
+          "weights": [
+            400,
+            500,
+            600
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "IBM Plex Mono",
+          "source": "google",
+          "weights": [
+            400,
+            500
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "split-pastel",
+      "name": "Split Pastel",
+      "fonts": {
+        "heading": {
+          "family": "Outfit",
+          "source": "google",
+          "weights": [
+            700,
+            800
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "body": {
+          "family": "Outfit",
+          "source": "google",
+          "weights": [
+            400,
+            500,
+            600
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "IBM Plex Mono",
+          "source": "google",
+          "weights": [
+            400,
+            500
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "swiss-modern",
+      "name": "Swiss Modern",
+      "fonts": {
+        "heading": {
+          "family": "Archivo",
+          "source": "google",
+          "weights": [
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "body": {
+          "family": "Nunito",
+          "source": "google",
+          "weights": [
+            400,
+            600
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "IBM Plex Mono",
+          "source": "google",
+          "weights": [
+            400,
+            500
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "terminal-green",
+      "name": "Terminal Green",
+      "fonts": {
+        "heading": {
+          "family": "JetBrains Mono",
+          "source": "google",
+          "weights": [
+            400,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        },
+        "body": {
+          "family": "JetBrains Mono",
+          "source": "google",
+          "weights": [
+            400,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        },
+        "mono": {
+          "family": "JetBrains Mono",
+          "source": "google",
+          "weights": [
+            400,
+            700
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "vintage-editorial",
+      "name": "Vintage Editorial",
+      "fonts": {
+        "heading": {
+          "family": "Fraunces",
+          "source": "google",
+          "weights": [
+            700,
+            900
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "serif"
+          ]
+        },
+        "body": {
+          "family": "Work Sans",
+          "source": "google",
+          "weights": [
+            400,
+            500,
+            600
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "sans-serif"
+          ]
+        },
+        "mono": {
+          "family": "IBM Plex Mono",
+          "source": "google",
+          "weights": [
+            400,
+            500
+          ],
+          "styles": [
+            "normal"
+          ],
+          "display": "swap",
+          "fallbacks": [
+            "monospace"
+          ]
+        }
+      }
+    },
     {
       "slug": "xinimalist-dark",
       "name": "Xinimalist Dark",
