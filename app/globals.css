@@ -736,7 +736,7 @@ textarea {
   border-top: var(--border-chrome-panel);
   border-left: var(--border-chrome-panel);
   border-right: var(--border-chrome-panel);
-  background: var(--color-chrome-overlay-surface);
+  background: var(--color-chrome-surface-strong);
   backdrop-filter: blur(var(--color-chrome-panel-blur));
   box-shadow: var(--shadow-chrome-panel);
   opacity: 0;
@@ -1052,8 +1052,8 @@ textarea {
   display: grid;
   place-items: center;
   padding: var(--spacing-chrome-overlay-padding);
-  background: var(--color-overlay-scrim, rgba(20, 17, 12, 0.48));
-  backdrop-filter: blur(var(--color-chrome-overlay-blur, 14px));
+  background: var(--color-overlay-scrim);
+  backdrop-filter: blur(var(--color-chrome-overlay-blur));
 }
 
 .shortcutOverlayPanel {
@@ -1065,7 +1065,7 @@ textarea {
   padding: var(--spacing-chrome-overlay-panel-padding);
   border-radius: var(--radius-chrome-overlay);
   border: var(--border-chrome-overlay);
-  background: var(--color-chrome-overlay-surface, rgba(255, 249, 240, 0.96));
+  background: var(--color-chrome-surface-strong);
   box-shadow: var(--shadow-chrome-overlay);
 }
 
@@ -1083,7 +1083,7 @@ textarea {
 
 .shortcutOverlaySubtitle,
 .shortcutOverlayDescription {
-  color: var(--color-chrome-text-soft, #60584f);
+  color: var(--color-chrome-text-soft);
   line-height: 1.45;
 }
 
@@ -1108,8 +1108,8 @@ textarea {
   padding: var(--spacing-chrome-overlay-key-padding-y)
     var(--spacing-chrome-overlay-key-padding-x);
   border-radius: var(--radius-chrome-chip);
-  background: var(--color-chrome-badge-bg, rgba(42, 108, 100, 0.08));
-  color: var(--color-chrome-badge-text, #245952);
+  background: var(--color-chrome-badge-bg);
+  color: var(--color-chrome-badge-text);
   font-size: var(--text-components-shell-shortcut-key);
 }
 

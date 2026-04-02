@@ -1,9 +1,10 @@
 'use client';
 
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { CSSProperties, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { resolveTheme } from '@/lib/engine/theme-resolver';
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
 
 function isEditableTarget(target: EventTarget | null) {
@@ -367,11 +368,15 @@ export function PresentationControls({
   sequence?: ReactNode;
   rightActions?: ReactNode;
 }) {
-  const { machine } = usePresentationRuntime();
+  const { machine, theme } = usePresentationRuntime();
   const [showShortcuts, setShowShortcuts] = useState(false);
   const progress = total > 0 ? (current / total) * 100 : 0;
   const unitLabel = mapMode ? 'Cluster' : 'Step';
   const canScrubSteps = !mapMode && total > 0;
+  const controlThemeVars = useMemo(
+    () => resolveTheme(theme).cssVariables as CSSProperties,
+    [theme]
+  );
 
   const jumpToProgressPosition = (clientX: number, element: HTMLElement) => {
     if (!canScrubSteps) {
@@ -411,7 +416,7 @@ export function PresentationControls({
   };
 
   return (
-    <>
+    <div style={controlThemeVars}>
       <ViewerHotkeys
         total={total}
         current={current}
@@ -483,6 +488,6 @@ export function PresentationControls({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
