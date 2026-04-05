@@ -1,6 +1,9 @@
 # dependencies
 /node_modules
 
+# claude code
+/.claude
+
 # next
 /.next
 /out
@@ -30,8 +33,8 @@ pnpm-debug.log*
 /output/
 /playwright-report/
 /test-results/
-/.playwright-cli
-/.github
+/.playwright-cli/
+/.github/
 
 #presentation refs
 /presentations/human-ai-and-music/ref
