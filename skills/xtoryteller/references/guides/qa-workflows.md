@@ -16,6 +16,8 @@ Read this file when the task changes authoring data, runtime behavior, manifests
   `npm run validate:skill` (also runs automatically at the end of `npm run validate:all`)
 - Dashboard thumbnail (viewer screenshot → `presentations/<slug>/assets/thumbnail.png` and `meta.thumbnail`; requires dev server):
   `npm run thumbnail -- --slug <slug> [--base-url http://127.0.0.1:3000]`
+- PDF export (DOM/SVG/text print route → `exports/<slug>.pdf`; requires a running Next server):
+  `npm run presentation:pdf -- --slug <slug> [--base-url http://127.0.0.1:3000]`
 
 ## Test Layers
 
@@ -38,6 +40,7 @@ Read this file when the task changes authoring data, runtime behavior, manifests
 - Shared visual-token or reusable CSS refactor: `validate:all`, `test:unit`, and `test:integration`
 - Validator, registry, or engine logic change: `test:unit` and `test:integration`
 - Runtime renderer, dashboard, or viewer interaction change: `test:contracts`, `test:integration`, and `test:e2e`
+- PDF export change: `test:unit`, `test:integration`, and a targeted browser/PDF smoke check when Chromium is available
 - Portability workflow change: `test:unit`, `test:integration`, and the relevant package validation flow
 
 ## Visual-System Regression Rule

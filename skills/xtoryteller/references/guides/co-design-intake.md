@@ -4,6 +4,8 @@ Read this guide when creating a new Xtoryteller presentation from scratch (SKILL
 
 Batch questions to minimize back-and-forth. Complete all steps before writing any YAML.
 
+For new presentation generation, storytelling preparation is the default. Read [presentation-storytelling-mode.md](presentation-storytelling-mode.md) during this intake unless the user explicitly asks to skip narrative/storytelling prep. Treat the story spine as the content structure that Step 4 confirms.
+
 ---
 
 ## Step 0: Mode
@@ -71,6 +73,19 @@ If the answer is "All content ready" or "Rough notes", ask the user to share or 
 - No — view only
 
 Store this preference. The Xtoryteller dev mode supports live YAML hot-reload; the presentation.yaml is the source of truth. Inline browser editing is not applicable here (unlike standalone HTML decks), so inform the user if they select Yes: the dev server hot-reloads from the YAML file, which they can edit in any editor.
+
+### 1e — Storytelling preparation
+
+Unless the user explicitly said to skip storytelling prep, follow [presentation-storytelling-mode.md](presentation-storytelling-mode.md) after the core intake is known. Capture or infer:
+
+- occasion
+- audience
+- purpose
+- duration
+- speaker identity, if relevant
+- scenario route: A material transformation, B from scratch, C polish, D renovation, or E local rewrite
+
+If the user provided material, run the material understanding step before outlining. If the user has only a topic, build the story shape directly. If the user already supplied a narrative outline or story spine, use Skip mode and continue from the next useful step.
 
 ---
 
@@ -176,6 +191,7 @@ Synthesize what you know into a proposed structure:
 
 - Mode, slug, title
 - Number of steps (Stage) or clusters (Map), with a brief title for each
+- Story spine summary: chapters, step roles, key-message titles, and estimated timing when Stage mode is speaker-led
 - Any asset/logo placements noted
 - Style choice and density/tempo preferences
 

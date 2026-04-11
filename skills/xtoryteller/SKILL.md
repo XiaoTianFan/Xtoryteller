@@ -1,6 +1,6 @@
 ---
 name: xtoryteller
-description: Create, edit, validate, test, and package Xtoryteller presentations and runtime features. Use when the task involves Stage-mode or Map-mode authoring in this repo, markdown annotation authoring, theme/background/transition work, dashboard or viewer runtime changes, choosing or refining layouts/components/themes/transitions, creating style previews, scaffolding Xtoryteller primitives, or running portability workflows for export/import/promotion.
+description: Create, edit, validate, test, and package Xtoryteller presentations and runtime features. Use when the task involves Stage-mode or Map-mode authoring in this repo, default presentation-storytelling preparation for new presentation generation, optional strategy-consulting deck structure, markdown annotation authoring, theme/background/transition work, dashboard or viewer runtime changes, choosing or refining layouts/components/themes/transitions, creating style previews, scaffolding Xtoryteller primitives, or running portability workflows for export/import/promotion.
 ---
 
 # Xtoryteller
@@ -13,13 +13,15 @@ Follow the phases in order unless the task is trivially local (for example, a on
 
 ### Phase 0: Detect task type
 
-- **New presentation from scratch** → Phase 1 (co-design intake).
+- **New presentation from scratch** → Phase 1 (co-design intake + [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md) by default unless the user explicitly asks to skip storytelling prep).
 - **Editing or enhancing an existing presentation** → Phase 2 (the existing YAML is the source of truth; skip co-design).
+- **Story rewrite / speaker-led deck / material-to-presentation task** → read [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md) before writing YAML unless explicitly skipped.
+- **Strategy / market / consulting-style research deck** → run [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md), then read [strategy-consulting-mode.md](references/guides/strategy-consulting-mode.md) before writing YAML.
 - **Annotations, themes, backgrounds, transitions, runtime, primitives, portability** → Phase 2.
 
 ### Phase 1: Co-design intake (new presentations only)
 
-Before touching YAML, co-design the presentation with the user. Read [guides/co-design-intake.md](references/guides/co-design-intake.md) and follow the full intake flow. The intake covers mode, purpose, length/size, content readiness, media and logo assets, style path, content density, and animation tempo. On completion you will have a confirmed slug, structure outline, and style direction — then continue to Phase 2.
+Before touching YAML, co-design the presentation with the user. Read [guides/co-design-intake.md](references/guides/co-design-intake.md) and follow the full intake flow. For new presentation generation, also read [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md) and complete storytelling preparation unless the user explicitly asked to skip it. The intake covers mode, purpose, length/size, content readiness, media and logo assets, style path, content density, and animation tempo; storytelling preparation adds speaking context, scenario routing, material understanding, story spine, and narrative quality checks. On completion you will have a confirmed slug, story/structure outline, and style direction — then continue to Phase 2.
 
 ### Phase 2: Classify and load context
 
@@ -29,6 +31,8 @@ Before touching YAML, co-design the presentation with the user. Read [guides/co-
 | --- | --- |
 | Stage deck (new or edited) | [stage-authoring.md](references/guides/stage-authoring.md), [example-selection.md](references/guides/example-selection.md) |
 | Map presentation (new or edited) | [map-authoring.md](references/guides/map-authoring.md), [example-selection.md](references/guides/example-selection.md) |
+| New presentation / speaker-led story / material-to-deck task | [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md), then the Stage or Map authoring guide |
+| Strategy / market / consulting-style research deck | [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md), [strategy-consulting-mode.md](references/guides/strategy-consulting-mode.md), [stage-authoring.md](references/guides/stage-authoring.md), [example-selection.md](references/guides/example-selection.md) |
 | Themes / `themeOverrides` / backgrounds / transitions | [theme-authoring.md](references/guides/theme-authoring.md), [backgrounds-transitions.md](references/guides/backgrounds-transitions.md) |
 | Markdown annotations | [annotations.md](references/guides/annotations.md) |
 | New component / layout / reusable theme | [primitive-extension.md](references/guides/primitive-extension.md), [component-authoring.md](references/guides/component-authoring.md) |
@@ -58,6 +62,8 @@ If the user has not committed to art direction after Phase 1 or needs to compare
 - Let the theme own the default background when possible. Add presentation-level `background` only for overrides that should not follow theme switching.
 - Treat the shipped demos as canonical references: `simple-stage`, `simple-map`, `complex-stage`, `complex-map`.
 - For long Stage decks, treat structure as a first-class task: section resets, legible step purpose, usable navigation at scale.
+- For new presentation generation, use [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md) to capture speaking context, route the scenario, understand materials, create a story spine, and score narrative completeness before composing YAML unless the user explicitly skipped this prep.
+- For strategy or research decks, use [strategy-consulting-mode.md](references/guides/strategy-consulting-mode.md) to define the decision frame, issue tree, hypotheses, argument plan, and page dependency plan before composing YAML.
 
 See **Theme-System Route** and **Working Rules** below for styling constraints and guardrails.
 
@@ -77,9 +83,11 @@ After verification, offer to deploy the Xtoryteller app — including the new or
 
 ## Quick Route
 
-- New presentation → Phase 1 ([co-design-intake.md](references/guides/co-design-intake.md)).
+- New presentation → Phase 1 ([co-design-intake.md](references/guides/co-design-intake.md) + [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md) by default unless explicitly skipped).
+- Story rewrite / material-to-presentation / speaker-led deck → [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md).
 - Existing Stage deck → [stage-authoring.md](references/guides/stage-authoring.md).
 - Existing Map presentation → [map-authoring.md](references/guides/map-authoring.md).
+- Strategy / market / consulting-style deck → [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md), then [strategy-consulting-mode.md](references/guides/strategy-consulting-mode.md), then [stage-authoring.md](references/guides/stage-authoring.md).
 - Annotations → [annotations.md](references/guides/annotations.md).
 - Themes / backgrounds / transitions → [theme-authoring.md](references/guides/theme-authoring.md), [backgrounds-transitions.md](references/guides/backgrounds-transitions.md).
 - New component / layout → [primitive-extension.md](references/guides/primitive-extension.md).
@@ -131,6 +139,7 @@ Use these when repeated scaffolding would otherwise become manual and fragile.
 - `node skills/xtoryteller/scripts/init-layout.mjs --name spotlight-split`
 - `node skills/xtoryteller/scripts/create-style-previews.mjs --mood calm --topic "Systems Story" --force`
 - `node skills/xtoryteller/scripts/print-preview-urls.mjs` — prints dev-server viewer URLs for the default preview slugs after style previews are generated.
+- `npm run presentation:pdf -- --slug <slug>` — exports `exports/<slug>.pdf` through the dedicated DOM/SVG/text PDF print route; not a screenshot capture, not a semantic PowerPoint object model.
 
 ---
 
@@ -151,7 +160,9 @@ Use these when repeated scaffolding would otherwise become manual and fragile.
 - Keep `stat-card` values short and metric-like. If the value reads like a sentence fragment, use `card`, `feature-card`, or `callout` instead.
 - Split instead of cram, especially when a step is trying to carry both a strong motif and dense explanatory copy.
 - When a contrast or surface problem repeats across multiple steps, fix the shared component or theme token path instead of patching each slide with local overrides.
+- Do not skip storytelling preparation for new presentation generation unless the user explicitly asks for a fast scaffold or says to skip it.
 - Long research decks need visible chaptering. Add section title steps and orientation copy before the deck starts to feel like an unbroken wall of content.
+- Consulting-style decks need argument titles, visible evidence, and a recommendation path. Use the optional strategy-consulting mode instead of only making the deck look more corporate.
 - Prefer preset-family language such as `bold-signal`, `notebook-tabs`, or `paper-and-ink` over vague requests like "make it nicer" or "slightly more modern."
 - Use `build: sequential` on bullet or numbered lists when the story expects one item per advance.
 - Do not use `build: sequential` just because a list is long. If the audience needs fast scanning or reference-style reading, reveal the list all at once.

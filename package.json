@@ -15,6 +15,7 @@
     "validate:skill": "node scripts/validate-skill-consistency.mjs",
     "registries": "node scripts/generate-registries.mjs",
     "presentation:export": "node scripts/export.mjs",
+    "presentation:pdf": "node scripts/export-pdf.mjs",
     "presentation:import": "node scripts/import.mjs",
     "component:promote": "node scripts/promote-component.mjs",
     "watch": "node scripts/watch.mjs",

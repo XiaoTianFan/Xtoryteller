@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { MouseEvent, PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { MouseEvent, PointerEvent as ReactPointerEvent, TouchEvent as ReactTouchEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { createBuildPlan, getSequentialRevealCount, isComponentVisible } from '@/lib/runtime/build-plan';
 import { getEditorClipboard, setEditorClipboard } from '@/lib/runtime/editor/clipboard';
@@ -33,6 +33,10 @@ import {
   offsetFreeformGeometry
 } from '@/lib/runtime/editor/utils';
 import { resolveRuntimeTransition } from '@/lib/runtime/primitive-resolver';
+import {
+  isCompactStageViewport,
+  serializePresentationHash
+} from '@/lib/runtime/presentation-navigation';
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
 import { ComponentRenderer } from '@/lib/runtime/renderers/component-renderer';
 import { LayoutRenderer } from '@/lib/runtime/renderers/layout-renderer';
@@ -59,6 +63,17 @@ interface StageEditInteraction {
 const MIN_COMPONENT_WIDTH = 140;
 const MIN_COMPONENT_HEIGHT = 88;
 const INSERT_OFFSET = 0.04;
+const STAGE_SWIPE_THRESHOLD = 72;
+
+function shouldStartStageSwipeFromTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return true;
+  }
+
+  return !target.closest(
+    'button, a, input, textarea, select, summary, [role="button"], [role="link"], [data-no-stage-swipe], .shortcutOverlayBackdrop, .shortcutOverlayPanel'
+  );
+}
 
 function clampStageGeometry(
   geometry: Pick<EditableComponentDraft, 'x' | 'y' | 'width' | 'height'>,
@@ -272,6 +287,7 @@ export function StageRenderer() {
   const stepSceneBodyRef = useRef<HTMLDivElement | null>(null);
   const editInteractionRef = useRef<StageEditInteraction | null>(null);
   const pendingNavigationRef = useRef<(() => void) | null>(null);
+  const swipeGestureRef = useRef<{ startX: number; startY: number; lastX: number; lastY: number } | null>(null);
   const [editPhase, setEditPhase] = useState<StageEditPhase>('idle');
   const [history, setHistory] = useState<EditorHistoryState<EditableComponentDraft[]> | null>(null);
   const [cleanDrafts, setCleanDrafts] = useState<EditableComponentDraft[]>([]);
@@ -281,6 +297,8 @@ export function StageRenderer() {
   const [showUnsavedPrompt, setShowUnsavedPrompt] = useState(false);
   const [showAddComponentOverlay, setShowAddComponentOverlay] = useState(false);
   const [presenterReady, setPresenterReady] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState(1280);
+  const [supportsSwipeNavigation, setSupportsSwipeNavigation] = useState(false);
 
   useEffect(() => {
     setPresenterReady(false);
@@ -290,11 +308,32 @@ export function StageRenderer() {
     return () => cancelAnimationFrame(id);
   }, [stepIndex]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const updateViewportWidth = () => setViewportWidth(window.innerWidth);
+    updateViewportWidth();
+    window.addEventListener('resize', updateViewportWidth);
+    return () => window.removeEventListener('resize', updateViewportWidth);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches || window.navigator.maxTouchPoints > 0;
+    setSupportsSwipeNavigation(coarsePointer);
+  }, []);
+
   const renderedDrafts = history?.present ?? [];
   const draftSignature = buildStageDraftSignature(renderedDrafts);
   const cleanDraftSignature = buildStageDraftSignature(cleanDrafts);
   const layoutDraftIsDirty = editPhase === 'active' && draftSignature !== cleanDraftSignature;
   const isEditing = editPhase !== 'idle';
+  const isCompactViewport = isCompactStageViewport(viewportWidth);
 
   const resetEditorState = () => {
     editInteractionRef.current = null;
@@ -578,10 +617,6 @@ export function StageRenderer() {
   const canUndo = Boolean(history?.past.length);
   const canRedo = Boolean(history?.future.length);
 
-  if (!step) {
-    return null;
-  }
-
   const exitEditMode = () => {
     setShowUnsavedPrompt(false);
     resetEditorState();
@@ -681,6 +716,113 @@ export function StageRenderer() {
     onRequestGoToStep: (nextStepIndex) => requestStageNavigation(() => machine.goToStep(nextStepIndex)),
     onRequestExit: () => requestStageNavigation(() => router.push('/'))
   };
+  const stageSwipeEnabled = isCompactViewport && supportsSwipeNavigation;
+
+  const canStartStageSwipe = (target: EventTarget | null) =>
+    stageSwipeEnabled &&
+    !isEditing &&
+    !isSavingLayout &&
+    !showUnsavedPrompt &&
+    !showAddComponentOverlay &&
+    shouldStartStageSwipeFromTarget(target);
+
+  const beginStageSwipe = (clientX: number, clientY: number, target: EventTarget | null) => {
+    if (!canStartStageSwipe(target)) {
+      swipeGestureRef.current = null;
+      return;
+    }
+
+    swipeGestureRef.current = {
+      startX: clientX,
+      startY: clientY,
+      lastX: clientX,
+      lastY: clientY
+    };
+  };
+
+  const updateStageSwipe = (clientX: number, clientY: number) => {
+    if (!swipeGestureRef.current) {
+      return;
+    }
+
+    swipeGestureRef.current = {
+      ...swipeGestureRef.current,
+      lastX: clientX,
+      lastY: clientY
+    };
+  };
+
+  const finishStageSwipe = () => {
+    const swipe = swipeGestureRef.current;
+    swipeGestureRef.current = null;
+    if (!swipe) {
+      return;
+    }
+
+    const moveX = swipe.lastX - swipe.startX;
+    const moveY = swipe.lastY - swipe.startY;
+    if (Math.abs(moveX) < STAGE_SWIPE_THRESHOLD || Math.abs(moveX) <= Math.abs(moveY) * 1.25) {
+      return;
+    }
+
+    if (moveX < 0) {
+      navigationHandlers.onRequestNext?.();
+      return;
+    }
+
+    navigationHandlers.onRequestPrev?.();
+  };
+
+  const cancelStageSwipe = () => {
+    swipeGestureRef.current = null;
+  };
+
+  const handleStagePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'touch') {
+      return;
+    }
+
+    beginStageSwipe(event.clientX, event.clientY, event.target);
+  };
+
+  const handleStagePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'touch') {
+      return;
+    }
+
+    updateStageSwipe(event.clientX, event.clientY);
+  };
+
+  const handleStageTouchStart = (event: ReactTouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) {
+      return;
+    }
+
+    beginStageSwipe(touch.clientX, touch.clientY, event.target);
+  };
+
+  const handleStageTouchMove = (event: ReactTouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) {
+      return;
+    }
+
+    updateStageSwipe(touch.clientX, touch.clientY);
+  };
+
+  const handleStageTouchEnd = (event: ReactTouchEvent<HTMLDivElement>) => {
+    const touch = event.changedTouches[0];
+    if (touch) {
+      updateStageSwipe(touch.clientX, touch.clientY);
+    }
+
+    finishStageSwipe();
+  };
+
+  if (!step) {
+    return null;
+  }
 
   const enterEditMode = () => {
     if (!isDev || isEditing || !step.components.length) {
@@ -748,7 +890,12 @@ export function StageRenderer() {
   };
 
   return (
-    <main className="viewerShell" data-xt-presenter-ready={presenterReady ? 'true' : 'false'}>
+    <main
+      className="viewerShell"
+      data-xt-presenter-ready={presenterReady ? 'true' : 'false'}
+      data-stage-compact={isCompactViewport ? 'true' : 'false'}
+      data-stage-current-hash={serializePresentationHash(presentation, { kind: 'stage-step', stepIndex }) ?? ''}
+    >
       <BackgroundLayer />
       <AnimatePresence mode="wait">
         <motion.section
@@ -765,7 +912,20 @@ export function StageRenderer() {
               {step.description ? <p className="stepSceneDescription">{step.description}</p> : null}
             </header>
           ) : null}
-          <div ref={stepSceneBodyRef} className="stepSceneBody" data-editing={isEditing ? 'true' : 'false'}>
+          <div
+            ref={stepSceneBodyRef}
+            className="stepSceneBody"
+            data-editing={isEditing ? 'true' : 'false'}
+            data-stage-swipe-enabled={stageSwipeEnabled ? 'true' : 'false'}
+            onPointerDown={handleStagePointerDown}
+            onPointerMove={handleStagePointerMove}
+            onPointerUp={finishStageSwipe}
+            onPointerCancel={cancelStageSwipe}
+            onTouchStart={handleStageTouchStart}
+            onTouchMove={handleStageTouchMove}
+            onTouchEnd={handleStageTouchEnd}
+            onTouchCancel={cancelStageSwipe}
+          >
             {editPhase === 'active' ? (
               <div className="stageEditCanvas" aria-label="Stage layout editor">
                 {renderedDrafts.map((item, index) => {
@@ -840,6 +1000,7 @@ export function StageRenderer() {
               <LayoutRenderer
                 layout={step.layout}
                 layoutProps={step.layoutProps}
+                compact={isCompactViewport}
                 disableMotion={editPhase === 'measuring'}
                 items={
                   editPhase === 'measuring'

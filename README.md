@@ -1,141 +1,26 @@
 # Xtoryteller
 
-Xtoryteller is a self-hosted, agent-first presentation system built around reusable primitives instead of one-off slide generation. Presentations are authored as YAML, rendered through a shared Next.js runtime, and composed from persistent components, layouts, themes, transitions, and validation tooling that both humans and agents can work with reliably.
+Xtoryteller is a self-hosted presentation system for building rich, reusable decks from YAML, shared components, layouts, themes, transitions, and background presets. It is designed so humans can create and review presentations in the browser while agents work from the same persistent infrastructure.
 
-## Table of Contents
+## At A Glance
 
-- [What It Is](#what-it-is)
-- [Core Capabilities](#core-capabilities)
-- [Architecture Overview](#architecture-overview)
-- [Project Structure](#project-structure)
-- [Quick Start](#quick-start)
-- [Authoring Workflow](#authoring-workflow)
-- [Extending The System](#extending-the-system)
-- [Agent Skill Package](#agent-skill-package)
-- [Validation, QA, And Testing](#validation-qa-and-testing)
-- [Portability Workflows](#portability-workflows)
-- [Development Notes](#development-notes)
-- [Additional Docs](#additional-docs)
-
-## What It Is
-
-Xtoryteller is designed for a workflow where agents compose with stable presentation infrastructure instead of regenerating ad-hoc HTML for every deck.
-
-The system combines:
-
-- declarative presentation orchestration in YAML
-- reusable TSX component, layout, and transition libraries with manifests
-- theme-driven styling through YAML and CSS custom properties
-- dual navigation modes for linear and spatial storytelling
-- validation and packaging workflows that keep decks portable and repo-safe
-
-## Core Capabilities
-
-- **Stage mode** for sequential, speaker-led narratives with step and build progression
-- **Map mode** for spatial storytelling with clusters, guided sequences, and free-roam navigation
-- **Manual Map editing** in local/dev mode with cluster drag, resize, and save back to YAML
-- **Reusable primitives** in `components/`, `layouts/`, `transitions/`, and `themes/`
-- **Agent-readable registries** generated from manifests and theme files
-- **Shared background preset library** under `backgrounds/*.yaml`
-- **Markdown-rich content** including markdown-scoped hover annotations via `{{hover:key|Label}}` plus `component.annotations`
-- **Validation tooling** for presentations, themes, runtime parity, density guidance, and asset references
-- **Portability tooling** for export, import, and promotion of presentation-scoped components
-- **Canonical agent skill package** under `skills/xtoryteller/`
-- **Canonical demos**: `human-ai-and-music-insight-brief` (stage) and `human-ai-and-music` (map)
-
-## Architecture Overview
-
-Xtoryteller is a file-system-first runtime.
-
-- Presentation content lives in `presentations/<slug>/presentation.yaml`.
-- Components, layouts, and transitions are real code with manifests that feed registries and validation.
-- Themes live in YAML and resolve to CSS custom properties at runtime.
-- The dashboard reads directly from `presentations/`.
-- Stage and Map rendering sit on top of shared runtime and state-management infrastructure in `lib/`.
-- Validation and registry generation live in `scripts/`.
-
-### Navigation Modes
-
-| Mode    | Best For                                           | Key Concepts                                         |
-| ------- | -------------------------------------------------- | ---------------------------------------------------- |
-| `stage` | linear talks, walkthroughs, reports                | steps, builds, transitions                           |
-| `map`   | systems thinking, canvases, exploratory narratives | clusters, anchors, arrangement, navigation sequences |
-
-## Project Structure
-
-```text
-xtoryteller/
-├── app/                        # Next.js routes: dashboard and presentation viewer
-├── components/                 # Global presentation primitives with manifests
-├── layouts/                    # Layout primitives with manifests
-├── transitions/                # Transition definitions with manifests
-├── backgrounds/                # Shared Paper Shader background presets
-├── themes/                     # Theme YAML files
-├── presentations/              # File-backed presentations and local assets
-├── lib/                        # Runtime, renderers, engine logic, shared types
-├── scripts/                    # Validation, registries, watch, and portability tooling
-├── skills/xtoryteller/         # Canonical agent skill package
-├── tests/                      # Contracts, unit, integration, and browser coverage
-└── docs/                       # Longer-form QA, skill-evaluation, and APRD reference docs
-```
+- Stage mode for linear, speaker-led presentations
+- Map mode for spatial, exploratory presentations
+- Persistent components, layouts, themes, transitions, and background presets
+- YAML-first presentation authoring with Markdown content
+- Shared validation, QA, export, and import tooling
+- A canonical agent skill package for repo-aware presentation work
 
 ## Quick Start
 
-### Requirements
-
-- Node.js
-- npm
-
-### Install And Run
-
 ```bash
 npm install
-npm run validate:all
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) for the dashboard.
 
-The root route shows the dashboard. Each presentation is routed by slug at `/<slug>`.
-
-## Authoring Workflow
-
-1. Start with the Xtoryteller skill package in `skills/xtoryteller/`.
-2. Read the generated registries in `skills/xtoryteller/references/registries/`.
-3. Decide whether the story is better as Stage mode or Map mode.
-4. Outline the beats or clusters before writing YAML.
-5. Choose a theme or a small set of `themeOverrides`.
-6. Author `presentations/<slug>/presentation.yaml` and place local assets under `presentations/<slug>/assets/`.
-7. Validate the presentation.
-8. Review it in the browser while `npm run dev` is running.
-
-If a presentation should follow the dashboard's active theme switcher, omit `theme`. Add `theme: <slug>` only when the deck must lock itself to a specific reusable theme.
-
-### Stage Or Map
-
-Use Stage mode when the presentation is mostly sequential.
-
-Use Map mode when the material benefits from spatial exploration, systems views, or guided cluster navigation.
-
-### Core Authoring Rules
-
-- Keep the folder name and `meta.slug` aligned.
-- Prefer built-in components and layouts before creating new primitives.
-- Split dense content across more steps or clusters instead of cramming.
-- In Stage mode, the page must stay locked to the viewport. Never rely on scrolling or page-height growth to rescue dense content.
-- Keep assets relative to the presentation folder, usually under `assets/`.
-- Prefer theme tokens and `themeOverrides` over repeated inline style.
-- Prefer theme-owned backgrounds over presentation-level `background` when the deck should follow theme switching.
-- Keep `stat-card` values short and metric-like. Move sentence-like copy into `detail`, `feature-card`, `card`, or `callout`.
-- Add `build: sequential` explicitly when list items or numbered points should reveal one-by-one.
-- Keep `pyramid-layout` rows compact and concise.
-- Treat markdown hover annotations as supported inside markdown-rendered content, not as a universal `annotation anywhere` surface.
-- Verify advanced motion or component-level animation hints in the browser.
-- In local/dev mode, Map presentations can be adjusted directly in the viewer with `Edit layout`, then saved back into YAML as absolute anchors plus cluster frames.
-- Saving a manually edited Map deck removes arrangement-driven positioning and writes the current geometry to each cluster's `anchor.x/y` and `frame.width/height`.
-- Compact Map cards relax narrow text-width caps for text-like components so widened clusters can actually reflow their copy.
-
-### Helpful Commands
+Useful checks:
 
 ```bash
 node scripts/validate.mjs presentations/<slug>/presentation.yaml
@@ -143,186 +28,49 @@ node scripts/validate-theme.mjs themes/<theme>.yaml
 node scripts/validate-all.mjs
 ```
 
-`validate-all` refreshes the canonical skill registries before it runs.
+## How It Works
 
-### Current Support Notes
+Presentations live in `presentations/<slug>/presentation.yaml`.
+The viewer renders them through a shared Next.js runtime.
+Components, layouts, transitions, themes, and backgrounds are reusable project primitives, not one-off slide code.
 
-- Markdown-rendered content supports hover annotations through `{{hover:key|Label}}` plus `component.annotations`.
-- Presentation-scoped `components/`, `layouts/`, and `transitions/` are valid runtime inputs for that presentation and override global libraries when names collide.
-- Backgrounds support both simple CSS values and Paper shaders. The runtime accepts object configs, APRD-style `background.stages` / `background.regions`, legacy `backgroundSections`, and short string forms such as `background: none` or `background: mesh-gradient`.
-- Reusable Paper Shader presets live in `backgrounds/*.yaml` and can be referenced from any object background with `presetRef`.
-- If a presentation omits `background`, the active theme background renders instead.
-- Paper Shader motion prefers the upstream shader library's built-in animation path when available; Xtoryteller only adds fallback wrapper drift for shaders without native motion channels.
-- Component-level animation hints are shipped and validated, but motion-heavy changes should still be reviewed in the browser.
+Stage mode is best for sequential talks, walkthroughs, and reports.
+Map mode is best for systems, exploration, and clustered narratives.
 
-## Extending The System
+## Human Authoring Workflow
 
-### Components
+1. Pick the right presentation mode.
+2. Outline the story before writing YAML.
+3. Reuse existing components and layouts when possible.
+4. Keep assets under `presentations/<slug>/assets/`.
+5. Validate the deck.
+6. Review it in the browser and iterate.
 
-Each component typically lives in `components/<name>/` and includes:
+Manual Map editing is supported in local/dev mode: use the viewer's `Edit layout` flow to drag, resize, and save cluster geometry back to YAML when you want to refine a spatial deck by hand.
 
-- `index.tsx`
-- `manifest.yaml`
-- `styles.module.css` when needed
+## Repository Map
 
-Guidelines:
+- `app/` - dashboard and presentation routes
+- `components/` - reusable presentation components
+- `layouts/` - reusable layout definitions
+- `transitions/` - transition presets
+- `backgrounds/` - shared background presets
+- `themes/` - reusable theme definitions
+- `presentations/` - authored decks and local assets
+- `lib/` - runtime, engine, and state machine code
+- `scripts/` - validation, scaffolding, and packaging tools
+- `skills/xtoryteller/` - agent-facing guidance, registries, schemas, and examples
+- `docs/` - longer architecture, QA, and implementation notes
 
-- use semantic HTML
-- reference theme CSS variables instead of hardcoded values
-- keep props agent-readable in the manifest
-- add a real presentation example before relying on the component broadly
-- reuse the shared markdown renderer when a component should support markdown content or markdown annotations
+## For Agents
 
-### Themes
+The canonical agent entrypoint is [skills/xtoryteller/SKILL.md](skills/xtoryteller/SKILL.md).
 
-Themes live in `themes/<slug>.yaml`.
-All theme data used at runtime comes from these YAML files; Xtoryteller does not keep a separate hardcoded TypeScript theme object.
-The app-wide fallback theme is `themes/xinimalist-paper.yaml`.
+If you are creating or editing presentations, use the matching guide in `skills/xtoryteller/references/guides/` instead of relying on this README for operational detail.
 
-Common sections:
+## More Docs
 
-- `fonts`
-- `colors`
-- `typography`
-- `spacing`
-- `sizing`
-- `radii`
-- `shadows`
-- `borders`
-- `motion`
-
-Use `themeOverrides` for one-off presentation-specific adjustments. Create a full theme when the visual language should be reusable. If a presentation should inherit the dashboard-selected global theme, omit `theme` from its YAML entirely.
-
-Advanced theme support includes:
-
-- font sources: `system`, `local`, `google`, and `fontshare`
-- local font files declared from `public/fonts/`
-- semantic token families such as `spacing.chrome.*`, `spacing.components.*`, `spacing.layouts.*`, `sizing.components.*`, `sizing.layouts.*`, `typography.components.*`, and optional `motion.components.*`
-- semantic shape/elevation/border groups such as `radii.chrome.*`, `radii.components.*`, `radii.layouts.*`, `shadows.chrome.*`, `shadows.components.*`, `borders.chrome.*`, and `borders.components.*`
-- nested shell and color groups such as `colors.chrome.*`, `colors.code.*`, `colors.scrollbar.*`, `colors.progress.*`, `colors.diagram.*`, and `colors.backgroundStops.*`
-
-Decision rule:
-
-- use generic core tokens when the value belongs to the whole theme, like `spacing.page` or `typography.h1`
-- use semantic families when the value represents reusable visual language for shell, component, or layout patterns
-- keep values in code or CSS only when they are structural mechanics, viewport rules, algorithmic layout outputs, or rendering math rather than theme language
-
-Shared CSS should normally consume semantic tokens instead of hardcoded values for:
-
-- dashboard and viewer shell spacing and sizing
-- reusable card, list, callout, timeline, annotation, and media patterns
-- shared layout presentation values such as compact padding, divider badge size, scattered widths, and timeline offsets
-
-Validate themes with:
-
-```bash
-node scripts/validate-theme.mjs themes/<theme>.yaml
-```
-
-### Scaffolding Helpers
-
-```bash
-node skills/xtoryteller/scripts/init-presentation.mjs --slug my-talk --mode stage --example simple
-node skills/xtoryteller/scripts/init-component.mjs --name maturity-curve
-node skills/xtoryteller/scripts/init-layout.mjs --name spotlight-split
-node skills/xtoryteller/scripts/create-style-previews.mjs --mood calm --topic "Systems Story" --force
-```
-
-## Agent Skill Package
-
-The canonical agent-facing package lives in [skills/xtoryteller](/F:/Project/Xtoryteller/skills/xtoryteller).
-
-### Skill Layout
-
-```text
-skills/xtoryteller/
-├── SKILL.md
-├── evals/
-│   └── coverage-prompts.md
-├── references/
-│   ├── guides/
-│   ├── registries/
-│   ├── schema/
-│   └── examples/
-└── scripts/
-```
-
-### What The Skill Covers
-
-- Stage and Map authoring
-- markdown annotations
-- theme, background, and transition work
-- component, layout, and primitive extension
-- dashboard and viewer runtime tasks
-- YAML-driven visual tokenization and semantic theme-system work
-- validation and QA workflows
-- export, import, and promotion workflows
-
-### Entry Points
-
-- [SKILL.md](/F:/Project/Xtoryteller/skills/xtoryteller/SKILL.md)
-- [guides](/F:/Project/Xtoryteller/skills/xtoryteller/references/guides)
-- [registries](/F:/Project/Xtoryteller/skills/xtoryteller/references/registries)
-- [schema](/F:/Project/Xtoryteller/skills/xtoryteller/references/schema)
-- [examples](/F:/Project/Xtoryteller/skills/xtoryteller/references/examples)
-- [eval prompts](/F:/Project/Xtoryteller/skills/xtoryteller/evals/coverage-prompts.md)
-
-## Validation, QA, And Testing
-
-### Validation And Build
-
-```bash
-npm run validate:all
-npm run build
-```
-
-### Test Commands
-
-```bash
-npm run test:contracts
-npm run test:unit
-npm run test:integration
-npm run test:portability
-npm run test:e2e
-npm run test:qa
-```
-
-### What The QA Surface Covers
-
-- manifest/runtime parity
-- presentation and theme validation
-- runtime integration coverage
-- browser smoke coverage
-- viewport-fit and overflow-sensitive viewer behavior
-- portability round-trip checks
-
-## Portability Workflows
-
-Use the repo-level scripts to package or move presentations safely.
-
-```bash
-node scripts/export.mjs presentations/<slug>
-node scripts/import.mjs exports/<slug>-complete.zip
-node scripts/import.mjs exports/<slug>-complete.zip --confirm
-node scripts/promote-component.mjs <presentation-slug> <component-name>
-```
-
-Use promotion when a presentation-scoped component should become part of the reusable global component library.
-
-## Development Notes
-
-- `npm run validate:all` refreshes agent registries before validating the repo.
-- `npm run dev` runs the Next.js app and the watcher together.
-- The watcher refreshes registries when manifests or themes change.
-- The watcher publishes YAML, theme, manifest, and asset changes over WebSocket on port `3001`.
-- The runtime primarily assumes global components, layouts, and transitions for routine authoring.
-- If a requested theme slug is missing, runtime fallback resolves via `themes/xinimalist-paper.yaml`.
-
-## Additional Docs
-
-The remaining `docs/` folder is for longer-form or audit-style material rather than quick-start summaries.
-
-- [IMPLEMENTATION_PROGRESS.md](/F:/Project/Xtoryteller/docs/IMPLEMENTATION_PROGRESS.md)
-- [QA_SYSTEM_PLAN.md](/F:/Project/Xtoryteller/docs/QA_SYSTEM_PLAN.md)
-- [SKILL_EVALUATION_REPORT.md](/F:/Project/Xtoryteller/docs/SKILL_EVALUATION_REPORT.md)
-- APRD reference chapters under `docs/`
+- [docs/IMPLEMENTATION_PROGRESS.md](docs/IMPLEMENTATION_PROGRESS.md)
+- [docs/QA_SYSTEM_PLAN.md](docs/QA_SYSTEM_PLAN.md)
+- [skills/xtoryteller/references/guides/](skills/xtoryteller/references/guides/)
+- [skills/xtoryteller/references/registries/](skills/xtoryteller/references/registries/)

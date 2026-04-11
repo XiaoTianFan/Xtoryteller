@@ -158,4 +158,3 @@ Remaining opportunity:
 By the Skill Creator methodology, Xtoryteller now has a credible, canonical, agent-agnostic skill package instead of a transitional project-native workflow tree.
 
 The remaining work is refinement, not rescue. The skill already has the right anatomy. The next gains come from better benchmarking, sharper historical cleanup, and continued tightening of the trigger and routing language based on real usage.
-

@@ -762,6 +762,43 @@ textarea {
   overflow: hidden;
 }
 
+.viewerShell[data-stage-compact='true'] .stepSceneHeader {
+  width: 100%;
+  padding: clamp(0.9rem, 3.4vw, 1.2rem)
+    clamp(1rem, 4vw, 1.35rem)
+    clamp(0.15rem, 1vw, 0.4rem);
+}
+
+.viewerShell[data-stage-compact='true'] .stepSceneDescription {
+  max-width: 100%;
+}
+
+.viewerShell[data-stage-compact='true'] .stepSceneBody {
+  min-width: 0;
+  touch-action: pan-y;
+}
+
+.viewerShell[data-stage-compact='true'] .viewerDockPanel {
+  max-height: min(52vh, var(--spacing-chrome-dock-open-height));
+  padding-left: clamp(0.85rem, 4vw, 1rem);
+  padding-right: clamp(0.85rem, 4vw, 1rem);
+}
+
+.viewerShell[data-stage-compact='true'] .viewerDockRow {
+  align-items: flex-start;
+}
+
+.viewerShell[data-stage-compact='true'] .viewerDockPrimary,
+.viewerShell[data-stage-compact='true'] .viewerDockActions {
+  width: 100%;
+  min-width: 0;
+}
+
+.viewerShell[data-stage-compact='true'] .viewerDockActions {
+  margin-left: 0;
+  justify-content: flex-start;
+}
+
 .layoutRevealItem,
 .layoutRevealCard {
   width: 100%;
@@ -1604,5 +1641,130 @@ body::-webkit-scrollbar-thumb,
   .dashboardDrawerBackdrop {
     transition-duration: 120ms;
     animation-duration: 120ms;
+  }
+}
+
+@page {
+  size: 13.333in 7.5in;
+  margin: 0;
+}
+
+.pdfExportShell {
+  width: 1280px;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.pdfPage {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  overflow: hidden;
+  isolation: isolate;
+  break-after: page;
+  page-break-after: always;
+  background: var(--color-background);
+}
+
+.pdfPage:last-of-type {
+  break-after: auto;
+  page-break-after: auto;
+}
+
+.pdfBackgroundLayer,
+.pdfBackgroundLayer .backgroundFilter {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pdfStepScene {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.pdfStepSceneBody {
+  height: 100%;
+  min-height: 0;
+}
+
+.pdfStepSceneBody > * {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pdfMapViewport {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.pdfMapCanvas {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+}
+
+.pdfClusterCard {
+  cursor: default;
+}
+
+.pdfMediaFallbackLink {
+  display: grid;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.pdfMediaFallback {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--spacing-components-card-gap, 0.75rem);
+  min-height: min(100%, var(--size-components-media-iframe-min-height, 16rem));
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: var(--spacing-components-card-padding, clamp(1rem, 2vw, 1.5rem));
+  border-radius: var(--radius-components-card, var(--radius-medium));
+  border: var(--border-subtle);
+  background: color-mix(in srgb, var(--color-surface) 84%, transparent);
+  color: var(--color-foreground);
+  text-align: center;
+}
+
+.pdfMediaFallback strong {
+  font-family: var(--font-heading);
+  font-size: var(--text-h3);
+}
+
+.pdfMediaFallback figcaption {
+  max-width: 48ch;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  overflow-wrap: anywhere;
+}
+
+.pdfExportWarnings {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    width: 1280px;
+    margin: 0;
+    background: var(--color-background);
+  }
+
+  .pdfExportShell {
+    width: 1280px;
   }
 }

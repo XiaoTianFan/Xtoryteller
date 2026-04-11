@@ -15,6 +15,25 @@ What it does:
 - copies the active theme when available
 - creates a portable zip in `exports/`
 
+## PDF Export
+
+Use the PDF export script when the user wants a shareable PDF rather than a portable Xtoryteller package.
+
+Command:
+`npm run presentation:pdf -- --slug <slug> [--output exports] [--base-url http://127.0.0.1:3000]`
+
+What it does:
+- loads the dedicated `/<slug>/export/pdf` route from a running Next server
+- uses Chromium `page.pdf()`, not screenshot capture
+- writes `exports/<slug>.pdf`
+- exports Stage mode as one fully revealed page per step
+- exports Map mode as one full-map overview page
+
+Fidelity boundary:
+- foreground text, SVG diagrams, CSS shapes, and links stay distinct/selectable where Chromium's PDF pipeline preserves them
+- decorative Paper Shader/WebGL backgrounds and media fallbacks may rasterize
+- PDF export is not a semantic PowerPoint object model, even though it is not a scanned-image PDF
+
 ## Import
 
 Inspect first, then apply.

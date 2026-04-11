@@ -38,6 +38,7 @@
 ### 19.1 Purpose
 
 This document serves two audiences:
+
 1. **Agents:** Referenced in the skill system to prevent common mistakes when generating presentations
 2. **Humans:** Referenced when manually creating or modifying presentations or components
 
@@ -46,136 +47,150 @@ This document serves two audiences:
 #### ❌ Hardcoding Colors
 
 yaml
-# WRONG — colors will not respond to theme changes
-- type: headline
-  content: "Title"
-  style:
-    color: "#2c3e50"
-    backgroundColor: "#f5f0e8"
 
+# WRONG — colors will not respond to theme changes
+
+- type: headline
+content: "Title"
+style:
+  color: "#2c3e50"
+  backgroundColor: "#f5f0e8"
 
 yaml
-# CORRECT — reference theme variables
-- type: headline
-  content: "Title"
-  style:
-    color: "var(--color-primary)"
-    backgroundColor: "var(--color-background)"
 
+# CORRECT — reference theme variables
+
+- type: headline
+content: "Title"
+style:
+  color: "var(--color-primary)"
+  backgroundColor: "var(--color-background)"
 
 **Exception:** One-off accent colors that are content-specific (e.g., a brand logo color) may be hardcoded, but only at the component `style` level, never in the theme.
 
 #### ❌ Exceeding Content Density Limits
 
 yaml
-# WRONG — 8 bullet points in a two-column layout
-- layout: two-column
-  components:
-    - type: bullet-list
-      items: [A, B, C, D, E, F, G, H]
-    - type: bullet-list
-      items: [I, J, K, L, M, N, O, P]
 
+# WRONG — 8 bullet points in a two-column layout
+
+- layout: two-column
+components:
+  - type: bullet-list
+  items: [A, B, C, D, E, F, G, H]
+  - type: bullet-list
+  items: [I, J, K, L, M, N, O, P]
 
 yaml
+
 # CORRECT — split across multiple steps
-- layout: two-column
-  components:
-    - type: bullet-list
-      items: [A, B, C, D]
-    - type: image
-      props: { src: assets/diagram.png }
 
 - layout: two-column
-  components:
-    - type: bullet-list
-      items: [E, F, G, H]
-    - type: callout
-      content: "Key takeaway..."
-
+components:
+  - type: bullet-list
+  items: [A, B, C, D]
+  - type: image
+  props: { src: assets/diagram.png }
+- layout: two-column
+components:
+  - type: bullet-list
+  items: [E, F, G, H]
+  - type: callout
+  content: "Key takeaway..."
 
 **Rule:** Never cram. Never scroll. Always split.
 
 #### ❌ Using a Non-Existent Component Type
 
 yaml
-# WRONG — will fail validation
-- type: causal-diagrams    # Typo!
-  props: { ... }
 
+# WRONG — will fail validation
+
+- type: causal-diagrams    # Typo!
+props: { ... }
 
 **Rule:** Always check the component registry before referencing a type. Run validation after generating.
 
 #### ❌ Creating a New Component When a Preset Works
 
 yaml
-# WRONG approach: Agent creates a custom "highlighted-text" component
-# when body-text with a callout would work fine
 
+# WRONG approach: Agent creates a custom "highlighted-text" component
+
+# when body-text with a callout would work fine
 
 **Rule:** Before creating a custom component, verify that no existing component can achieve the desired result through props or styling. Check the component registry thoroughly.
 
 #### ❌ Omitting Build Steps for Dense Content
 
 yaml
-# WRONG — all content appears at once, overwhelming the viewer
-- layout: single-content
-  components:
-    - type: bullet-list
-      build: 0              # Everything appears immediately
-      items: [A, B, C, D, E]
 
+# WRONG — all content appears at once, overwhelming the viewer
+
+- layout: single-content
+components:
+  - type: bullet-list
+  build: 0              # Everything appears immediately
+  items: [A, B, C, D, E]
 
 yaml
-# CORRECT — content builds incrementally
-- layout: single-content
-  components:
-    - type: bullet-list
-      build: sequential     # Each bullet appears one by one
-      items: [A, B, C, D, E]
 
+# CORRECT — content builds incrementally
+
+- layout: single-content
+components:
+  - type: bullet-list
+  build: sequential     # Each bullet appears one by one
+  items: [A, B, C, D, E]
 
 **Rule:** For content slides with more than 2-3 elements, use build steps to guide the viewer's attention.
 
 #### ❌ Inconsistent Transition Styles
 
 yaml
-# WRONG — every step has a different, unrelated transition
-steps:
-  - transition: fade
-  - transition: slide-left
-  - transition: scale
-  - transition: blur
-  - transition: wipe-up
-  - transition: slide-right
-  - transition: drop
 
+# WRONG — every step has a different, unrelated transition
+
+steps:
+
+- transition: fade
+- transition: slide-left
+- transition: scale
+- transition: blur
+- transition: wipe-up
+- transition: slide-right
+- transition: drop
 
 yaml
-# CORRECT — consistent base with intentional variation
-steps:
-  - transition: fade            # Title entrance
-  - transition: slide-left      # Content progression (consistent)
-  - transition: slide-left      # Content progression (consistent)
-  - transition: scale           # Emphasis moment (intentional break)
-  - transition: slide-left      # Resume progression
-  - transition: slide-left      # Resume progression
-  - transition: fade            # Closing
 
+# CORRECT — consistent base with intentional variation
+
+steps:
+
+- transition: fade            # Title entrance
+- transition: slide-left      # Content progression (consistent)
+- transition: slide-left      # Content progression (consistent)
+- transition: scale           # Emphasis moment (intentional break)
+- transition: slide-left      # Resume progression
+- transition: slide-left      # Resume progression
+- transition: fade            # Closing
 
 **Rule:** Choose 1-2 primary transitions and use them consistently. Use a contrasting transition only for intentional emphasis — section changes, key reveals, or mood shifts.
 
 #### ❌ Missing Meta Information
 
 yaml
+
 # WRONG — minimal meta, hard to find later
+
 meta:
   title: "Talk"
   slug: talk
 
-
 yaml
+
 # CORRECT — comprehensive, searchable meta
+
 meta:
   title: "Understanding Causal Systems"
   slug: causal-systems
@@ -183,7 +198,6 @@ meta:
   author: "Jane Doe"
   tags: [systems-thinking, workshop, beginner, causality]
   createdAt: 2025-06-20
-
 
 **Rule:** Always include meaningful title, slug, description, and tags. This makes presentations findable in the dashboard and provides context for agents modifying them later.
 
@@ -199,7 +213,6 @@ css
   margin-bottom: 24px;
 }
 
-
 css
 /* CORRECT */
 .headline {
@@ -207,7 +220,6 @@ css
   padding: var(--spacing-content-gap);               /* Theme variable */
   margin-bottom: var(--spacing-element-gap);         /* Theme variable */
 }
-
 
 **Rule:** Never use fixed pixel values for typography or spacing. Use theme CSS custom properties, which are defined with `clamp()` for responsive scaling.
 
@@ -218,9 +230,8 @@ tsx
 const Card = () => (
   <div style={{ backgroundColor: '#ffffff', color: '#333333', borderColor: '#e0e0e0' }}>
     ...
-  </div>
+  
 );
-
 
 css
 /* CORRECT */
@@ -230,7 +241,6 @@ css
   border-color: var(--color-border);
 }
 
-
 **Rule:** Components must reference theme CSS custom properties. This ensures they adapt when the theme changes.
 
 #### ❌ Non-Semantic HTML
@@ -238,26 +248,16 @@ css
 tsx
 // WRONG
 const Quote = ({ text, author }) => (
-  <div className="quote">
-    <div className="quote-text">{text}</div>
-    <div className="quote-author">{author}</div>
-  </div>
+  {text}
+    {author}
+  
 );
-
 
 tsx
 // CORRECT
 const Quote = ({ text, author }) => (
-  <figure className="quote">
-    <blockquote>
-      <p>{text}</p>
-    </blockquote>
-    <figcaption>
-      — <cite>{author}</cite>
-    </figcaption>
-  </figure>
+  > {text} — {author}
 );
-
 
 **Rule:** Use the most semantically meaningful HTML element. Never use `<div>` when a more specific element exists.
 
@@ -270,11 +270,15 @@ const AnimatedChart = () => (
     initial={{ scale: 0 }}
     animate={{ scale: 1 }}
     transition={{ type: 'spring', bounce: 0.5 }}
-  >
-    ...
+
+
+
+```
+...
+```
+
   </motion.div>
 );
-
 
 tsx
 // CORRECT — respects user preference
@@ -295,16 +299,13 @@ const AnimatedChart = () => {
   );
 };
 
-
 **Rule:** All component-internal animations must check `prefers-reduced-motion` and provide a subdued alternative.
 
 #### ❌ Missing Component Manifest
 
-
 components/
 └── my-widget/
     └── index.tsx           # No manifest.yaml!
-
 
 **Rule:** Every component must have a `manifest.yaml`. Without it, agents cannot discover or use the component. The component will not appear in the registry.
 
@@ -313,38 +314,40 @@ components/
 #### ❌ Overlapping Clusters
 
 yaml
-# WRONG — clusters too close together
-- id: intro
-  anchor: origin
-- id: details
-  anchor:
-    relativeTo: intro
-    direction: right
-    distance: 50        # Way too close
 
+# WRONG — clusters too close together
+
+- id: intro
+anchor: origin
+- id: details
+anchor:
+  relativeTo: intro
+  direction: right
+  distance: 50        # Way too close
 
 **Rule:** Minimum distance between clusters should be at least `canvas.spacing` (default: 300). Closer clusters risk visual overlap and navigation confusion.
 
 #### ❌ Unresolvable Relative References
 
 yaml
-# WRONG — circular or dangling reference
-- id: A
-  anchor:
-    relativeTo: C       # C is defined after A and references B which references A
-    direction: right
-    distance: 300
-- id: B
-  anchor:
-    relativeTo: A
-    direction: below
-    distance: 300
-- id: C
-  anchor:
-    relativeTo: B
-    direction: left
-    distance: 300       # Circular!
 
+# WRONG — circular or dangling reference
+
+- id: A
+anchor:
+  relativeTo: C       # C is defined after A and references B which references A
+  direction: right
+  distance: 300
+- id: B
+anchor:
+  relativeTo: A
+  direction: below
+  distance: 300
+- id: C
+anchor:
+  relativeTo: B
+  direction: left
+  distance: 300       # Circular!
 
 **Rule:** Relative positioning must form a directed acyclic graph (DAG) rooted at the `origin` cluster. The validator checks for circular references and dangling references.
 
@@ -353,24 +356,26 @@ yaml
 #### ❌ Insufficient Contrast
 
 yaml
+
 # WRONG — light gray text on white background
+
 colors:
   text:
     primary: "#cccccc"    # Too light!
   background: "#ffffff"
-
 
 **Rule:** Run `node scripts/validate-theme.js` to check all contrast ratios. WCAG AA requires 4.5:1 for normal text.
 
 #### ❌ Missing Font Weights
 
 yaml
+
 # WRONG — body font only includes 400, but components use 300 and 600
+
 fonts:
   body:
     family: "Inter"
     weights: [400]        # Missing weights!
-
 
 **Rule:** Include all font weights that components might use. The default component set uses weights 300 (light), 400 (regular), 500 (medium), and 600 (semi-bold) for body text.
 
@@ -386,18 +391,22 @@ This section provides the detailed specification for every built-in component an
 
 #### `headline`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                                 |
+| ----------- | ----------------------------------------------------- |
 | **Purpose** | Large title text for step headings and section titles |
-| **Content** | Plain text (single line recommended) |
-| **HTML** | `<h1>`, `<h2>`, or `<h3>` based on `level` prop |
+| **Content** | Plain text (single line recommended)                  |
+| **HTML**    | `<h1>`, `<h2>`, or `<h3>` based on `level` prop       |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `level` | `1 \| 2 \| 3` | `1` | Heading level (h1, h2, h3) |
-| `align` | `'left' \| 'center' \| 'right'` | `'left'` | Text alignment |
+
+| Prop    | Type                          | Default  | Description                |
+| ------- | ----------------------------- | -------- | -------------------------- |
+| `level` | `1 | 2 | 3`                   | `1`      | Heading level (h1, h2, h3) |
+| `align` | `'left' | 'center' | 'right'` | `'left'` | Text alignment             |
+
 
 **Density:** Takes 1 heading slot. Pair with subtitle, body-text, or other components.
 
@@ -405,34 +414,42 @@ This section provides the detailed specification for every built-in component an
 
 #### `subtitle`
 
-| Property | Value |
-|---|---|
-| **Purpose** | Secondary text below a headline |
+
+| Property    | Value                              |
+| ----------- | ---------------------------------- |
+| **Purpose** | Secondary text below a headline    |
 | **Content** | Plain text or single-line Markdown |
-| **HTML** | `<p>` with `role="doc-subtitle"` |
+| **HTML**    | `<p>` with `role="doc-subtitle"`   |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `align` | `'left' \| 'center' \| 'right'` | `'left'` | Text alignment |
+
+| Prop    | Type                          | Default  | Description    |
+| ------- | ----------------------------- | -------- | -------------- |
+| `align` | `'left' | 'center' | 'right'` | `'left'` | Text alignment |
+
 
 ---
 
 #### `body-text`
 
-| Property | Value |
-|---|---|
-| **Purpose** | Paragraph text blocks with rich formatting |
+
+| Property    | Value                                                               |
+| ----------- | ------------------------------------------------------------------- |
+| **Purpose** | Paragraph text blocks with rich formatting                          |
 | **Content** | Markdown (rendered to HTML: `<p>`, `<strong>`, `<em>`, `<a>`, etc.) |
-| **HTML** | Varies by Markdown output |
+| **HTML**    | Varies by Markdown output                                           |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `align` | `'left' \| 'center' \| 'right' \| 'justify'` | `'left'` | Text alignment |
-| `maxWidth` | `string` | `'65ch'` | Maximum width for readability |
+
+| Prop       | Type                                      | Default  | Description                   |
+| ---------- | ----------------------------------------- | -------- | ----------------------------- |
+| `align`    | `'left' | 'center' | 'right' | 'justify'` | `'left'` | Text alignment                |
+| `maxWidth` | `string`                                  | `'65ch'` | Maximum width for readability |
+
 
 **Density:** Maximum 2 short paragraphs per slot.
 
@@ -440,19 +457,23 @@ This section provides the detailed specification for every built-in component an
 
 #### `bullet-list`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                             |
+| ----------- | ------------------------------------------------- |
 | **Purpose** | Unordered or ordered list with build step support |
-| **Content** | Not used — items are provided via `items` prop |
-| **HTML** | `<ul>` + `<li>` or `<ol>` + `<li>` |
+| **Content** | Not used — items are provided via `items` prop    |
+| **HTML**    | `<ul>` + `<li>` or `<ol>` + `<li>`                |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `items` | `string[]` | Required | List items (Markdown supported per item) |
-| `ordered` | `boolean` | `false` | Render as ordered list |
-| `icon` | `string` | `undefined` | Custom bullet icon (emoji or icon reference) |
+
+| Prop      | Type       | Default     | Description                                  |
+| --------- | ---------- | ----------- | -------------------------------------------- |
+| `items`   | `string[]` | Required    | List items (Markdown supported per item)     |
+| `ordered` | `boolean`  | `false`     | Render as ordered list                       |
+| `icon`    | `string`   | `undefined` | Custom bullet icon (emoji or icon reference) |
+
 
 **Build Behavior:** Supports `build: sequential` — each item appears on a successive build action.
 
@@ -468,18 +489,22 @@ Alias for `bullet-list` with `ordered: true`. Same props and behavior.
 
 #### `blockquote`
 
-| Property | Value |
-|---|---|
-| **Purpose** | Styled quotation with optional attribution |
-| **Content** | Markdown (the quote text) |
-| **HTML** | `<figure>` + `<blockquote>` + `<figcaption>` + `<cite>` |
+
+| Property    | Value                                                   |
+| ----------- | ------------------------------------------------------- |
+| **Purpose** | Styled quotation with optional attribution              |
+| **Content** | Markdown (the quote text)                               |
+| **HTML**    | `<figure>` + `<blockquote>` + `<figcaption>` + `<cite>` |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `attribution` | `string` | `undefined` | Quote author or source |
-| `variant` | `'default' \| 'large' \| 'minimal'` | `'default'` | Visual style |
+
+| Prop          | Type                              | Default     | Description            |
+| ------------- | --------------------------------- | ----------- | ---------------------- |
+| `attribution` | `string`                          | `undefined` | Quote author or source |
+| `variant`     | `'default' | 'large' | 'minimal'` | `'default'` | Visual style           |
+
 
 **Density:** Maximum 3 lines of quote text.
 
@@ -487,18 +512,22 @@ Alias for `bullet-list` with `ordered: true`. Same props and behavior.
 
 #### `callout`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                                   |
+| ----------- | ------------------------------------------------------- |
 | **Purpose** | Highlighted box for tips, warnings, notes, key insights |
-| **Content** | Markdown |
-| **HTML** | `<aside>` with `role="note"` |
+| **Content** | Markdown                                                |
+| **HTML**    | `<aside>` with `role="note"`                            |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `variant` | `'info' \| 'warning' \| 'tip' \| 'note' \| 'important'` | `'note'` | Visual variant with icon and color |
-| `title` | `string` | `undefined` | Optional callout heading |
+
+| Prop      | Type                                                | Default     | Description                        |
+| --------- | --------------------------------------------------- | ----------- | ---------------------------------- |
+| `variant` | `'info' | 'warning' | 'tip' | 'note' | 'important'` | `'note'`    | Visual variant with icon and color |
+| `title`   | `string`                                            | `undefined` | Optional callout heading           |
+
 
 **Density:** Maximum 3-4 lines of content.
 
@@ -506,33 +535,41 @@ Alias for `bullet-list` with `ordered: true`. Same props and behavior.
 
 #### `footnote`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                                 |
+| ----------- | ----------------------------------------------------- |
 | **Purpose** | Small reference text anchored to the bottom of a step |
-| **Content** | Plain text or short Markdown |
-| **HTML** | `<footer>` + `<small>` |
+| **Content** | Plain text or short Markdown                          |
+| **HTML**    | `<footer>` + `<small>`                                |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `align` | `'left' \| 'center' \| 'right'` | `'left'` | Text alignment |
+
+| Prop    | Type                          | Default  | Description    |
+| ------- | ----------------------------- | -------- | -------------- |
+| `align` | `'left' | 'center' | 'right'` | `'left'` | Text alignment |
+
 
 ---
 
 #### `label`
 
-| Property | Value |
-|---|---|
-| **Purpose** | Short metadata badge or section label |
-| **Content** | Plain text (short — 1-3 words) |
-| **HTML** | `<span>` with theme-shaped badge styling |
+
+| Property    | Value                                    |
+| ----------- | ---------------------------------------- |
+| **Purpose** | Short metadata badge or section label    |
+| **Content** | Plain text (short — 1-3 words)           |
+| **HTML**    | `<span>` with theme-shaped badge styling |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `tone` | `'default' \| 'primary' \| 'secondary'` | `'default'` | Text tone variant |
+
+| Prop   | Type                                  | Default     | Description       |
+| ------ | ------------------------------------- | ----------- | ----------------- |
+| `tone` | `'default' | 'primary' | 'secondary'` | `'default'` | Text tone variant |
+
 
 **Authoring note:** The label follows the active theme's standard component radii. Do not assume pill corners unless the theme itself defines them.
 
@@ -540,18 +577,22 @@ Alias for `bullet-list` with `ordered: true`. Same props and behavior.
 
 #### `divider`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                     |
+| ----------- | ----------------------------------------- |
 | **Purpose** | Visual separator between content sections |
-| **Content** | None |
-| **HTML** | `<hr>` with styled variants |
+| **Content** | None                                      |
+| **HTML**    | `<hr>` with styled variants               |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `variant` | `'line' \| 'dots' \| 'ornamental' \| 'gradient'` | `'line'` | Visual style |
-| `spacing` | `'small' \| 'medium' \| 'large'` | `'medium'` | Vertical space around divider |
+
+| Prop      | Type                                          | Default    | Description                   |
+| --------- | --------------------------------------------- | ---------- | ----------------------------- |
+| `variant` | `'line' | 'dots' | 'ornamental' | 'gradient'` | `'line'`   | Visual style                  |
+| `spacing` | `'small' | 'medium' | 'large'`                | `'medium'` | Vertical space around divider |
+
 
 ---
 
@@ -559,103 +600,123 @@ Alias for `bullet-list` with `ordered: true`. Same props and behavior.
 
 #### `image`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                  |
+| ----------- | -------------------------------------- |
 | **Purpose** | Responsive image with optional caption |
-| **Content** | None — image specified via `src` prop |
-| **HTML** | `<figure>` + `<img>` + `<figcaption>` |
+| **Content** | None — image specified via `src` prop  |
+| **HTML**    | `<figure>` + `<img>` + `<figcaption>`  |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `src` | `string` | Required | Image path (relative to presentation assets/) or external URL |
-| `alt` | `string` | Required | Alt text for accessibility |
-| `caption` | `string` | `undefined` | Caption text below image |
-| `fit` | `'contain' \| 'cover' \| 'fill'` | `'contain'` | Object-fit behavior |
-| `maxHeight` | `string` | `'min(50vh, 400px)'` | Maximum height constraint |
-| `rounded` | `boolean` | `false` | Apply border-radius |
-| `shadow` | `boolean` | `false` | Apply drop shadow |
+
+| Prop        | Type                           | Default              | Description                                                   |
+| ----------- | ------------------------------ | -------------------- | ------------------------------------------------------------- |
+| `src`       | `string`                       | Required             | Image path (relative to presentation assets/) or external URL |
+| `alt`       | `string`                       | Required             | Alt text for accessibility                                    |
+| `caption`   | `string`                       | `undefined`          | Caption text below image                                      |
+| `fit`       | `'contain' | 'cover' | 'fill'` | `'contain'`          | Object-fit behavior                                           |
+| `maxHeight` | `string`                       | `'min(50vh, 400px)'` | Maximum height constraint                                     |
+| `rounded`   | `boolean`                      | `false`              | Apply border-radius                                           |
+| `shadow`    | `boolean`                      | `false`              | Apply drop shadow                                             |
+
 
 ---
 
 #### `video`
 
-| Property | Value |
-|---|---|
-| **Purpose** | Embedded video player |
+
+| Property    | Value                                 |
+| ----------- | ------------------------------------- |
+| **Purpose** | Embedded video player                 |
 | **Content** | None — video specified via `src` prop |
-| **HTML** | `<figure>` + `<video>` |
+| **HTML**    | `<figure>` + `<video>`                |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `src` | `string` | Required | Video path (relative or URL) |
-| `poster` | `string` | `undefined` | Poster image before playback |
-| `autoplay` | `boolean` | `false` | Auto-play when step is entered |
-| `loop` | `boolean` | `false` | Loop playback |
-| `muted` | `boolean` | `true` | Muted by default |
-| `controls` | `boolean` | `true` | Show playback controls |
-| `maxHeight` | `string` | `'min(60vh, 500px)'` | Maximum height |
+
+| Prop        | Type      | Default              | Description                    |
+| ----------- | --------- | -------------------- | ------------------------------ |
+| `src`       | `string`  | Required             | Video path (relative or URL)   |
+| `poster`    | `string`  | `undefined`          | Poster image before playback   |
+| `autoplay`  | `boolean` | `false`              | Auto-play when step is entered |
+| `loop`      | `boolean` | `false`              | Loop playback                  |
+| `muted`     | `boolean` | `true`               | Muted by default               |
+| `controls`  | `boolean` | `true`               | Show playback controls         |
+| `maxHeight` | `string`  | `'min(60vh, 500px)'` | Maximum height                 |
+
 
 ---
 
 #### `svg-graphic`
 
-| Property | Value |
-|---|---|
-| **Purpose** | Inline SVG graphic with optional animation |
-| **Content** | None — SVG specified via `src` prop |
-| **HTML** | Inline `<svg>` (not `<img>`) for styling and animation access |
+
+| Property    | Value                                                         |
+| ----------- | ------------------------------------------------------------- |
+| **Purpose** | Inline SVG graphic with optional animation                    |
+| **Content** | None — SVG specified via `src` prop                           |
+| **HTML**    | Inline `<svg>` (not `<img>`) for styling and animation access |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `src` | `string` | Required | SVG file path |
-| `alt` | `string` | Required | Accessible description |
-| `animated` | `boolean` | `false` | Enable SVG entrance animation (draw effect) |
-| `maxHeight` | `string` | `'min(50vh, 400px)'` | Maximum height |
+
+| Prop        | Type      | Default              | Description                                 |
+| ----------- | --------- | -------------------- | ------------------------------------------- |
+| `src`       | `string`  | Required             | SVG file path                               |
+| `alt`       | `string`  | Required             | Accessible description                      |
+| `animated`  | `boolean` | `false`              | Enable SVG entrance animation (draw effect) |
+| `maxHeight` | `string`  | `'min(50vh, 400px)'` | Maximum height                              |
+
 
 ---
 
 #### `iframe-embed`
 
-| Property | Value |
-|---|---|
-| **Purpose** | Embed external web content |
+
+| Property    | Value                               |
+| ----------- | ----------------------------------- |
+| **Purpose** | Embed external web content          |
 | **Content** | None — URL specified via `src` prop |
-| **HTML** | `<iframe>` with responsive wrapper |
+| **HTML**    | `<iframe>` with responsive wrapper  |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `src` | `string` | Required | URL to embed |
-| `title` | `string` | Required | Accessible title for the iframe |
-| `aspectRatio` | `string` | `'16/9'` | Aspect ratio of the embed |
-| `maxHeight` | `string` | `'min(60vh, 500px)'` | Maximum height |
+
+| Prop          | Type     | Default              | Description                     |
+| ------------- | -------- | -------------------- | ------------------------------- |
+| `src`         | `string` | Required             | URL to embed                    |
+| `title`       | `string` | Required             | Accessible title for the iframe |
+| `aspectRatio` | `string` | `'16/9'`             | Aspect ratio of the embed       |
+| `maxHeight`   | `string` | `'min(60vh, 500px)'` | Maximum height                  |
+
 
 ---
 
 #### `code-block`
 
-| Property | Value |
-|---|---|
-| **Purpose** | Syntax-highlighted code display |
+
+| Property    | Value                                            |
+| ----------- | ------------------------------------------------ |
+| **Purpose** | Syntax-highlighted code display                  |
 | **Content** | Code text (provided via `content` field in YAML) |
-| **HTML** | `<pre>` + `<code>` |
+| **HTML**    | `<pre>` + `<code>`                               |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `language` | `string` | `'text'` | Programming language for syntax highlighting |
-| `highlightLines` | `number[]` | `[]` | Line numbers to highlight/emphasize |
-| `showLineNumbers` | `boolean` | `false` | Display line numbers |
-| `maxLines` | `number` | `15` | Maximum visible lines (truncates with scroll indicator) |
-| `filename` | `string` | `undefined` | Optional filename header |
+
+| Prop              | Type       | Default     | Description                                             |
+| ----------------- | ---------- | ----------- | ------------------------------------------------------- |
+| `language`        | `string`   | `'text'`    | Programming language for syntax highlighting            |
+| `highlightLines`  | `number[]` | `[]`        | Line numbers to highlight/emphasize                     |
+| `showLineNumbers` | `boolean`  | `false`     | Display line numbers                                    |
+| `maxLines`        | `number`   | `15`        | Maximum visible lines (truncates with scroll indicator) |
+| `filename`        | `string`   | `undefined` | Optional filename header                                |
+
 
 **Density:** Maximum 10-15 lines per code block in a presentation context.
 
@@ -663,20 +724,24 @@ Alias for `bullet-list` with `ordered: true`. Same props and behavior.
 
 #### `icon`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                    |
+| ----------- | ---------------------------------------- |
 | **Purpose** | Decorative or informational icon element |
-| **Content** | None |
-| **HTML** | `<span>` wrapping SVG icon |
+| **Content** | None                                     |
+| **HTML**    | `<span>` wrapping SVG icon               |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `name` | `string` | Required | Lucide icon name in kebab-case (for example `sparkles` or `arrow-right`) |
-| `customSvg` | `string` | `undefined` | Optional raw SVG markup for an explicitly requested custom icon. Overrides `name` when present. |
-| `size` | `'small' \| 'medium' \| 'large' \| 'xlarge'` | `'medium'` | Icon size |
-| `color` | `string` | `'var(--color-primary)'` | Icon color |
+
+| Prop        | Type                                      | Default                  | Description                                                                                     |
+| ----------- | ----------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------- |
+| `name`      | `string`                                  | Required                 | Lucide icon name in kebab-case (for example `sparkles` or `arrow-right`)                        |
+| `customSvg` | `string`                                  | `undefined`              | Optional raw SVG markup for an explicitly requested custom icon. Overrides `name` when present. |
+| `size`      | `'small' | 'medium' | 'large' | 'xlarge'` | `'medium'`               | Icon size                                                                                       |
+| `color`     | `string`                                  | `'var(--color-primary)'` | Icon color                                                                                      |
+
 
 Built-in presets use Lucide by default. Custom SVG should be treated as an advanced opt-in path for bespoke marks, not the default authoring workflow.
 
@@ -686,42 +751,50 @@ Built-in presets use Lucide by default. Custom SVG should be treated as an advan
 
 #### `card`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                                        |
+| ----------- | ------------------------------------------------------------ |
 | **Purpose** | General-purpose content card with optional header and footer |
-| **Content** | Markdown (renders in the card body) |
-| **HTML** | `<article>` with sectioned layout |
+| **Content** | Markdown (renders in the card body)                          |
+| **HTML**    | `<article>` with sectioned layout                            |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `header` | `string` | `undefined` | Card header text |
-| `footer` | `string` | `undefined` | Card footer text |
-| `variant` | `'default' \| 'elevated' \| 'outlined' \| 'filled'` | `'default'` | Visual variant |
-| `accent` | `string` | `undefined` | Optional left/top accent color bar |
+
+| Prop      | Type                                             | Default     | Description                        |
+| --------- | ------------------------------------------------ | ----------- | ---------------------------------- |
+| `header`  | `string`                                         | `undefined` | Card header text                   |
+| `footer`  | `string`                                         | `undefined` | Card footer text                   |
+| `variant` | `'default' | 'elevated' | 'outlined' | 'filled'` | `'default'` | Visual variant                     |
+| `accent`  | `string`                                         | `undefined` | Optional left/top accent color bar |
+
 
 ---
 
 #### `stat-card`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                                       |
+| ----------- | ----------------------------------------------------------- |
 | **Purpose** | Display a large metric/number with label and optional trend |
-| **Content** | None — data via props |
-| **HTML** | `<article>` with structured layout |
+| **Content** | None — data via props                                       |
+| **HTML**    | `<article>` with structured layout                          |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `value` | `string \| number` | Required | The primary metric value |
-| `label` | `string` | Required | Description of the metric |
-| `trend` | `'up' \| 'down' \| 'neutral'` | `undefined` | Trend indicator arrow |
-| `trendValue` | `string` | `undefined` | Trend detail (e.g., "+12%") |
-| `prefix` | `string` | `undefined` | Value prefix (e.g., "$") |
-| `suffix` | `string` | `undefined` | Value suffix (e.g., "%") |
-| `detail` | `string` | `undefined` | Supporting explanation beneath the metric |
+
+| Prop         | Type                        | Default     | Description                               |
+| ------------ | --------------------------- | ----------- | ----------------------------------------- |
+| `value`      | `string | number`           | Required    | The primary metric value                  |
+| `label`      | `string`                    | Required    | Description of the metric                 |
+| `trend`      | `'up' | 'down' | 'neutral'` | `undefined` | Trend indicator arrow                     |
+| `trendValue` | `string`                    | `undefined` | Trend detail (e.g., "+12%")               |
+| `prefix`     | `string`                    | `undefined` | Value prefix (e.g., "$")                  |
+| `suffix`     | `string`                    | `undefined` | Value suffix (e.g., "%")                  |
+| `detail`     | `string`                    | `undefined` | Supporting explanation beneath the metric |
+
 
 **Authoring note:** Keep `value` short and metric-like. If the value reads like a phrase or sentence fragment, use `detail` or switch to `card`, `feature-card`, or `callout`.
 
@@ -729,105 +802,127 @@ Built-in presets use Lucide by default. Custom SVG should be treated as an advan
 
 #### `profile-card`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                      |
+| ----------- | ------------------------------------------ |
 | **Purpose** | Person/entity card with avatar, name, role |
-| **Content** | Markdown (renders as bio/description) |
-| **HTML** | `<article>` with avatar and text layout |
+| **Content** | Markdown (renders as bio/description)      |
+| **HTML**    | `<article>` with avatar and text layout    |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `name` | `string` | Required | Person's name |
-| `role` | `string` | `undefined` | Title or role |
+
+| Prop     | Type     | Default     | Description              |
+| -------- | -------- | ----------- | ------------------------ |
+| `name`   | `string` | Required    | Person's name            |
+| `role`   | `string` | `undefined` | Title or role            |
 | `avatar` | `string` | `undefined` | Avatar image path or URL |
+
 
 ---
 
 #### `feature-card`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                               |
+| ----------- | --------------------------------------------------- |
 | **Purpose** | Feature highlight with icon, title, and description |
-| **Content** | Markdown (renders as feature description) |
-| **HTML** | `<article>` with icon and text |
+| **Content** | Markdown (renders as feature description)           |
+| **HTML**    | `<article>` with icon and text                      |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `title` | `string` | Required | Feature name |
-| `icon` | `string` | `undefined` | Lucide icon name |
+
+| Prop    | Type     | Default     | Description      |
+| ------- | -------- | ----------- | ---------------- |
+| `title` | `string` | Required    | Feature name     |
+| `icon`  | `string` | `undefined` | Lucide icon name |
+
 
 ---
 
 #### `comparison-card`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                                                 |
+| ----------- | ----------------------------------------------------- |
 | **Purpose** | Side-by-side comparison (before/after, option A vs B) |
-| **Content** | None — content via props |
-| **HTML** | `<article>` with two panels |
+| **Content** | None — content via props                              |
+| **HTML**    | `<article>` with two panels                           |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `leftTitle` | `string` | Required | Left panel heading |
-| `leftContent` | `string` | Required | Left panel content (Markdown) |
-| `rightTitle` | `string` | Required | Right panel heading |
-| `rightContent` | `string` | Required | Right panel content (Markdown) |
-| `variant` | `'versus' \| 'before-after' \| 'neutral'` | `'neutral'` | Visual treatment |
+
+| Prop           | Type                                    | Default     | Description                    |
+| -------------- | --------------------------------------- | ----------- | ------------------------------ |
+| `leftTitle`    | `string`                                | Required    | Left panel heading             |
+| `leftContent`  | `string`                                | Required    | Left panel content (Markdown)  |
+| `rightTitle`   | `string`                                | Required    | Right panel heading            |
+| `rightContent` | `string`                                | Required    | Right panel content (Markdown) |
+| `variant`      | `'versus' | 'before-after' | 'neutral'` | `'neutral'` | Visual treatment               |
+
 
 ---
 
 #### `timeline-item`
 
-| Property | Value |
-|---|---|
+
+| Property    | Value                               |
+| ----------- | ----------------------------------- |
 | **Purpose** | Single event in a timeline sequence |
-| **Content** | Markdown (event description) |
-| **HTML** | `<article>` with date marker |
+| **Content** | Markdown (event description)        |
+| **HTML**    | `<article>` with date marker        |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `date` | `string` | Required | Date or time label |
-| `title` | `string` | Required | Event title |
-| `marker` | `'dot' \| 'icon' \| 'number'` | `'dot'` | Timeline marker style |
-| `markerValue` | `string` | `undefined` | Lucide icon name when `marker: icon`, or literal text when `marker: number` |
+
+| Prop          | Type                        | Default     | Description                                                                 |
+| ------------- | --------------------------- | ----------- | --------------------------------------------------------------------------- |
+| `date`        | `string`                    | Required    | Date or time label                                                          |
+| `title`       | `string`                    | Required    | Event title                                                                 |
+| `marker`      | `'dot' | 'icon' | 'number'` | `'dot'`     | Timeline marker style                                                       |
+| `markerValue` | `string`                    | `undefined` | Lucide icon name when `marker: icon`, or literal text when `marker: number` |
+
 
 ---
 
 ### 20.5 Diagram Components
 
 #### `causal-diagram`
-| Property | Value |
-|---|---|
-| **Purpose** | Directed graph showing causal relationships between variables with polarity labels |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` with `role="img"`, `<title>`, `<desc>` |
-| **Layout Engine** | ELK.js for automatic node positioning |
+
+
+| Property          | Value                                                                              |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| **Purpose**       | Directed graph showing causal relationships between variables with polarity labels |
+| **Content**       | None — data via props                                                              |
+| **HTML**          | `<svg>` with `role="img"`, `<title>`, `<desc>`                                     |
+| **Layout Engine** | ELK.js for automatic node positioning                                              |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `variables` | `array<{ id: string, label: string, detail?: string }>` | Required | Nodes in the diagram |
-| `edges` | `array<{ from: string, to: string, polarity: '+' \| '-', label?: string }>` | Required | Directed edges with polarity |
-| `layoutDirection` | `'horizontal' \| 'vertical' \| 'radial'` | `'horizontal'` | Primary layout direction |
-| `showLoops` | `boolean` | `true` | Highlight detected feedback loops (reinforcing/balancing) |
-| `style.nodeColor` | `string` | `'var(--color-primary)'` | Node fill color |
-| `style.edgeColor` | `string` | `'var(--color-text-secondary)'` | Edge stroke color |
-| `style.positiveColor` | `string` | `'var(--color-success)'` | Color for positive polarity indicators |
-| `style.negativeColor` | `string` | `'var(--color-error)'` | Color for negative polarity indicators |
-| `style.edgeStyle` | `'solid' \| 'dashed' \| 'dotted'` | `'solid'` | Edge stroke style |
-| `style.nodeRadius` | `number` | `40` | Node circle radius |
-| `style.fontSize` | `string` | `'var(--text-small)'` | Label font size |
+
+| Prop                  | Type                                                                       | Default                         | Description                                               |
+| --------------------- | -------------------------------------------------------------------------- | ------------------------------- | --------------------------------------------------------- |
+| `variables`           | `array<{ id: string, label: string, detail?: string }>`                    | Required                        | Nodes in the diagram                                      |
+| `edges`               | `array<{ from: string, to: string, polarity: '+' | '-', label?: string }>` | Required                        | Directed edges with polarity                              |
+| `layoutDirection`     | `'horizontal' | 'vertical' | 'radial'`                                     | `'horizontal'`                  | Primary layout direction                                  |
+| `showLoops`           | `boolean`                                                                  | `true`                          | Highlight detected feedback loops (reinforcing/balancing) |
+| `style.nodeColor`     | `string`                                                                   | `'var(--color-primary)'`        | Node fill color                                           |
+| `style.edgeColor`     | `string`                                                                   | `'var(--color-text-secondary)'` | Edge stroke color                                         |
+| `style.positiveColor` | `string`                                                                   | `'var(--color-success)'`        | Color for positive polarity indicators                    |
+| `style.negativeColor` | `string`                                                                   | `'var(--color-error)'`          | Color for negative polarity indicators                    |
+| `style.edgeStyle`     | `'solid' | 'dashed' | 'dotted'`                                            | `'solid'`                       | Edge stroke style                                         |
+| `style.nodeRadius`    | `number`                                                                   | `40`                            | Node circle radius                                        |
+| `style.fontSize`      | `string`                                                                   | `'var(--text-small)'`           | Label font size                                           |
+
 
 **Build Behavior:**
+
 - `all-at-once` — Everything appears together (default)
 - `nodes-first` — Nodes appear, then edges animate in with draw effect
 - `sequential` — Nodes and their outgoing edges appear one by one
@@ -839,63 +934,74 @@ Built-in presets use Lucide by default. Custom SVG should be treated as an advan
 ---
 
 #### `mind-map`
-| Property | Value |
-|---|---|
-| **Purpose** | Radial or hierarchical mind map with expandable nodes |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` with `role="img"` |
-| **Layout Engine** | ELK.js (tree layout) |
+
+
+| Property          | Value                                                 |
+| ----------------- | ----------------------------------------------------- |
+| **Purpose**       | Radial or hierarchical mind map with expandable nodes |
+| **Content**       | None — data via props                                 |
+| **HTML**          | `<svg>` with `role="img"`                             |
+| **Layout Engine** | ELK.js (tree layout)                                  |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `root` | `{ label: string, detail?: string }` | Required | Central/root node |
-| `branches` | `array<Branch>` | Required | Top-level branches from root |
-| `layoutMode` | `'radial' \| 'tree-horizontal' \| 'tree-vertical'` | `'radial'` | Layout algorithm |
-| `maxDepth` | `number` | `4` | Maximum visible depth |
-| `style.branchColors` | `string[]` | Theme-derived | Color per top-level branch |
-| `style.nodeRadius` | `number` | `30` | Node size |
-| `style.connectionStyle` | `'curved' \| 'straight' \| 'organic'` | `'curved'` | Edge curve style |
+
+| Prop                    | Type                                             | Default       | Description                  |
+| ----------------------- | ------------------------------------------------ | ------------- | ---------------------------- |
+| `root`                  | `{ label: string, detail?: string }`             | Required      | Central/root node            |
+| `branches`              | `array<Branch>`                                  | Required      | Top-level branches from root |
+| `layoutMode`            | `'radial' | 'tree-horizontal' | 'tree-vertical'` | `'radial'`    | Layout algorithm             |
+| `maxDepth`              | `number`                                         | `4`           | Maximum visible depth        |
+| `style.branchColors`    | `string[]`                                       | Theme-derived | Color per top-level branch   |
+| `style.nodeRadius`      | `number`                                         | `30`          | Node size                    |
+| `style.connectionStyle` | `'curved' | 'straight' | 'organic'`              | `'curved'`    | Edge curve style             |
+
 
 **Branch type:**
 yaml
 branches:
-  - label: "Core Concepts"
-    detail: "Foundational ideas"
-    children:
-      - label: "Feedback Loops"
-        children:
-          - label: "Reinforcing"
-          - label: "Balancing"
-      - label: "Emergence"
 
+- label: "Core Concepts"
+detail: "Foundational ideas"
+children:
+  - label: "Feedback Loops"
+  children:
+    - label: "Reinforcing"
+    - label: "Balancing"
+  - label: "Emergence"
 
 **Build Behavior:** Supports `sequential` — branches appear one by one from root outward, depth-first or breadth-first (configurable).
 
 ---
 
 #### `iceberg-diagram`
-| Property | Value |
-|---|---|
-| **Purpose** | Layered depth metaphor with SVG water/ice visuals for exploring hidden structures beneath surface observations |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` with custom iceberg illustration + DOM overlays for text |
-| **Rendering** | Custom SVG (no graph layout engine needed) |
+
+
+| Property      | Value                                                                                                          |
+| ------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Purpose**   | Layered depth metaphor with SVG water/ice visuals for exploring hidden structures beneath surface observations |
+| **Content**   | None — data via props                                                                                          |
+| **HTML**      | `<svg>` with custom iceberg illustration + DOM overlays for text                                               |
+| **Rendering** | Custom SVG (no graph layout engine needed)                                                                     |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `layers` | `array<{ depth: string, label: string, items: string[], detail?: string }>` | Required | Layers from top to bottom |
-| `waterlinePosition` | `number` | `0.25` | Fraction from top where the waterline sits (0-1) |
-| `style.waterColor` | `string` | `'var(--color-accent)'` | Water/below-surface tint |
-| `style.iceColor` | `string` | `'var(--color-surface)'` | Above-surface tint |
-| `style.opacity` | `number` | `0.15` | Tint overlay opacity |
+
+| Prop                | Type                                                                        | Default                  | Description                                      |
+| ------------------- | --------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------ |
+| `layers`            | `array<{ depth: string, label: string, items: string[], detail?: string }>` | Required                 | Layers from top to bottom                        |
+| `waterlinePosition` | `number`                                                                    | `0.25`                   | Fraction from top where the waterline sits (0-1) |
+| `style.waterColor`  | `string`                                                                    | `'var(--color-accent)'`  | Water/below-surface tint                         |
+| `style.iceColor`    | `string`                                                                    | `'var(--color-surface)'` | Above-surface tint                               |
+| `style.opacity`     | `number`                                                                    | `0.15`                   | Tint overlay opacity                             |
+
 
 **Standard depth names:** `surface`, `patterns`, `structures`, `mental-models` (but users can define custom depth names).
 
 **Build Behavior:**
+
 - `top-down` — Layers reveal from surface downward (default)
 - `all-at-once` — Everything appears together
 
@@ -904,49 +1010,60 @@ branches:
 ---
 
 #### `three-horizons`
-| Property | Value |
-|---|---|
-| **Purpose** | Three S-curves showing transition from current system through intermediate phase to future system |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` with custom curve rendering + DOM overlays |
-| **Rendering** | Custom SVG |
+
+
+| Property      | Value                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------- |
+| **Purpose**   | Three S-curves showing transition from current system through intermediate phase to future system |
+| **Content**   | None — data via props                                                                             |
+| **HTML**      | `<svg>` with custom curve rendering + DOM overlays                                                |
+| **Rendering** | Custom SVG                                                                                        |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `horizon1` | `{ label: string, items: string[], color?: string }` | Required | Current system (declining curve) |
-| `horizon2` | `{ label: string, items: string[], color?: string }` | Required | Intermediate innovations |
-| `horizon3` | `{ label: string, items: string[], color?: string }` | Required | Future system (rising curve) |
-| `timeLabels` | `{ start: string, mid?: string, end: string }` | `{ start: 'Now', end: 'Future' }` | X-axis labels |
-| `style.curve1Color` | `string` | `'var(--color-error)'` | H1 curve color |
-| `style.curve2Color` | `string` | `'var(--color-warning)'` | H2 curve color |
-| `style.curve3Color` | `string` | `'var(--color-success)'` | H3 curve color |
+
+| Prop                | Type                                                 | Default                           | Description                      |
+| ------------------- | ---------------------------------------------------- | --------------------------------- | -------------------------------- |
+| `horizon1`          | `{ label: string, items: string[], color?: string }` | Required                          | Current system (declining curve) |
+| `horizon2`          | `{ label: string, items: string[], color?: string }` | Required                          | Intermediate innovations         |
+| `horizon3`          | `{ label: string, items: string[], color?: string }` | Required                          | Future system (rising curve)     |
+| `timeLabels`        | `{ start: string, mid?: string, end: string }`       | `{ start: 'Now', end: 'Future' }` | X-axis labels                    |
+| `style.curve1Color` | `string`                                             | `'var(--color-error)'`            | H1 curve color                   |
+| `style.curve2Color` | `string`                                             | `'var(--color-warning)'`          | H2 curve color                   |
+| `style.curve3Color` | `string`                                             | `'var(--color-success)'`          | H3 curve color                   |
+
 
 **Build Behavior:**
+
 - `sequential` — H1 curve appears, then H2, then H3 with their labels
 - `all-at-once` — Everything appears together
 
 ---
 
 #### `quadrant-chart`
-| Property | Value |
-|---|---|
-| **Purpose** | 2×2 matrix with labeled axes and positioned items |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` + DOM overlays for labels |
-| **Rendering** | Custom SVG |
+
+
+| Property      | Value                                             |
+| ------------- | ------------------------------------------------- |
+| **Purpose**   | 2×2 matrix with labeled axes and positioned items |
+| **Content**   | None — data via props                             |
+| **HTML**      | `<svg>` + DOM overlays for labels                 |
+| **Rendering** | Custom SVG                                        |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `xAxis` | `{ label: string, low: string, high: string }` | Required | Horizontal axis definition |
-| `yAxis` | `{ label: string, low: string, high: string }` | Required | Vertical axis definition |
-| `quadrantLabels` | `{ topLeft: string, topRight: string, bottomLeft: string, bottomRight: string }` | `undefined` | Optional labels for each quadrant |
-| `items` | `array<{ label: string, x: number, y: number, size?: number, detail?: string }>` | Required | Items positioned by x,y coordinates (0-1 range) |
-| `style.quadrantColors` | `string[]` | Theme-derived with varying opacity | Background color per quadrant |
-| `style.itemColor` | `string` | `'var(--color-primary)'` | Item dot color |
+
+| Prop                   | Type                                                                             | Default                            | Description                                     |
+| ---------------------- | -------------------------------------------------------------------------------- | ---------------------------------- | ----------------------------------------------- |
+| `xAxis`                | `{ label: string, low: string, high: string }`                                   | Required                           | Horizontal axis definition                      |
+| `yAxis`                | `{ label: string, low: string, high: string }`                                   | Required                           | Vertical axis definition                        |
+| `quadrantLabels`       | `{ topLeft: string, topRight: string, bottomLeft: string, bottomRight: string }` | `undefined`                        | Optional labels for each quadrant               |
+| `items`                | `array<{ label: string, x: number, y: number, size?: number, detail?: string }>` | Required                           | Items positioned by x,y coordinates (0-1 range) |
+| `style.quadrantColors` | `string[]`                                                                       | Theme-derived with varying opacity | Background color per quadrant                   |
+| `style.itemColor`      | `string`                                                                         | `'var(--color-primary)'`           | Item dot color                                  |
+
 
 **Build Behavior:** Supports `sequential` — axes appear first, then items one by one.
 
@@ -955,147 +1072,182 @@ branches:
 ---
 
 #### `spectrum-bar`
-| Property | Value |
-|---|---|
-| **Purpose** | Linear spectrum with positioned markers and labels |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` or styled DOM |
-| **Rendering** | Custom SVG |
+
+
+| Property      | Value                                              |
+| ------------- | -------------------------------------------------- |
+| **Purpose**   | Linear spectrum with positioned markers and labels |
+| **Content**   | None — data via props                              |
+| **HTML**      | `<svg>` or styled DOM                              |
+| **Rendering** | Custom SVG                                         |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `leftLabel` | `string` | Required | Left end label |
-| `rightLabel` | `string` | Required | Right end label |
-| `markers` | `array<{ label: string, position: number, detail?: string }>` | Required | Markers positioned along spectrum (0-1) |
-| `gradient` | `[string, string]` | `['var(--color-primary)', 'var(--color-accent)']` | Gradient from left to right |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Spectrum direction |
+
+| Prop          | Type                                                          | Default                                           | Description                             |
+| ------------- | ------------------------------------------------------------- | ------------------------------------------------- | --------------------------------------- |
+| `leftLabel`   | `string`                                                      | Required                                          | Left end label                          |
+| `rightLabel`  | `string`                                                      | Required                                          | Right end label                         |
+| `markers`     | `array<{ label: string, position: number, detail?: string }>` | Required                                          | Markers positioned along spectrum (0-1) |
+| `gradient`    | `[string, string]`                                            | `['var(--color-primary)', 'var(--color-accent)']` | Gradient from left to right             |
+| `orientation` | `'horizontal' | 'vertical'`                                   | `'horizontal'`                                    | Spectrum direction                      |
+
 
 ---
 
 #### `funnel-diagram`
-| Property | Value |
-|---|---|
-| **Purpose** | Narrowing stages showing filtering or conversion process |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` with trapezoid sections |
-| **Rendering** | Custom SVG |
+
+
+| Property      | Value                                                    |
+| ------------- | -------------------------------------------------------- |
+| **Purpose**   | Narrowing stages showing filtering or conversion process |
+| **Content**   | None — data via props                                    |
+| **HTML**      | `<svg>` with trapezoid sections                          |
+| **Rendering** | Custom SVG                                               |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `stages` | `array<{ label: string, value?: string \| number, detail?: string }>` | Required | Stages from widest (top) to narrowest (bottom) |
-| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | Funnel direction |
-| `style.colors` | `string[]` | Theme-derived gradient | Color per stage |
-| `showValues` | `boolean` | `true` | Display value labels |
+
+| Prop           | Type                                                                 | Default                | Description                                    |
+| -------------- | -------------------------------------------------------------------- | ---------------------- | ---------------------------------------------- |
+| `stages`       | `array<{ label: string, value?: string | number, detail?: string }>` | Required               | Stages from widest (top) to narrowest (bottom) |
+| `orientation`  | `'vertical' | 'horizontal'`                                          | `'vertical'`           | Funnel direction                               |
+| `style.colors` | `string[]`                                                           | Theme-derived gradient | Color per stage                                |
+| `showValues`   | `boolean`                                                            | `true`                 | Display value labels                           |
+
 
 **Build Behavior:** Supports `sequential` — stages appear one by one from top to bottom.
 
 ---
 
 #### `venn-diagram`
-| Property | Value |
-|---|---|
-| **Purpose** | 2-3 overlapping circles showing set relationships |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` with circles and text overlays |
-| **Rendering** | Custom SVG |
+
+
+| Property      | Value                                             |
+| ------------- | ------------------------------------------------- |
+| **Purpose**   | 2-3 overlapping circles showing set relationships |
+| **Content**   | None — data via props                             |
+| **HTML**      | `<svg>` with circles and text overlays            |
+| **Rendering** | Custom SVG                                        |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `sets` | `array<{ label: string, items?: string[], color?: string }>` | Required (2-3 sets) | The individual sets |
-| `intersections` | `array<{ sets: string[], label: string, items?: string[] }>` | `[]` | Labeled intersections |
-| `style.opacity` | `number` | `0.3` | Circle fill opacity |
+
+| Prop            | Type                                                         | Default             | Description           |
+| --------------- | ------------------------------------------------------------ | ------------------- | --------------------- |
+| `sets`          | `array<{ label: string, items?: string[], color?: string }>` | Required (2-3 sets) | The individual sets   |
+| `intersections` | `array<{ sets: string[], label: string, items?: string[] }>` | `[]`                | Labeled intersections |
+| `style.opacity` | `number`                                                     | `0.3`               | Circle fill opacity   |
+
 
 **Build Behavior:** Supports `sequential` — circles appear one by one, then intersections highlight.
 
 ---
 
 #### `flowchart`
-| Property | Value |
-|---|---|
-| **Purpose** | Process flow with action and decision nodes |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` with `role="img"` |
-| **Layout Engine** | ELK.js (layered layout) |
+
+
+| Property          | Value                                       |
+| ----------------- | ------------------------------------------- |
+| **Purpose**       | Process flow with action and decision nodes |
+| **Content**       | None — data via props                       |
+| **HTML**          | `<svg>` with `role="img"`                   |
+| **Layout Engine** | ELK.js (layered layout)                     |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `nodes` | `array<{ id: string, label: string, type: 'action' \| 'decision' \| 'start' \| 'end', detail?: string }>` | Required | Flow nodes |
-| `edges` | `array<{ from: string, to: string, label?: string }>` | Required | Connections between nodes |
-| `direction` | `'top-bottom' \| 'left-right'` | `'top-bottom'` | Flow direction |
-| `style.actionColor` | `string` | `'var(--color-primary)'` | Action node color |
-| `style.decisionColor` | `string` | `'var(--color-warning)'` | Decision node color (diamond shape) |
+
+| Prop                  | Type                                                                                                   | Default                  | Description                         |
+| --------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------ | ----------------------------------- |
+| `nodes`               | `array<{ id: string, label: string, type: 'action' | 'decision' | 'start' | 'end', detail?: string }>` | Required                 | Flow nodes                          |
+| `edges`               | `array<{ from: string, to: string, label?: string }>`                                                  | Required                 | Connections between nodes           |
+| `direction`           | `'top-bottom' | 'left-right'`                                                                          | `'top-bottom'`           | Flow direction                      |
+| `style.actionColor`   | `string`                                                                                               | `'var(--color-primary)'` | Action node color                   |
+| `style.decisionColor` | `string`                                                                                               | `'var(--color-warning)'` | Decision node color (diamond shape) |
+
 
 **Build Behavior:** Supports `sequential` — nodes and edges appear following the flow direction.
 
 ---
 
 #### `stakeholder-map`
-| Property | Value |
-|---|---|
-| **Purpose** | Concentric circles with positioned stakeholders showing proximity/influence |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` with concentric circles and positioned labels |
-| **Rendering** | Custom SVG |
+
+
+| Property      | Value                                                                       |
+| ------------- | --------------------------------------------------------------------------- |
+| **Purpose**   | Concentric circles with positioned stakeholders showing proximity/influence |
+| **Content**   | None — data via props                                                       |
+| **HTML**      | `<svg>` with concentric circles and positioned labels                       |
+| **Rendering** | Custom SVG                                                                  |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `center` | `string` | Required | Central entity label |
-| `rings` | `array<{ label: string, stakeholders: array<{ label: string, angle?: number, detail?: string }> }>` | Required | Concentric rings from inside out |
-| `style.ringColors` | `string[]` | Theme-derived with decreasing opacity | Color per ring |
+
+| Prop               | Type                                                                                                | Default                               | Description                      |
+| ------------------ | --------------------------------------------------------------------------------------------------- | ------------------------------------- | -------------------------------- |
+| `center`           | `string`                                                                                            | Required                              | Central entity label             |
+| `rings`            | `array<{ label: string, stakeholders: array<{ label: string, angle?: number, detail?: string }> }>` | Required                              | Concentric rings from inside out |
+| `style.ringColors` | `string[]`                                                                                          | Theme-derived with decreasing opacity | Color per ring                   |
+
 
 **Build Behavior:** Supports `sequential` — center appears, then rings from inside out.
 
 ---
 
 #### `radar-chart`
-| Property | Value |
-|---|---|
-| **Purpose** | Multi-axis spider/radar chart for comparing dimensions |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` |
-| **Rendering** | D3.js → SVG |
+
+
+| Property      | Value                                                  |
+| ------------- | ------------------------------------------------------ |
+| **Purpose**   | Multi-axis spider/radar chart for comparing dimensions |
+| **Content**   | None — data via props                                  |
+| **HTML**      | `<svg>`                                                |
+| **Rendering** | D3.js → SVG                                            |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `axes` | `array<{ label: string, max?: number }>` | Required | Axis definitions (3-8 recommended) |
-| `datasets` | `array<{ label: string, values: number[], color?: string }>` | Required | Data series to plot |
-| `showGrid` | `boolean` | `true` | Show radar grid lines |
-| `showValues` | `boolean` | `false` | Show numeric values at points |
-| `fillOpacity` | `number` | `0.2` | Area fill opacity |
+
+| Prop          | Type                                                         | Default  | Description                        |
+| ------------- | ------------------------------------------------------------ | -------- | ---------------------------------- |
+| `axes`        | `array<{ label: string, max?: number }>`                     | Required | Axis definitions (3-8 recommended) |
+| `datasets`    | `array<{ label: string, values: number[], color?: string }>` | Required | Data series to plot                |
+| `showGrid`    | `boolean`                                                    | `true`   | Show radar grid lines              |
+| `showValues`  | `boolean`                                                    | `false`  | Show numeric values at points      |
+| `fillOpacity` | `number`                                                     | `0.2`    | Area fill opacity                  |
+
 
 **Build Behavior:** Supports `sequential` — datasets appear one by one with draw animation.
 
 ---
 
 #### `timeline`
-| Property | Value |
-|---|---|
-| **Purpose** | Connected sequence of events with dates and descriptions |
-| **Content** | None — data via props |
-| **HTML** | DOM-based with CSS layout (not SVG) for rich text support |
-| **Rendering** | Styled DOM |
+
+
+| Property      | Value                                                     |
+| ------------- | --------------------------------------------------------- |
+| **Purpose**   | Connected sequence of events with dates and descriptions  |
+| **Content**   | None — data via props                                     |
+| **HTML**      | DOM-based with CSS layout (not SVG) for rich text support |
+| **Rendering** | Styled DOM                                                |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `events` | `array<{ date: string, title: string, description?: string, marker?: string }>` | Required | Timeline events in order |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Timeline direction |
-| `alternating` | `boolean` | `true` | Alternate events above/below (horizontal) or left/right (vertical) |
-| `style.lineColor` | `string` | `'var(--color-border)'` | Timeline line color |
-| `style.markerColor` | `string` | `'var(--color-primary)'` | Event marker color |
+
+| Prop                | Type                                                                            | Default                  | Description                                                        |
+| ------------------- | ------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------------ |
+| `events`            | `array<{ date: string, title: string, description?: string, marker?: string }>` | Required                 | Timeline events in order                                           |
+| `orientation`       | `'horizontal' | 'vertical'`                                                     | `'horizontal'`           | Timeline direction                                                 |
+| `alternating`       | `boolean`                                                                       | `true`                   | Alternate events above/below (horizontal) or left/right (vertical) |
+| `style.lineColor`   | `string`                                                                        | `'var(--color-border)'`  | Timeline line color                                                |
+| `style.markerColor` | `string`                                                                        | `'var(--color-primary)'` | Event marker color                                                 |
+
 
 **Build Behavior:** Supports `sequential` — events appear one by one along the timeline.
 
@@ -1104,19 +1256,24 @@ branches:
 ---
 
 #### `org-chart`
-| Property | Value |
-|---|---|
-| **Purpose** | Hierarchical tree of roles, entities, or concepts |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` with `role="img"` |
+
+
+| Property          | Value                                                   |
+| ----------------- | ------------------------------------------------------- |
+| **Purpose**       | Hierarchical tree of roles, entities, or concepts       |
+| **Content**       | None — data via props                                   |
+| **HTML**          | `<svg>` with `role="img"`                               |
 | **Layout Engine** | Custom SVG tree layout with automatic viewBox expansion |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `root` | `OrgNode` | Required | Root node of the hierarchy |
-| `direction` | `'top-bottom' \| 'left-right'` | `'top-bottom'` | Tree direction |
+
+| Prop        | Type                          | Default        | Description                |
+| ----------- | ----------------------------- | -------------- | -------------------------- |
+| `root`      | `OrgNode`                     | Required       | Root node of the hierarchy |
+| `direction` | `'top-bottom' | 'left-right'` | `'top-bottom'` | Tree direction             |
+
 
 **OrgNode type:**
 yaml
@@ -1133,7 +1290,6 @@ root:
         - label: "Finance"
         - label: "Legal"
 
-
 **Build Behavior:** Supports `sequential` — levels appear top-down, one tier at a time.
 
 **Authoring note:** Keep labels concise. Wide hierarchies now expand their SVG bounds to stay visible, but dense trees should still be split when readability starts to suffer.
@@ -1141,42 +1297,52 @@ root:
 ---
 
 #### `cycle-diagram`
-| Property | Value |
-|---|---|
-| **Purpose** | Circular process diagram with connected stages |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` |
-| **Rendering** | Custom SVG |
+
+
+| Property      | Value                                          |
+| ------------- | ---------------------------------------------- |
+| **Purpose**   | Circular process diagram with connected stages |
+| **Content**   | None — data via props                          |
+| **HTML**      | `<svg>`                                        |
+| **Rendering** | Custom SVG                                     |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `stages` | `array<{ label: string, detail?: string, icon?: string }>` | Required | Stages arranged in a circle. When provided, `icon` should be a Lucide icon name. |
-| `direction` | `'clockwise' \| 'counterclockwise'` | `'clockwise'` | Flow direction |
-| `style.stageColors` | `string[]` | Theme-derived | Color per stage |
-| `style.arrowColor` | `string` | `'var(--color-text-secondary)'` | Arrow/connector color |
+
+| Prop                | Type                                                       | Default                         | Description                                                                      |
+| ------------------- | ---------------------------------------------------------- | ------------------------------- | -------------------------------------------------------------------------------- |
+| `stages`            | `array<{ label: string, detail?: string, icon?: string }>` | Required                        | Stages arranged in a circle. When provided, `icon` should be a Lucide icon name. |
+| `direction`         | `'clockwise' | 'counterclockwise'`                         | `'clockwise'`                   | Flow direction                                                                   |
+| `style.stageColors` | `string[]`                                                 | Theme-derived                   | Color per stage                                                                  |
+| `style.arrowColor`  | `string`                                                   | `'var(--color-text-secondary)'` | Arrow/connector color                                                            |
+
 
 **Build Behavior:** Supports `sequential` — stages appear one by one around the cycle.
 
 ---
 
 #### `sankey-diagram`
-| Property | Value |
-|---|---|
-| **Purpose** | Flow diagram showing quantity distribution between nodes across stages |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` |
+
+
+| Property      | Value                                                                    |
+| ------------- | ------------------------------------------------------------------------ |
+| **Purpose**   | Flow diagram showing quantity distribution between nodes across stages   |
+| **Content**   | None — data via props                                                    |
+| **HTML**      | `<svg>`                                                                  |
 | **Rendering** | Custom SVG sankey-style layout with automatic fit and vertical centering |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `nodes` | `array<{ id: string, label: string }>` | Required | All nodes |
-| `links` | `array<{ source: string, target: string, value: number }>` | Required | Flows between nodes with magnitude |
-| `alignment` | `'left' \| 'right' \| 'center' \| 'justify'` | `'justify'` | Reserved alignment hint for future layout tuning |
-| `opacity` | `number` | `0.5` | Flow band opacity |
+
+| Prop        | Type                                                       | Default     | Description                                      |
+| ----------- | ---------------------------------------------------------- | ----------- | ------------------------------------------------ |
+| `nodes`     | `array<{ id: string, label: string }>`                     | Required    | All nodes                                        |
+| `links`     | `array<{ source: string, target: string, value: number }>` | Required    | Flows between nodes with magnitude               |
+| `alignment` | `'left' | 'right' | 'center' | 'justify'`                  | `'justify'` | Reserved alignment hint for future layout tuning |
+| `opacity`   | `number`                                                   | `0.5`       | Flow band opacity                                |
+
 
 **Build Behavior:** Supports `nodes-first` — nodes appear, then flow bands animate in.
 
@@ -1187,24 +1353,29 @@ root:
 ---
 
 #### `coordinate-plot`
-| Property | Value |
-|---|---|
-| **Purpose** | X-Y scatter plot with variable-radius circles and labels — a versatile context mapping tool |
-| **Content** | None — data via props |
-| **HTML** | `<svg>` |
-| **Rendering** | D3.js → SVG |
+
+
+| Property      | Value                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| **Purpose**   | X-Y scatter plot with variable-radius circles and labels — a versatile context mapping tool |
+| **Content**   | None — data via props                                                                       |
+| **HTML**      | `<svg>`                                                                                     |
+| **Rendering** | D3.js → SVG                                                                                 |
+
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `xAxis` | `{ label: string, min?: number, max?: number }` | Required | X-axis definition |
-| `yAxis` | `{ label: string, min?: number, max?: number }` | Required | Y-axis definition |
-| `points` | `array<{ label: string, x: number, y: number, radius?: number, color?: string, detail?: string }>` | Required | Data points |
-| `showGrid` | `boolean` | `true` | Show background grid |
-| `showLabels` | `boolean` | `true` | Show point labels |
-| `style.defaultRadius` | `number` | `20` | Default circle radius |
-| `style.defaultColor` | `string` | `'var(--color-primary)'` | Default point color |
+
+| Prop                  | Type                                                                                               | Default                  | Description           |
+| --------------------- | -------------------------------------------------------------------------------------------------- | ------------------------ | --------------------- |
+| `xAxis`               | `{ label: string, min?: number, max?: number }`                                                    | Required                 | X-axis definition     |
+| `yAxis`               | `{ label: string, min?: number, max?: number }`                                                    | Required                 | Y-axis definition     |
+| `points`              | `array<{ label: string, x: number, y: number, radius?: number, color?: string, detail?: string }>` | Required                 | Data points           |
+| `showGrid`            | `boolean`                                                                                          | `true`                   | Show background grid  |
+| `showLabels`          | `boolean`                                                                                          | `true`                   | Show point labels     |
+| `style.defaultRadius` | `number`                                                                                           | `20`                     | Default circle radius |
+| `style.defaultColor`  | `string`                                                                                           | `'var(--color-primary)'` | Default point color   |
+
 
 **Build Behavior:** Supports `sequential` — points appear one by one.
 
@@ -1217,35 +1388,42 @@ root:
 These components are defined in the manifest system but are not part of the MVP implementation. They are documented here so the schema accommodates them, and agents can be aware they are planned.
 
 #### `toggle-reveal`
+
 | Purpose | Click/tap to reveal hidden content |
 | Props | `label: string`, `revealContent: string` (Markdown) |
 | Interaction | Click toggles visibility of the reveal content |
 
 #### `tab-group`
+
 | Purpose | Tabbed content panels |
 | Props | `tabs: array<{ label: string, content: string }>` |
 | Interaction | Click tab to switch visible panel |
 
 #### `accordion`
+
 | Purpose | Expandable/collapsible sections |
 | Props | `sections: array<{ title: string, content: string }>`, `allowMultiple: boolean` |
 | Interaction | Click section header to expand/collapse |
 
 #### `hover-annotation`
+
 | Purpose | Hotspot that shows tooltip/popover on hover |
 | Props | `target: string` (text to annotate), `annotation: string` (tooltip content) |
 | Interaction | Hover/focus shows annotation popover |
 
 #### `live-counter`
+
 | Purpose | Animated number counting up to a target value |
 | Props | `from: number`, `to: number`, `duration: number`, `prefix: string`, `suffix: string` |
 | Interaction | Counts on enter animation |
 
 #### `progress-bar`
+
 | Purpose | Visual progress/completion indicator |
 | Props | `value: number`, `max: number`, `label: string`, `showPercentage: boolean` |
 
 #### `code-runner`
+
 | Purpose | Executable code block with output panel |
 | Props | `language: string`, `code: string`, `editable: boolean` |
 | Interaction | Run button executes code and displays output |
@@ -1257,30 +1435,35 @@ These components are defined in the manifest system but are not part of the MVP 
 Detailed specifications for all built-in layouts. Each layout describes its slot structure, responsive behavior, and density limits.
 
 #### `title-center`
+
 | Slots | 1-3 (heading, subtitle, label) |
 | Arrangement | All content centered horizontally and vertically |
 | Responsive | Scales down font sizes at smaller viewports |
 | Density | 1 headline + 1 subtitle + 1 optional label |
 
 #### `title-left`
+
 | Slots | 1-3 (heading, subtitle, decorative element) |
 | Arrangement | Left-aligned with generous padding. Optional decorative element right-aligned. |
 | Responsive | Decorative element hides below 600px width |
 | Density | 1 headline + 1 subtitle + 1 optional element |
 
 #### `section-header`
+
 | Slots | 1-2 (section number/label, section title) |
 | Arrangement | Large section number top-left, title centered or bottom-left |
 | Responsive | Number scales down at smaller viewports |
 | Density | 1 section identifier + 1 title |
 
 #### `single-content`
+
 | Slots | 1 |
 | Arrangement | Centered with max-width constraint and comfortable padding |
 | Responsive | Max-width reduces at smaller viewports |
 | Density | 1 heading + 1 component |
 
 #### `two-column`
+
 | Slots | 2 |
 | Arrangement | Side-by-side columns with configurable ratio |
 | Props | `ratio: '50-50' \| '60-40' \| '40-60' \| '70-30' \| '30-70'`, `gap`, `verticalAlign` |
@@ -1288,24 +1471,28 @@ Detailed specifications for all built-in layouts. Each layout describes its slot
 | Density | 1 component per column (each: 4-6 bullets OR 1 diagram OR 1 image + caption) |
 
 #### `three-column`
+
 | Slots | 3 |
 | Arrangement | Three equal-width columns |
 | Responsive | 3 → 2 → 1 columns at breakpoints 900px and 600px |
 | Density | 1 compact component per column (3-4 bullets OR 1 stat-card) |
 
 #### `content-left-media-right`
+
 | Slots | 2 |
 | Arrangement | 60% text left, 40% media right |
 | Responsive | Stacks with media below text at 768px |
 | Density | Left: 1 heading + 4-6 bullets. Right: 1 image/diagram |
 
 #### `media-left-content-right`
+
 | Slots | 2 |
 | Arrangement | 40% media left, 60% text right |
 | Responsive | Stacks with media above text at 768px |
 | Density | Left: 1 image/diagram. Right: 1 heading + 4-6 bullets |
 
 #### `top-bottom`
+
 | Slots | 2 |
 | Arrangement | Vertically stacked, configurable ratio |
 | Props | `ratio: '50-50' \| '60-40' \| '40-60' \| '70-30' \| '30-70'` |
@@ -1313,42 +1500,49 @@ Detailed specifications for all built-in layouts. Each layout describes its slot
 | Density | 1 component per region |
 
 #### `grid-2x2`
+
 | Slots | 4 |
 | Arrangement | 2×2 grid with equal cells |
 | Responsive | 2×2 → 2×1 stack → 1×4 stack at breakpoints |
 | Density | 1 card per cell (title + 2-3 lines) |
 
 #### `grid-3x2`
+
 | Slots | 6 |
 | Arrangement | 3 columns × 2 rows |
 | Responsive | 3×2 → 2×3 → 1×6 at breakpoints |
 | Density | 1 compact card per cell |
 
 #### `sidebar-main`
+
 | Slots | 2 |
 | Arrangement | Narrow sidebar (25-30%) + wide main area (70-75%) |
 | Responsive | Sidebar collapses above main content below 768px |
 | Density | Sidebar: navigation/labels/small components. Main: primary content component |
 
 #### `full-bleed`
+
 | Slots | 1 |
 | Arrangement | Component fills entire viewport edge-to-edge, no padding |
 | Responsive | Component handles its own responsive behavior |
 | Density | 1 image, video, or large diagram |
 
 #### `gallery`
+
 | Slots | N (variable) |
 | Arrangement | Responsive CSS grid with auto-fit columns (min 250px) |
 | Responsive | Column count reduces automatically |
 | Density | Up to 9 items (3×3) |
 
 #### `stack`
+
 | Slots | N (variable) |
 | Arrangement | Vertically stacked with consistent spacing |
 | Responsive | Spacing reduces at smaller viewports |
 | Density | Up to 5 stacked components |
 
 #### `scattered`
+
 | Slots | N (variable, with position data) |
 | Arrangement | Components placed at specified relative positions within the slot area. Intended for organic Map mode clusters. |
 | Props | Each component can have `position: { x: number, y: number }` (0-1 normalized coordinates) |
@@ -1356,6 +1550,7 @@ Detailed specifications for all built-in layouts. Each layout describes its slot
 | Density | Context-dependent; avoid overlap |
 
 #### `timeline-layout`
+
 | Slots | N (variable) |
 | Arrangement | Horizontal or vertical timeline with connected events |
 | Props | `orientation: 'horizontal' \| 'vertical'`, `alternating: boolean` |
@@ -1365,6 +1560,7 @@ Detailed specifications for all built-in layouts. Each layout describes its slot
 **Authoring note:** Keep timeline items similarly dense so cards align well in shared rows.
 
 #### `comparison-layout`
+
 | Slots | 2 |
 | Arrangement | Side-by-side with visual divider (vertical line or "vs" badge) |
 | Props | `divider: 'line' \| 'vs' \| 'arrow'` |
@@ -1372,6 +1568,7 @@ Detailed specifications for all built-in layouts. Each layout describes its slot
 | Density | 1 panel per side (title + 3-4 points each) |
 
 #### `pyramid-layout`
+
 | Slots | 3-5 |
 | Arrangement | Triangular arrangement — first slot narrow at top, widening rows below |
 | Responsive | Collapses to vertical stack below 600px |
@@ -1384,7 +1581,6 @@ Detailed specifications for all built-in layouts. Each layout describes its slot
 ## 21. Project Directory Structure
 
 ### 21.1 Complete Directory Tree
-
 
 xtoryteller/
 │
@@ -1689,42 +1885,45 @@ xtoryteller/
 ├── .gitignore
 └── README.md                            # Repository README
 
-
 ### 21.2 Naming Conventions
 
-| Entity | Convention | Example |
-|---|---|---|
-| Component directory | `kebab-case` | `causal-diagram/` |
-| Component TSX file | `index.tsx` | `components/causal-diagram/index.tsx` |
-| Component manifest | `manifest.yaml` | `components/causal-diagram/manifest.yaml` |
-| Component CSS module | `styles.module.css` | `components/causal-diagram/styles.module.css` |
-| Layout directory | `kebab-case` | `two-column/` |
-| Transition directory | `kebab-case` | `slide-up/` |
-| Theme file | `kebab-case.yaml` | `themes/dark-botanical.yaml` |
-| Presentation directory | `kebab-case` (matches slug) | `presentations/causal-systems/` |
-| Presentation file | `presentation.yaml` | Always this name within its directory |
-| Type references in YAML | `kebab-case` | `type: causal-diagram` |
-| TypeScript type names | `PascalCase` | `PresentationConfig`, `StepDefinition` |
-| React component exports | `PascalCase` | `export const CausalDiagram` |
-| CSS custom properties | `--kebab-case` | `--color-primary`, `--text-h1` |
-| Registry JSON files | `kebab-case.json` | `component-registry.json` |
-| Skill YAML files | `kebab-case.yaml` | `style-discovery.yaml` |
+
+| Entity                  | Convention                  | Example                                       |
+| ----------------------- | --------------------------- | --------------------------------------------- |
+| Component directory     | `kebab-case`                | `causal-diagram/`                             |
+| Component TSX file      | `index.tsx`                 | `components/causal-diagram/index.tsx`         |
+| Component manifest      | `manifest.yaml`             | `components/causal-diagram/manifest.yaml`     |
+| Component CSS module    | `styles.module.css`         | `components/causal-diagram/styles.module.css` |
+| Layout directory        | `kebab-case`                | `two-column/`                                 |
+| Transition directory    | `kebab-case`                | `slide-up/`                                   |
+| Theme file              | `kebab-case.yaml`           | `themes/dark-botanical.yaml`                  |
+| Presentation directory  | `kebab-case` (matches slug) | `presentations/causal-systems/`               |
+| Presentation file       | `presentation.yaml`         | Always this name within its directory         |
+| Type references in YAML | `kebab-case`                | `type: causal-diagram`                        |
+| TypeScript type names   | `PascalCase`                | `PresentationConfig`, `StepDefinition`        |
+| React component exports | `PascalCase`                | `export const CausalDiagram`                  |
+| CSS custom properties   | `--kebab-case`              | `--color-primary`, `--text-h1`                |
+| Registry JSON files     | `kebab-case.json`           | `component-registry.json`                     |
+| Skill YAML files        | `kebab-case.yaml`           | `style-discovery.yaml`                        |
+
 
 ### 21.3 File Ownership
 
-| Directory | Managed By | Modified By |
-|---|---|---|
-| `app/` | Core project | Developers only (not agents) |
-| `components/` (built-in) | Core project + user extensions | Developers, agents (component creation sub-pipeline) |
-| `layouts/` | Core project + user extensions | Developers, agents (layout creation sub-pipeline) |
-| `transitions/` | Core project + user extensions | Developers, agents |
-| `themes/` | Core project + user extensions | Agents (style discovery), developers |
-| `presentations/` | Users | Agents (primary), manual editing (secondary) |
-| `lib/` | Core project | Developers only |
-| `scripts/` | Core project | Developers only |
-| `skills/` | Core project | Developers (skill definition), auto-generated (registries) |
-| `public/fonts/` | Core project + user | Developers, font download script |
-| `docs/` | Core project | Developers |
+
+| Directory                | Managed By                     | Modified By                                                |
+| ------------------------ | ------------------------------ | ---------------------------------------------------------- |
+| `app/`                   | Core project                   | Developers only (not agents)                               |
+| `components/` (built-in) | Core project + user extensions | Developers, agents (component creation sub-pipeline)       |
+| `layouts/`               | Core project + user extensions | Developers, agents (layout creation sub-pipeline)          |
+| `transitions/`           | Core project + user extensions | Developers, agents                                         |
+| `themes/`                | Core project + user extensions | Agents (style discovery), developers                       |
+| `presentations/`         | Users                          | Agents (primary), manual editing (secondary)               |
+| `lib/`                   | Core project                   | Developers only                                            |
+| `scripts/`               | Core project                   | Developers only                                            |
+| `skills/`                | Core project                   | Developers (skill definition), auto-generated (registries) |
+| `public/fonts/`          | Core project + user            | Developers, font download script                           |
+| `docs/`                  | Core project                   | Developers                                                 |
+
 
 ---
 
@@ -1739,100 +1938,111 @@ The MVP delivers a functional, end-to-end system where a user can clone the proj
 **Goal:** A working system where an agent can generate a Stage-mode presentation from YAML and the user can view it in the browser.
 
 **Infrastructure:**
-- [ ] Next.js project setup with App Router, TypeScript, ESLint, Prettier
-- [ ] YAML parsing and presentation loader (`lib/engine/presentation-loader.ts`)
-- [ ] JSON Schema for `presentation.yaml` and validation script (`scripts/validate.js`)
-- [ ] Component registry with manifest scanning (`lib/engine/component-registry.ts`)
-- [ ] Layout registry with manifest scanning (`lib/engine/layout-registry.ts`)
-- [ ] Transition registry with manifest scanning (`lib/engine/transition-registry.ts`)
-- [ ] Theme resolver — YAML to CSS custom properties (`lib/engine/theme-resolver.ts`)
-- [ ] Template expression engine for basic data references (`lib/engine/template-engine.ts`)
-- [ ] Asset path resolution (`lib/engine/asset-resolver.ts`)
-- [ ] TypeScript type definitions for all data structures (`lib/types/`)
+
+- Next.js project setup with App Router, TypeScript, ESLint, Prettier
+- YAML parsing and presentation loader (`lib/engine/presentation-loader.ts`)
+- JSON Schema for `presentation.yaml` and validation script (`scripts/validate.js`)
+- Component registry with manifest scanning (`lib/engine/component-registry.ts`)
+- Layout registry with manifest scanning (`lib/engine/layout-registry.ts`)
+- Transition registry with manifest scanning (`lib/engine/transition-registry.ts`)
+- Theme resolver — YAML to CSS custom properties (`lib/engine/theme-resolver.ts`)
+- Template expression engine for basic data references (`lib/engine/template-engine.ts`)
+- Asset path resolution (`lib/engine/asset-resolver.ts`)
+- TypeScript type definitions for all data structures (`lib/types/`)
 
 **State Machine:**
-- [ ] XState v5 Stage mode machine (step navigation, build steps, transition states)
-- [ ] XState v5 Background state machine (stable/interpolating)
-- [ ] Top-level parallel presentation machine
-- [ ] React integration via `@xstate/react`
+
+- XState v5 Stage mode machine (step navigation, build steps, transition states)
+- XState v5 Background state machine (stable/interpolating)
+- Top-level parallel presentation machine
+- React integration via `@xstate/react`
 
 **Rendering:**
-- [ ] `PresentationProvider` context with machine
-- [ ] `ThemeProvider` with CSS custom property injection
-- [ ] `StageRenderer` with step transitions and build step sequencing
-- [ ] `BuildStepWrapper` with enter/exit animations
-- [ ] `ContentLayer` and `UILayer` separation
-- [ ] Keyboard navigation (arrow keys, space, escape)
-- [ ] Progress indicator (step counter or progress bar)
-- [ ] Screen reader announcements
-- [ ] `prefers-reduced-motion` support
+
+- `PresentationProvider` context with machine
+- `ThemeProvider` with CSS custom property injection
+- `StageRenderer` with step transitions and build step sequencing
+- `BuildStepWrapper` with enter/exit animations
+- `ContentLayer` and `UILayer` separation
+- Keyboard navigation (arrow keys, space, escape)
+- Progress indicator (step counter or progress bar)
+- Screen reader announcements
+- `prefers-reduced-motion` support
 
 **Components (Minimum Viable Set — 10):**
-- [ ] `headline`
-- [ ] `subtitle`
-- [ ] `body-text`
-- [ ] `bullet-list`
-- [ ] `blockquote`
-- [ ] `callout`
-- [ ] `image`
-- [ ] `code-block`
-- [ ] `card`
-- [ ] `divider`
+
+- `headline`
+- `subtitle`
+- `body-text`
+- `bullet-list`
+- `blockquote`
+- `callout`
+- `image`
+- `code-block`
+- `card`
+- `divider`
 
 Each with: TSX implementation, manifest.yaml, styles.module.css, semantic HTML, theme variable references, responsive sizing.
 
 **Layouts (Minimum Viable Set — 6):**
-- [ ] `title-center`
-- [ ] `single-content`
-- [ ] `two-column`
-- [ ] `content-left-media-right`
-- [ ] `full-bleed`
-- [ ] `stack`
+
+- `title-center`
+- `single-content`
+- `two-column`
+- `content-left-media-right`
+- `full-bleed`
+- `stack`
 
 Each with: TSX implementation, manifest.yaml, slot definitions, responsive behavior, density guidelines.
 
 **Transitions (Minimum Viable Set — 5):**
-- [ ] `fade`
-- [ ] `slide-left`
-- [ ] `slide-up`
-- [ ] `scale`
-- [ ] `none`
+
+- `fade`
+- `slide-left`
+- `slide-up`
+- `scale`
+- `none`
 
 Each with: TypeScript implementation, manifest.yaml, enter/exit functions, configurable parameters.
 
 **Theme:**
-- [ ] Default theme YAML with full color, font, typography, spacing, border, shadow, animation definitions
-- [ ] Default fonts shipped locally (Playfair Display, Inter, JetBrains Mono)
-- [ ] Theme override support in presentation YAML
-- [ ] Component inline style overrides
+
+- Default theme YAML with full color, font, typography, spacing, border, shadow, animation definitions
+- Default fonts shipped locally (Playfair Display, Inter, JetBrains Mono)
+- Theme override support in presentation YAML
+- Component inline style overrides
 
 **Background:**
-- [ ] Paper-shader integration with single-shader-per-presentation support
-- [ ] Background rendered on WebGL canvas behind content
-- [ ] Fallback to CSS background on devices without WebGL
+
+- Paper-shader integration with single-shader-per-presentation support
+- Background rendered on WebGL canvas behind content
+- Fallback to CSS background on devices without WebGL
 
 **Dashboard:**
-- [ ] Gallery view at `/` showing all presentations
-- [ ] Presentation metadata display (title, description, tags, mode, step count)
-- [ ] Click to enter presentation at `/[slug]`
-- [ ] Back button from presentation to dashboard
-- [ ] Auto-generated thumbnail (or placeholder)
+
+- Gallery view at `/` showing all presentations
+- Presentation metadata display (title, description, tags, mode, step count)
+- Click to enter presentation at `/[slug]`
+- Back button from presentation to dashboard
+- Auto-generated thumbnail (or placeholder)
 
 **Developer Experience:**
-- [ ] `npm run dev` with hot reload
-- [ ] File watcher + WebSocket for YAML changes → browser update
-- [ ] Error overlay for invalid YAML or missing components
-- [ ] `npm run validate` for CLI validation
-- [ ] `npm run registries` for registry generation
+
+- `npm run dev` with hot reload
+- File watcher + WebSocket for YAML changes → browser update
+- Error overlay for invalid YAML or missing components
+- `npm run validate` for CLI validation
+- `npm run registries` for registry generation
 
 **Agent Skill (MVP):**
-- [ ] Master skill YAML (`xtoryteller-skill.yaml`)
-- [ ] Phase 0-5 YAML definitions
-- [ ] Schema reference file for agents
-- [ ] 2 example presentations (simple and complex Stage mode)
-- [ ] Component, layout, transition, and theme registry JSON files (auto-generated)
-- [ ] Architecture overview doc for agent context
-- [ ] Anti-patterns reference
+
+- Master skill YAML (`xtoryteller-skill.yaml`)
+- Phase 0-5 YAML definitions
+- Schema reference file for agents
+- 2 example presentations (simple and complex Stage mode)
+- Component, layout, transition, and theme registry JSON files (auto-generated)
+- Architecture overview doc for agent context
+- Anti-patterns reference
 
 **Deliverable:** A user can clone the repo, run `npm install && npm run dev`, invoke an agent (Claude Code, Codex, etc.) with the skill, discuss a presentation, and the agent generates a working `presentation.yaml` that renders in the browser with transitions, build steps, and a styled theme.
 
@@ -1841,156 +2051,176 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 **Goal:** Add the Map navigation mode and the first wave of diagram components — the key differentiators.
 
 **Map Mode:**
-- [ ] XState Map mode machine (free roam, guided, flying states)
-- [ ] `MapRenderer` with DOM + CSS transforms
-- [ ] Gesture handling via `@use-gesture/react` (drag/pan, pinch/wheel zoom)
-- [ ] Camera flight animations via Framer Motion
-- [ ] Cluster position resolver (manual-relative + `flow` algorithm)
-- [ ] Guided sequence navigation
-- [ ] Free roam ↔ guided mode toggle
-- [ ] Cluster click-to-navigate
-- [ ] Viewport framing logic (center + zoom to fit cluster)
+
+- XState Map mode machine (free roam, guided, flying states)
+- `MapRenderer` with DOM + CSS transforms
+- Gesture handling via `@use-gesture/react` (drag/pan, pinch/wheel zoom)
+- Camera flight animations via Framer Motion
+- Cluster position resolver (manual-relative + `flow` algorithm)
+- Guided sequence navigation
+- Free roam ↔ guided mode toggle
+- Cluster click-to-navigate
+- Viewport framing logic (center + zoom to fit cluster)
 
 **Automatic Arrangement Algorithms:**
-- [ ] `flow` (left-to-right, wrapping)
-- [ ] `radial` (circular around center)
-- [ ] `grid` (regular grid)
+
+- `flow` (left-to-right, wrapping)
+- `radial` (circular around center)
+- `grid` (regular grid)
 
 **Diagram Components (First Wave — 5):**
-- [ ] `causal-diagram` (ELK.js layout, polarity labels, loop detection)
-- [ ] `mind-map` (ELK.js tree/radial layout, expandable branches)
-- [ ] `iceberg-diagram` (custom SVG, layered depth metaphor)
-- [ ] `flowchart` (ELK.js layered layout, decision nodes)
-- [ ] `quadrant-chart` (custom SVG, 2×2 with positioned items)
+
+- `causal-diagram` (ELK.js layout, polarity labels, loop detection)
+- `mind-map` (ELK.js tree/radial layout, expandable branches)
+- `iceberg-diagram` (custom SVG, layered depth metaphor)
+- `flowchart` (ELK.js layered layout, decision nodes)
+- `quadrant-chart` (custom SVG, 2×2 with positioned items)
 
 **Additional Layouts:**
-- [ ] `three-column`
-- [ ] `grid-2x2`
-- [ ] `media-left-content-right`
-- [ ] `sidebar-main`
-- [ ] `gallery`
-- [ ] `scattered` (for Map mode clusters)
+
+- `three-column`
+- `grid-2x2`
+- `media-left-content-right`
+- `sidebar-main`
+- `gallery`
+- `scattered` (for Map mode clusters)
 
 **Additional Transitions:**
-- [ ] `slide-right`
-- [ ] `slide-down`
-- [ ] `scale-out`
-- [ ] `blur`
-- [ ] `wipe-left`
+
+- `slide-right`
+- `slide-down`
+- `scale-out`
+- `blur`
+- `wipe-left`
 
 **Background Enhancement:**
-- [ ] Per-section shader configuration (different params per step range or cluster group)
-- [ ] Smooth parameter interpolation between sections
-- [ ] Cross-fade between different shader algorithms
+
+- Per-section shader configuration (different params per step range or cluster group)
+- Smooth parameter interpolation between sections
+- Cross-fade between different shader algorithms
 
 **Agent Skill Updates:**
-- [ ] Map mode examples (simple and complex)
-- [ ] Diagram component documentation in registry
-- [ ] Updated skill phases for Map mode orchestration
+
+- Map mode examples (simple and complex)
+- Diagram component documentation in registry
+- Updated skill phases for Map mode orchestration
 
 ### 22.4 Phase 3: Full Component Suite & Portability
 
 **Goal:** Complete the component and layout libraries. Implement portability (import/export/sharing).
 
 **Remaining Diagram Components:**
-- [ ] `three-horizons`
-- [ ] `spectrum-bar`
-- [ ] `funnel-diagram`
-- [ ] `venn-diagram`
-- [ ] `stakeholder-map`
-- [ ] `radar-chart` (D3)
-- [ ] `timeline`
-- [ ] `org-chart`
-- [ ] `cycle-diagram`
-- [ ] `sankey-diagram` (D3)
-- [ ] `coordinate-plot` (D3)
+
+- `three-horizons`
+- `spectrum-bar`
+- `funnel-diagram`
+- `venn-diagram`
+- `stakeholder-map`
+- `radar-chart` (D3)
+- `timeline`
+- `org-chart`
+- `cycle-diagram`
+- `sankey-diagram` (D3)
+- `coordinate-plot` (D3)
 
 **Remaining Content Components:**
-- [ ] `numbered-list`
-- [ ] `footnote`
-- [ ] `label`
-- [ ] `icon`
-- [ ] `video`
-- [ ] `svg-graphic`
-- [ ] `iframe-embed`
-- [ ] `stat-card`
-- [ ] `profile-card`
-- [ ] `feature-card`
-- [ ] `comparison-card`
-- [ ] `timeline-item`
+
+- `numbered-list`
+- `footnote`
+- `label`
+- `icon`
+- `video`
+- `svg-graphic`
+- `iframe-embed`
+- `stat-card`
+- `profile-card`
+- `feature-card`
+- `comparison-card`
+- `timeline-item`
 
 **Remaining Layouts:**
-- [ ] `title-left`
-- [ ] `section-header`
-- [ ] `top-bottom`
-- [ ] `grid-3x2`
-- [ ] `timeline-layout`
-- [ ] `comparison-layout`
-- [ ] `pyramid-layout`
+
+- `title-left`
+- `section-header`
+- `top-bottom`
+- `grid-3x2`
+- `timeline-layout`
+- `comparison-layout`
+- `pyramid-layout`
 
 **Remaining Arrangement Algorithms:**
-- [ ] `tree` (hierarchical)
+
+- `tree` (hierarchical)
 
 **Portability:**
-- [ ] Export script (`scripts/export.js`) — zip presentation with dependencies
-- [ ] Import script (`scripts/import.js`) — validate and unpack presentation
-- [ ] Import validation (component resolution, theme availability, slug conflicts)
-- [ ] Component promotion workflow (presentation-scoped → global)
+
+- Export script (`scripts/export.js`) — zip presentation with dependencies
+- Import script (`scripts/import.js`) — validate and unpack presentation
+- Import validation (component resolution, theme availability, slug conflicts)
+- Component promotion workflow (presentation-scoped → global)
 
 **Agent Sub-Pipelines:**
-- [ ] Style discovery sub-pipeline (generate 3 theme variants, preview, pick)
-- [ ] Component creation sub-pipeline (guided custom component authoring)
-- [ ] Layout creation sub-pipeline
-- [ ] Theme creation sub-pipeline
+
+- Style discovery sub-pipeline (generate 3 theme variants, preview, pick)
+- Component creation sub-pipeline (guided custom component authoring)
+- Layout creation sub-pipeline
+- Theme creation sub-pipeline
 
 **Dashboard Enhancements:**
-- [ ] Tag-based filtering
-- [ ] Search by title, description, content
-- [ ] Sort by date created, updated, title
-- [ ] Grid/list view toggle
+
+- Tag-based filtering
+- Search by title, description, content
+- Sort by date created, updated, title
+- Grid/list view toggle
 
 **Hover Annotation System:**
-- [ ] Global annotation syntax in Markdown (`<annotate>` markers)
-- [ ] Tooltip rendering component
-- [ ] Keyboard-accessible annotation reveal (focus + Enter)
+
+- Global annotation syntax in Markdown (`<annotate>` markers)
+- Tooltip rendering component
+- Keyboard-accessible annotation reveal (focus + Enter)
 
 **Theme Validation:**
-- [ ] `scripts/validate-theme.js` — contrast ratio checking
-- [ ] Font availability checking
-- [ ] Build-time theme validation
+
+- `scripts/validate-theme.js` — contrast ratio checking
+- Font availability checking
+- Build-time theme validation
 
 ### 22.5 Phase 4: Polish & Advanced Features
 
 **Goal:** Refinements, advanced features, and production-readiness.
 
 **Additional Features:**
-- [ ] Deep linking into steps (`/slug#step-3`) and clusters (`/slug#cluster-name`)
-- [ ] Fullscreen mode (F key)
-- [ ] Keyboard shortcuts overlay (? key)
-- [ ] Touch/swipe navigation for mobile
-- [ ] Iframe embedding detection and UI adjustment
-- [ ] Font download script (`scripts/download-font.js`)
-- [ ] Auto-thumbnail generation
-- [ ] `npm run export` static site export mode
-- [ ] Production deployment documentation and sh and skill workflow using vercel for Vercel
+
+- Deep linking into steps (`/slug#step-3`) and clusters (`/slug#cluster-name`)
+- Fullscreen mode (F key)
+- Keyboard shortcuts overlay (? key)
+- Touch/swipe navigation for mobile
+- Iframe embedding detection and UI adjustment
+- Font download script (`scripts/download-font.js`)
+- Auto-thumbnail generation
+- `npm run export` static site export mode
+- Production deployment documentation and sh and skill workflow using vercel for Vercel
 
 **Component Enhancements:**
-- [ ] Hover annotations on all diagram components
-- [ ] Build step `sequential` mode for diagram components (nodes-first, etc.)
-- [ ] SVG draw animation for diagram edges
-- [ ] Animated number counting for stat-card
+
+- Hover annotations on all diagram components
+- Build step `sequential` mode for diagram components (nodes-first, etc.)
+- SVG draw animation for diagram edges
+- Animated number counting for stat-card
 
 **Map Mode Enhancements:**
-- [ ] Mid-flight zoom-out during camera transitions (Optional)
-- [ ] Minimap overlay showing canvas overview (Hover-rendered with fade in animation)
-- [ ] Cluster proximity loading (lazy-mount distant clusters)
+
+- Mid-flight zoom-out during camera transitions (Optional)
+- Minimap overlay showing canvas overview (Hover-rendered with fade in animation)
+- Cluster proximity loading (lazy-mount distant clusters)
 
 **Performance:**
-- [ ] Dynamic component imports (code-split per presentation)
-- [ ] D3 and ELK.js lazy loading
-- [ ] Paper-shader resolution scaling for low-end devices
-- [ ] Font preloading
-- [ ] Image optimization via Next.js Image component (SSR mode)
+
+- Dynamic component imports (code-split per presentation)
+- D3 and ELK.js lazy loading
+- Paper-shader resolution scaling for low-end devices
+- Font preloading
+- Image optimization via Next.js Image component (SSR mode)
 
 ---
 
@@ -1999,12 +2229,14 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 ### 23.1 Near-Term (Post-MVP)
 
 **PPT/PPTX Import**
+
 - Python script to extract content from PowerPoint files (`python-pptx`)
 - Agent skill to map extracted content to Xtoryteller components and layouts
 - Generate `presentation.yaml` from extracted content
 - Preserve slide order, text, images, and speaker notes
 
 **Interactive Components**
+
 - `toggle-reveal` — click to show hidden content
 - `tab-group` — tabbed panels
 - `accordion` — expandable sections
@@ -2012,12 +2244,14 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 - `live-counter` — animated counting numbers
 
 **Presenter Mode** (Ignore for now)
+
 - Split view: presenter sees current step + next step + speaker notes
 - Timer and clock display
 - Private notes field in presentation YAML (not rendered in viewer mode)
 - Remote control support (phone as remote via WebSocket)
 
 **Agent Preview Loop**
+
 - Agent can invoke a screenshot tool (via MCP or direct Playwright call) to preview generated presentations
 - Agent reviews the screenshot, identifies issues, and self-corrects
 - Reduces the human review cycle for iterative refinement
@@ -2026,30 +2260,35 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 ### 23.2 Medium-Term
 
 **Branching / Non-Linear Navigation**
+
 - Steps can define conditional branches ("If the audience asks about X, go to step 12")
 - Agent can create choose-your-own-adventure style presentations
 - Map mode naturally supports non-linear exploration; this adds it to Stage mode
 - Navigation UI shows branch points
 
 **Real-Time Data Integration**
+
 - Components can fetch data from APIs at render time
 - Live dashboards embedded in presentations
 - WebSocket-driven live updating components
 - Data sources defined in presentation YAML
 
 **Collaborative Editing**
+
 - Multiple users editing the same presentation YAML simultaneously
 - Conflict resolution (CRDT or operational transform on YAML)
 - Real-time cursor presence
 - Requires server component (not static export compatible)
 
 **Animation Timeline Editor**
+
 - Visual timeline for orchestrating component animations
 - Drag-and-drop sequencing of build steps
 - Preview animations in real time
 - Export timeline back to YAML
 
 **Component Marketplace**
+
 - Public registry of community-contributed components
 - npm-like install mechanism: `node scripts/install-component.js @community/gantt-chart`
 - Version management for shared components
@@ -2058,6 +2297,7 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 ### 23.3 Long-Term
 
 **Cloud-Hosted Version**
+
 - Multi-tenant SaaS deployment
 - User accounts with private and public presentations
 - Component sandboxing (iframe-based isolation for untrusted components)
@@ -2065,12 +2305,14 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 - Usage analytics (view count, average view duration, drop-off points)
 
 **Export Formats**
+
 - PDF export (headless browser screenshot per step → combined PDF)
 - Video export (recorded step transitions as MP4/WebM)
 - Static HTML export (single self-contained HTML file for maximum portability)
 - Image export (individual step screenshots as PNG/SVG)
 
 **AI-Enhanced Features**
+
 - Auto-layout suggestions based on content analysis
 - Content summarization for speaker notes
 - Automatic diagram generation from text descriptions
@@ -2079,6 +2321,7 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 - Translation — auto-translate presentation content to other languages
 
 **Advanced Rendering**
+
 - 3D components (Three.js integration for spatial data visualization)
 - Particle effects and generative art components
 - Custom shader components (user-authored GLSL for component backgrounds)
@@ -2086,12 +2329,14 @@ Each with: TypeScript implementation, manifest.yaml, enter/exit functions, confi
 - WebGPU support for next-generation shader performance
 
 **Presentation Analytics**
+
 - Heatmaps showing which steps viewers spend most time on
 - Navigation path analysis (for Map mode — which clusters are most visited)
 - A/B testing different presentation versions
 - Engagement scoring
 
 **Offline / PWA Support**
+
 - Service worker for offline presentation viewing
 - Progressive Web App manifest
 - Cache presentations locally for offline access

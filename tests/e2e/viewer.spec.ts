@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 async function readMapCanvasState(page: Page) {
@@ -11,6 +11,36 @@ async function readMapCanvasState(page: Page) {
 function extractScale(transform: string) {
   const match = transform.match(/^matrix\(([^,]+)/);
   return match ? Number.parseFloat(match[1]) : Number.NaN;
+}
+
+async function dispatchTouchDrag(page: Page, locator: Locator, startRatio: number, endRatio: number) {
+  const session = await page.context().newCDPSession(page);
+  const box = await locator.boundingBox();
+  if (!box) {
+    throw new Error('Could not resolve a touch target for swipe testing.');
+  }
+
+  const y = Math.round(box.y + box.height * 0.5);
+  const startX = Math.round(box.x + box.width * startRatio);
+  const endX = Math.round(box.x + box.width * endRatio);
+
+  await session.send('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [{ x: startX, y }]
+  });
+
+  for (let index = 1; index <= 6; index += 1) {
+    const x = Math.round(startX + ((endX - startX) * index) / 6);
+    await session.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: [{ x, y }]
+    });
+  }
+
+  await session.send('Input.dispatchTouchEvent', {
+    type: 'touchEnd',
+    touchPoints: []
+  });
 }
 
 test('stage viewer supports keyboard-only navigation and reduced motion', async ({ page }) => {
@@ -33,7 +63,7 @@ test('stage viewer escape returns to the dashboard from the first step', async (
 
   await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })));
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.getByRole('heading', { name: /Agent-first presentation infrastructure/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Agent-first storytelling infrastructure/.' })).toBeVisible();
 });
 
 test('map viewer supports guided navigation and accessibility', async ({ page }) => {
@@ -109,6 +139,60 @@ test('map viewer guided mode allows temporary free navigation and snaps back on 
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(page.locator('.mapCanvas')).toHaveAttribute('data-camera-behavior', 'flight');
   await expect(liveRegion).toContainText('context-crisis', { timeout: 5000 });
+});
+
+test('stage deep links load from step ids and numeric hashes', async ({ page }) => {
+  await page.goto('/human-ai-and-music-insight-brief#step-opening');
+  await expect(page.locator('[aria-live="polite"]')).toContainText(/Step 1 of .*: Opening/i);
+
+  await page.goto('/human-ai-and-music-insight-brief#step-3');
+  await expect(page.locator('[aria-live="polite"]')).toContainText(/Step 3 of .*: Executive Summary/i);
+});
+
+test('map deep links load from cluster hashes', async ({ page }) => {
+  await page.goto('/human-ai-and-music#cluster-context-crisis');
+  await expect(page.locator('[aria-live="polite"]')).toContainText('context-crisis');
+});
+
+test('map navigation updates cluster hashes', async ({ page }) => {
+  await page.goto('/human-ai-and-music#cluster-overview');
+  await expect(page.locator('[aria-live="polite"]')).toContainText('overview');
+
+  await page.getByRole('button', { name: /3. context-crisis/i }).click();
+  await expect(page).toHaveURL(/#cluster-context-crisis$/);
+  await expect(page.locator('[aria-live="polite"]')).toContainText('context-crisis');
+});
+
+test.describe('mobile stage viewer', () => {
+  test.use({ hasTouch: true, viewport: { width: 390, height: 844 } });
+
+  test('supports swipe navigation on the stage body', async ({ page }) => {
+    await page.goto('/human-ai-and-music-insight-brief#step-opening');
+    await expect(page.locator('[data-stage-compact="true"]')).toBeVisible();
+
+    await dispatchTouchDrag(page, page.locator('.stepSceneBody'), 0.82, 0.2);
+
+    await expect(page).toHaveURL(/#step-section-context$/);
+  });
+
+  test('ignores swipe gestures started on controls', async ({ page }) => {
+    await page.goto('/human-ai-and-music-insight-brief#step-opening');
+    await expect(page.locator('[data-stage-compact="true"]')).toBeVisible();
+
+    await dispatchTouchDrag(page, page.getByRole('button', { name: 'Next' }), 0.8, 0.2);
+
+    await expect(page).toHaveURL(/#step-opening$/);
+  });
+
+  test('keeps narrow stage layouts free of horizontal overflow', async ({ page }) => {
+    await page.goto('/human-ai-and-music-insight-brief#step-opening');
+    const hasOverflow = await page.evaluate(() => {
+      const scene = document.querySelector('.stepScene');
+      return scene ? scene.scrollWidth > window.innerWidth + 1 : true;
+    });
+
+    expect(hasOverflow).toBe(false);
+  });
 });
 
 test('map viewer responds to touch-style dragging', async ({ page }) => {

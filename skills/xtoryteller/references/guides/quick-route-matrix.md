@@ -4,9 +4,11 @@ Use this table to jump straight to the right guides and commands. For the full p
 
 | Task | Read first | Validate / check |
 | --- | --- | --- |
-| **New presentation from scratch** | [co-design-intake.md](co-design-intake.md) → Phase 1 | Complete intake first, then scaffold and validate |
+| **New presentation from scratch** | [co-design-intake.md](co-design-intake.md) + [presentation-storytelling-mode.md](presentation-storytelling-mode.md) → Phase 1 | Complete storytelling prep unless explicitly skipped, then scaffold and validate |
 | New or edited **Stage** deck | [stage-authoring.md](stage-authoring.md), [example-selection.md](example-selection.md), registries | `node scripts/validate.mjs presentations/<slug>/presentation.yaml` |
 | New or edited **Map** presentation | [map-authoring.md](map-authoring.md), [example-selection.md](example-selection.md), registries | same |
+| **Story rewrite / material-to-presentation / speaker-led deck** | [presentation-storytelling-mode.md](presentation-storytelling-mode.md), then Stage or Map authoring | Confirm speaking context, scenario route, story spine, and story completeness before YAML; then validate |
+| **Strategy / market / consulting-style** Stage deck | [presentation-storytelling-mode.md](presentation-storytelling-mode.md), then [strategy-consulting-mode.md](strategy-consulting-mode.md), then [stage-authoring.md](stage-authoring.md), registries | Confirm story spine, decision frame, argument plan, and dependency plan before YAML; then validate |
 | **Scaffold** a new presentation | [example-selection.md](example-selection.md) | `node skills/xtoryteller/scripts/init-presentation.mjs --slug <slug> --mode stage\|map --example simple\|complex` then `node scripts/validate.mjs …` |
 | **Theme** / `themeOverrides` / fonts | [theme-authoring.md](theme-authoring.md) | `node scripts/validate-theme.mjs themes/<theme>.yaml` if editing a theme file |
 | **Backgrounds** / transitions | [backgrounds-transitions.md](backgrounds-transitions.md), background registry | `node scripts/validate.mjs …`; after changing shared presets: `node scripts/validate-all.mjs` |

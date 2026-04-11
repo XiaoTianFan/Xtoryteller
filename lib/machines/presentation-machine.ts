@@ -220,6 +220,12 @@ export const presentationMachine = setup({
           ]
         },
         stage: {
+          on: {
+            GO_TO_STEP: {
+              target: '#presentation.navigation.stage.exiting',
+              actions: 'queueTargetStep'
+            }
+          },
           initial: 'entering',
           states: {
             entering: {

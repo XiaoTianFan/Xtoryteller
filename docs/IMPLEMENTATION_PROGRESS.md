@@ -20,6 +20,7 @@ The largest gaps are no longer missing architecture. They are mainly about robus
 Status: Strongly implemented, with tooling polish added in this pass.
 
 Shipped:
+
 - Next.js app router setup with dashboard and presentation routes
 - YAML loading and schema validation
 - Component, layout, transition, and theme registries
@@ -30,6 +31,7 @@ Shipped:
 - Dev watcher and dashboard entry flow
 
 Polished in this pass:
+
 - Validation now checks missing assets, build-step gaps, duplicate step or cluster ids, background-section references, map anchor cycles, and navigation sequence integrity.
 - Validation now emits density warnings for overloaded layouts, prose-like `stat-card` values, and over-dense `pyramid-layout` rows.
 - Shared validation now refreshes agent registries before running.
@@ -42,6 +44,7 @@ Polished in this pass:
 Status: Largely implemented.
 
 Shipped:
+
 - Map mode runtime with free-roam and guided navigation
 - Cluster positioning with manual anchors plus flow, radial, grid, and tree arrangements
 - First-wave diagram components such as causal, mind-map, iceberg, flowchart, and quadrant styles
@@ -49,6 +52,7 @@ Shipped:
 - Map example presentations and background-section support
 
 Polished in this pass:
+
 - Validation now checks map navigation and anchor reference integrity more directly.
 - Skill guidance now treats Map mode as a first-class orchestration path instead of a footnote.
 - Map keyboard support now covers guided navigation, free-roam pan/zoom controls, shortcuts help, and consistent Escape behavior.
@@ -61,6 +65,7 @@ Polished in this pass:
 Status: Broadly implemented, with a few partial areas still worth tracking.
 
 Shipped:
+
 - Remaining major content and diagram component suite present in the repo
 - Additional Phase 3 layouts
 - Portability scripts for export, import, and component promotion
@@ -70,6 +75,7 @@ Shipped:
 - Skill folders, references, schema, examples, and sub-pipelines
 
 Polished in this pass:
+
 - Import and promotion workflows now regenerate agent registries automatically.
 - The skill system was rewritten with fuller phase guidance, supporting-file references, density rules, style-discovery UX, and clearer current-support boundaries.
 - Human-facing docs now include this progress snapshot and a presentation-authoring guide.
@@ -80,10 +86,10 @@ Polished in this pass:
 - Shared grid, gallery, timeline, and pyramid rendering now stretches card-like components consistently so rows align visually without author-side spacing hacks.
 
 Still partial or worth noting:
+
 - Markdown hover annotations are shipped for markdown-rendered content, but the broader APRD-wide annotation vision still exceeds the current runtime surface.
 - Background transitions now interpolate supported numeric and color props for compatible CSS and Paper states, then fall back to cross-fades when renderer types or presets differ.
 
 ## Practical Conclusion
 
 Phases 1-3 are best described as implemented with selective partials, not unfinished from scratch. The repo now has a stronger “agent can trust the system” surface because validation is stricter, registries stay fresher, and the skill documentation is much closer to the actual runtime.
-

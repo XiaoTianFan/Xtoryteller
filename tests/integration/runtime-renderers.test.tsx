@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import { createElement } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@paper-design/shaders-react', () => {
   const createShader = (label: string) => {
@@ -61,6 +61,16 @@ describe('runtime renderers', () => {
     onReady(machine);
     return createElement(MapRenderer);
   }
+
+  afterEach(() => {
+    window.history.replaceState({}, '', '/');
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: 1024
+    });
+    window.dispatchEvent(new Event('resize'));
+  });
 
   beforeAll(async () => {
     [stagePresentation, mapPresentation] = await Promise.all([
@@ -229,6 +239,69 @@ describe('runtime renderers', () => {
 
     expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
     await waitFor(() => expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent(/Step 1 of .*: Opening/i));
+  });
+
+  it('mounts the stage viewer from hash-based deep links', async () => {
+    window.history.replaceState({}, '', '/human-ai-and-music-insight-brief#step-3');
+
+    render(
+      createElement(
+        ThemeProvider,
+        { theme: stageTheme, overrides: stagePresentation.themeOverrides },
+        createElement(
+          PresentationProvider,
+          { presentation: stagePresentation, theme: stageTheme },
+          createElement(StageRenderer)
+        )
+      )
+    );
+
+    await waitFor(() => expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent(/Step 3 of .*: Executive Summary/i));
+  });
+
+  it('mounts the map viewer from a cluster hash', async () => {
+    window.history.replaceState({}, '', '/human-ai-and-music#cluster-context-crisis');
+
+    render(
+      createElement(
+        ThemeProvider,
+        { theme: mapTheme, overrides: mapPresentation.themeOverrides },
+        createElement(
+          PresentationProvider,
+          { presentation: mapPresentation, theme: mapTheme },
+          createElement(MapRenderer)
+        )
+      )
+    );
+
+    await waitFor(() => expect(document.querySelector('[aria-live="polite"]')).toHaveTextContent('context-crisis'));
+  });
+
+  it('marks narrow stage viewports as compact and passes compact styles to text content', async () => {
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: 840
+    });
+    window.history.replaceState({}, '', '/human-ai-and-music-insight-brief#step-opening');
+
+    render(
+      createElement(
+        ThemeProvider,
+        { theme: stageTheme, overrides: stagePresentation.themeOverrides },
+        createElement(
+          PresentationProvider,
+          { presentation: stagePresentation, theme: stageTheme },
+          createElement(StageRenderer)
+        )
+      )
+    );
+
+    await waitFor(() => expect(document.querySelector('[data-stage-compact="true"]')).toBeTruthy());
+    const heading = await screen.findByRole('heading', { name: 'Recalibrating the Music System' });
+    await waitFor(() => {
+      expect(heading).toHaveStyle({ maxWidth: '100%', width: '100%' });
+    });
   });
 
   it('renders the canonical map viewer shell', async () => {
