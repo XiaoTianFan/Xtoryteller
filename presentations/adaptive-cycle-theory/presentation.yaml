@@ -1,0 +1,382 @@
+meta:
+  title: From Metaphor to Reality in Adaptive Cycle Theory
+  slug: adaptive-cycle-theory
+  description: >-
+    A 30-minute reading facilitation seminar for system designers with
+    philosophical background, based on Sundstrom & Allen.
+  author: ""
+  tags: [ systems, ecology, complexity, seminar, panarchy ]
+  createdAt: 2026-04-14
+  updatedAt: 2026-04-14
+  thumbnail: ./assets/thumbnail.png
+mode: stage
+theme: dark-botanical
+
+steps:
+  # ── Opening ────────────────────────────────────────────────────────────────
+
+  - id: title
+    title: Title
+    layout: title-center
+    transition: fade
+    components:
+      - type: headline
+        content: From Metaphor to Reality
+        props: { level: 1, align: center }
+      - type: subtitle
+        content: Adaptive Cycle Theory — Sundstrom & Allen
+        props: { align: center }
+      - type: label
+        content: Reading Facilitation · Chalmers Seminar
+        props: { tone: secondary }
+
+  - id: core-promise
+    title: The Central Claim
+    layout: single-content
+    transition: fade
+    components:
+      - type: blockquote
+        content: >-
+          The adaptive cycle is not a useful metaphor for how complex systems
+          change — it is a thermodynamically real and measurable phenomenon.
+          Calling it only a metaphor is both philosophically imprecise and
+          practically consequential.
+        props:
+          attribution: Sundstrom & Allen (paraphrased)
+          variant: large
+      - type: body-text
+        content: >-
+          Today: understand the framework, examine the thermodynamic claim,
+          evaluate the evidence, and ask what it means to design in systems that
+          are built to collapse.
+
+  # ── Chapter 1: The Framework ───────────────────────────────────────────────
+
+  - id: ch1-header
+    title: "Chapter 1: The Framework"
+    layout: section-header
+    transition: blur
+    components:
+      - type: label
+        content: Chapter 1
+        props: { tone: secondary }
+        style: { position: absolute, bottom: "calc(50% + 2.5rem)" }
+      - type: headline
+        content: The Adaptive Cycle
+        props: { level: 1, align: left }
+
+  - id: four-phases
+    title: The Four Phases
+    layout: content-left-media-right
+    transition: slide-up
+    components:
+      - type: body-text
+        content: |
+          Every complex system moves through four recurring phases.
+          The canonical case is **forest succession**, but the pattern
+          appears across domains.
+
+          **r → K** (front loop): exploitation to conservation — rapid growth,
+          accumulation of potential, rising connectedness, falling resilience.
+          **Ω → α** (back loop): release to reorganisation — collapse cascades
+          through connections, residual resources seed the next cycle.
+      - type: cycle-diagram
+        props:
+          direction: clockwise
+          stages:
+            - label: r — Exploitation
+              detail: Rapid growth, low connectedness
+              icon: sprout
+            - label: K — Conservation
+              detail: High potential, growing vulnerability
+              icon: tree-pine
+            - label: Ω — Release
+              detail: Collapse cascades through connections
+              icon: flame
+            - label: α — Reorganisation
+              detail: Residual resources, renewal begins
+              icon: refresh-cw
+
+  - id: three-dimensions
+    title: The State Space
+    layout: two-column
+    transition: slide-up
+    components:
+      - type: body-text
+        content: |
+          Systems navigate a **three-dimensional state space**: **Potential**
+          (accumulated resources), **Connectedness** (density of relationships
+          between elements), and **Resilience** (capacity to absorb disturbance).
+
+          As a system matures through r and K, potential and connectedness rise
+          while resilience paradoxically falls — creating the geometry of
+          inevitable collapse.
+      - type: feature-card
+        content: >-
+          An old-growth forest accumulates maximum biomass, builds maximum
+          connectivity across its network — and becomes maximally susceptible to
+          a single large fire. This is not failure. It is the geometry of the
+          cycle.
+        props:
+          title: The Maturity Trap
+          eyebrow: Key insight
+          icon: triangle-alert
+
+  - id: panarchy
+    title: Nested Cycles — Panarchy
+    layout: scattered
+    transition: slide-up
+    components:
+      - type: body-text
+        content: |
+          Adaptive cycles do not occur in isolation. They **nest across
+          scales and interact**: fast cycles at small scales release resources
+          that seed renewal at larger, slower scales. Small-scale collapses
+          are not noise — they are the mechanism by which large-scale
+          stability is maintained.
+
+          Gunderson & Holling call this **Panarchy** — a nested hierarchy of
+          adaptive cycles, each with its own rhythm, each depending on the
+          others' dynamics.
+        position:
+          x: 0.028892
+          y: 0.396814
+          width: 0.558393
+          height: 0.185595
+      - type: org-chart
+        props:
+          direction: top-bottom
+          root:
+            label: Slow — Forest
+            detail: Centuries-long fire cycle
+            children:
+              - label: Medium — Tree
+                detail: Decades-long growth cycle
+                children:
+                  - label: Fast — Needle
+                    detail: Days-to-weeks turnover
+        position:
+          x: 0.602453
+          y: 0.124989
+          width: 0.313678
+          height: 0.716845
+
+  # ── Chapter 2: The Claim ───────────────────────────────────────────────────
+
+  - id: ch2-header
+    title: "Chapter 2: The Claim"
+    layout: section-header
+    transition: blur
+    components:
+      - type: label
+        content: Chapter 2
+        props: { tone: secondary }
+        style: { position: absolute, bottom: "calc(50% + 2.5rem)" }
+      - type: headline
+        content: From Metaphor to Thermodynamic Mechanism
+        props: { level: 1, align: left }
+
+  - id: core-claim
+    title: The Audacious Thesis
+    layout: single-content
+    transition: fade
+    components:
+      - type: blockquote
+        content: >-
+          The four-phase pattern is not contingent on biological details. It is
+          what non-equilibrium thermodynamics predicts for any
+          energy-dissipating, far-from-equilibrium system. Dissipative
+          structures must accumulate, organise, become critical, collapse, and
+          reorganise.
+        props:
+          attribution: Sundstrom & Allen
+          variant: large
+      - type: body-text
+        content: >-
+          If true, this moves the adaptive cycle from a *useful heuristic* to a
+          *physical law* — discoverable in any complex adaptive system,
+          regardless of substrate.
+
+  - id: convergent-evidence
+    title: Convergent Evidence Across Domains
+    layout: gallery
+    transition: slide-up
+    components:
+      - type: feature-card
+        content: >-
+          Forest succession and predator-prey dynamics exhibit clear r–K–Ω–α
+          phases. Laboratory microcosms produce stable cycles, chaos, and limit
+          cycles matching adaptive cycle predictions.
+        props:
+          title: Ecology
+          eyebrow: Ecological dynamics
+          icon: leaf
+      - type: feature-card
+        content: >-
+          Companies follow explosive growth, market dominance, collapse, and
+          startup renewal — matching the cycle geometry including the K
+          vulnerability trap before market disruption.
+        props:
+          title: Economics
+          eyebrow: Economic systems
+          icon: trending-up
+      - type: feature-card
+        content: >-
+          Archaeological civilisations show consolidation, expansion,
+          dissolution, and dark age before renaissance — cycles visible at
+          multi-century scales.
+        props:
+          title: Archaeology
+          eyebrow: Civilisation dynamics
+          icon: landmark
+      - type: feature-card
+        content: >-
+          Evolutionary simulations produce punctuated equilibrium — long periods
+          of stasis interrupted by rapid change — precisely matching adaptive
+          cycle predictions (Jain & Krishna).
+        props:
+          title: Evolutionary Models
+          eyebrow: Simulation results
+          icon: dna
+      - type: feature-card
+        content: >-
+          Self-organised criticality shows systems evolving toward a critical
+          state where small disturbances trigger power-law distributed events —
+          the K phase rendered in mathematical form.
+        props:
+          title: Complexity Science
+          eyebrow: Self-organised criticality
+          icon: network
+
+  # ── Chapter 3: Measurement ─────────────────────────────────────────────────
+
+  - id: ch3-header
+    title: "Chapter 3: Measurement"
+    layout: section-header
+    transition: blur
+    components:
+      - type: label
+        content: Chapter 3
+        props: { tone: secondary }
+        style: { position: absolute, bottom: "calc(50% + 2.5rem)" }
+      - type: headline
+        content: Making It Measurable
+        props: { level: 1, align: left }
+
+  - id: scale-specific-indicators
+    title: The Measurement Innovation
+    layout: content-left-media-right
+    transition: slide-up
+    components:
+      - type: body-text
+        content: |
+          If adaptive cycles are real, they should leave measurable
+          thermodynamic signatures. But the key question is **where**
+          to measure.
+
+          The paper's answer: calculate indicators **within each objectively
+          identified scale domain**, not system-wide. This captures what
+          aggregate measurements obscure — small-scale collapse and renewal
+          occurring *simultaneously* with large-scale stability.
+      - type: feature-card
+        content: >-
+          A forest may appear stable system-wide while small mammal populations
+          cycle through r–K–Ω–α within the same years. Both dynamics are real.
+          Neither cancels the other.
+        props:
+          title: The Scale-Domain Insight
+          eyebrow: Why location of measurement matters
+          icon: layers
+
+  - id: honest-boundary
+    title: What Makes This Hard
+    layout: stack
+    transition: fade
+    components:
+      - type: headline
+        content: The methodology is proposed — not yet proven
+        props: { level: 2, align: left }
+      - type: bullet-list
+        props:
+          items:
+            - "Temporal mismatch — some cycles run on century timescales; most
+              datasets span decades at best"
+            - "Multi-taxa gap — discontinuity studies have mainly used
+              single-taxon body mass; cross-taxa synthesis is largely undone"
+            - "Vegetation structure — equivalent scale breaks in plant
+              communities are harder to identify than animal body mass (LiDAR
+              may help)"
+            - "Circularity risk — if scale domains are identified using body
+              mass, using those same patterns as evidence risks circular
+              validation"
+
+  # ── Chapter 4: Discussion ─────────────────────────────────────────────────
+
+  - id: ch4-header
+    title: Discussion
+    layout: section-header
+    transition: blur
+    components:
+      - type: label
+        content: Open Floor
+        props: { tone: secondary }
+        style: { position: absolute, bottom: "calc(50% + 2.5rem)" }
+      - type: headline
+        content: Questions for Discussion
+        props: { level: 1, align: left }
+
+  - id: discussion-claim
+    title: "Discussion — The Claim"
+    layout: stack
+    transition: fade
+    components:
+      - type: callout
+        content: >-
+          Do you accept the **strong reading** — that adaptive cycles are
+          thermodynamically inevitable — or is cross-domain convergence an
+          artifact of how we choose to frame and measure complex systems?
+        props:
+          variant: note
+          title: "1 — The claim"
+      - type: callout
+        content: >-
+          The paper asserts that scale domains are **objectively real**, not
+          analytical constructs. Who decides where to draw the boundary? Is that
+          kind of objectivity achievable in ecological systems — and what
+          methods would establish it?
+        props:
+          variant: note
+          title: "2 — Objectivity of scale"
+
+  - id: discussion-design
+    title: "Discussion — Design and Ethics"
+    layout: stack
+    transition: fade
+    components:
+      - type: callout
+        content: >-
+          If suppressing small failures creates large ones, should we
+          **deliberately design instability** into managed systems —
+          organisations, cities, economies? What is the ethics of designed
+          collapse in human-governed contexts?
+        props:
+          variant: note
+          title: "3 — Designed instability"
+      - type: callout
+        content: >-
+          Is this paper **physics explaining ecology** — or ecology being
+          colonised by physics? Does the reductive direction of explanation
+          matter, and what is lost when thermodynamic necessity replaces
+          biological contingency?
+        props:
+          variant: note
+          title: "4 — Disciplinary hierarchy"
+      - type: callout
+        content: >-
+          What would **falsify** the adaptive cycle as thermodynamic law? And
+          why hasn't the paper specified disconfirming evidence — is this a gap
+          in the argument, or an expected feature of early-stage
+          theory-building?
+        props:
+          variant: note
+          title: "5 — Falsifiability"

@@ -394,8 +394,8 @@ textarea {
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: var(--color-overlay-scrim);
-  backdrop-filter: blur(var(--color-chrome-overlay-blur));
+  background: transparent;
+  backdrop-filter: none;
   animation: dashboardDrawerBackdropFade 180ms ease-out;
 }
 
@@ -411,6 +411,10 @@ textarea {
   border-left: var(--border-chrome-overlay);
   box-shadow: var(--shadow-chrome-overlay);
   animation: dashboardDrawerSlideIn 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dashboardThemeDrawer {
+  width: min(42rem, 100vw);
 }
 
 .dashboardDrawerHeader,
@@ -496,6 +500,52 @@ textarea {
 .dashboardColorList {
   display: grid;
   gap: 0.6rem;
+}
+
+.dashboardThemeFieldList,
+.dashboardThemeFieldCard,
+.dashboardThemeListEditor,
+.dashboardThemeFieldMeta,
+.dashboardThemeDrawerButtonStack,
+.dashboardThemeFieldActions,
+.dashboardThemeEmptyState {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.dashboardThemeFieldCard {
+  padding: 1rem;
+  border: var(--border-chrome-card);
+  border-radius: var(--radius-chrome-card);
+  background: var(--color-chrome-surface);
+}
+
+.dashboardThemeFieldMeta code {
+  color: var(--color-chrome-text-soft);
+  font-size: 0.8rem;
+}
+
+.dashboardThemeDrawerButtonStack {
+  align-content: end;
+}
+
+.dashboardThemeFieldActions {
+  grid-auto-flow: column;
+  justify-content: end;
+}
+
+.dashboardThemeEmptyState {
+  padding: 1rem;
+  border: var(--border-chrome-card);
+  border-radius: var(--radius-chrome-card);
+  background: var(--color-chrome-surface);
+}
+
+.dashboardBooleanField {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-chrome-text);
 }
 
 .dashboardRangeInput {

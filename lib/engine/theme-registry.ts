@@ -45,12 +45,13 @@ export async function loadThemeRegistry() {
 }
 
 export async function loadThemeBySlug(slug: string): Promise<ThemeConfig> {
-  const [theme, presetMap] = await Promise.all([
-    parseYamlFile<ThemeConfig>(path.join(THEMES_DIR, `${slug}.yaml`)),
-    loadBackgroundPresetMap()
-  ]);
+  const [theme, presetMap] = await Promise.all([loadThemeSourceBySlug(slug), loadBackgroundPresetMap()]);
 
   return resolveThemeBackgroundPresetRefs(theme, presetMap);
+}
+
+export async function loadThemeSourceBySlug(slug: string): Promise<ThemeConfig> {
+  return parseYamlFile<ThemeConfig>(path.join(THEMES_DIR, `${slug}.yaml`));
 }
 
 export async function themeExists(slug: string | null | undefined) {

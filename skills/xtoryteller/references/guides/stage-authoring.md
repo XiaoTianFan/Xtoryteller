@@ -49,6 +49,7 @@ Good fits:
 - `timeline-layout`: timeline items should be similarly dense; split outliers into a separate step
 - `pyramid-layout`: 3-5 compact rows only, each row with a short title and short supporting line
 - `stack`: simple vertical rhythm for closing or emphasis
+- `section-header`: chapter break with a label and a headline. By default both components are centered together as a block. When the headline should sit at the exact vertical midpoint with the label floating just above it, take the label out of the flex flow with `style: { position: absolute, bottom: "calc(50% + 2.5rem)" }`. This leaves the headline as the sole flow item so the layout's `justify-content: center` centers it alone. Adjust the `2.5rem` offset to taste.
 
 ## Content Rules
 

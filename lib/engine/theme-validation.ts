@@ -1,34 +1,64 @@
-﻿import fs from 'node:fs/promises';
+import fs from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import fg from 'fast-glob';
-import YAML from 'yaml';
-import themeSchema from '../lib/engine/theme-schema.json' with { type: 'json' };
 
-const root = process.cwd();
+import { loadBackgroundPresetMap } from '@/lib/engine/background-preset-registry';
+import {
+  REQUIRED_BORDER_PATHS,
+  REQUIRED_COLOR_KEYS,
+  REQUIRED_MOTION_PATHS,
+  REQUIRED_RADII_PATHS,
+  REQUIRED_SHADOW_PATHS,
+  REQUIRED_SIZING_PATHS,
+  REQUIRED_SPACING_PATHS,
+  REQUIRED_TYPOGRAPHY_PATHS
+} from '@/lib/engine/theme-editor-schema';
+import paperShaderSupportData from '@/lib/runtime/paper-shader-support.json';
+import type { BackgroundPresetConfig } from '@/lib/types/background-preset';
+import type { ThemeConfig } from '@/lib/types/theme';
+
 const MIN_CONTRAST = 4.5;
-const FONT_SOURCES = ['local', 'google', 'fontshare', 'system'];
-const FONT_DISPLAYS = ['auto', 'block', 'swap', 'fallback', 'optional'];
-const FONT_STYLES = ['normal', 'italic'];
-const PAPER_SHADER_SUPPORT = JSON.parse(
-  await fs.readFile(path.join(root, 'lib', 'runtime', 'paper-shader-support.json'), 'utf8')
-);
+const FONT_SOURCES = ['local', 'google', 'fontshare', 'system'] as const;
+const FONT_DISPLAYS = ['auto', 'block', 'swap', 'fallback', 'optional'] as const;
+const FONT_STYLES = ['normal', 'italic'] as const;
+
+interface PaperShaderSupportEntry {
+  presets: string[];
+  allowedParams: string[];
+  genericMappings: Partial<Record<'colorStops' | 'intensity' | 'grain' | 'contrast' | 'speed', string>>;
+}
+
+interface PaperShaderSupportFile {
+  aliases: Record<string, string>;
+  shaders: Record<string, PaperShaderSupportEntry>;
+}
+
+export class ThemeValidationError extends Error {
+  issues: string[];
+
+  constructor(issues: string[]) {
+    super(issues[0] ?? 'Theme validation failed.');
+    this.name = 'ThemeValidationError';
+    this.issues = issues;
+  }
+}
+
+const PAPER_SHADER_SUPPORT = paperShaderSupportData as PaperShaderSupportFile;
 const PAPER_SHADER_NAMES = new Set(Object.keys(PAPER_SHADER_SUPPORT.shaders));
 
-function parseHex(hex) {
+function parseHex(hex: string) {
   const normalized = hex.replace('#', '').trim();
   if (normalized.length === 3) {
-    return normalized.split('').map((part) => parseInt(`${part}${part}`, 16));
+    return normalized.split('').map((part) => Number.parseInt(`${part}${part}`, 16));
   }
+
   if (normalized.length === 6) {
-    return [0, 2, 4].map((offset) =>
-      parseInt(normalized.slice(offset, offset + 2), 16)
-    );
+    return [0, 2, 4].map((offset) => Number.parseInt(normalized.slice(offset, offset + 2), 16));
   }
+
   return null;
 }
 
-function parseRgb(input) {
+function parseRgb(input: string) {
   const match = input.match(/rgba?\(([^)]+)\)/i);
   if (!match) {
     return null;
@@ -37,6 +67,7 @@ function parseRgb(input) {
   const [r, g, b] = match[1]
     .split(',')
     .map((part) => Number.parseFloat(part.trim()));
+
   if ([r, g, b].some((value) => Number.isNaN(value))) {
     return null;
   }
@@ -44,7 +75,7 @@ function parseRgb(input) {
   return [r, g, b];
 }
 
-function toRgb(input) {
+function toRgb(input: unknown) {
   if (typeof input !== 'string') {
     return null;
   }
@@ -60,7 +91,7 @@ function toRgb(input) {
   return null;
 }
 
-function normalizeKey(value) {
+function normalizeKey(value: unknown) {
   return String(value)
     .trim()
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
@@ -69,7 +100,7 @@ function normalizeKey(value) {
     .toLowerCase();
 }
 
-function normalizePaperShaderName(value) {
+function normalizePaperShaderName(value: unknown) {
   if (typeof value !== 'string' || !value.trim()) {
     return null;
   }
@@ -78,7 +109,7 @@ function normalizePaperShaderName(value) {
   return PAPER_SHADER_SUPPORT.aliases[normalized] ?? (PAPER_SHADER_NAMES.has(normalized) ? normalized : null);
 }
 
-function normalizePaperShaderPresetName(shaderName, value) {
+function normalizePaperShaderPresetName(shaderName: string | null, value: unknown) {
   if (!shaderName || typeof value !== 'string' || !value.trim()) {
     return null;
   }
@@ -91,15 +122,17 @@ function normalizePaperShaderPresetName(shaderName, value) {
   );
 }
 
-function asObject(value) {
-  return value && typeof value === 'object' && !Array.isArray(value) ? value : null;
+function asObject(value: unknown) {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
 }
 
-function looksLikeCssBackground(value) {
-  return typeof value === 'string' && /(gradient\(|#|rgb\(|rgba\(|hsl\(|hsla\(|var\(|url\()/i.test(value);
+function looksLikeCssBackground(value: string) {
+  return /(gradient\(|#|rgb\(|rgba\(|hsl\(|hsla\(|var\(|url\()/i.test(value);
 }
 
-function validateCssGradient(gradient, label, issues) {
+function validateCssGradient(gradient: unknown, label: string, issues: string[]) {
   if (!gradient) {
     return;
   }
@@ -110,7 +143,7 @@ function validateCssGradient(gradient, label, issues) {
     return;
   }
 
-  if (value.type != null && !['linear', 'radial'].includes(value.type)) {
+  if (value.type != null && !['linear', 'radial'].includes(String(value.type))) {
     issues.push(`${label}.type must be "linear" or "radial".`);
   }
 
@@ -123,7 +156,7 @@ function validateCssGradient(gradient, label, issues) {
   }
 }
 
-function validateBackgroundFilterConfig(filter, label, issues) {
+function validateBackgroundFilterConfig(filter: unknown, label: string, issues: string[]) {
   if (filter == null) {
     return;
   }
@@ -149,20 +182,33 @@ function validateBackgroundFilterConfig(filter, label, issues) {
       'linear-horizontal-reverse',
       'linear-vertical',
       'linear-vertical-reverse'
-    ].includes(value.mode)
+    ].includes(String(value.mode))
   ) {
-    issues.push(`${label}.mode must be "radial", "radial-reverse", "linear-horizontal", "linear-horizontal-reverse", "linear-vertical", or "linear-vertical-reverse".`);
+    issues.push(
+      `${label}.mode must be "radial", "radial-reverse", "linear-horizontal", "linear-horizontal-reverse", "linear-vertical", or "linear-vertical-reverse".`
+    );
   }
 
-  if (value.opacity != null && (!Number.isFinite(value.opacity) || value.opacity < 0 || value.opacity > 1)) {
+  if (
+    value.opacity != null &&
+    (!Number.isFinite(value.opacity) || Number(value.opacity) < 0 || Number(value.opacity) > 1)
+  ) {
     issues.push(`${label}.opacity must be between 0 and 1.`);
   }
 
-  if (value.linearProportion != null && (!Number.isFinite(value.linearProportion) || value.linearProportion < 0 || value.linearProportion > 1)) {
+  if (
+    value.linearProportion != null &&
+    (!Number.isFinite(value.linearProportion) ||
+      Number(value.linearProportion) < 0 ||
+      Number(value.linearProportion) > 1)
+  ) {
     issues.push(`${label}.linearProportion must be between 0 and 1.`);
   }
 
-  if (value.steepness != null && (!Number.isFinite(value.steepness) || value.steepness < 0 || value.steepness > 1)) {
+  if (
+    value.steepness != null &&
+    (!Number.isFinite(value.steepness) || Number(value.steepness) < 0 || Number(value.steepness) > 1)
+  ) {
     issues.push(`${label}.steepness must be between 0 and 1.`);
   }
 
@@ -170,24 +216,31 @@ function validateBackgroundFilterConfig(filter, label, issues) {
     const radialSize = asObject(value.radialSize);
     if (!radialSize) {
       issues.push(`${label}.radialSize must be an object.`);
-    } else {
-      const allowedRadialKeys = new Set(['width', 'height']);
-      for (const key of Object.keys(radialSize)) {
-        if (!allowedRadialKeys.has(key)) {
-          issues.push(`${label}.radialSize.${key} is not supported.`);
-        }
-      }
+      return;
+    }
 
-      for (const key of ['width', 'height']) {
-        if (radialSize[key] != null && (!Number.isFinite(radialSize[key]) || radialSize[key] < 0 || radialSize[key] > 1)) {
-          issues.push(`${label}.radialSize.${key} must be between 0 and 1.`);
-        }
+    const allowedRadialKeys = new Set(['width', 'height']);
+    for (const key of Object.keys(radialSize)) {
+      if (!allowedRadialKeys.has(key)) {
+        issues.push(`${label}.radialSize.${key} is not supported.`);
+      }
+    }
+
+    for (const key of ['width', 'height'] as const) {
+      const nested = radialSize[key];
+      if (nested != null && (!Number.isFinite(nested) || Number(nested) < 0 || Number(nested) > 1)) {
+        issues.push(`${label}.radialSize.${key} must be between 0 and 1.`);
       }
     }
   }
 }
 
-function validatePaperShaderConfig(value, label, issues, shaderName) {
+function validatePaperShaderConfig(
+  value: Record<string, unknown>,
+  label: string,
+  issues: string[],
+  shaderName: string
+) {
   const support = PAPER_SHADER_SUPPORT.shaders[shaderName];
   if (!support) {
     issues.push(`${label} references unsupported Paper shader "${shaderName}".`);
@@ -200,7 +253,7 @@ function validatePaperShaderConfig(value, label, issues, shaderName) {
   const declaredPreset = typeof value.preset === 'string' ? value.preset : value.variant;
   if (declaredPreset != null && !normalizedPreset) {
     issues.push(
-      `${label} references unsupported preset "${declaredPreset}" for Paper shader "${shaderName}".`
+      `${label} references unsupported preset "${String(declaredPreset)}" for Paper shader "${shaderName}".`
     );
   }
 
@@ -212,8 +265,7 @@ function validatePaperShaderConfig(value, label, issues, shaderName) {
     }
   }
 
-  const genericFields = ['colorStops', 'intensity', 'grain', 'contrast', 'speed'];
-  for (const field of genericFields) {
+  for (const field of ['colorStops', 'intensity', 'grain', 'contrast', 'speed'] as const) {
     if (value[field] == null) {
       continue;
     }
@@ -234,20 +286,12 @@ function validatePaperShaderConfig(value, label, issues, shaderName) {
   }
 }
 
-async function loadBackgroundPresetMap() {
-  const presetPaths = await fg('backgrounds/*.yaml', { cwd: root, absolute: true });
-  const entries = await Promise.all(
-    presetPaths.map(async (presetPath) => [path.basename(presetPath, '.yaml'), await parseYaml(presetPath)])
-  );
-
-  return new Map(entries);
-}
-
-function resolvePresetBackedBackground(value, backgroundPresetMap) {
+function resolvePresetBackedBackground(
+  value: Record<string, unknown>,
+  backgroundPresetMap: Map<string, BackgroundPresetConfig>
+) {
   const presetRef =
-    typeof value.presetRef === 'string' && value.presetRef.trim()
-      ? value.presetRef.trim()
-      : null;
+    typeof value.presetRef === 'string' && value.presetRef.trim() ? value.presetRef.trim() : null;
   const preset = presetRef ? backgroundPresetMap.get(presetRef) ?? null : null;
 
   if (!preset) {
@@ -273,21 +317,30 @@ function resolvePresetBackedBackground(value, backgroundPresetMap) {
       contrast: value.contrast ?? preset.contrast,
       speed: value.speed ?? preset.speed,
       opacity: value.opacity ?? preset.opacity,
-      filter: preset.filter || value.filter
-        ? {
-            ...(asObject(preset.filter) ?? {}),
-            ...(asObject(value.filter) ?? {}),
-            radialSize: {
-              ...((asObject(preset.filter)?.radialSize && asObject(asObject(preset.filter).radialSize)) ?? {}),
-              ...((asObject(value.filter)?.radialSize && asObject(asObject(value.filter).radialSize)) ?? {})
+      filter:
+        preset.filter || value.filter
+          ? {
+              ...(asObject(preset.filter) ?? {}),
+              ...(asObject(value.filter) ?? {}),
+              radialSize: {
+                ...((asObject(preset.filter)?.radialSize &&
+                  asObject(asObject(preset.filter)?.radialSize)) ??
+                  {}),
+                ...((asObject(value.filter)?.radialSize &&
+                  asObject(asObject(value.filter)?.radialSize)) ??
+                  {})
+              }
             }
-          }
-        : undefined
+          : undefined
     }
   };
 }
 
-function validateThemeBackground(background, issues, backgroundPresetMap) {
+function validateThemeBackground(
+  background: ThemeConfig['background'],
+  issues: string[],
+  backgroundPresetMap: Map<string, BackgroundPresetConfig>
+) {
   if (background == null) {
     return;
   }
@@ -315,23 +368,17 @@ function validateThemeBackground(background, issues, backgroundPresetMap) {
   }
 
   if (value.stages != null || value.regions != null || value.transition != null) {
-    issues.push(
-      'background on a theme cannot declare stages, regions, or transition overrides.'
-    );
+    issues.push('background on a theme cannot declare stages, regions, or transition overrides.');
   }
 
-  const { presetRef, preset, effectiveValue } = resolvePresetBackedBackground(
-    value,
-    backgroundPresetMap
-  );
+  const { presetRef, preset, effectiveValue } = resolvePresetBackedBackground(value, backgroundPresetMap);
   const normalizedType = normalizeKey(effectiveValue.type ?? '');
   const explicitCss = normalizedType === 'css';
   const explicitNone = normalizedType === 'none';
   const shaderName =
     normalizePaperShaderName(effectiveValue.shader) ??
     (normalizedType === 'paper-shader' ? 'paper-texture' : null) ??
-    (normalizedType &&
-    !['css', 'none', 'paper', 'paper-shader'].includes(normalizedType)
+    (normalizedType && !['css', 'none', 'paper', 'paper-shader'].includes(normalizedType)
       ? normalizePaperShaderName(value.type)
       : null);
 
@@ -344,14 +391,12 @@ function validateThemeBackground(background, issues, backgroundPresetMap) {
   }
 
   if (presetRef && (value.value != null || value.gradient != null)) {
-    issues.push(
-      'background.presetRef cannot be combined with CSS-only fields like value or gradient.'
-    );
+    issues.push('background.presetRef cannot be combined with CSS-only fields like value or gradient.');
   }
 
   if (presetRef && (explicitCss || explicitNone)) {
     issues.push(
-      `background.presetRef implies a Paper shader background and cannot be combined with type "${value.type}".`
+      `background.presetRef implies a Paper shader background and cannot be combined with type "${String(value.type)}".`
     );
   }
 
@@ -376,9 +421,7 @@ function validateThemeBackground(background, issues, backgroundPresetMap) {
     effectiveValue.gradient == null &&
     effectiveValue.colorStops == null
   ) {
-    issues.push(
-      'background must declare a CSS background, "none", or a supported Paper shader.'
-    );
+    issues.push('background must declare a CSS background, "none", or a supported Paper shader.');
   }
 
   if (
@@ -424,19 +467,19 @@ function validateThemeBackground(background, issues, backgroundPresetMap) {
   }
 }
 
-function channelToLinear(value) {
+function channelToLinear(value: number) {
   const normalized = value / 255;
   return normalized <= 0.03928
     ? normalized / 12.92
     : ((normalized + 0.055) / 1.055) ** 2.4;
 }
 
-function luminance(rgb) {
+function luminance(rgb: number[]) {
   const [r, g, b] = rgb.map(channelToLinear);
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-function contrastRatio(left, right) {
+function contrastRatio(left: number[], right: number[]) {
   const l1 = luminance(left);
   const l2 = luminance(right);
   const lighter = Math.max(l1, l2);
@@ -444,24 +487,7 @@ function contrastRatio(left, right) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-async function parseYaml(filePath) {
-  return YAML.parse(await fs.readFile(filePath, 'utf8'));
-}
-
-function validateRequiredKeys(sectionName, value, requiredKeys, issues) {
-  if (!value || typeof value !== 'object') {
-    issues.push(`${sectionName} is missing required values.`);
-    return;
-  }
-
-  for (const key of requiredKeys) {
-    if (!(key in value)) {
-      issues.push(`${sectionName} is missing required key "${key}".`);
-    }
-  }
-}
-
-function hasNestedKey(value, pathSegments) {
+function hasNestedKey(value: unknown, pathSegments: string[]) {
   let current = value;
 
   for (const segment of pathSegments) {
@@ -469,13 +495,36 @@ function hasNestedKey(value, pathSegments) {
       return false;
     }
 
-    current = current[segment];
+    current = (current as Record<string, unknown>)[segment];
   }
 
   return true;
 }
 
-function validateRequiredPaths(sectionName, value, requiredPaths, issues) {
+function validateRequiredKeys(
+  sectionName: string,
+  value: unknown,
+  requiredKeys: string[],
+  issues: string[]
+) {
+  if (!value || typeof value !== 'object') {
+    issues.push(`${sectionName} is missing required values.`);
+    return;
+  }
+
+  for (const key of requiredKeys) {
+    if (!(key in (value as Record<string, unknown>))) {
+      issues.push(`${sectionName} is missing required key "${key}".`);
+    }
+  }
+}
+
+function validateRequiredPaths(
+  sectionName: string,
+  value: unknown,
+  requiredPaths: string[],
+  issues: string[]
+) {
   if (!value || typeof value !== 'object') {
     issues.push(`${sectionName} is missing required values.`);
     return;
@@ -488,30 +537,25 @@ function validateRequiredPaths(sectionName, value, requiredPaths, issues) {
   }
 }
 
-const REQUIRED_COLOR_KEYS = themeSchema.requiredColorKeys;
-const REQUIRED_TYPOGRAPHY_PATHS = themeSchema.requiredTypographyPaths;
-const REQUIRED_SPACING_PATHS = themeSchema.requiredSpacingPaths;
-const REQUIRED_SIZING_PATHS = themeSchema.requiredSizingPaths;
-const REQUIRED_RADII_PATHS = themeSchema.requiredRadiiPaths;
-const REQUIRED_SHADOW_PATHS = themeSchema.requiredShadowPaths;
-const REQUIRED_BORDER_PATHS = themeSchema.requiredBorderPaths;
-const REQUIRED_MOTION_PATHS = themeSchema.requiredMotionPaths;
-
-function validateFontMetadata(roleName, role, issues) {
+function validateFontMetadata(
+  roleName: string,
+  role: ThemeConfig['fonts']['heading'] | undefined,
+  issues: string[]
+) {
   if (!role?.family) {
     issues.push(`${roleName} font is missing a family.`);
     return false;
   }
 
-  if (role?.source && !FONT_SOURCES.includes(role.source)) {
+  if (role.source && !FONT_SOURCES.includes(role.source)) {
     issues.push(`${roleName} font has unsupported source "${role.source}".`);
   }
 
-  if (role?.display && !FONT_DISPLAYS.includes(role.display)) {
+  if (role.display && !FONT_DISPLAYS.includes(role.display)) {
     issues.push(`${roleName} font has unsupported display "${role.display}".`);
   }
 
-  if (Array.isArray(role?.styles)) {
+  if (Array.isArray(role.styles)) {
     for (const style of role.styles) {
       if (!FONT_STYLES.includes(style)) {
         issues.push(`${roleName} font has unsupported style "${style}".`);
@@ -522,38 +566,33 @@ function validateFontMetadata(roleName, role, issues) {
   return true;
 }
 
-async function validateLocalFontRole(roleName, role, issues) {
+async function validateLocalFontRole(
+  roleName: string,
+  role: ThemeConfig['fonts']['heading'],
+  issues: string[],
+  projectRoot: string
+) {
   if (!Array.isArray(role.files) || role.files.length === 0) {
-    issues.push(
-      `${roleName} font at "${role.family}" is local and must declare files.`
-    );
+    issues.push(`${roleName} font at "${role.family}" is local and must declare files.`);
     return;
   }
 
-  const fontsRoot = path.join(root, 'public', 'fonts');
+  const fontsRoot = path.join(projectRoot, 'public', 'fonts');
   for (const file of role.files) {
     if (!file?.path || typeof file.path !== 'string') {
-      issues.push(
-        `${roleName} font at "${role.family}" has a file entry without a path.`
-      );
+      issues.push(`${roleName} font at "${role.family}" has a file entry without a path.`);
       continue;
     }
 
     if (typeof file.weight !== 'number' || !Number.isFinite(file.weight)) {
-      issues.push(
-        `${roleName} font at "${role.family}" has a file entry without a numeric weight.`
-      );
+      issues.push(`${roleName} font at "${role.family}" has a file entry without a numeric weight.`);
     }
 
     if (file.style && !FONT_STYLES.includes(file.style)) {
-      issues.push(
-        `${roleName} font at "${role.family}" has unsupported file style "${file.style}".`
-      );
+      issues.push(`${roleName} font at "${role.family}" has unsupported file style "${file.style}".`);
     }
 
-    const relativePath = file.path
-      .replace(/^\//, '')
-      .replace(/^fonts[\\/]/, '');
+    const relativePath = file.path.replace(/^\//, '').replace(/^fonts[\\/]/, '');
     const resolvedPath = path.resolve(fontsRoot, relativePath);
     if (!resolvedPath.startsWith(fontsRoot)) {
       issues.push(
@@ -566,21 +605,27 @@ async function validateLocalFontRole(roleName, role, issues) {
       await fs.access(resolvedPath);
     } catch {
       issues.push(
-        `${roleName} font at "${role.family}" references missing file ${path.relative(root, resolvedPath)}.`
+        `${roleName} font at "${role.family}" references missing file ${path.relative(projectRoot, resolvedPath)}.`
       );
     }
   }
 }
 
-function validateGoogleFontRole(roleName, role, issues) {
+function validateGoogleFontRole(
+  roleName: string,
+  role: ThemeConfig['fonts']['heading'],
+  issues: string[]
+) {
   if (!Array.isArray(role.weights) || role.weights.length === 0) {
-    issues.push(
-      `${roleName} font at "${role.family}" needs explicit weights when source is google.`
-    );
+    issues.push(`${roleName} font at "${role.family}" needs explicit weights when source is google.`);
   }
 }
 
-function validateFontshareRole(roleName, role, issues) {
+function validateFontshareRole(
+  roleName: string,
+  role: ThemeConfig['fonts']['heading'],
+  issues: string[]
+) {
   if (typeof role.cssUrl !== 'string' || !/^https?:\/\//i.test(role.cssUrl)) {
     issues.push(
       `${roleName} font at "${role.family}" must provide a valid cssUrl when source is fontshare.`
@@ -588,14 +633,19 @@ function validateFontshareRole(roleName, role, issues) {
   }
 }
 
-async function validateFontRole(roleName, role, issues) {
-  if (!validateFontMetadata(roleName, role, issues)) {
+async function validateFontRole(
+  roleName: string,
+  role: ThemeConfig['fonts']['heading'] | undefined,
+  issues: string[],
+  projectRoot: string
+) {
+  if (!validateFontMetadata(roleName, role, issues) || !role) {
     return;
   }
 
-  switch (role?.source) {
+  switch (role.source) {
     case 'local':
-      await validateLocalFontRole(roleName, role, issues);
+      await validateLocalFontRole(roleName, role, issues, projectRoot);
       break;
     case 'google':
       validateGoogleFontRole(roleName, role, issues);
@@ -608,55 +658,45 @@ async function validateFontRole(roleName, role, issues) {
   }
 }
 
-export async function validateTheme(filePath) {
-  const theme = await parseYaml(filePath);
-  const backgroundPresetMap = await loadBackgroundPresetMap();
-  const issues = [];
+export async function collectThemeValidationIssues(
+  theme: ThemeConfig,
+  options?: {
+    backgroundPresetMap?: Map<string, BackgroundPresetConfig>;
+    projectRoot?: string;
+  }
+) {
+  const backgroundPresetMap = options?.backgroundPresetMap ?? (await loadBackgroundPresetMap());
+  const projectRoot = options?.projectRoot ?? process.cwd();
+  const issues: string[] = [];
 
   await Promise.all([
-    validateFontRole('heading', theme.fonts?.heading, issues),
-    validateFontRole('body', theme.fonts?.body, issues),
-    validateFontRole('mono', theme.fonts?.mono, issues),
+    validateFontRole('heading', theme.fonts?.heading, issues, projectRoot),
+    validateFontRole('body', theme.fonts?.body, issues, projectRoot),
+    validateFontRole('mono', theme.fonts?.mono, issues, projectRoot)
   ]);
 
+  if (!theme.name?.trim()) {
+    issues.push('name is required.');
+  }
+
   validateRequiredKeys('colors', theme.colors, REQUIRED_COLOR_KEYS, issues);
-  validateRequiredPaths(
-    'typography',
-    theme.typography,
-    REQUIRED_TYPOGRAPHY_PATHS,
-    issues
-  );
-  validateRequiredPaths(
-    'spacing',
-    theme.spacing,
-    REQUIRED_SPACING_PATHS,
-    issues
-  );
+  validateRequiredPaths('typography', theme.typography, REQUIRED_TYPOGRAPHY_PATHS, issues);
+  validateRequiredPaths('spacing', theme.spacing, REQUIRED_SPACING_PATHS, issues);
   validateRequiredPaths('sizing', theme.sizing, REQUIRED_SIZING_PATHS, issues);
   validateRequiredPaths('radii', theme.radii, REQUIRED_RADII_PATHS, issues);
-  validateRequiredPaths(
-    'shadows',
-    theme.shadows,
-    REQUIRED_SHADOW_PATHS,
-    issues
-  );
-  validateRequiredPaths(
-    'borders',
-    theme.borders,
-    REQUIRED_BORDER_PATHS,
-    issues
-  );
+  validateRequiredPaths('shadows', theme.shadows, REQUIRED_SHADOW_PATHS, issues);
+  validateRequiredPaths('borders', theme.borders, REQUIRED_BORDER_PATHS, issues);
   validateRequiredPaths('motion', theme.motion, REQUIRED_MOTION_PATHS, issues);
   validateThemeBackground(theme.background, issues, backgroundPresetMap);
 
   const background = toRgb(theme.colors?.background);
   const surface = toRgb(theme.colors?.surface ?? theme.colors?.background);
-  const checks = [
+  const checks: Array<[string, number[] | null, number[] | null]> = [
     ['foreground/background', toRgb(theme.colors?.foreground), background],
     ['foreground/surface', toRgb(theme.colors?.foreground), surface],
     ['muted/background', toRgb(theme.colors?.muted), background],
     ['primary/background', toRgb(theme.colors?.primary), background],
-    ['secondary/background', toRgb(theme.colors?.secondary), background],
+    ['secondary/background', toRgb(theme.colors?.secondary), background]
   ];
 
   for (const [label, left, right] of checks) {
@@ -666,43 +706,22 @@ export async function validateTheme(filePath) {
 
     const contrast = contrastRatio(left, right);
     if (contrast < MIN_CONTRAST) {
-      issues.push(
-        `${label} contrast is ${contrast.toFixed(2)}:1, below ${MIN_CONTRAST}:1.`
-      );
+      issues.push(`${label} contrast is ${contrast.toFixed(2)}:1, below ${MIN_CONTRAST}:1.`);
     }
   }
 
+  return issues;
+}
+
+export async function validateThemeConfig(
+  theme: ThemeConfig,
+  options?: {
+    backgroundPresetMap?: Map<string, BackgroundPresetConfig>;
+    projectRoot?: string;
+  }
+) {
+  const issues = await collectThemeValidationIssues(theme, options);
   if (issues.length) {
-    console.error(`Theme validation failed for ${filePath}:`);
-    for (const issue of issues) {
-      console.error(`- ${issue}`);
-    }
-    throw new Error(`Theme validation failed for ${filePath}`);
+    throw new ThemeValidationError(issues);
   }
-
-  console.log(`OK ${path.relative(root, filePath)}`);
-}
-
-async function main() {
-  const target = process.argv[2];
-  if (target) {
-    await validateTheme(path.resolve(target));
-    return;
-  }
-
-  const themeFiles = await fg('themes/*.yaml', { cwd: root, absolute: true });
-  for (const file of themeFiles) {
-    await validateTheme(file);
-  }
-}
-
-const isEntrypoint =
-  process.argv[1] &&
-  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
-
-if (isEntrypoint) {
-  main().catch((error) => {
-    console.error(error.message);
-    process.exit(1);
-  });
 }

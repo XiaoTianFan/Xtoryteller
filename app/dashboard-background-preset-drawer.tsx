@@ -5,15 +5,18 @@ import { startTransition, useEffect, useMemo, useState } from 'react';
 import {
   availableBackgroundPresetShaders,
   defaultBackgroundPresetShader,
+  getPaperShaderGenericControls,
   getPaperShaderParameterControls,
   getPaperShaderPresetOptions,
   getPaperShaderPresetSeed
 } from '@/lib/runtime/background-preset-controls';
 import type { SupportedPaperShaderName } from '@/lib/runtime/paper-shaders';
+import type { BackgroundPresetDefinitionEntry } from '@/lib/types/background-preset';
 import type {
   CreateBackgroundPresetPayload,
   CreateBackgroundPresetResponse
 } from '@/lib/types/dashboard-background';
+import type { BackgroundShaderConfig } from '@/lib/types/presentation';
 import type { ThemeConfig } from '@/lib/types/theme';
 
 function stringifyJson(value: unknown) {
@@ -36,19 +39,95 @@ function asStringList(value: unknown) {
   return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : [];
 }
 
+function buildPresetPayload(
+  name: string,
+  description: string,
+  tags: string,
+  shader: SupportedPaperShaderName,
+  preset: string | undefined,
+  params: Record<string, unknown>,
+  genericValues: Record<string, unknown>
+): CreateBackgroundPresetPayload {
+  return {
+    name: name.trim() || 'Untitled Preset',
+    ...(description.trim() ? { description: description.trim() } : {}),
+    ...(tags.trim()
+      ? {
+          tags: tags
+            .split(',')
+            .map((entry) => entry.trim())
+            .filter(Boolean)
+        }
+      : {}),
+    shader,
+    ...(preset ? { preset } : {}),
+    ...(Object.keys(params).length ? { params } : {}),
+    ...(Array.isArray(genericValues.colorStops) && genericValues.colorStops.length
+      ? { colorStops: genericValues.colorStops as string[] }
+      : {}),
+    ...(typeof genericValues.intensity === 'number' ? { intensity: genericValues.intensity } : {}),
+    ...(typeof genericValues.grain === 'number' ? { grain: genericValues.grain } : {}),
+    ...(typeof genericValues.contrast === 'number' ? { contrast: genericValues.contrast } : {}),
+    ...(typeof genericValues.speed === 'number' ? { speed: genericValues.speed } : {}),
+    ...(typeof genericValues.opacity === 'number' ? { opacity: genericValues.opacity } : {})
+  };
+}
+
+function isSupportedShaderName(value: unknown): value is SupportedPaperShaderName {
+  return typeof value === 'string' && availableBackgroundPresetShaders.includes(value as SupportedPaperShaderName);
+}
+
+function readBackgroundDraftFromConfig(
+  background: BackgroundShaderConfig | null | undefined
+): CreateBackgroundPresetPayload | null {
+  if (!background || typeof background !== 'object' || Array.isArray(background)) {
+    return null;
+  }
+
+  const config = background as Extract<BackgroundShaderConfig, Record<string, unknown>>;
+  const shader = isSupportedShaderName(config.shader) ? config.shader : defaultBackgroundPresetShader;
+  const preset =
+    typeof config.preset === 'string' && config.preset.trim()
+      ? config.preset
+      : getPaperShaderPresetOptions(shader)[0]?.value;
+
+  return {
+    name: '',
+    shader,
+    ...(preset ? { preset } : {}),
+    ...(config.params && Object.keys(config.params).length ? { params: config.params } : {}),
+    ...(Array.isArray(config.colorStops) ? { colorStops: config.colorStops } : {}),
+    ...(typeof config.intensity === 'number' ? { intensity: config.intensity } : {}),
+    ...(typeof config.grain === 'number' ? { grain: config.grain } : {}),
+    ...(typeof config.contrast === 'number' ? { contrast: config.contrast } : {}),
+    ...(typeof config.speed === 'number' ? { speed: config.speed } : {}),
+    ...(typeof config.opacity === 'number' ? { opacity: config.opacity } : {})
+  };
+}
+
 export function DashboardBackgroundPresetDrawer({
   open,
+  activePreset,
+  activePresetSlug,
+  effectiveBackground,
   theme,
   onClose,
   onPreviewChange,
   onSaved
 }: {
   open: boolean;
+  activePreset: BackgroundPresetDefinitionEntry | null;
+  activePresetSlug: string | null;
+  effectiveBackground: BackgroundShaderConfig | null | undefined;
   theme: ThemeConfig;
   onClose: () => void;
   onPreviewChange: (draft: CreateBackgroundPresetPayload | null) => void;
-  onSaved: (payload: CreateBackgroundPresetResponse['preset']) => void;
+  onSaved: (
+    payload: CreateBackgroundPresetResponse['preset'],
+    options: { mode: 'save' | 'saveNew' }
+  ) => void;
 }) {
+  const [currentPresetSlug, setCurrentPresetSlug] = useState<string | null>(activePresetSlug);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
@@ -58,6 +137,7 @@ export function DashboardBackgroundPresetDrawer({
   const [params, setParams] = useState<Record<string, unknown>>(() =>
     getPaperShaderPresetSeed(defaultBackgroundPresetShader, presetOptions[0]?.value)
   );
+  const [genericValues, setGenericValues] = useState<Record<string, unknown>>({});
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -67,41 +147,52 @@ export function DashboardBackgroundPresetDrawer({
       return;
     }
 
-    onPreviewChange({
-      name: name.trim() || 'Untitled Preset',
-      ...(description.trim() ? { description: description.trim() } : {}),
-      ...(tags.trim()
-        ? {
-            tags: tags
-              .split(',')
-              .map((entry) => entry.trim())
-              .filter(Boolean)
-          }
-        : {}),
-      shader,
-      ...(preset ? { preset } : {}),
-      params
-    });
-  }, [description, name, onPreviewChange, open, params, preset, shader, tags]);
+    onPreviewChange(buildPresetPayload(name, description, tags, shader, preset, params, genericValues));
+  }, [description, genericValues, name, onPreviewChange, open, params, preset, shader, tags]);
 
   useEffect(() => {
     if (!open) {
+      setCurrentPresetSlug(activePresetSlug);
       setName('');
       setDescription('');
       setTags('');
       setShader(defaultBackgroundPresetShader);
       setPreset(undefined);
       setParams({});
+      setGenericValues({});
       setSaveError(null);
       setIsSaving(false);
+      return;
     }
-  }, [open]);
 
-  useEffect(() => {
-    const nextPreset = presetOptions[0]?.value;
-    setPreset(nextPreset);
-    setParams(getPaperShaderPresetSeed(shader, nextPreset));
-  }, [presetOptions, shader]);
+    const source =
+      readBackgroundDraftFromConfig(effectiveBackground) ??
+      activePreset?.config ??
+      readBackgroundDraftFromConfig(theme.background);
+    const sourceShader = isSupportedShaderName(source?.shader) ? source.shader : defaultBackgroundPresetShader;
+    const sourcePreset =
+      typeof source?.preset === 'string' && source.preset.trim()
+        ? source.preset
+        : getPaperShaderPresetOptions(sourceShader)[0]?.value;
+
+    setCurrentPresetSlug(activePresetSlug);
+    setName(activePreset?.name ?? source?.name ?? '');
+    setDescription(activePreset?.description ?? source?.description ?? '');
+    setTags((activePreset?.tags ?? source?.tags ?? []).join(', '));
+    setShader(sourceShader);
+    setPreset(sourcePreset);
+    setParams(source?.params ?? getPaperShaderPresetSeed(sourceShader, sourcePreset));
+    setGenericValues({
+      ...(Array.isArray(source?.colorStops) ? { colorStops: source.colorStops } : {}),
+      ...(typeof source?.intensity === 'number' ? { intensity: source.intensity } : {}),
+      ...(typeof source?.grain === 'number' ? { grain: source.grain } : {}),
+      ...(typeof source?.contrast === 'number' ? { contrast: source.contrast } : {}),
+      ...(typeof source?.speed === 'number' ? { speed: source.speed } : {}),
+      ...(typeof source?.opacity === 'number' ? { opacity: source.opacity } : {})
+    });
+    setSaveError(null);
+    setIsSaving(false);
+  }, [activePreset, activePresetSlug, effectiveBackground, open, theme]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -121,6 +212,7 @@ export function DashboardBackgroundPresetDrawer({
   }, [onClose, open]);
 
   const controls = useMemo(() => getPaperShaderParameterControls(shader), [shader]);
+  const genericControls = useMemo(() => getPaperShaderGenericControls(shader), [shader]);
 
   if (!open) {
     return null;
@@ -131,15 +223,15 @@ export function DashboardBackgroundPresetDrawer({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Create background preset"
+        aria-label="Edit background"
         className="dashboardDrawer appScrollbarMuted"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="dashboardDrawerHeader">
           <div>
-            <strong className="shortcutOverlayTitle">Create background preset</strong>
+            <strong className="shortcutOverlayTitle">Edit background</strong>
             <span className="shortcutOverlaySubtitle">
-              Build a shared Paper shader preset and preview it live on the dashboard.
+              Edit the active dashboard background preset live, then save over it or fork a new one.
             </span>
           </div>
           <button type="button" className="ghostButton" onClick={onClose}>
@@ -149,6 +241,14 @@ export function DashboardBackgroundPresetDrawer({
 
         <div className="dashboardDrawerBody">
           <section className="dashboardDrawerSection">
+            <div className="dashboardSectionHeader">
+              <strong>{currentPresetSlug ?? 'Theme background'}</strong>
+              <span className="shortcutOverlaySubtitle">
+                {currentPresetSlug
+                  ? 'Saving will update this shared preset in place.'
+                  : 'No shared preset detected. Save New to create one.'}
+              </span>
+            </div>
             <label className="dashboardField">
               <span className="dashboardFieldLabel">Preset name</span>
               <input
@@ -190,8 +290,12 @@ export function DashboardBackgroundPresetDrawer({
                   className="dashboardSelect"
                   value={shader}
                   onChange={(event) => {
+                    const nextShader = event.target.value as SupportedPaperShaderName;
+                    const nextPreset = getPaperShaderPresetOptions(nextShader)[0]?.value;
                     startTransition(() => {
-                      setShader(event.target.value as SupportedPaperShaderName);
+                      setShader(nextShader);
+                      setPreset(nextPreset);
+                      setParams(getPaperShaderPresetSeed(nextShader, nextPreset));
                     });
                   }}
                 >
@@ -225,6 +329,109 @@ export function DashboardBackgroundPresetDrawer({
             <p className="dashboardFieldHint">
               Theme background color hint: <code>{String(theme.colors.background ?? 'n/a')}</code>
             </p>
+          </section>
+
+          <section className="dashboardDrawerSection">
+            <div className="dashboardSectionHeader">
+              <strong>Shader settings</strong>
+              <span className="shortcutOverlaySubtitle">{genericControls.length} controls</span>
+            </div>
+            <div className="dashboardParamGrid">
+              {genericControls.map((control) => {
+                const value = genericValues[control.key];
+
+                if (control.kind === 'color-list') {
+                  const colors = asStringList(value);
+                  return (
+                    <div key={control.key} className="dashboardField">
+                      <div className="dashboardSectionHeader">
+                        <span className="dashboardFieldLabel">{control.label}</span>
+                        <button
+                          type="button"
+                          className="ghostButton"
+                          onClick={() =>
+                            setGenericValues((current) => ({
+                              ...current,
+                              [control.key]: [...colors, '#ffffff']
+                            }))
+                          }
+                        >
+                          Add color
+                        </button>
+                      </div>
+                      <div className="dashboardColorList">
+                        {colors.map((color, index) => (
+                          <div key={`${control.key}-${index}`} className="dashboardColorListRow">
+                            <input
+                              className="dashboardColorInput"
+                              type="color"
+                              value={asColorValue(color)}
+                              onChange={(event) => {
+                                const nextColors = [...colors];
+                                nextColors[index] = event.target.value;
+                                setGenericValues((current) => ({ ...current, [control.key]: nextColors }));
+                              }}
+                            />
+                            <input
+                              className="dashboardInput"
+                              type="text"
+                              value={color}
+                              onChange={(event) => {
+                                const nextColors = [...colors];
+                                nextColors[index] = event.target.value;
+                                setGenericValues((current) => ({ ...current, [control.key]: nextColors }));
+                              }}
+                            />
+                            <button
+                              type="button"
+                              className="ghostButton"
+                              onClick={() => {
+                                const nextColors = colors.filter((_, colorIndex) => colorIndex !== index);
+                                setGenericValues((current) => ({ ...current, [control.key]: nextColors }));
+                              }}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <label key={control.key} className="dashboardField">
+                    <span className="dashboardFieldLabel">{control.label}</span>
+                    <div className="dashboardRangeField">
+                      <input
+                        className="dashboardRangeInput"
+                        type="range"
+                        min={control.min}
+                        max={control.max}
+                        step={control.step}
+                        value={typeof value === 'number' ? value : control.min ?? 0}
+                        onChange={(event) => {
+                          const nextValue = Number(event.target.value);
+                          setGenericValues((current) => ({ ...current, [control.key]: nextValue }));
+                        }}
+                      />
+                      <input
+                        className="dashboardInput dashboardNumberInput"
+                        type="number"
+                        min={control.min}
+                        max={control.max}
+                        step={control.step}
+                        value={typeof value === 'number' ? value : ''}
+                        onChange={(event) => {
+                          const nextValue = Number(event.target.value);
+                          setGenericValues((current) => ({ ...current, [control.key]: nextValue }));
+                        }}
+                      />
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
           </section>
 
           <section className="dashboardDrawerSection">
@@ -425,32 +632,27 @@ export function DashboardBackgroundPresetDrawer({
           <button
             type="button"
             className="ghostButton"
-            disabled={!name.trim() || isSaving}
+            disabled={!currentPresetSlug || !name.trim() || isSaving}
             onClick={async () => {
               setIsSaving(true);
               setSaveError(null);
 
               try {
-                const response = await fetch('/api/background-presets', {
+                const requestPayload = buildPresetPayload(
+                  name,
+                  description,
+                  tags,
+                  shader,
+                  preset,
+                  params,
+                  genericValues
+                );
+                const response = await fetch(`/api/background-presets/${currentPresetSlug}`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
                   },
-                  body: JSON.stringify({
-                    name: name.trim(),
-                    ...(description.trim() ? { description: description.trim() } : {}),
-                    ...(tags.trim()
-                      ? {
-                          tags: tags
-                            .split(',')
-                            .map((entry) => entry.trim())
-                            .filter(Boolean)
-                        }
-                      : {}),
-                    shader,
-                    ...(preset ? { preset } : {}),
-                    params
-                  } satisfies CreateBackgroundPresetPayload)
+                  body: JSON.stringify(requestPayload)
                 });
 
                 const payload = (await response.json().catch(() => null)) as
@@ -461,7 +663,7 @@ export function DashboardBackgroundPresetDrawer({
                   throw new Error(payload?.error ?? 'Failed to save preset.');
                 }
 
-                onSaved(payload.preset);
+                onSaved(payload.preset, { mode: 'save' });
                 onClose();
               } catch (error) {
                 setSaveError(error instanceof Error ? error.message : 'Failed to save preset.');
@@ -470,7 +672,52 @@ export function DashboardBackgroundPresetDrawer({
               }
             }}
           >
-            {isSaving ? 'Saving...' : 'Save preset'}
+            {isSaving ? 'Saving...' : 'Save'}
+          </button>
+          <button
+            type="button"
+            className="ghostButton"
+            disabled={!name.trim() || isSaving}
+            onClick={async () => {
+              setIsSaving(true);
+              setSaveError(null);
+
+              try {
+                const requestPayload = buildPresetPayload(
+                  name,
+                  description,
+                  tags,
+                  shader,
+                  preset,
+                  params,
+                  genericValues
+                );
+                const response = await fetch('/api/background-presets', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(requestPayload)
+                });
+
+                const payload = (await response.json().catch(() => null)) as
+                  | ({ error?: string } & Partial<CreateBackgroundPresetResponse>)
+                  | null;
+
+                if (!response.ok || !payload?.preset) {
+                  throw new Error(payload?.error ?? 'Failed to save preset.');
+                }
+
+                onSaved(payload.preset, { mode: 'saveNew' });
+                onClose();
+              } catch (error) {
+                setSaveError(error instanceof Error ? error.message : 'Failed to save preset.');
+              } finally {
+                setIsSaving(false);
+              }
+            }}
+          >
+            {isSaving ? 'Saving...' : 'Save New'}
           </button>
         </div>
       </div>

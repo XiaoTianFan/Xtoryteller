@@ -5,7 +5,8 @@ import path from 'node:path';
 import { parseYamlFile } from '@/lib/engine/yaml';
 import {
   BackgroundPresetSaveError,
-  saveBackgroundPreset
+  saveBackgroundPreset,
+  updateBackgroundPresetBySlug
 } from '@/lib/engine/background-preset-save';
 import type { BackgroundPresetConfig } from '@/lib/types/background-preset';
 
@@ -132,6 +133,47 @@ describe('background preset save helper', () => {
       )
     ).rejects.toMatchObject<BackgroundPresetSaveError>({
       status: 400
+    });
+  });
+
+  it('updates an existing preset in place while preserving its slug', async () => {
+    const harness = await createTempHarness();
+
+    await saveBackgroundPreset(
+      {
+        name: 'Dashboard Signal',
+        shader: 'warp',
+        preset: 'default',
+        params: {
+          speed: 0.35
+        }
+      },
+      harness
+    );
+
+    const updated = await updateBackgroundPresetBySlug(
+      'dashboard-signal',
+      {
+        name: 'Dashboard Signal Refined',
+        shader: 'warp',
+        preset: 'default',
+        params: {
+          speed: 0.5
+        }
+      },
+      harness
+    );
+
+    expect(updated.slug).toBe('dashboard-signal');
+    expect(updated.name).toBe('Dashboard Signal Refined');
+
+    await expect(
+      parseYamlFile<BackgroundPresetConfig>(path.join(harness.backgroundsDir, 'dashboard-signal.yaml'))
+    ).resolves.toMatchObject({
+      name: 'Dashboard Signal Refined',
+      params: {
+        speed: 0.5
+      }
     });
   });
 });

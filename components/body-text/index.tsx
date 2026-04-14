@@ -11,7 +11,7 @@ export default function BodyText({
   style?: React.CSSProperties;
 }) {
   const align = String(props?.align ?? 'left');
-  const maxWidth = String(props?.maxWidth ?? '68ch');
+  const maxWidth = props?.maxWidth ? String(props.maxWidth) : 'none';
   const dropCap = Boolean(props?.dropCap);
   const dropCapLines = typeof props?.dropCapLines === 'number' ? Number(props.dropCapLines) : 3;
 

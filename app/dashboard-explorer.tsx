@@ -34,6 +34,7 @@ export function DashboardExplorer({
   selectedThemeSlug,
   onThemeChange,
   isSavingTheme,
+  onOpenThemeEditor,
   backgroundPresets,
   selectedBackgroundPresetSlug,
   onBackgroundChange,
@@ -45,6 +46,7 @@ export function DashboardExplorer({
   selectedThemeSlug: string;
   onThemeChange: (themeSlug: string) => Promise<void>;
   isSavingTheme: boolean;
+  onOpenThemeEditor: () => void;
   backgroundPresets: BackgroundPresetDefinitionEntry[];
   selectedBackgroundPresetSlug: string | null;
   onBackgroundChange: (presetSlug: string | null) => Promise<void>;
@@ -134,6 +136,9 @@ export function DashboardExplorer({
             ))}
           </select>
         </label>
+        <button type="button" className="ghostButton" onClick={onOpenThemeEditor}>
+          Edit theme
+        </button>
         <label>
           <span className="srOnly">Dashboard background preset</span>
           <select
@@ -156,7 +161,7 @@ export function DashboardExplorer({
           </select>
         </label>
         <button type="button" className="ghostButton" onClick={onOpenCreatePreset}>
-          Create preset
+          Edit background
         </button>
         <div className="viewToggle" role="group" aria-label="View mode">
           <button

@@ -115,6 +115,13 @@ function buildPresetConfig(payload: CreateBackgroundPresetPayload): BackgroundPr
     ...(cleanStringArray(payload.tags) ? { tags: cleanStringArray(payload.tags) } : {}),
     shader,
     ...(preset ? { preset } : {}),
+    ...(payload.colorStops?.length ? { colorStops: cleanStringArray(payload.colorStops) } : {}),
+    ...(payload.intensity != null ? { intensity: payload.intensity } : {}),
+    ...(payload.grain != null ? { grain: payload.grain } : {}),
+    ...(payload.contrast != null ? { contrast: payload.contrast } : {}),
+    ...(payload.speed != null ? { speed: payload.speed } : {}),
+    ...(payload.opacity != null ? { opacity: payload.opacity } : {}),
+    ...(payload.filter ? { filter: payload.filter } : {}),
     ...(Object.keys(cleanParams(shader, payload.params)).length
       ? { params: cleanParams(shader, payload.params) }
       : {})
@@ -180,8 +187,24 @@ async function writeBackgroundRegistryArtifacts(
   );
 }
 
-export async function saveBackgroundPreset(
-  payload: CreateBackgroundPresetPayload,
+async function readBackgroundPresetDefinition(
+  slug: string,
+  config: BackgroundPresetConfig
+): Promise<BackgroundPresetDefinitionEntry> {
+  return {
+    slug,
+    name: config.name,
+    description: config.description,
+    tags: config.tags ?? [],
+    shader: config.shader,
+    preset: config.preset,
+    config
+  };
+}
+
+async function writeBackgroundPresetConfig(
+  slug: string,
+  config: BackgroundPresetConfig,
   options?: {
     backgroundsDir?: string;
     registriesDir?: string;
@@ -191,6 +214,24 @@ export async function saveBackgroundPreset(
   const backgroundsDir = options?.backgroundsDir ?? BACKGROUNDS_DIR;
   const registriesDir = options?.registriesDir ?? XTORYTELLER_REGISTRIES_DIR;
   const skillManifestPath = options?.skillManifestPath ?? XTORYTELLER_SKILL_MANIFEST_PATH;
+  const targetPath = path.join(backgroundsDir, `${slug}.yaml`);
+
+  await fs.mkdir(backgroundsDir, { recursive: true });
+  await fs.writeFile(targetPath, YAML.stringify(config), 'utf8');
+  await writeBackgroundRegistryArtifacts(backgroundsDir, registriesDir, skillManifestPath);
+
+  return readBackgroundPresetDefinition(slug, config);
+}
+
+export async function saveBackgroundPreset(
+  payload: CreateBackgroundPresetPayload,
+  options?: {
+    backgroundsDir?: string;
+    registriesDir?: string;
+    skillManifestPath?: string;
+  }
+): Promise<BackgroundPresetDefinitionEntry> {
+  const backgroundsDir = options?.backgroundsDir ?? BACKGROUNDS_DIR;
   const config = buildPresetConfig(payload);
   const slug = slugifyPresetName(config.name);
   const targetPath = path.join(backgroundsDir, `${slug}.yaml`);
@@ -204,19 +245,29 @@ export async function saveBackgroundPreset(
     }
   }
 
-  await fs.mkdir(backgroundsDir, { recursive: true });
-  await fs.writeFile(targetPath, YAML.stringify(config), 'utf8');
-  await writeBackgroundRegistryArtifacts(backgroundsDir, registriesDir, skillManifestPath);
+  return writeBackgroundPresetConfig(slug, config, options);
+}
 
-  return {
-    slug,
-    name: config.name,
-    description: config.description,
-    tags: config.tags ?? [],
-    shader: config.shader,
-    preset: config.preset,
-    config
-  };
+export async function updateBackgroundPresetBySlug(
+  slug: string,
+  payload: CreateBackgroundPresetPayload,
+  options?: {
+    backgroundsDir?: string;
+    registriesDir?: string;
+    skillManifestPath?: string;
+  }
+): Promise<BackgroundPresetDefinitionEntry> {
+  const backgroundsDir = options?.backgroundsDir ?? BACKGROUNDS_DIR;
+  const targetPath = path.join(backgroundsDir, `${slug}.yaml`);
+
+  try {
+    await fs.access(targetPath);
+  } catch {
+    throw new BackgroundPresetSaveError(404, `Background preset "${slug}" does not exist.`);
+  }
+
+  const config = buildPresetConfig(payload);
+  return writeBackgroundPresetConfig(slug, config, options);
 }
 
 export { slugifyPresetName };

@@ -1,5 +1,4 @@
 .body {
-  max-width: 68ch;
   min-width: 0;
   color: var(--color-foreground);
   font-size: var(--text-body);

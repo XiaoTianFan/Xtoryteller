@@ -45,6 +45,7 @@
 - If a change should affect many components, move it into the theme instead of repeating overrides.
 - Let component shape follow theme radii. Do not assume decorative pills or rounded capsules unless the theme or component contract calls for them.
 - Keep viewport mechanics, SVG math, arrangement outputs, and similar intrinsic rules in code/CSS instead of moving them into YAML by default.
+- To float one component out of a layout's flex flow while keeping the remaining components centered, use `style: { position: absolute, bottom: "calc(50% + <offset>)" }` on the component to remove. The standard case is a `section-header` label that should sit just above a vertically centered headline rather than being centered with it. See the `section-header` entry in the Stage authoring layout heuristics.
 
 ## Card Selection
 

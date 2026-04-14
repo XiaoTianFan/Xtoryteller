@@ -44,8 +44,9 @@ function flattenTree(root: OrgNode, spacingX: number, spacingY: number) {
     nodes.push({
       id,
       label: String(node.label ?? 'Node'),
+      // No hardcoded offset — y starts at 0 for depth 0
       x: center,
-      y: 60 + depth * spacingY,
+      y: depth * spacingY,
       width: NODE_WIDTH,
       depth,
       parentId
@@ -65,35 +66,53 @@ function flattenTree(root: OrgNode, spacingX: number, spacingY: number) {
 export default function OrgChart({ props }: { props?: Record<string, unknown> }) {
   const root = (props?.root as OrgNode | undefined) ?? { label: 'Root' };
   const direction = props?.direction === 'left-right' ? 'left-right' : 'top-bottom';
-  const nodes = flattenTree(root, HORIZONTAL_SPACING, VERTICAL_SPACING).map((node) => ({
+
+  // Raw render coords (no padding yet)
+  const rawNodes = flattenTree(root, HORIZONTAL_SPACING, VERTICAL_SPACING).map((node) => ({
     ...node,
-    renderX: (direction === 'left-right' ? node.y : node.x) + DIAGRAM_PADDING,
-    renderY: (direction === 'left-right' ? node.x : node.y) + DIAGRAM_PADDING
+    renderX: direction === 'left-right' ? node.y : node.x,
+    renderY: direction === 'left-right' ? node.x : node.y,
   }));
-  const nodeMap = new Map(nodes.map((node) => [node.id, node]));
-  const viewWidth =
-    Math.max(...nodes.map((node) => node.renderX + NODE_WIDTH), NODE_WIDTH + DIAGRAM_PADDING * 2) + DIAGRAM_PADDING;
-  const viewHeight =
-    Math.max(...nodes.map((node) => node.renderY + NODE_HEIGHT), NODE_HEIGHT + DIAGRAM_PADDING * 2) + DIAGRAM_PADDING;
+
+  // Measure bounding box and re-origin to uniform DIAGRAM_PADDING on all sides
+  const minRX = Math.min(...rawNodes.map((n) => n.renderX));
+  const minRY = Math.min(...rawNodes.map((n) => n.renderY));
+  const maxRX = Math.max(...rawNodes.map((n) => n.renderX + NODE_WIDTH));
+  const maxRY = Math.max(...rawNodes.map((n) => n.renderY + NODE_HEIGHT));
+
+  const viewWidth  = (maxRX - minRX) + DIAGRAM_PADDING * 2;
+  const viewHeight = (maxRY - minRY) + DIAGRAM_PADDING * 2;
+
+  const nodes = rawNodes.map((n) => ({
+    ...n,
+    renderX: n.renderX - minRX + DIAGRAM_PADDING,
+    renderY: n.renderY - minRY + DIAGRAM_PADDING,
+  }));
+
+  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+  const hw = NODE_WIDTH  / 2;  // half-width  = 66
+  const hh = NODE_HEIGHT / 2;  // half-height = 22
 
   return (
     <figure className={styles.shell}>
       <svg viewBox={`0 0 ${viewWidth} ${viewHeight}`} role="img" aria-label="Org chart">
+        {/* Connector paths */}
         {nodes.map((node) => {
-          if (!node.parentId) {
-            return null;
-          }
-
+          if (!node.parentId) return null;
           const parent = nodeMap.get(node.parentId);
-          if (!parent) {
-            return null;
-          }
+          if (!parent) return null;
 
           if (direction === 'left-right') {
+            // Right-centre of parent → left-centre of child
+            const x1 = parent.renderX + NODE_WIDTH;
+            const y1 = parent.renderY + hh;
+            const x2 = node.renderX;
+            const y2 = node.renderY + hh;
+            const cx = (x1 + x2) / 2;
             return (
               <path
                 key={`${parent.id}-${node.id}`}
-                d={`M${parent.renderX + 70} ${parent.renderY + 22} C ${parent.renderX + 105} ${parent.renderY + 22}, ${node.renderX + 15} ${node.renderY + 22}, ${node.renderX + 50} ${node.renderY + 22}`}
+                d={`M${x1} ${y1} C${cx} ${y1}, ${cx} ${y2}, ${x2} ${y2}`}
                 fill="none"
                 stroke="var(--color-border)"
                 strokeWidth="2"
@@ -101,10 +120,16 @@ export default function OrgChart({ props }: { props?: Record<string, unknown> })
             );
           }
 
+          // Bottom-centre of parent → top-centre of child
+          const x1 = parent.renderX + hw;
+          const y1 = parent.renderY + NODE_HEIGHT;
+          const x2 = node.renderX + hw;
+          const y2 = node.renderY;
+          const cy = (y1 + y2) / 2;
           return (
             <path
               key={`${parent.id}-${node.id}`}
-              d={`M${parent.renderX + 66} ${parent.renderY + 42} C ${parent.renderX + 66} ${parent.renderY + 72}, ${node.renderX + 66} ${node.renderY - 30}, ${node.renderX + 66} ${node.renderY}`}
+              d={`M${x1} ${y1} C${x1} ${cy}, ${x2} ${cy}, ${x2} ${y2}`}
               fill="none"
               stroke="var(--color-border)"
               strokeWidth="2"
@@ -112,10 +137,13 @@ export default function OrgChart({ props }: { props?: Record<string, unknown> })
           );
         })}
 
+        {/* Node rectangles and labels */}
         {nodes.map((node) => (
           <g key={node.id} transform={`translate(${node.renderX}, ${node.renderY})`}>
             <rect width={NODE_WIDTH} height={NODE_HEIGHT} rx="16" className={styles.surface} />
-            <text x="66" y="27" textAnchor="middle" className={styles.label}>{node.label}</text>
+            <text x={hw} y={hh + 5} textAnchor="middle" dominantBaseline="middle" className={styles.label}>
+              {node.label}
+            </text>
           </g>
         ))}
       </svg>

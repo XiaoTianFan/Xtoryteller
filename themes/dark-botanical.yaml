@@ -342,7 +342,7 @@ colors:
   muted: "#c8c0b7"
   border: rgba(232, 228, 223, 0.16)
   primary: "#d4a574"
-  secondary: "#e8b4b8"
+  secondary: "#98c8a6"
   accent: "#c9b896"
   success: "#8fd19e"
   warning: "#f0c674"
@@ -388,7 +388,7 @@ colors:
   overlay-scrim: rgba(8, 8, 8, 0.58)
   diagram:
     series-1: "#d4a574"
-    series-2: "#e8b4b8"
+    series-2: "#a7ddb7"
     series-3: "#c9b896"
   error-surface: rgba(241, 154, 162, 0.08)
   error-border: rgba(241, 154, 162, 0.22)
@@ -400,12 +400,13 @@ colors:
     panel: "#171515"
     line: "#c9b896"
     rail-1: "#d4a574"
-    rail-2: "#e8b4b8"
+    rail-2: "#98c8a6"
     rail-3: "#c9b896"
     rail-4: "#7f5e4a"
     rail-5: "#f2e7da"
   pattern:
-    overlay: radial-gradient(circle at 82% 18%, rgba(232, 180, 184, 0.16) 0%, transparent 28%)
+    overlay: radial-gradient(circle at 82% 18%, rgba(232, 180, 184, 0.16) 0%,
+      transparent 28%)
     grid: transparent
     scanline: transparent
     dot: rgba(201, 184, 150, 0.18)

@@ -206,5 +206,42 @@ export function getPaperShaderParameterControls(shader: SupportedPaperShaderName
   });
 }
 
+export function getPaperShaderGenericControls(shader: SupportedPaperShaderName) {
+  const support = getPaperShaderSupport(shader);
+  const controls: BackgroundPresetControlDefinition[] = [];
+
+  if (support.genericMappings.colorStops) {
+    controls.push({
+      key: 'colorStops',
+      label: 'Color Stops',
+      kind: 'color-list'
+    });
+  }
+
+  for (const key of ['intensity', 'grain', 'contrast', 'speed'] as const) {
+    if (!support.genericMappings[key]) {
+      continue;
+    }
+
+    controls.push({
+      key,
+      label: titleCase(key),
+      kind: 'number',
+      ...(numericRanges[key] ?? { min: 0, max: 2, step: 0.01 })
+    });
+  }
+
+  controls.push({
+    key: 'opacity',
+    label: 'Opacity',
+    kind: 'number',
+    min: 0,
+    max: 1,
+    step: 0.01
+  });
+
+  return controls;
+}
+
 export const defaultBackgroundPresetShader: SupportedPaperShaderName = 'paper-texture';
 export const availableBackgroundPresetShaders = supportedPaperShaderNames;

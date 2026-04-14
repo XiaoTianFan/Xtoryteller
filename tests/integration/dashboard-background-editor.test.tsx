@@ -48,15 +48,81 @@ const themeEntries: DashboardThemeEntry[] = [
   {
     slug: 'paper-theme',
     name: 'Paper Theme',
+    sourceTheme: {
+      name: 'Paper Theme',
+      background: {
+        type: 'paper-shader',
+        presetRef: 'grain-demo',
+        params: {
+          speed: 0.33
+        },
+        colorStops: ['#202020', '#f8f8f8'],
+        intensity: 0.57
+      },
+      fonts: {
+        heading: { family: 'Georgia' },
+        body: { family: 'Arial' },
+        mono: { family: 'Courier New' }
+      },
+      colors: {
+        background: '#f6f1e8'
+      },
+      typography: {
+        h1: '1rem',
+        h2: '1rem',
+        h3: '1rem',
+        body: '1rem',
+        small: '1rem',
+        lead: '1rem',
+        code: '1rem',
+        components: {}
+      },
+      spacing: {
+        page: '1rem',
+        section: '1rem',
+        gap: '1rem',
+        cluster: '1rem',
+        chrome: {},
+        components: {},
+        layouts: {}
+      },
+      sizing: {
+        components: {},
+        layouts: {}
+      },
+      radii: {
+        small: '0',
+        medium: '0',
+        large: '0',
+        pill: '999px'
+      },
+      shadows: {
+        soft: 'none',
+        strong: 'none'
+      },
+      borders: {
+        subtle: '1px solid transparent',
+        strong: '1px solid transparent'
+      },
+      motion: {
+        fast: '100ms',
+        normal: '200ms',
+        slow: '300ms',
+        easing: 'linear'
+      }
+    },
     theme: {
       name: 'Paper Theme',
       background: {
         type: 'paper-shader',
-        shader: 'paper-texture',
-        preset: 'abstract',
+        shader: 'grain-gradient',
+        preset: 'wave',
         params: {
-          scale: 0.8
-        }
+          colors: ['#202020', '#f8f8f8'],
+          speed: 0.33
+        },
+        colorStops: ['#202020', '#f8f8f8'],
+        intensity: 0.57
       },
       fonts: {
         heading: { family: 'Georgia' },
@@ -114,6 +180,68 @@ const themeEntries: DashboardThemeEntry[] = [
   {
     slug: 'warp-theme',
     name: 'Warp Theme',
+    sourceTheme: {
+      name: 'Warp Theme',
+      background: {
+        type: 'paper-shader',
+        shader: 'warp',
+        preset: 'default',
+        params: {
+          speed: 0.2
+        }
+      },
+      fonts: {
+        heading: { family: 'Georgia' },
+        body: { family: 'Arial' },
+        mono: { family: 'Courier New' }
+      },
+      colors: {
+        background: '#080808'
+      },
+      typography: {
+        h1: '1rem',
+        h2: '1rem',
+        h3: '1rem',
+        body: '1rem',
+        small: '1rem',
+        lead: '1rem',
+        code: '1rem',
+        components: {}
+      },
+      spacing: {
+        page: '1rem',
+        section: '1rem',
+        gap: '1rem',
+        cluster: '1rem',
+        chrome: {},
+        components: {},
+        layouts: {}
+      },
+      sizing: {
+        components: {},
+        layouts: {}
+      },
+      radii: {
+        small: '0',
+        medium: '0',
+        large: '0',
+        pill: '999px'
+      },
+      shadows: {
+        soft: 'none',
+        strong: 'none'
+      },
+      borders: {
+        subtle: '1px solid transparent',
+        strong: '1px solid transparent'
+      },
+      motion: {
+        fast: '100ms',
+        normal: '200ms',
+        slow: '300ms',
+        easing: 'linear'
+      }
+    },
     theme: {
       name: 'Warp Theme',
       background: {
@@ -196,7 +324,29 @@ const presets: BackgroundPresetDefinitionEntry[] = [
       params: {
         colors: ['#111111', '#ffffff'],
         speed: 0.08
-      }
+      },
+      colorStops: ['#111111', '#ffffff', '#f6c177'],
+      intensity: 0.61
+    }
+  },
+  {
+    slug: 'warp-demo',
+    name: 'Warp Demo',
+    description: 'Warp demo',
+    tags: ['demo'],
+    shader: 'warp',
+    preset: 'default',
+    config: {
+      name: 'Warp Demo',
+      description: 'Warp demo',
+      tags: ['demo'],
+      shader: 'warp',
+      preset: 'default',
+      params: {
+        speed: 0.2
+      },
+      colorStops: ['#330066', '#ff6600'],
+      intensity: 0.41
     }
   }
 ];
@@ -251,11 +401,66 @@ describe('dashboard background editor', () => {
         } as Response;
       }
 
+      if (url === '/api/background-presets/grain-demo') {
+        return {
+          ok: true,
+          json: async () => ({
+            preset: {
+              slug: 'grain-demo',
+              name: body?.name ?? 'Grain Demo',
+              description: body?.description,
+              tags: body?.tags ?? [],
+              shader: body?.shader ?? 'grain-gradient',
+              preset: body?.preset,
+              config: {
+                name: body?.name ?? 'Grain Demo',
+                description: body?.description,
+                tags: body?.tags ?? [],
+                shader: body?.shader ?? 'grain-gradient',
+                preset: body?.preset,
+                params: body?.params ?? {},
+                colorStops: body?.colorStops ?? [],
+                intensity: body?.intensity,
+                contrast: body?.contrast,
+                speed: body?.speed
+              }
+            }
+          })
+        } as Response;
+      }
+
+      if (url === '/api/themes/paper-theme') {
+        return {
+          ok: true,
+          json: async () => ({
+            theme: {
+              slug: 'paper-theme',
+              name: body?.theme?.name ?? 'Paper Theme',
+              sourceTheme: body?.theme,
+              theme: {
+                ...body?.theme,
+                background:
+                  body?.theme?.background?.presetRef === 'warp-demo'
+                    ? {
+                        type: 'paper-shader',
+                        shader: 'warp',
+                        preset: 'default',
+                        params: {
+                          speed: 0.2
+                        }
+                      }
+                    : themeEntries[0].theme.background
+              }
+            }
+          })
+        } as Response;
+      }
+
       throw new Error(`Unhandled fetch ${url}`);
     });
   });
 
-  it('shows theme specific plus shared presets and previews both selection and creation flows', async () => {
+  it('edits the active background preset, forks a new preset, and lets the theme editor switch base presets', async () => {
     render(
       createElement(DashboardShell, {
         presentations: [
@@ -278,53 +483,41 @@ describe('dashboard background editor', () => {
 
     expect(screen.getByRole('option', { name: 'Theme Specific' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Grain Demo' })).toBeInTheDocument();
-    await waitFor(() => {
-      expect(document.querySelector('[data-paper-shader="PaperTexture"]')).toBeTruthy();
-    });
-
-    fireEvent.change(screen.getByRole('combobox', { name: 'Dashboard background preset' }), {
-      target: { value: 'grain-demo' }
-    });
-
+    expect(screen.getByRole('option', { name: 'Warp Demo' })).toBeInTheDocument();
     await waitFor(() => {
       expect(document.querySelector('[data-paper-shader="GrainGradient"]')).toBeTruthy();
     });
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/dashboard-background',
-      expect.objectContaining({
-        method: 'POST'
-      })
-    );
 
-    fireEvent.change(screen.getByRole('combobox', { name: 'Global theme' }), {
-      target: { value: 'warp-theme' }
+    fireEvent.click(screen.getByRole('button', { name: 'Edit background' }));
+    expect(await screen.findByRole('dialog', { name: 'Edit background' })).toBeInTheDocument();
+    expect((screen.getByLabelText('Preset name') as HTMLInputElement).value).toBe('Grain Demo');
+    expect(screen.getAllByDisplayValue('0.33').length).toBeGreaterThan(0);
+    expect(screen.getAllByDisplayValue('0.57').length).toBeGreaterThan(0);
+    expect(screen.getAllByDisplayValue('#202020').length).toBeGreaterThan(0);
+
+    fireEvent.change(screen.getByLabelText('Preset name'), {
+      target: { value: 'Grain Demo Refined' }
     });
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
     await waitFor(() => {
-      expect(refreshSpy).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/background-presets/grain-demo',
+        expect.objectContaining({
+          method: 'POST'
+        })
+      );
     });
-    expect(document.querySelector('[data-paper-shader="GrainGradient"]')).toBeTruthy();
+    expect(
+      (screen.getByRole('combobox', { name: 'Dashboard background preset' }) as HTMLSelectElement).value
+    ).toBe('__theme_specific__');
 
-    fireEvent.change(screen.getByRole('combobox', { name: 'Dashboard background preset' }), {
-      target: { value: '__theme_specific__' }
-    });
-    await waitFor(() => {
-      expect(document.querySelector('[data-paper-shader="Warp"]')).toBeTruthy();
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: 'Create preset' }));
-    expect(await screen.findByRole('dialog', { name: 'Create background preset' })).toBeInTheDocument();
-
-    fireEvent.change(screen.getByLabelText('Shader'), {
-      target: { value: 'waves' }
-    });
-    await waitFor(() => {
-      expect(document.querySelector('[data-paper-shader="Waves"]')).toBeTruthy();
-    });
-
+    fireEvent.click(screen.getByRole('button', { name: 'Edit background' }));
+    expect(await screen.findByRole('dialog', { name: 'Edit background' })).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('Preset name'), {
       target: { value: 'New Dashboard Preset' }
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Save preset' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save New' }));
 
     await waitFor(() => {
       expect(screen.getByRole('option', { name: 'New Dashboard Preset' })).toBeInTheDocument();
@@ -338,5 +531,46 @@ describe('dashboard background editor', () => {
     expect(
       (screen.getByRole('combobox', { name: 'Dashboard background preset' }) as HTMLSelectElement).value
     ).toBe('new-dashboard-preset');
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Dashboard background preset' }), {
+      target: { value: 'warp-demo' }
+    });
+    await waitFor(() => {
+      expect(document.querySelector('[data-paper-shader="Warp"]')).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit background' }));
+    expect(await screen.findByRole('dialog', { name: 'Edit background' })).toBeInTheDocument();
+    expect((screen.getByLabelText('Preset name') as HTMLInputElement).value).toBe('Warp Demo');
+    expect(screen.getAllByDisplayValue('0.41').length).toBeGreaterThan(0);
+    expect(screen.getAllByDisplayValue('#330066').length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Dashboard background preset' }), {
+      target: { value: '__theme_specific__' }
+    });
+    await waitFor(() => {
+      expect(document.querySelector('[data-paper-shader="GrainGradient"]')).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit theme' }));
+    expect(await screen.findByRole('dialog', { name: 'Edit theme' })).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Background preset'), {
+      target: { value: 'warp-demo' }
+    });
+
+    await waitFor(() => {
+      expect(document.querySelector('[data-paper-shader="Warp"]')).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save theme' }));
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/themes/paper-theme',
+        expect.objectContaining({
+          method: 'POST'
+        })
+      );
+    });
   });
 });

@@ -8,6 +8,7 @@ import {
   GLOBAL_THEME_COOKIE_NAME,
   loadThemeRegistry,
   loadThemeBySlug,
+  loadThemeSourceBySlug,
   resolveAvailableThemeSlug
 } from '@/lib/engine/theme-registry';
 
@@ -26,6 +27,7 @@ export default async function DashboardPage() {
     themeRegistry.map(async (theme) => ({
       slug: theme.slug,
       name: theme.name,
+      sourceTheme: await loadThemeSourceBySlug(theme.slug),
       theme: await loadThemeBySlug(theme.slug)
     }))
   );

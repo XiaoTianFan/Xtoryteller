@@ -16,5 +16,6 @@
     "themes": 14,
     "backgrounds": 13
   },
-  "compatibilityNote": "Registries are snapshots from repo manifests and themes; run `npm run registries` or `npm run validate:all` after changing components, layouts, transitions, themes, or background presets. Skill package version is independent of the app semver in package.json."
+  "compatibilityNote": "Registries are snapshots from repo manifests and themes; run `npm run registries` or `npm run validate:all` after changing components, layouts, transitions, themes, or background presets. Skill package version is independent of the app semver in package.json.",
+  "lastRegistryGeneration": "2026-04-14T11:53:20.837Z"
 }
