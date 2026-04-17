@@ -3,7 +3,7 @@
 import { useGesture } from '@use-gesture/react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { KeyboardEvent as ReactKeyboardEvent, MouseEvent, PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from 'react';
+import { KeyboardEvent as ReactKeyboardEvent, MouseEvent, PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { getCameraTransform, PositionedCluster, ViewportPoint } from '@/lib/engine/arrangement';
 import { getEditorClipboard, setEditorClipboard } from '@/lib/runtime/editor/clipboard';
@@ -78,6 +78,8 @@ const MIN_CLUSTER_HEIGHT = 180;
 const MIN_COMPONENT_WIDTH = 140;
 const MIN_COMPONENT_HEIGHT = 88;
 const COMPONENT_INSERT_OFFSET = 0.04;
+const EMPTY_CLUSTER_DEFINITIONS: ClusterDefinition[] = [];
+const EMPTY_MAP_DRAFTS: EditableMapClusterDraft[] = [];
 
 export function shouldStartMapPanFromTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
@@ -478,7 +480,7 @@ export function MapRenderer() {
   const isDev = process.env.NODE_ENV !== 'production';
   const prefersReducedMotion = useReducedMotion();
   const activeClusterId = machine.state.context.currentClusterId;
-  const clusters = presentation.clusters ?? [];
+  const clusters = presentation.clusters ?? EMPTY_CLUSTER_DEFINITIONS;
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const clusterContentRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const wheelInteractionTimeoutRef = useRef<number | null>(null);
@@ -665,7 +667,7 @@ export function MapRenderer() {
     }, 120);
   };
 
-  const bind = useGesture(
+  useGesture(
     {
       onDragStart: ({ event }) => {
         if (editInteractionRef.current) {
@@ -717,7 +719,9 @@ export function MapRenderer() {
         }
 
         event.preventDefault();
-        machine.beginDirectManipulation();
+        if (machine.state.context.cameraBehavior !== 'interactive') {
+          machine.beginDirectManipulation();
+        }
         const point = getViewportPoint(event.clientX, event.clientY);
         const nextZoom = machine.state.context.camera.zoom * Math.exp(-y / 400);
         machine.zoomAtViewportPoint(nextZoom, point, viewportSize);
@@ -754,12 +758,13 @@ export function MapRenderer() {
       }
     },
     {
+      target: viewportRef,
       drag: { filterTaps: true, threshold: 2 },
       wheel: { eventOptions: { passive: false } }
     }
   );
 
-  const draftClusters = history?.present ?? [];
+  const draftClusters = history?.present ?? EMPTY_MAP_DRAFTS;
   const draftSignature = buildMapDraftSignature(draftClusters);
   const cleanSignature = buildMapDraftSignature(cleanDrafts);
   const layoutDraftIsDirty = editMode && draftSignature !== cleanSignature;
@@ -1186,7 +1191,11 @@ export function MapRenderer() {
   const cameraMotion = getMapCameraMotion(presentation.navigation?.transition, theme, Boolean(prefersReducedMotion));
   const cameraTransform = getCameraTransform(camera, viewportSize);
   const showBoundsOverlay = showClusterBounds || editMode;
-  const renderedClusters = editMode ? draftClusters : buildMapDrafts(clusters, machine.positionedClusters);
+  const staticRenderedClusters = useMemo(
+    () => buildMapDrafts(clusters, machine.positionedClusters),
+    [clusters, machine.positionedClusters]
+  );
+  const renderedClusters = editMode ? draftClusters : staticRenderedClusters;
 
   const enterEditMode = () => {
     if (editMode || !clusters.length) {
@@ -1459,7 +1468,7 @@ export function MapRenderer() {
   return (
     <main className="viewerShell mapViewer" data-xt-presenter-ready={presenterReady ? 'true' : 'false'}>
       <BackgroundLayer />
-      <div ref={viewportRef} className="mapViewport" onClick={handleViewportClick} {...bind()}>
+      <div ref={viewportRef} className="mapViewport" onClick={handleViewportClick}>
         <motion.div
           className="mapCanvas"
           data-show-bounds={showBoundsOverlay ? 'true' : 'false'}

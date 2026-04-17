@@ -64,6 +64,7 @@ const MIN_COMPONENT_WIDTH = 140;
 const MIN_COMPONENT_HEIGHT = 88;
 const INSERT_OFFSET = 0.04;
 const STAGE_SWIPE_THRESHOLD = 72;
+const EMPTY_COMPONENT_DRAFTS: EditableComponentDraft[] = [];
 
 function shouldStartStageSwipeFromTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
@@ -328,7 +329,7 @@ export function StageRenderer() {
     setSupportsSwipeNavigation(coarsePointer);
   }, []);
 
-  const renderedDrafts = history?.present ?? [];
+  const renderedDrafts = history?.present ?? EMPTY_COMPONENT_DRAFTS;
   const draftSignature = buildStageDraftSignature(renderedDrafts);
   const cleanDraftSignature = buildStageDraftSignature(cleanDrafts);
   const layoutDraftIsDirty = editPhase === 'active' && draftSignature !== cleanDraftSignature;
