@@ -82,7 +82,8 @@ async function writeJson(fileName, data) {
   await fs.mkdir(XTORYTELLER_REGISTRIES_DIR, { recursive: true });
   await fs.writeFile(
     path.join(XTORYTELLER_REGISTRIES_DIR, fileName),
-    JSON.stringify(data, null, 2)
+    `${JSON.stringify(data, null, 2)}\n`,
+    'utf8'
   );
 }
 

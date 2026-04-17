@@ -289,7 +289,11 @@ function validatePaperShaderConfig(
 function resolvePresetBackedBackground(
   value: Record<string, unknown>,
   backgroundPresetMap: Map<string, BackgroundPresetConfig>
-) {
+): {
+  presetRef: string | null;
+  preset: BackgroundPresetConfig | null;
+  effectiveValue: Record<string, unknown>;
+} {
   const presetRef =
     typeof value.presetRef === 'string' && value.presetRef.trim() ? value.presetRef.trim() : null;
   const preset = presetRef ? backgroundPresetMap.get(presetRef) ?? null : null;

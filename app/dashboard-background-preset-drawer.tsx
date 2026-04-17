@@ -19,6 +19,18 @@ import type {
 import type { BackgroundShaderConfig } from '@/lib/types/presentation';
 import type { ThemeConfig } from '@/lib/types/theme';
 
+type BackgroundDraftConfig = {
+  shader?: unknown;
+  preset?: unknown;
+  params?: unknown;
+  colorStops?: unknown;
+  intensity?: unknown;
+  grain?: unknown;
+  contrast?: unknown;
+  speed?: unknown;
+  opacity?: unknown;
+};
+
 function stringifyJson(value: unknown) {
   return JSON.stringify(value, null, 2);
 }
@@ -37,6 +49,10 @@ function asColorValue(value: unknown) {
 
 function asStringList(value: unknown) {
   return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : [];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
 function buildPresetPayload(
@@ -84,19 +100,21 @@ function readBackgroundDraftFromConfig(
     return null;
   }
 
-  const config = background as Extract<BackgroundShaderConfig, Record<string, unknown>>;
+  const config = background as BackgroundDraftConfig;
   const shader = isSupportedShaderName(config.shader) ? config.shader : defaultBackgroundPresetShader;
   const preset =
     typeof config.preset === 'string' && config.preset.trim()
       ? config.preset
       : getPaperShaderPresetOptions(shader)[0]?.value;
+  const params = isRecord(config.params) ? config.params : undefined;
+  const colorStops = asStringList(config.colorStops);
 
   return {
     name: '',
     shader,
     ...(preset ? { preset } : {}),
-    ...(config.params && Object.keys(config.params).length ? { params: config.params } : {}),
-    ...(Array.isArray(config.colorStops) ? { colorStops: config.colorStops } : {}),
+    ...(params && Object.keys(params).length ? { params } : {}),
+    ...(colorStops.length ? { colorStops } : {}),
     ...(typeof config.intensity === 'number' ? { intensity: config.intensity } : {}),
     ...(typeof config.grain === 'number' ? { grain: config.grain } : {}),
     ...(typeof config.contrast === 'number' ? { contrast: config.contrast } : {}),

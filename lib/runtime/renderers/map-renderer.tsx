@@ -754,7 +754,8 @@ export function MapRenderer() {
       }
     },
     {
-      drag: { filterTaps: true, threshold: 2 }
+      drag: { filterTaps: true, threshold: 2 },
+      wheel: { eventOptions: { passive: false } }
     }
   );
 

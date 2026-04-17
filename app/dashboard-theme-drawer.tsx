@@ -284,7 +284,7 @@ export function DashboardThemeDrawer({
                     const nextBackground = {
                       ...currentBackground,
                       type: currentBackground.type ?? 'paper-shader'
-                    } as Record<string, unknown>;
+                    };
 
                     if (nextPresetRef) {
                       nextBackground.presetRef = nextPresetRef;
@@ -294,7 +294,7 @@ export function DashboardThemeDrawer({
 
                     return {
                       ...current,
-                      background: nextBackground as ThemeConfig['background']
+                      background: nextBackground
                     };
                   });
                   setSaveError(null);

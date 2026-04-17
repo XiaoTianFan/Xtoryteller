@@ -10,6 +10,7 @@ import {
   BackgroundPresetDefinitionEntry
 } from '@/lib/types/background-preset';
 import { CreateBackgroundPresetPayload } from '@/lib/types/dashboard-background';
+import type { BackgroundFilterConfig, BackgroundFilterMode } from '@/lib/types/presentation';
 
 import paperShaderSupportData from '@/lib/runtime/paper-shader-support.json';
 
@@ -28,6 +29,14 @@ const XTORYTELLER_SKILL_MANIFEST_PATH = path.join(PROJECT_ROOT, 'skills', 'xtory
 
 const paperShaderSupport = paperShaderSupportData as PaperShaderSupportFile;
 const paperShaderNames = new Set(Object.keys(paperShaderSupport.shaders));
+const backgroundFilterModes = new Set<BackgroundFilterMode>([
+  'radial',
+  'radial-reverse',
+  'linear-horizontal',
+  'linear-horizontal-reverse',
+  'linear-vertical',
+  'linear-vertical-reverse'
+]);
 
 export class BackgroundPresetSaveError extends Error {
   status: number;
@@ -90,6 +99,26 @@ function cleanParams(shader: string, params: Record<string, unknown> | undefined
   return Object.fromEntries(cleanedEntries);
 }
 
+function cleanFilter(
+  filter: CreateBackgroundPresetPayload['filter']
+): BackgroundFilterConfig | undefined {
+  if (!filter) {
+    return undefined;
+  }
+
+  if (!backgroundFilterModes.has(filter.mode as BackgroundFilterMode)) {
+    throw new BackgroundPresetSaveError(400, `Unsupported background filter mode "${filter.mode}".`);
+  }
+
+  return {
+    mode: filter.mode as BackgroundFilterMode,
+    ...(filter.opacity != null ? { opacity: filter.opacity } : {}),
+    ...(filter.radialSize ? { radialSize: filter.radialSize } : {}),
+    ...(filter.linearProportion != null ? { linearProportion: filter.linearProportion } : {}),
+    ...(filter.steepness != null ? { steepness: filter.steepness } : {})
+  };
+}
+
 function buildPresetConfig(payload: CreateBackgroundPresetPayload): BackgroundPresetConfig {
   const name = payload.name.trim();
   if (!name) {
@@ -108,6 +137,7 @@ function buildPresetConfig(payload: CreateBackgroundPresetPayload): BackgroundPr
       `Unsupported preset "${payload.preset}" for shader "${shader}".`
     );
   }
+  const filter = cleanFilter(payload.filter);
 
   const config: BackgroundPresetConfig = {
     name,
@@ -121,7 +151,7 @@ function buildPresetConfig(payload: CreateBackgroundPresetPayload): BackgroundPr
     ...(payload.contrast != null ? { contrast: payload.contrast } : {}),
     ...(payload.speed != null ? { speed: payload.speed } : {}),
     ...(payload.opacity != null ? { opacity: payload.opacity } : {}),
-    ...(payload.filter ? { filter: payload.filter } : {}),
+    ...(filter ? { filter } : {}),
     ...(Object.keys(cleanParams(shader, payload.params)).length
       ? { params: cleanParams(shader, payload.params) }
       : {})
