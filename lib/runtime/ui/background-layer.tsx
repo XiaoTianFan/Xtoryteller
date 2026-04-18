@@ -1,7 +1,12 @@
 'use client';
 
 import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
-import { animate, useReducedMotion } from 'framer-motion';
+import {
+  animate,
+  motion,
+  type Transition,
+  useReducedMotion,
+} from 'framer-motion';
 
 import {
   ResolvedBackgroundAppearance,
@@ -10,14 +15,14 @@ import {
   ResolvedCssGradientConfig,
   buildCssBackgroundValue,
   resolveBackgroundState,
-  resolveThemeBackgroundState
+  resolveThemeBackgroundState,
 } from '@/lib/runtime/background-config';
 import {
   getPaperShaderSupport,
   isPaperShaderParamInterpolable,
   normalizePaperShaderName,
   paperShaderSupportsBuiltInMotion,
-  resolvePaperShaderDefinition
+  resolvePaperShaderDefinition,
 } from '@/lib/runtime/paper-shaders';
 import { usePresentationRuntime } from '@/lib/runtime/providers/presentation-provider';
 import { resolveMotionEasing } from '@/lib/runtime/transition-presets';
@@ -25,7 +30,7 @@ import { ThemeConfig } from '@/lib/types/theme';
 
 const surfaceStyle: CSSProperties = {
   position: 'absolute',
-  inset: 0
+  inset: 0,
 };
 
 type BackgroundRenderState =
@@ -35,7 +40,13 @@ type BackgroundRenderState =
       from: ResolvedBackgroundAppearance;
       to: ResolvedBackgroundAppearance;
       progress: number;
+      startedAtElapsedSeconds: number;
     };
+
+const BACKGROUND_SHADER_MIN_PIXEL_RATIO = 1;
+const BACKGROUND_SHADER_MAX_PIXEL_COUNT = 2560 * 1440;
+const BACKGROUND_WRAPPER_MOTION_FPS = 15;
+const BACKGROUND_INTERPOLATION_FPS = 30;
 
 function stableStringify(value: unknown): string {
   if (Array.isArray(value)) {
@@ -45,7 +56,10 @@ function stableStringify(value: unknown): string {
   if (value && typeof value === 'object') {
     return `{${Object.keys(value)
       .sort()
-      .map((key) => `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`)
+      .map(
+        (key) =>
+          `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`
+      )
       .join(',')}}`;
   }
 
@@ -60,17 +74,21 @@ function parseCssColor(value: string): [number, number, number, number] | null {
   const trimmed = value.trim();
   const hex = trimmed.match(/^#([\da-f]{3,8})$/i);
   if (hex) {
-    const normalized = hex[1].length <= 4
-      ? hex[1]
-          .split('')
-          .map((part) => part + part)
-          .join('')
-      : hex[1];
+    const normalized =
+      hex[1].length <= 4
+        ? hex[1]
+            .split('')
+            .map((part) => part + part)
+            .join('')
+        : hex[1];
     if (normalized.length === 6 || normalized.length === 8) {
       const red = Number.parseInt(normalized.slice(0, 2), 16);
       const green = Number.parseInt(normalized.slice(2, 4), 16);
       const blue = Number.parseInt(normalized.slice(4, 6), 16);
-      const alpha = normalized.length === 8 ? Number.parseInt(normalized.slice(6, 8), 16) / 255 : 1;
+      const alpha =
+        normalized.length === 8
+          ? Number.parseInt(normalized.slice(6, 8), 16) / 255
+          : 1;
       return [red, green, blue, alpha];
     }
   }
@@ -94,7 +112,12 @@ function parseCssColor(value: string): [number, number, number, number] | null {
     : null;
 }
 
-function formatCssColor([red, green, blue, alpha]: [number, number, number, number]): string {
+function formatCssColor([red, green, blue, alpha]: [
+  number,
+  number,
+  number,
+  number,
+]): string {
   const rounded = [red, green, blue].map((entry) => Math.round(entry));
   const normalizedAlpha = Math.max(0, Math.min(1, alpha));
   return `rgba(${rounded[0]}, ${rounded[1]}, ${rounded[2]}, ${normalizedAlpha.toFixed(3)})`;
@@ -104,7 +127,11 @@ function interpolateNumber(from: number, to: number, progress: number): number {
   return from + (to - from) * progress;
 }
 
-function interpolateValue(from: unknown, to: unknown, progress: number): unknown {
+function interpolateValue(
+  from: unknown,
+  to: unknown,
+  progress: number
+): unknown {
   if (typeof from === 'number' && typeof to === 'number') {
     return interpolateNumber(from, to, progress);
   }
@@ -117,13 +144,15 @@ function interpolateValue(from: unknown, to: unknown, progress: number): unknown
         interpolateNumber(fromColor[0], toColor[0], progress),
         interpolateNumber(fromColor[1], toColor[1], progress),
         interpolateNumber(fromColor[2], toColor[2], progress),
-        interpolateNumber(fromColor[3], toColor[3], progress)
+        interpolateNumber(fromColor[3], toColor[3], progress),
       ]);
     }
   }
 
   if (Array.isArray(from) && Array.isArray(to) && from.length === to.length) {
-    const next = from.map((entry, index) => interpolateValue(entry, to[index], progress));
+    const next = from.map((entry, index) =>
+      interpolateValue(entry, to[index], progress)
+    );
     return next.every((entry) => entry != null) ? next : null;
   }
 
@@ -138,7 +167,12 @@ function canInterpolateCssAppearance(
     return false;
   }
 
-  if (from.kind !== 'css' || to.kind !== 'css' || !from.cssConfig || !to.cssConfig) {
+  if (
+    from.kind !== 'css' ||
+    to.kind !== 'css' ||
+    !from.cssConfig ||
+    !to.cssConfig
+  ) {
     return false;
   }
 
@@ -183,7 +217,7 @@ function canInterpolatePaperAppearance(
 
   const keys = new Set([
     ...Object.keys(from.params ?? {}),
-    ...Object.keys(to.params ?? {})
+    ...Object.keys(to.params ?? {}),
   ]);
 
   for (const key of keys) {
@@ -217,18 +251,22 @@ function interpolateCssAppearance(
     type: toConfig.type,
     angle: toConfig.angle,
     position: toConfig.position,
-    stops: fromConfig.stops.map((stop, index) =>
-      interpolateValue(stop, toConfig.stops[index], progress) as string
-    )
+    stops: fromConfig.stops.map(
+      (stop, index) =>
+        interpolateValue(stop, toConfig.stops[index], progress) as string
+    ),
   };
-  const value = buildCssBackgroundValue({ gradient: cssConfig }, undefined).value;
+  const value = buildCssBackgroundValue(
+    { gradient: cssConfig },
+    undefined
+  ).value;
 
   return {
     ...to,
     opacity: interpolateNumber(from.opacity, to.opacity, progress),
     value,
     cssConfig,
-    key: `${to.key}:interp:${progress.toFixed(3)}`
+    key: `${to.key}:interp:${progress.toFixed(3)}`,
   };
 }
 
@@ -240,7 +278,7 @@ function interpolatePaperAppearance(
   const params: Record<string, unknown> = {};
   const keys = new Set([
     ...Object.keys(from.params ?? {}),
-    ...Object.keys(to.params ?? {})
+    ...Object.keys(to.params ?? {}),
   ]);
 
   for (const key of keys) {
@@ -248,14 +286,14 @@ function interpolatePaperAppearance(
     const right = to.params?.[key];
     params[key] = valuesAreEqual(left, right)
       ? right
-      : interpolateValue(left, right, progress) ?? right;
+      : (interpolateValue(left, right, progress) ?? right);
   }
 
   return {
     ...to,
     opacity: interpolateNumber(from.opacity, to.opacity, progress),
     params,
-    key: `${to.key}:interp:${progress.toFixed(3)}`
+    key: `${to.key}:interp:${progress.toFixed(3)}`,
   };
 }
 
@@ -328,32 +366,65 @@ export function resolveAnimatedPaperShaderParams(
   }
 
   if (!allowedParams.has('frame') && allowedParams.has('rotation')) {
-    nextParams.rotation = toFiniteNumber(baseParams.rotation, 0) + Math.sin(drift * 0.4) * 0.03;
+    nextParams.rotation =
+      toFiniteNumber(baseParams.rotation, 0) + Math.sin(drift * 0.4) * 0.03;
   }
 
   return nextParams;
 }
 
-function useBackgroundAnimationClock(active: boolean, prefersReducedMotion: boolean) {
+function useDocumentVisible() {
+  const [isVisible, setIsVisible] = useState(() =>
+    typeof document === 'undefined' ? true : !document.hidden
+  );
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden);
+    };
+
+    handleVisibilityChange();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  return isVisible;
+}
+
+function useBackgroundAnimationClock(
+  active: boolean,
+  prefersReducedMotion: boolean,
+  isDocumentVisible: boolean
+) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const elapsedSecondsRef = useRef(0);
+
+  useEffect(() => {
+    elapsedSecondsRef.current = elapsedSeconds;
+  }, [elapsedSeconds]);
 
   useEffect(() => {
     if (!active || prefersReducedMotion) {
+      elapsedSecondsRef.current = 0;
       setElapsedSeconds(0);
       return;
     }
 
+    if (!isDocumentVisible) {
+      return;
+    }
+
     let animationFrameId = 0;
-    let startTime = 0;
+    const startTime = performance.now() - elapsedSecondsRef.current * 1000;
     let lastCommitTime = 0;
 
     const step = (now: number) => {
-      if (startTime === 0) {
-        startTime = now;
-      }
-
-      if (now - lastCommitTime >= 1000 / 24) {
-        setElapsedSeconds((now - startTime) / 1000);
+      if (now - lastCommitTime >= 1000 / BACKGROUND_WRAPPER_MOTION_FPS) {
+        const nextElapsedSeconds = (now - startTime) / 1000;
+        elapsedSecondsRef.current = nextElapsedSeconds;
+        setElapsedSeconds(nextElapsedSeconds);
         lastCommitTime = now;
       }
 
@@ -364,9 +435,15 @@ function useBackgroundAnimationClock(active: boolean, prefersReducedMotion: bool
     return () => {
       window.cancelAnimationFrame(animationFrameId);
     };
-  }, [active, prefersReducedMotion]);
+  }, [active, prefersReducedMotion, isDocumentVisible]);
 
   return elapsedSeconds;
+}
+
+function suppressPaperShaderMotion(
+  props: Record<string, unknown>
+): Record<string, unknown> {
+  return props.speed === 0 ? props : { ...props, speed: 0 };
 }
 
 function BackgroundSurface({
@@ -375,7 +452,8 @@ function BackgroundSurface({
   shader,
   params,
   elapsedSeconds,
-  prefersReducedMotion
+  prefersReducedMotion,
+  active,
 }: {
   kind: 'css' | 'none' | 'paper-shader';
   value?: string;
@@ -383,6 +461,7 @@ function BackgroundSurface({
   params?: Record<string, unknown>;
   elapsedSeconds: number;
   prefersReducedMotion: boolean;
+  active: boolean;
 }) {
   if (kind === 'none') {
     return null;
@@ -391,7 +470,10 @@ function BackgroundSurface({
   if (kind === 'css') {
     return (
       <>
-        <div className="backgroundSurface" style={{ ...surfaceStyle, background: value }} />
+        <div
+          className="backgroundSurface"
+          style={{ ...surfaceStyle, background: value }}
+        />
         <div className="backgroundNoise" />
         <div className="backgroundPattern" />
       </>
@@ -402,7 +484,10 @@ function BackgroundSurface({
   if (!definition || !shader) {
     return (
       <>
-        <div className="backgroundSurface" style={{ ...surfaceStyle, background: value }} />
+        <div
+          className="backgroundSurface"
+          style={{ ...surfaceStyle, background: value }}
+        />
         <div className="backgroundNoise" />
         <div className="backgroundPattern" />
       </>
@@ -410,12 +495,16 @@ function BackgroundSurface({
   }
 
   const ShaderComponent = definition.component;
-  const shaderProps = resolveAnimatedPaperShaderParams(
+  const resolvedShaderProps = resolveAnimatedPaperShaderParams(
     shader,
     params,
     elapsedSeconds,
     prefersReducedMotion
   );
+  const shaderProps =
+    active && !prefersReducedMotion
+      ? resolvedShaderProps
+      : suppressPaperShaderMotion(resolvedShaderProps);
   const mergedStyle =
     shaderProps.style && typeof shaderProps.style === 'object'
       ? {
@@ -423,18 +512,21 @@ function BackgroundSurface({
           ...surfaceStyle,
           width: '100%',
           height: '100%',
-          display: 'block'
+          display: 'block',
         }
       : {
           ...surfaceStyle,
           width: '100%',
           height: '100%',
-          display: 'block'
+          display: 'block',
         };
 
   return (
     <>
-      <div className="backgroundSurface backgroundSurfaceShader" style={surfaceStyle}>
+      <div
+        className="backgroundSurface backgroundSurfaceShader"
+        style={surfaceStyle}
+      >
         <ShaderComponent
           {...shaderProps}
           aria-hidden="true"
@@ -443,6 +535,8 @@ function BackgroundSurface({
               ? `paperShaderCanvas ${shaderProps.className}`
               : 'paperShaderCanvas'
           }
+          minPixelRatio={BACKGROUND_SHADER_MIN_PIXEL_RATIO}
+          maxPixelCount={BACKGROUND_SHADER_MAX_PIXEL_COUNT}
           width="100%"
           height="100%"
           style={mergedStyle}
@@ -457,23 +551,24 @@ function BackgroundAppearanceLayer({
   appearance,
   opacity,
   elapsedSeconds,
-  prefersReducedMotion
+  prefersReducedMotion,
+  active,
+  opacityMotion,
 }: {
   appearance: ResolvedBackgroundAppearance;
   opacity: number;
   elapsedSeconds: number;
   prefersReducedMotion: boolean;
+  active: boolean;
+  opacityMotion?: {
+    initial: number;
+    animate: number;
+    transition: Transition;
+    onComplete?: () => void;
+  };
 }) {
-  return (
-    <div
-      aria-hidden="true"
-      className="backgroundLayer"
-      data-background-kind={appearance.kind}
-      data-background-key={appearance.key}
-      data-background-shader={appearance.shader ?? ''}
-      data-background-preset={appearance.preset ?? ''}
-      style={{ opacity }}
-    >
+  const content = (
+    <>
       <BackgroundSurface
         kind={appearance.kind}
         value={appearance.value}
@@ -481,18 +576,48 @@ function BackgroundAppearanceLayer({
         params={appearance.params}
         elapsedSeconds={elapsedSeconds}
         prefersReducedMotion={prefersReducedMotion}
+        active={active}
       />
       <BackgroundFilterLayer
         kind={appearance.kind}
         filter={appearance.filter}
       />
+    </>
+  );
+
+  const layerProps = {
+    'aria-hidden': true,
+    className: 'backgroundLayer',
+    'data-background-kind': appearance.kind,
+    'data-background-key': appearance.key,
+    'data-background-shader': appearance.shader ?? '',
+    'data-background-preset': appearance.preset ?? '',
+  };
+
+  if (opacityMotion) {
+    return (
+      <motion.div
+        {...layerProps}
+        initial={{ opacity: opacityMotion.initial }}
+        animate={{ opacity: opacityMotion.animate }}
+        transition={opacityMotion.transition}
+        onAnimationComplete={opacityMotion.onComplete}
+      >
+        {content}
+      </motion.div>
+    );
+  }
+
+  return (
+    <div {...layerProps} style={{ opacity }}>
+      {content}
     </div>
   );
 }
 
 function BackgroundFilterLayer({
   kind,
-  filter
+  filter,
 }: {
   kind: ResolvedBackgroundAppearance['kind'];
   filter?: ResolvedBackgroundFilter;
@@ -510,7 +635,7 @@ function BackgroundFilterLayer({
       style={{
         ...surfaceStyle,
         background: filter.value,
-        pointerEvents: 'none'
+        pointerEvents: 'none',
       }}
     />
   );
@@ -520,7 +645,10 @@ export function getBackgroundTransitionMode(
   from: ResolvedBackgroundAppearance,
   to: ResolvedBackgroundAppearance
 ): 'interpolate' | 'crossfade' {
-  if (canInterpolatePaperAppearance(from, to) || canInterpolateCssAppearance(from, to)) {
+  if (
+    canInterpolatePaperAppearance(from, to) ||
+    canInterpolateCssAppearance(from, to)
+  ) {
     return 'interpolate';
   }
 
@@ -545,32 +673,55 @@ export function getInterpolatedBackgroundAppearance(
 
 export function ResolvedBackgroundLayer({
   targetAppearance,
-  transition
+  transition,
 }: {
   targetAppearance: ResolvedBackgroundAppearance;
   transition: ResolvedBackgroundTransition;
 }) {
   const prefersReducedMotion = useReducedMotion();
+  const isDocumentVisible = useDocumentVisible();
   const [renderState, setRenderState] = useState<BackgroundRenderState>({
     mode: 'stable',
-    appearance: targetAppearance
+    appearance: targetAppearance,
   });
+  const transitionSpec = useMemo<Transition>(
+    () => ({
+      duration: transition.duration / 1000,
+      ease: resolveMotionEasing(transition.easing),
+    }),
+    [transition.duration, transition.easing]
+  );
   const activeAppearance = useMemo(
-    () => (renderState.mode === 'stable' ? renderState.appearance : renderState.to),
+    () =>
+      renderState.mode === 'stable' ? renderState.appearance : renderState.to,
     [renderState]
   );
   const activeAppearanceRef = useRef(activeAppearance);
+  const elapsedSecondsRef = useRef(0);
   const needsWrapperMotion = useMemo(() => {
     if (renderState.mode === 'stable') {
-      return renderState.appearance.kind === 'paper-shader' && paperShaderNeedsWrapperMotion(renderState.appearance.shader);
+      return (
+        renderState.appearance.kind === 'paper-shader' &&
+        paperShaderNeedsWrapperMotion(renderState.appearance.shader)
+      );
     }
 
     return (
-      (renderState.from.kind === 'paper-shader' && paperShaderNeedsWrapperMotion(renderState.from.shader)) ||
-      (renderState.to.kind === 'paper-shader' && paperShaderNeedsWrapperMotion(renderState.to.shader))
+      (renderState.from.kind === 'paper-shader' &&
+        paperShaderNeedsWrapperMotion(renderState.from.shader)) ||
+      (renderState.to.kind === 'paper-shader' &&
+        paperShaderNeedsWrapperMotion(renderState.to.shader))
     );
   }, [renderState]);
-  const elapsedSeconds = useBackgroundAnimationClock(needsWrapperMotion, Boolean(prefersReducedMotion));
+  const elapsedSeconds = useBackgroundAnimationClock(
+    needsWrapperMotion,
+    Boolean(prefersReducedMotion),
+    isDocumentVisible
+  );
+
+  useEffect(() => {
+    elapsedSecondsRef.current = elapsedSeconds;
+  }, [elapsedSeconds]);
 
   useEffect(() => {
     activeAppearanceRef.current = activeAppearance;
@@ -593,13 +744,43 @@ export function ResolvedBackgroundLayer({
       mode,
       from: previous,
       to: targetAppearance,
-      progress: 0
+      progress: 0,
+      startedAtElapsedSeconds: elapsedSecondsRef.current,
     });
 
+    if (mode === 'crossfade') {
+      const timeoutId = window.setTimeout(
+        () => {
+          activeAppearanceRef.current = targetAppearance;
+          setRenderState((current) =>
+            current.mode === 'crossfade' &&
+            current.from.key === previous.key &&
+            current.to.key === targetAppearance.key
+              ? { mode: 'stable', appearance: targetAppearance }
+              : current
+          );
+        },
+        Math.max(0, transition.duration)
+      );
+
+      return () => {
+        window.clearTimeout(timeoutId);
+      };
+    }
+
+    let lastProgressCommitTime = 0;
     const controls = animate(0, 1, {
       duration: transition.duration / 1000,
       ease: resolveMotionEasing(transition.easing),
-      onUpdate: (progress) => {
+      onUpdate: (progress: number) => {
+        const now = performance.now();
+        if (
+          progress < 1 &&
+          now - lastProgressCommitTime < 1000 / BACKGROUND_INTERPOLATION_FPS
+        ) {
+          return;
+        }
+        lastProgressCommitTime = now;
         setRenderState((current) =>
           current.mode === mode &&
           current.from.key === previous.key &&
@@ -611,7 +792,7 @@ export function ResolvedBackgroundLayer({
       onComplete: () => {
         activeAppearanceRef.current = targetAppearance;
         setRenderState({ mode: 'stable', appearance: targetAppearance });
-      }
+      },
     });
 
     return () => {
@@ -621,7 +802,8 @@ export function ResolvedBackgroundLayer({
     prefersReducedMotion,
     targetAppearance,
     transition.duration,
-    transition.easing
+    transition.easing,
+    transitionSpec,
   ]);
 
   if (renderState.mode === 'stable') {
@@ -631,6 +813,7 @@ export function ResolvedBackgroundLayer({
         opacity={renderState.appearance.opacity}
         elapsedSeconds={elapsedSeconds}
         prefersReducedMotion={Boolean(prefersReducedMotion)}
+        active={isDocumentVisible}
       />
     );
   }
@@ -647,23 +830,47 @@ export function ResolvedBackgroundLayer({
         opacity={interpolated.opacity}
         elapsedSeconds={elapsedSeconds}
         prefersReducedMotion={Boolean(prefersReducedMotion)}
+        active={isDocumentVisible}
       />
     );
   }
 
+  const crossfadeTransition = transitionSpec;
   return (
     <>
       <BackgroundAppearanceLayer
         appearance={renderState.from}
-        opacity={(1 - renderState.progress) * renderState.from.opacity}
-        elapsedSeconds={elapsedSeconds}
+        opacity={renderState.from.opacity}
+        elapsedSeconds={renderState.startedAtElapsedSeconds}
         prefersReducedMotion={Boolean(prefersReducedMotion)}
+        active={false}
+        opacityMotion={{
+          initial: renderState.from.opacity,
+          animate: 0,
+          transition: crossfadeTransition,
+        }}
       />
       <BackgroundAppearanceLayer
         appearance={renderState.to}
-        opacity={renderState.progress * renderState.to.opacity}
+        opacity={renderState.to.opacity}
         elapsedSeconds={elapsedSeconds}
         prefersReducedMotion={Boolean(prefersReducedMotion)}
+        active={isDocumentVisible}
+        opacityMotion={{
+          initial: 0,
+          animate: renderState.to.opacity,
+          transition: crossfadeTransition,
+          onComplete: () => {
+            activeAppearanceRef.current = renderState.to;
+            setRenderState((current) =>
+              current.mode === 'crossfade' &&
+              current.from.key === renderState.from.key &&
+              current.to.key === renderState.to.key
+                ? { mode: 'stable', appearance: renderState.to }
+                : current
+            );
+          },
+        }}
       />
     </>
   );
@@ -688,7 +895,7 @@ export function BackgroundLayer() {
 
 export function ThemeBackgroundLayer({
   theme,
-  slug = 'dashboard'
+  slug = 'dashboard',
 }: {
   theme: ThemeConfig;
   slug?: string;
