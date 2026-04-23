@@ -1201,8 +1201,8 @@ clusters:
       x: 1693
       y: 1310
     frame:
-      width: 1076
-      height: 293
+      width: 1275
+      height: 252
     components:
       - type: bullet-list
         props:

@@ -114,12 +114,67 @@ describe('roadmap-rings layout', () => {
     const all = [...strategyLayouts, ...actorLayouts, ...supportLayouts];
     for (let i = 0; i < all.length; i += 1) {
       for (let j = i + 1; j < all.length; j += 1) {
-        if (aabbOverlap(all[i]!, all[j]!)) {
-          // eslint-disable-next-line no-console -- debug overlap pairs
-          console.log('overlap', i, j, all[i], all[j]);
-        }
         expect(aabbOverlap(all[i]!, all[j]!)).toBe(false);
       }
     }
   });
+
+  it('places arc chips at distinct angles with approximately equal edge gaps within each arc (width-aware margins)', () => {
+    const phases = [
+      mkPhase('sm', { strategy: 0, actors: 6, support: 0 }),
+      mkPhase('md', { strategy: 0, actors: 0, support: 0 }),
+      mkPhase('lg', { strategy: 0, actors: 0, support: 0 })
+    ] as unknown[];
+    const geoms = computePhaseGeometry(phases as Parameters<typeof computePhaseGeometry>[0]);
+    const g = geoms[0];
+    const p = phases[0] as NormalizedPhaseLike;
+    const layouts = layoutArcChips('actors', p.actors.items, g, 0, []);
+
+    const cx = g.centerX;
+    const cy = g.centerY;
+    const angles = layouts.map((l) => (Math.atan2(l.y - cy, l.x - cx) * 180) / Math.PI);
+    const uniq = new Set(angles.map((a) => a.toFixed(4)));
+    expect(uniq.size).toBe(angles.length);
+
+    const rMean = layouts.reduce((s, l) => s + Math.hypot(l.x - cx, l.y - cy), 0) / layouts.length;
+    const withEdge = layouts
+      .map((l) => {
+        const c = (Math.atan2(l.y - cy, l.x - cx) * 180) / Math.PI;
+        const half = chipHalfAngleFromLayout(l, rMean);
+        return { left: c - half, right: c + half };
+      })
+      .sort((a, b) => a.left - b.left);
+
+    const runs: typeof withEdge[] = [];
+    let run: typeof withEdge = [withEdge[0]!];
+    for (let i = 1; i < withEdge.length; i += 1) {
+      const prev = withEdge[i - 1]!;
+      const gapBetweenArcs = withEdge[i]!.left - prev.right;
+      if (gapBetweenArcs > 40) {
+        runs.push(run);
+        run = [];
+      }
+      run.push(withEdge[i]!);
+    }
+    runs.push(run);
+
+    for (const seg of runs) {
+      if (seg.length < 2) {
+        continue;
+      }
+      const gaps: number[] = [];
+      for (let i = 0; i < seg.length - 1; i += 1) {
+        gaps.push(seg[i + 1]!.left - seg[i]!.right);
+      }
+      const mean = gaps.reduce((s, x) => s + x, 0) / gaps.length;
+      for (const x of gaps) {
+        expect(Math.abs(x - mean)).toBeLessThan(mean * 0.4 + 0.35);
+      }
+    }
+  });
 });
+
+function chipHalfAngleFromLayout(l: { width: number }, r: number): number {
+  const ratio = Math.min(1, Math.max(-1, l.width / (2 * r)));
+  return (Math.asin(ratio) * 180) / Math.PI;
+}

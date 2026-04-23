@@ -239,6 +239,10 @@ function degreesToRadians(value: number) {
   return (value * Math.PI) / 180;
 }
 
+function radiansToDegrees(value: number) {
+  return (value * 180) / Math.PI;
+}
+
 function polarPoint(centerX: number, centerY: number, radius: number, angle: number) {
   const radians = degreesToRadians(angle);
   return {
@@ -590,18 +594,6 @@ function computeVerticalBounds(
   return normalizeVerticalBounds(minY, maxY);
 }
 
-function distributeAngles(start: number, end: number, count: number) {
-  if (count <= 0) {
-    return [];
-  }
-
-  if (count === 1) {
-    return [(start + end) / 2];
-  }
-
-  return Array.from({ length: count }, (_, index) => start + ((end - start) * index) / (count - 1));
-}
-
 function splitIntoRows<T>(items: T[], rowCount: number) {
   if (rowCount <= 1 || items.length <= 1) {
     return [items];
@@ -937,7 +929,20 @@ function stripArcBounds(item: ItemLayout): ItemLayout {
   return rest;
 }
 
-/** Even angular spacing on one circle across the full usable arc (per disjoint range). */
+/** Central angle (half-width, degrees) subtended by a chip of axis-aligned width `w` on a circle of radius `r`. */
+function chipHalfAngleDegFromWidth(width: number, r: number): number {
+  const ratio = clamp(width / (2 * r), -1, 1);
+  return radiansToDegrees(Math.asin(ratio));
+}
+
+function totalChipFootprintDeg(widths: number[], r: number): number {
+  return widths.reduce((sum, w) => sum + 2 * chipHalfAngleDegFromWidth(w, r), 0);
+}
+
+/**
+ * Places chips on one radius with **equal angular gaps** between successive chip edges and at the arc ends.
+ * Widths come from each label (fitted font + text estimate), then scale down if the arc is too tight — not fixed (n−1) slots.
+ */
 function layoutArcRowEven(
   rowItems: NormalizedItem[],
   range: AngleRange,
@@ -951,21 +956,53 @@ function layoutArcRowEven(
     return [];
   }
 
-  const totalSpan = range.end - range.start;
-  const angles = distributeAngles(range.start, range.end, rowItems.length);
-  const step = rowItems.length <= 1 ? totalSpan : (range.end - range.start) / Math.max(rowItems.length - 1, 1);
-  /** Half-angle between neighbor centers; caps width so axis-aligned chip boxes can separate on the circle. */
-  const neighborHalfDeg = rowItems.length <= 1 ? totalSpan / 2 : step / 2;
-  const chordCap = 2 * rowRadius * Math.sin(degreesToRadians(neighborHalfDeg * 0.92));
+  const θ0 = range.start;
+  const θ1 = range.end;
+  const arcSpanDeg = θ1 - θ0;
+  const maxChip = geometry.outerRadius >= 300 ? 136 : geometry.outerRadius <= 210 ? 112 : 124;
+  const height = geometry.metrics.bandChipHeight + 4;
+  const padX = 18;
+  const n = rowItems.length;
+  /** Minimum angular margin between chip edges and at arc ends (degrees). */
+  const minGapDeg = Math.max(0.35, minDegreesPerItem * 0.06);
+
+  const minChord = 2 * rowRadius * Math.sin(degreesToRadians((arcSpanDeg / Math.max(n + 1, 2)) * 0.25));
+
+  let widths = rowItems.map((item) => {
+    const provisional = clamp(Math.max(minChord, maxChip * 0.55), 52, maxChip);
+    const fontSize = fitChipFontSize(item.label, provisional - padX, height - 8, 2, 11.25, 7.5);
+    const textW = estimateTextWidth(item.label, fontSize) + padX;
+    return clamp(textW, 48, maxChip);
+  });
+
+  let footprint = totalChipFootprintDeg(widths, rowRadius);
+  let gap = (arcSpanDeg - footprint) / (n + 1);
+
+  for (let shrink = 0; shrink < 28 && gap < minGapDeg; shrink += 1) {
+    const targetFootprint = arcSpanDeg - (n + 1) * minGapDeg;
+    const scale = clamp(targetFootprint / Math.max(footprint, 1e-6), 0.25, 0.995);
+    widths = widths.map((w) => Math.max(44, w * scale));
+    footprint = totalChipFootprintDeg(widths, rowRadius);
+    gap = (arcSpanDeg - footprint) / (n + 1);
+    if (scale >= 0.99) {
+      break;
+    }
+  }
+
+  let left = θ0 + gap;
+  const centers: number[] = [];
+  for (let i = 0; i < n; i += 1) {
+    const beta = chipHalfAngleDegFromWidth(widths[i]!, rowRadius);
+    const center = left + beta;
+    centers.push(center);
+    left = center + beta + gap;
+  }
 
   return rowItems.map((item, itemIndex) => {
-    const angle = angles[itemIndex];
+    const angle = centers[itemIndex]!;
+    const width = widths[itemIndex]!;
     const point = polarPoint(geometry.centerX, geometry.centerY, rowRadius, angle);
-    const arcWidth = rowRadius * degreesToRadians(Math.max(step * 0.82, minDegreesPerItem - 1));
-    const maxChip = geometry.outerRadius >= 300 ? 136 : geometry.outerRadius <= 210 ? 112 : 124;
-    const width = clamp(Math.min(arcWidth, chordCap), 56, maxChip);
-    const height = geometry.metrics.bandChipHeight + 4;
-    const fontSize = fitChipFontSize(item.label, width - 18, height - 8, 2, 11.25, 7.5);
+    const fontSize = fitChipFontSize(item.label, width - padX, height - 8, 2, 11.25, 7.5);
 
     return {
       key: item.key,
