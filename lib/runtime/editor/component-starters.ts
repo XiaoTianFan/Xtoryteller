@@ -82,6 +82,95 @@ function buildStarterComponent(type: RuntimeComponentType): ComponentInstance {
       return { type, props: { nodes: [{ id: 'start', label: 'Start', type: 'start' }, { id: 'review', label: 'Review', type: 'decision' }, { id: 'ship', label: 'Ship', type: 'end' }], edges: [{ from: 'start', to: 'review' }, { from: 'review', to: 'ship' }] } };
     case 'quadrant-chart':
       return { type, props: { xAxis: { label: 'Impact' }, yAxis: { label: 'Effort' }, items: [{ label: 'Pilot', x: 0.28, y: 0.72 }, { label: 'Scale', x: 0.74, y: 0.54 }] } };
+    case 'roadmap-rings':
+      return {
+        type,
+        props: {
+          phases: [
+            {
+              label: 'Pilot: Incubating',
+              dateRange: '2025-2027',
+              size: 'sm',
+              strategy: {
+                title: 'Minimum viable strategy',
+                subtitle: 'Prove the transition works',
+                items: [
+                  { label: 'Transparent provenance', detail: '- Make origin visible.\n- Let listeners filter for human-certified work.' },
+                  { label: 'Consent registry', detail: '- Track who opts in.\n- Pay creators when their data is used.' }
+                ]
+              },
+              actors: {
+                title: 'Actors / Stakeholders',
+                items: [
+                  { label: 'Pilot artists', detail: '- A values-aligned cohort tests the system.' },
+                  { label: 'Ethical listeners', detail: '- Early adopters create demand for better norms.' }
+                ]
+              },
+              support: {
+                title: 'System Support',
+                items: [
+                  { label: 'Legal templates', detail: '- Consent, privacy, and licensing patterns.' },
+                  { label: 'Evaluation loops', detail: '- Measure whether behavior and payouts change.' }
+                ]
+              }
+            },
+            {
+              label: 'Scale: Connecting',
+              dateRange: '2028-2032',
+              size: 'md',
+              strategy: {
+                title: 'Intermediate strategy',
+                subtitle: 'Expand into a federated network',
+                items: [
+                  { label: 'Interoperable standards', detail: '- Shared metadata and provenance across platforms.' },
+                  { label: 'Collective governance', detail: '- Artists co-own more of the infrastructure.' }
+                ]
+              },
+              actors: {
+                title: 'Actors / Stakeholders',
+                items: [
+                  { label: 'Platform partners', detail: '- Multiple platforms adopt the same standards.' },
+                  { label: 'Collectives + PROs', detail: '- Existing institutions expand to cover AI royalties.' }
+                ]
+              },
+              support: {
+                title: 'System Support',
+                items: [
+                  { label: 'Knowledge networks', detail: '- Shared playbooks, training, and convenings.' },
+                  { label: 'Funding mix', detail: '- Public, philanthropic, and earned revenue support.' }
+                ]
+              }
+            },
+            {
+              label: 'Practice: Embedded in the Regime',
+              dateRange: '2038-2040',
+              size: 'lg',
+              strategy: {
+                title: 'Full strategy',
+                subtitle: 'Make the new model mainstream',
+                items: [
+                  { label: 'Mandatory transparency', detail: '- Disclosure becomes a regulatory baseline.' },
+                  { label: 'Consent as law', detail: '- Training without permission is no longer acceptable.' }
+                ]
+              },
+              actors: {
+                title: 'Actors / Stakeholders',
+                items: [
+                  { label: 'Governments', detail: '- Policymakers embed the norms in law.' },
+                  { label: 'Major platforms', detail: '- Market leaders are forced to comply.' }
+                ]
+              },
+              support: {
+                title: 'System Support',
+                items: [
+                  { label: 'Public funding', detail: '- Culture and compute are treated as infrastructure.' },
+                  { label: 'Policy enforcement', detail: '- Compliance and interoperability are audited.' }
+                ]
+              }
+            }
+          ]
+        }
+      };
     case 'spectrum-bar':
       return { type, props: { leftLabel: 'Stable', rightLabel: 'Adaptive', markers: [{ label: 'Today', value: 0.32 }, { label: 'Target', value: 0.78 }] } };
     case 'funnel-diagram':
@@ -116,4 +205,3 @@ export const componentStarterRegistry: ComponentStarterDefinition[] = componentR
 export function getComponentStarter(type: RuntimeComponentType) {
   return componentStarterRegistry.find((entry) => entry.type === type) ?? null;
 }
-

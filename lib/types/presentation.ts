@@ -223,11 +223,14 @@ export interface ClusterArrangementConfig {
   spacing?: number;
 }
 
+export type ClusterLabelPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
 export interface ClusterDefinition {
   id: string;
   title?: string;
   description?: string;
   group?: string;
+  labelPosition?: ClusterLabelPosition;
   layout: string;
   frame?: ClusterFrame;
   layoutProps?: Record<string, unknown>;

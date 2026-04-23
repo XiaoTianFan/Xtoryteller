@@ -279,13 +279,26 @@ function PdfClusterCard({
   slug: string;
   cluster: PdfMapPage['clusters'][number];
 }) {
+  const clusterLabelPosition = cluster.cluster.labelPosition ?? 'top-left';
+
   return (
     <section
       className="clusterCard pdfClusterCard"
       style={{ left: cluster.x, top: cluster.y, width: cluster.width, height: cluster.height }}
       data-cluster-id={cluster.id}
     >
-      <div className="clusterCardHeader">
+      <div
+        className={`clusterCardHeader ${
+          clusterLabelPosition === 'top-right'
+            ? 'clusterCardHeaderTopRight'
+            : clusterLabelPosition === 'bottom-left'
+              ? 'clusterCardHeaderBottomLeft'
+              : clusterLabelPosition === 'bottom-right'
+                ? 'clusterCardHeaderBottomRight'
+                : 'clusterCardHeaderTopLeft'
+        }`}
+        data-cluster-label-position={clusterLabelPosition}
+      >
         <span className="clusterBadge">{cluster.cluster.group ?? 'Cluster'}</span>
         <span className="clusterCardTitle">{cluster.cluster.title ?? cluster.cluster.id}</span>
       </div>

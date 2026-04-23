@@ -1195,6 +1195,30 @@ textarea {
   box-shadow: var(--shadow-chrome-float);
 }
 
+.clusterCardHeaderTopLeft {
+  top: calc(-1 * var(--spacing-chrome-cluster-header-offset));
+  left: 0;
+}
+
+.clusterCardHeaderTopRight {
+  top: calc(-1 * var(--spacing-chrome-cluster-header-offset));
+  left: auto;
+  right: 0;
+}
+
+.clusterCardHeaderBottomLeft {
+  top: auto;
+  bottom: calc(-1 * var(--spacing-chrome-cluster-header-offset));
+  left: 0;
+}
+
+.clusterCardHeaderBottomRight {
+  top: auto;
+  bottom: calc(-1 * var(--spacing-chrome-cluster-header-offset));
+  left: auto;
+  right: 0;
+}
+
 .clusterCardTitle {
   color: var(--color-chrome-text);
   font-size: var(--text-components-shell-cluster-title);

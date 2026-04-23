@@ -6,7 +6,7 @@ meta:
   author: Xtoryteller
   tags: [ map, ai, music, systems, transition-design ]
   createdAt: '2026-04-02'
-  updatedAt: '2026-04-02'
+  updatedAt: '2026-04-23'
   thumbnail: ./assets/thumbnail.png
 mode: map
 theme: creative-voltage
@@ -37,9 +37,7 @@ navigation:
     - h2-bridge
     - h3-future
     - critical-insights
-    - roadmap-musicians
-    - roadmap-platforms
-    - roadmap-policy
+    - roadmap-transition-graph
 clusters:
   - id: overview
     title: Overview
@@ -1218,90 +1216,369 @@ clusters:
           gap: 0.28rem
           lineHeight: 1.22
           fontSize: 0.94rem
-  - id: roadmap-musicians
-    title: Roadmap for Musicians
-    description: Artists need collective leverage, transparent tools, and
-      diversified value beyond streaming.
+  - id: roadmap-transition-graph
+    title: Roadmap by Design
+    description: The transition pathway is reframed as a phased ring graph that
+      connects strategy, stakeholders, and system support over time.
     group: action
+    labelPosition: bottom-left
     layout: single-content
     anchor:
-      x: 1856
-      y: 1608
+      x: 1714
+      y: 1508
     frame:
-      width: 680
-      height: 621
+      width: 2520
+      height: 1305
     components:
-      - type: timeline
+      - type: roadmap-rings
         props:
-          orientation: vertical
-          events:
-            - date: 2025-2027
-              title: Short term
-              description: Join data co-ops, track scraping, adopt provenance badges, and
-                reduce dependence on streaming-only income.
-            - date: 2028-2032
-              title: Medium term
-              description: Support training-rights legislation, build guild norms, and fund
-                cross-regional cultural dataset work.
-            - date: 2033-2040
-              title: Long term
-              description: Shift toward meaning labor, governance participation, and cultural
-                public-good models.
-  - id: roadmap-platforms
-    title: Roadmap for Platforms
-    description: Platforms and toolmakers need to redesign for co-evolution rather
-      than extraction and opacity.
-    group: action
-    layout: single-content
-    anchor:
-      x: 2639
-      y: 1604
-    frame:
-      width: 680
-      height: 625
-    components:
-      - type: timeline
-        props:
-          orientation: vertical
-          events:
-            - date: 2025-2027
-              title: Short term
-              description: Add mandatory AI disclosure, publish transparency reports, and
-                pilot alternatives to pure stream-count payouts.
-            - date: 2028-2032
-              title: Medium term
-              description: Integrate provenance standards, fund human creator development, and
-                reward diversity and context more explicitly.
-            - date: 2033-2040
-              title: Long term
-              description: Operate as stewards of a musical commons with parity metrics,
-                shared governance, and renewable infrastructure.
-  - id: roadmap-policy
-    title: Roadmap for Policymakers
-    description: Public institutions can create the enabling conditions for consent,
-      research, diversity, and sustainable infrastructure.
-    group: action
-    layout: single-content
-    anchor:
-      x: 3399
-      y: 1596
-    frame:
-      width: 680
-      height: 637
-    components:
-      - type: timeline
-        props:
-          orientation: vertical
-          events:
-            - date: 2025-2027
-              title: Short term
-              description: Pass Right to Research protections, extend training rights, fund
-                Global South digitization, and require carbon reporting.
-            - date: 2028-2032
-              title: Medium term
-              description: Build international AI music governance standards, subsidize public
-                compute, and test Cultural UBI pilots.
-            - date: 2033-2040
-              title: Long term
-              description: Enforce representational parity in public deployments and protect
-                endangered musical traditions as digital heritage.
+          phases:
+            - label: "PILOT: INCUBATING"
+              dateRange: 2025-2027
+              size: sm
+              strategy:
+                title: Fairchain Music Collective
+                subtitle: Pilot platform for ethical AI music
+                items:
+                  - label: Transparent provenance system
+                    detail: >-
+                      - Metadata tagging: Human / AI-Assisted / Fully AI /
+                      Hybrid
+
+                      - C2PA pilot for cryptographic verification
+
+                      - One-click filter for "Show only Human Certified"
+                  - label: Consent-based training registry
+                    detail: |-
+                      - 1,000 artist pilot cohort with opt-in / opt-out controls
+                      - Blockchain-backed verification for permissions
+                      - Micro-royalty distribution even at pilot scale
+                  - label: Quality-weighted royalty model
+                    detail: >-
+                      - Replace pro-rata logic with a cultural contribution
+                      score
+
+                      - Show artists a transparent valuation dashboard
+
+                      - Monthly payouts with a detailed breakdown
+                  - label: Direct artist-listener features
+                    detail: |-
+                      - Story-behind-the-song pages make meaning labor visible
+                      - Integrated patronage layer for direct support
+                      - Community dialogue spaces between artists and listeners
+                  - label: Carbon footprint tracking
+                    detail: |-
+                      - Display gCO2e per stream and per AI generation
+                      - Give listeners a monthly carbon dashboard
+                      - Recommend lower-carbon listening paths
+              actors:
+                title: Actors / Stakeholders
+                items:
+                  - label: Early adopter artists
+                    detail: >-
+                      - 1,000 values-aligned artists act as co-designers and
+                      evangelists
+
+                      - Mix of established indie, emerging, and non-Western /
+                      experimental voices
+                  - label: Ethical listeners
+                    detail: >-
+                      - Target a first wave of 50K-100K values-driven listeners
+
+                      - Use feedback and word-of-mouth to test demand for
+                      ethical defaults
+                  - label: Indie platform partner
+                    detail: >-
+                      - Pair with Bandcamp or an equivalent artist-friendly
+                      platform
+
+                      - Use the partner as integration layer, distribution
+                      channel, and co-funder
+                  - label: Technical + research team
+                    detail: >-
+                      - Combine product, infrastructure, security, and
+                      evaluation roles
+
+                      - Track economic, cultural, and UX outcomes from the start
+                  - label: Legal + artist governance
+                    detail: >-
+                      - Add IP and tech-policy guidance early
+
+                      - Give an artist steering body real veto power over core
+                      changes
+              support:
+                title: System Support
+                items:
+                  - label: Legal templates
+                    detail: >-
+                      - Model consent agreements for training-data use
+
+                      - Terms of service and privacy patterns that preserve
+                      artist autonomy
+                  - label: Metadata + UX standards
+                    detail: >-
+                      - Draft a generation-method metadata schema
+
+                      - Establish transparency UX patterns that avoid
+                      dark-pattern behavior
+                  - label: Artist capability building
+                    detail: >-
+                      - Workshops on data rights, royalty logic, and
+                      story-building
+
+                      - Technical help for tagging catalog metadata and
+                      onboarding artists
+                  - label: Evaluation + learning loops
+                    detail: >-
+                      - Track listener filtering, artist income, retention, and
+                      carbon metrics
+
+                      - Use monthly reviews, incident reports, and public
+                      transparency updates
+                  - label: Blended pilot funding
+                    detail: >-
+                      - Run the pilot on a €1-1.5M mix of foundation grants,
+                      impact capital, crowdfunding, and partner support
+
+                      - Keep enough contingency to treat the pilot as a learning
+                      laboratory
+            - label: "SCALE: CONNECTING"
+              dateRange: 2028-2032
+              size: md
+              strategy:
+                title: Ethical Music Network
+                subtitle: Federated ecosystem of platforms and collectives
+                items:
+                  - label: Interoperable standards
+                    detail: >-
+                      - Extend metadata and provenance standards across 10+
+                      platforms
+
+                      - Make consent verification and human-certification
+                      portable across the network
+                  - label: Co-owned artist collectives
+                    detail: >-
+                      - Grow toward 100,000 artists in federated cooperatives
+
+                      - Use one-artist / one-vote governance for major
+                      infrastructure choices
+                  - label: PRO training royalties
+                    detail: >-
+                      - Pilot AI-training royalty distribution through existing
+                      PRO infrastructure
+
+                      - Prove that legacy institutions can extend into the new
+                      economy
+                  - label: Global South integration
+                    detail: >-
+                      - Fund digitization projects in 10 countries
+
+                      - Use PEFT toolkits to bring non-Western music into the
+                      network on better terms
+                  - label: Carbon accountability at scale
+                    detail: >-
+                      - Move 30% of streaming infrastructure toward renewables
+
+                      - Normalize carbon labeling and launch green AI music
+                      certification
+              actors:
+                title: Actors / Stakeholders
+                items:
+                  - label: Platform partners
+                    detail: >-
+                      - Coordinate 10-15 platform partners across indie,
+                      startup, and reluctant mainstream adopters
+
+                      - Use shared standards and pooled data to create positive
+                      network effects
+                  - label: Collectives + unions
+                    detail: >-
+                      - Regional and genre-based artist collectives organize
+                      bargaining, education, and mutual aid
+
+                      - Governance shifts from isolated artists toward
+                      collective infrastructure power
+                  - label: PRO pioneers
+                    detail: >-
+                      - ASCAP, PRS, SOCAN, APRA AMCOS, and SACEM test new
+                      royalty pathways
+
+                      - Existing distribution networks become transition
+                      infrastructure
+                  - label: Ethical AI + cultural institutions
+                    detail: >-
+                      - Consent-based AI companies, UNESCO, WIPO, and libraries
+                      add legitimacy and funding
+
+                      - Preservation and commercialization get linked through
+                      shared governance
+                  - label: Standards, research, and capital network
+                    detail: >-
+                      - ISO, W3C, C2PA, researchers, journalists, and impact
+                      investors turn the model into a visible movement
+
+                      - Evidence, narrative, and patient capital reinforce one
+                      another
+              support:
+                title: System Support
+                items:
+                  - label: Coalition knowledge base
+                    detail: >-
+                      - Build an international coalition with multilingual
+                      documentation and rotating convenings
+
+                      - Share open-source playbooks for governance, royalties,
+                      and digitization
+                  - label: Training + bootcamps
+                    detail: >-
+                      - Train PRO staff, artists, and Global South practitioners
+                      in AI royalties, consent tools, and dataset stewardship
+
+                      - Combine workshops, scholarships, and residencies
+                  - label: Longitudinal evaluation
+                    detail: >-
+                      - Track artist well-being, income, cultural diversity, and
+                      platform payout models over multiple years
+
+                      - Keep an annual State of Ethical Music report as a public
+                      feedback loop
+                  - label: 40-60M funding mix
+                    detail: >-
+                      - Blend public cultural funding, platform revenue
+                      contributions, philanthropy, impact investment, and
+                      registry fees
+
+                      - Keep the network expandable without one owner capturing
+                      it
+                  - label: Regional experiments + allies
+                    detail: >-
+                      - Let EU, US, Global South, and East Asia variants evolve
+                      within shared principles
+
+                      - Work with fellow-traveler groups such as Creative
+                      Commons, EFF, Algorithm Watch, and labor unions
+            - label: "PRACTICE: EMBEDDED IN THE REGIME"
+              dateRange: 2038-2040
+              size: lg
+              strategy:
+                title: Regenerative Music System
+                subtitle: H3 vision fully realized
+                items:
+                  - label: Mandatory transparency
+                    detail: >-
+                      - EU and US regimes require generation-method disclosure
+                      for all music
+
+                      - Platforms without compliance face real penalties and
+                      distribution consequences
+                  - label: Consent as international law
+                    detail: >-
+                      - WIPO-scale treaty logic makes training without consent
+                      infringement
+
+                      - Micro-royalties are collected and distributed globally
+                      by default
+                  - label: Quality-weighted royalties
+                    detail: >-
+                      - Pro-rata becomes a legacy edge case rather than the norm
+
+                      - Cultural contribution scoring and algorithmic audits
+                      become standard practice
+                  - label: Cultural UBI
+                    detail: >-
+                      - 20+ countries support artists with baseline income
+                      infrastructure
+
+                      - Streaming income is supplemented by public cultural
+                      support
+                  - label: Net-zero infrastructure
+                    detail: >-
+                      - Streaming and AI systems must run on renewable energy by
+                      2040
+
+                      - Carbon labels and compute-efficiency rules become
+                      non-optional
+                  - label: Global South parity
+                    detail: >-
+                      - Training datasets reach 50/50 Global North-South balance
+
+                      - Cultural provenance routes royalties back to source
+                      communities
+              actors:
+                title: Actors / Stakeholders
+                items:
+                  - label: Policymakers + governments
+                    detail: >-
+                      - Legislators, regulators, UNESCO, and WIPO embed
+                      transparency, data sovereignty, and cultural rights into
+                      law
+
+                      - Global South governments become agenda setters rather
+                      than edge participants
+                  - label: Major platforms
+                    detail: >-
+                      - Spotify, Apple, YouTube, and Amazon are forced into
+                      compliant governance and better creator economics
+
+                      - Artist-owned alternatives hold meaningful market share
+                  - label: Cloud + GPU infrastructure
+                    detail: >-
+                      - AWS, Azure, Google Cloud, Nvidia, and TSMC operate under
+                      carbon, access, and efficiency constraints
+
+                      - Compute becomes governed infrastructure, not just
+                      private leverage
+                  - label: Artist communities
+                    detail: >-
+                      - Millions of organized musicians bargain collectively and
+                      shape norms
+
+                      - Global South creators hold far greater revenue share and
+                      cultural visibility
+                  - label: Civil society + academia
+                    detail: >-
+                      - Consumer movements, climate activists, educators,
+                      universities, and mainstream media normalize the new
+                      regime
+
+                      - Ethical AI music becomes part of basic literacy, not a
+                      niche debate
+              support:
+                title: System Support
+                items:
+                  - label: Public cultural funding
+                    detail: >-
+                      - Governments, EU programs, and multilateral funds treat
+                      music-tech equity as durable infrastructure
+
+                      - Cultural development money flows to preservation,
+                      education, and inclusive compute access
+                  - label: Industry standards
+                    detail: >-
+                      - Trade associations, professional bodies, and ESG
+                      reporting lock the norms into operating practice
+
+                      - Ethical sourcing becomes an expected part of
+                      music-sector governance
+                  - label: Mainstream legitimacy
+                    detail: >-
+                      - Business schools, major media, and public case studies
+                      frame the shift as a model for just tech transitions
+
+                      - The narrative moves from fringe ethics to mainstream
+                      competitive advantage
+                  - label: Conscious streaming movement
+                    detail: >-
+                      - Popular artist endorsements and consumer pressure reward
+                      compliant platforms
+
+                      - Human-certified listening becomes a visible cultural
+                      identity marker
+                  - label: Policy enforcement
+                    detail: >-
+                      - Copyright, carbon rules, data-sovereignty treaties,
+                      right-to-research protections, and antitrust measures are
+                      actively enforced
+
+                      - Interoperability and artist data portability become
+                      baseline expectations

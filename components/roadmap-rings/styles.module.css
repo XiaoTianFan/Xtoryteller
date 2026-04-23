@@ -1,0 +1,242 @@
+.figure {
+  height: 100%;
+  min-height: 100%;
+}
+
+.canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: visible;
+}
+
+.svgShell {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.svgShell svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.phase {
+  color: inherit;
+}
+
+.outerFill {
+  fill: color-mix(in srgb, var(--phase-color) 7%, transparent);
+}
+
+.outerRing {
+  fill: none;
+  stroke: var(--phase-color);
+  stroke-width: 4;
+  opacity: 0.95;
+}
+
+.innerFill {
+  fill: color-mix(in srgb, var(--color-panel, var(--color-background)) 92%, var(--phase-color) 8%);
+}
+
+.innerRing {
+  fill: none;
+  stroke: var(--phase-color);
+  stroke-width: 3;
+  opacity: 0.9;
+}
+
+.bandText {
+  fill: var(--color-foreground);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.strategyTitle,
+.strategySubtitle,
+.phaseBadgeDate,
+.phaseBadgeLabel {
+  fill: var(--color-foreground);
+}
+
+.strategyTitle {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.strategySubtitle {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 600;
+  opacity: 0.86;
+}
+
+.phaseBadgeDate {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.82;
+}
+
+.phaseBadgeLabel {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.chip {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0;
+  border: 1px solid color-mix(in srgb, var(--roadmap-accent) 40%, var(--color-border) 60%);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 91%, var(--roadmap-accent) 9%) 0%,
+      color-mix(in srgb, var(--color-panel, var(--color-background)) 90%, var(--roadmap-accent) 10%) 100%
+    );
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.2);
+  color: var(--color-foreground);
+  cursor: help;
+  text-align: center;
+  transition:
+    transform var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease,
+    background var(--motion-fast) ease;
+}
+
+.chip[data-roadmap-item='strategy'] {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 88%, var(--roadmap-accent) 12%) 0%,
+      color-mix(in srgb, var(--color-panel, var(--color-background)) 88%, var(--roadmap-accent) 12%) 100%
+    );
+}
+
+.chip:hover,
+.chip:focus-visible {
+  transform: translate(-50%, calc(-50% - 2px));
+  border-color: color-mix(in srgb, var(--roadmap-accent) 74%, white 26%);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.24);
+}
+
+.chip:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--roadmap-accent) 74%, white 26%);
+  outline-offset: 2px;
+}
+
+.chipLabel {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-family: var(--font-body);
+  font-size: var(--roadmap-chip-font-size, 0.74rem);
+  font-weight: 700;
+  line-height: 1.14;
+  overflow-wrap: anywhere;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 200;
+  width: min(30rem, calc(100vw - 1.5rem));
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-components-card);
+  border: 1px solid color-mix(in srgb, var(--tooltip-accent) 44%, var(--color-foreground) 22%);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 94%, var(--tooltip-accent) 6%) 0%,
+      color-mix(in srgb, var(--color-panel, var(--color-background)) 92%, var(--color-foreground) 8%) 100%
+    );
+  box-shadow: var(--shadow-strong);
+  pointer-events: none;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  border-left: inherit;
+  border-top: inherit;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.tooltip[data-placement='top']::after {
+  top: calc(100% - 6px);
+  border-left: none;
+  border-top: none;
+  border-right: inherit;
+  border-bottom: inherit;
+}
+
+.tooltip[data-placement='bottom']::after {
+  top: -6px;
+}
+
+.tooltipEyebrow {
+  display: inline-flex;
+  color: var(--tooltip-accent);
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tooltip h5 {
+  margin: 0.22rem 0 0.55rem;
+  color: var(--color-foreground);
+  font-family: var(--font-heading);
+  font-size: 1.04rem;
+  line-height: 1.12;
+}
+
+.tooltipBody {
+  display: grid;
+  gap: 0.26rem;
+}
+
+.tooltipBody :global(p),
+.tooltipBody :global(ul) {
+  margin: 0;
+  color: color-mix(in srgb, var(--color-foreground) 80%, transparent 20%);
+  line-height: 1.42;
+}
+
+.tooltipBody :global(ul) {
+  padding-left: 1rem;
+}
+
+.tooltipBody :global(strong) {
+  color: var(--color-foreground);
+}

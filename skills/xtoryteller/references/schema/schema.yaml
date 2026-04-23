@@ -28,6 +28,7 @@ map:
     clusters:
       - id: string
         layout: string
+        labelPosition: top-left | top-right | bottom-left | bottom-right ?
         frame:
           width: number > 0 ?
           height: number > 0 ?

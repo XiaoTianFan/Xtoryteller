@@ -349,6 +349,7 @@ clusters:
             {
               id: 'root',
               title: 'Root',
+              labelPosition: 'bottom-left',
               layout: 'scattered',
               x: 12,
               y: 18,
@@ -391,6 +392,7 @@ clusters:
       clusters: Array<{
         id: string;
         layout?: string;
+        labelPosition?: string;
         anchor?: Record<string, unknown>;
         frame?: Record<string, unknown>;
         components: Array<{ type: string; position?: Record<string, unknown> }>;
@@ -399,6 +401,7 @@ clusters:
 
     expect(saved.clusters).toHaveLength(3);
     expect(saved.clusters[0].layout).toBe('scattered');
+    expect(saved.clusters[0].labelPosition).toBe('bottom-left');
     expect(saved.clusters[0].components[1].type).toBe('body-text');
     expect(saved.clusters[0].components[1].position).toEqual({
       x: 0.5,

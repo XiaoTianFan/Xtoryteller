@@ -27,6 +27,7 @@ import OrgChart from '@/components/org-chart';
 import ProfileCard from '@/components/profile-card';
 import QuadrantChart from '@/components/quadrant-chart';
 import RadarChart from '@/components/radar-chart';
+import RoadmapRings from '@/components/roadmap-rings';
 import SankeyDiagram from '@/components/sankey-diagram';
 import SpectrumBar from '@/components/spectrum-bar';
 import StatCard from '@/components/stat-card';
@@ -71,6 +72,7 @@ export const runtimeComponentMap = {
   'three-horizons': ThreeHorizons,
   flowchart: Flowchart,
   'quadrant-chart': QuadrantChart,
+  'roadmap-rings': RoadmapRings,
   'spectrum-bar': SpectrumBar,
   'funnel-diagram': FunnelDiagram,
   'venn-diagram': VennDiagram,

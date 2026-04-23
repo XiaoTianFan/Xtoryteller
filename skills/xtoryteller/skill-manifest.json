@@ -10,7 +10,7 @@
     "backgrounds": "references/registries/background-registry.json"
   },
   "lastRegistryCounts": {
-    "components": 40,
+    "components": 41,
     "layouts": 21,
     "transitions": 10,
     "themes": 14,

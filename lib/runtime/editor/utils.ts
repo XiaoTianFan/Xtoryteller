@@ -96,6 +96,7 @@ export function buildMapDraftSignature(drafts: EditableMapClusterDraft[]) {
       title: cluster.title,
       description: cluster.description,
       group: cluster.group,
+      labelPosition: cluster.labelPosition,
       layout: cluster.layout,
       layoutProps: cluster.layoutProps,
       transition: cluster.transition,
@@ -124,4 +125,3 @@ export function buildMapDraftSignature(drafts: EditableMapClusterDraft[]) {
     }))
   );
 }
-

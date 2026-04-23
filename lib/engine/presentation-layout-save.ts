@@ -531,6 +531,7 @@ export async function savePresentationLayoutAtPath(
         title: cluster.title,
         description: cluster.description,
         group: cluster.group,
+        labelPosition: cluster.labelPosition,
         layout: cluster.layout,
         layoutProps: cluster.layout === 'scattered' ? filterFreeformLayoutProps(cluster.layoutProps) : cluster.layoutProps,
         transition: cluster.transition,

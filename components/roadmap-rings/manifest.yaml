@@ -1,0 +1,14 @@
+name: roadmap-rings
+displayName: Roadmap Rings
+description: Three-phase roadmap graph with expanding rings, strategy cores, actor arcs, support arcs, and hoverable detail chips.
+category: diagram
+content: false
+props:
+  phases:
+    type: array
+    required: true
+    description: Exactly three ordered phases with `label`, `dateRange`, `size`, and `strategy` / `actors` / `support` sections.
+  styleVariant:
+    type: string
+    default: dark-map
+    description: Optional visual preset. The default is theme-aware dark map styling.

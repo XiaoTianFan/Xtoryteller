@@ -322,6 +322,7 @@ function buildMapDrafts(clusters: ClusterDefinition[], positions: PositionedClus
         title: cluster.title,
         description: cluster.description,
         group: cluster.group,
+        labelPosition: cluster.labelPosition,
         layout: cluster.layout,
         layoutProps: cloneDeep(cluster.layoutProps),
         transition: cluster.transition,
@@ -439,6 +440,7 @@ function buildClusterSavePayload(cluster: EditableMapClusterDraft, cleanCluster:
       title: cluster.title,
       description: cluster.description,
       group: cluster.group,
+      labelPosition: cluster.labelPosition,
       layout: cluster.layout,
       layoutProps: cloneDeep(cluster.layoutProps),
       transition: cluster.transition,
@@ -456,6 +458,7 @@ function buildClusterSavePayload(cluster: EditableMapClusterDraft, cleanCluster:
     title: cluster.title,
     description: cluster.description,
     group: cluster.group,
+    labelPosition: cluster.labelPosition,
     layout: 'scattered',
     layoutProps: cloneDeep(cluster.layoutProps),
     transition: cluster.transition,
@@ -1483,6 +1486,7 @@ export function MapRenderer() {
         >
           {renderedClusters.map((cluster) => {
             const clusterLabel = [cluster.title ?? cluster.id, cluster.description].filter(Boolean).join('. ');
+            const clusterLabelPosition = cluster.labelPosition ?? 'top-left';
             const isSelected = cluster.id === selectedClusterId;
             const isContentEditing = editMode && editLayer === 'components' && cluster.id === selectedClusterId;
             const renderableContent = getRenderableClusterComponents(cluster);
@@ -1511,7 +1515,18 @@ export function MapRenderer() {
                     </span>
                   </div>
                 ) : null}
-                <div className="clusterCardHeader">
+                <div
+                  className={`clusterCardHeader ${
+                    clusterLabelPosition === 'top-right'
+                      ? 'clusterCardHeaderTopRight'
+                      : clusterLabelPosition === 'bottom-left'
+                        ? 'clusterCardHeaderBottomLeft'
+                        : clusterLabelPosition === 'bottom-right'
+                          ? 'clusterCardHeaderBottomRight'
+                          : 'clusterCardHeaderTopLeft'
+                  }`}
+                  data-cluster-label-position={clusterLabelPosition}
+                >
                   <span className="clusterBadge">{cluster.group ?? 'Cluster'}</span>
                   <span className="clusterCardTitle">{cluster.title ?? cluster.id}</span>
                 </div>

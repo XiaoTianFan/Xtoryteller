@@ -336,6 +336,11 @@ describe('runtime renderers', () => {
       .filter(Boolean);
 
     expect(new Set(clusterSizes).size).toBeGreaterThan(1);
+    const roadmapHeader = document.querySelector(
+      '[data-cluster-id="roadmap-transition-graph"] .clusterCardHeader'
+    );
+    expect(roadmapHeader).toHaveAttribute('data-cluster-label-position', 'bottom-left');
+    expect(roadmapHeader?.className).toContain('clusterCardHeaderBottomLeft');
   });
 
   it('switches between immediate interaction and flight camera behavior', async () => {

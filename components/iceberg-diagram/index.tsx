@@ -36,11 +36,20 @@ interface TooltipState {
   visible: boolean;
 }
 
+interface IcebergFit {
+  containerWidth: number;
+  containerHeight: number;
+  renderWidth: number;
+  renderHeight: number;
+  left: number;
+  top: number;
+  scale: number;
+}
+
 const VIEWBOX_WIDTH = 1092;
 const VIEWBOX_HEIGHT = 1206;
 const HIDDEN_VIEWBOX_X = 250;
 const HIDDEN_VIEWBOX_WIDTH = 842;
-const LABELS_HIDDEN_TOP_TRIM = 100;
 
 const ICEBERG_PATH = `
   M742 76
@@ -259,12 +268,53 @@ function dividerPositions(waterY: number) {
   return [waterY, structuresBottom, worldviewBottom];
 }
 
+export function computeIcebergContainFit({
+  containerWidth,
+  containerHeight,
+  visibleWidth,
+  visibleHeight = VIEWBOX_HEIGHT
+}: {
+  containerWidth: number;
+  containerHeight: number;
+  visibleWidth: number;
+  visibleHeight?: number;
+}): IcebergFit {
+  const safeContainerWidth = Math.max(containerWidth, 0);
+  const safeContainerHeight = Math.max(containerHeight, 0);
+
+  if (safeContainerWidth === 0 || safeContainerHeight === 0 || visibleWidth <= 0 || visibleHeight <= 0) {
+    return {
+      containerWidth: safeContainerWidth,
+      containerHeight: safeContainerHeight,
+      renderWidth: 0,
+      renderHeight: 0,
+      left: 0,
+      top: 0,
+      scale: 0
+    };
+  }
+
+  const scale = Math.min(safeContainerWidth / visibleWidth, safeContainerHeight / visibleHeight);
+
+  return {
+    containerWidth: safeContainerWidth,
+    containerHeight: safeContainerHeight,
+    renderWidth: visibleWidth * scale,
+    renderHeight: visibleHeight * scale,
+    left: 0,
+    top: 0,
+    scale
+  };
+}
+
 export default function IcebergDiagram({ props }: { props?: Record<string, unknown> }) {
+  const boardRef = useRef<HTMLDivElement | null>(null);
   const clipPathId = useId().replace(/[:]/g, '-');
   const gradientId = `${clipPathId}-gradient`;
   const tooltipId = `iceberg-note-${clipPathId}`;
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const activeAnchorRef = useRef<HTMLElement | null>(null);
+  const [boardSize, setBoardSize] = useState({ width: 0, height: 0 });
   const [tooltip, setTooltip] = useState<TooltipState>({
     text: '',
     left: 0,
@@ -277,12 +327,16 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
   const labelsHidden = !showLabels;
   const visibleX = labelsHidden ? HIDDEN_VIEWBOX_X : 0;
   const visibleWidth = labelsHidden ? HIDDEN_VIEWBOX_WIDTH : VIEWBOX_WIDTH;
-  const topTrimPercent = labelsHidden ? (LABELS_HIDDEN_TOP_TRIM / VIEWBOX_HEIGHT) * 100 : 0;
   const waterline = clamp(Number(props?.waterlinePosition ?? 0.23), 0.18, 0.32);
   const waterY = waterline * VIEWBOX_HEIGHT;
   const [waterDivider, structuresDivider, worldviewDivider] = dividerPositions(waterY);
   const guideX1 = labelsHidden ? 300 : 22;
   const guideX2 = labelsHidden ? 1008 : VIEWBOX_WIDTH - 22;
+  const fit = computeIcebergContainFit({
+    containerWidth: boardSize.width,
+    containerHeight: boardSize.height,
+    visibleWidth
+  });
 
   const layerNotes = resolvedLayers.map((layer, index) => ({
     copy: resolveCopy(layer, index),
@@ -308,6 +362,46 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
   const stopClusterNavigation = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
   };
+
+  useEffect(() => {
+    const board = boardRef.current;
+    if (!board) {
+      return;
+    }
+
+    let frame = 0;
+
+    const updateSize = () => {
+      const rect = board.getBoundingClientRect();
+      const width = Math.max(rect.width, board.clientWidth, 0);
+      const height = Math.max(rect.height, board.clientHeight, 0);
+
+      startTransition(() => {
+        setBoardSize((current) =>
+          Math.abs(current.width - width) > 0.5 || Math.abs(current.height - height) > 0.5
+            ? { width, height }
+            : current
+        );
+      });
+    };
+
+    const scheduleUpdate = () => {
+      cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(updateSize);
+    };
+
+    scheduleUpdate();
+    window.addEventListener('resize', scheduleUpdate);
+
+    const observer = new ResizeObserver(scheduleUpdate);
+    observer.observe(board);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', scheduleUpdate);
+      observer.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     if (!tooltip.visible || !tooltip.text) {
@@ -421,98 +515,113 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
   return (
     <figure className={`${styles.shell} ${localStyles.figure}`}>
       <div
+        ref={boardRef}
         className={`${localStyles.board} ${labelsHidden ? localStyles.boardLabelsHidden : ''}`}
-        style={
-          {
-            ['--iceberg-top-trim' as string]: `${topTrimPercent}%`
-          } as CSSProperties
-        }
+        data-iceberg-board="true"
       >
-        <div className={localStyles.canvasViewport}>
-        <svg
-          viewBox={`${visibleX} 0 ${visibleWidth} ${VIEWBOX_HEIGHT}`}
-          role="img"
-          aria-label="Iceberg diagram"
-          className={localStyles.svg}
+        <div
+          className={localStyles.canvasViewport}
+          data-iceberg-viewport="true"
+          data-fit-left={fit.left.toFixed(2)}
+          data-fit-top={fit.top.toFixed(2)}
+          data-fit-width={fit.renderWidth.toFixed(2)}
+          data-fit-height={fit.renderHeight.toFixed(2)}
+          data-fit-scale={fit.scale.toFixed(4)}
+          data-visible-width={visibleWidth}
+          style={
+            {
+              left: `${fit.left}px`,
+              top: `${fit.top}px`,
+              width: `${fit.renderWidth}px`,
+              height: `${fit.renderHeight}px`
+            } as CSSProperties
+          }
         >
-          <defs>
-            <clipPath id={clipPathId}>
-              <path d={ICEBERG_PATH} />
-            </clipPath>
-            <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="color-mix(in srgb, var(--color-surface) 88%, white 12%)" />
-              <stop offset={`${(waterY / VIEWBOX_HEIGHT) * 100}%`} stopColor="color-mix(in srgb, var(--color-surface) 84%, var(--color-panel, var(--color-background)) 16%)" />
-              <stop offset={`${(waterY / VIEWBOX_HEIGHT) * 100}%`} stopColor="color-mix(in srgb, var(--color-panel, var(--color-surface)) 86%, var(--color-secondary) 14%)" />
-              <stop offset="100%" stopColor="color-mix(in srgb, var(--color-panel, var(--color-surface)) 80%, var(--color-secondary) 20%)" />
-            </linearGradient>
-          </defs>
+          <svg
+            viewBox={`${visibleX} 0 ${visibleWidth} ${VIEWBOX_HEIGHT}`}
+            preserveAspectRatio="xMinYMin meet"
+            role="img"
+            aria-label="Iceberg diagram"
+            className={localStyles.svg}
+          >
+            <defs>
+              <clipPath id={clipPathId}>
+                <path d={ICEBERG_PATH} />
+              </clipPath>
+              <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="color-mix(in srgb, var(--color-surface) 88%, white 12%)" />
+                <stop offset={`${(waterY / VIEWBOX_HEIGHT) * 100}%`} stopColor="color-mix(in srgb, var(--color-surface) 84%, var(--color-panel, var(--color-background)) 16%)" />
+                <stop offset={`${(waterY / VIEWBOX_HEIGHT) * 100}%`} stopColor="color-mix(in srgb, var(--color-panel, var(--color-surface)) 86%, var(--color-secondary) 14%)" />
+                <stop offset="100%" stopColor="color-mix(in srgb, var(--color-panel, var(--color-surface)) 80%, var(--color-secondary) 20%)" />
+              </linearGradient>
+            </defs>
 
-          <rect x="0" y="0" width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT} fill="transparent" />
+            <rect x="0" y="0" width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT} fill="transparent" />
 
-          {[waterDivider, structuresDivider, worldviewDivider].map((dividerY, index) => (
-            <line key={index} x1={guideX1} x2={guideX2} y1={dividerY} y2={dividerY} className={index === 0 ? localStyles.waterline : localStyles.divider} />
-          ))}
-
-          <path d={ICEBERG_PATH} fill={`url(#${gradientId})`} className={localStyles.iceberg} />
-          <rect x="0" y={waterY} width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT - waterY} clipPath={`url(#${clipPathId})`} className={localStyles.underwaterTint} />
-
-          <g clipPath={`url(#${clipPathId})`} className={localStyles.contours}>
-            {CONTOUR_PATHS.map((path, index) => (
-              <path key={index} d={path} />
+            {[waterDivider, structuresDivider, worldviewDivider].map((dividerY, index) => (
+              <line key={index} x1={guideX1} x2={guideX2} y1={dividerY} y2={dividerY} className={index === 0 ? localStyles.waterline : localStyles.divider} />
             ))}
-          </g>
-        </svg>
 
-        {showLabels ? (
-          <div className={localStyles.overlay} aria-hidden="true">
-            {layerNotes.map((layer, index) => {
-              const centerY = (layer.bandTop + layer.bandBottom) / 2;
-              return (
-                <section
-                  key={`label-${index}`}
-                  className={localStyles.labelBlock}
-                  style={{ top: `${(centerY / VIEWBOX_HEIGHT) * 100}%` }}
+            <path d={ICEBERG_PATH} fill={`url(#${gradientId})`} className={localStyles.iceberg} />
+            <rect x="0" y={waterY} width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT - waterY} clipPath={`url(#${clipPathId})`} className={localStyles.underwaterTint} />
+
+            <g clipPath={`url(#${clipPathId})`} className={localStyles.contours}>
+              {CONTOUR_PATHS.map((path, index) => (
+                <path key={index} d={path} />
+              ))}
+            </g>
+          </svg>
+
+          {showLabels ? (
+            <div className={localStyles.overlay} aria-hidden="true">
+              {layerNotes.map((layer, index) => {
+                const centerY = (layer.bandTop + layer.bandBottom) / 2;
+                return (
+                  <section
+                    key={`label-${index}`}
+                    className={localStyles.labelBlock}
+                    style={{ top: `${(centerY / VIEWBOX_HEIGHT) * 100}%` }}
+                  >
+                    <p className={localStyles.labelTitle}>{layer.copy.title}</p>
+                    <p className={localStyles.labelSubtitle}>{layer.copy.subtitle}</p>
+                  </section>
+                );
+              })}
+            </div>
+          ) : null}
+
+          <div className={localStyles.noteLayer}>
+            {layerNotes.flatMap((layer, layerIndex) =>
+              layer.notes.map((note, noteIndex) => (
+                <button
+                  key={`${layerIndex}-${noteIndex}-${note.text}`}
+                  type="button"
+                  className={localStyles.note}
+                  data-iceberg-note="true"
+                  data-layer-index={layerIndex}
+                  aria-label={note.text}
+                  aria-describedby={tooltip.visible && tooltip.text === note.text ? tooltipId : undefined}
+                  onClick={stopClusterNavigation}
+                  onMouseDown={stopClusterNavigation}
+                  onMouseEnter={(event) => showTooltip(event, note.text)}
+                  onMouseLeave={hideTooltip}
+                  onFocus={(event) => showTooltip(event, note.text)}
+                  onBlur={hideTooltip}
+                  style={{
+                    left: `${((note.left - visibleX) / visibleWidth) * 100}%`,
+                    top: `${(note.top / VIEWBOX_HEIGHT) * 100}%`,
+                    width: `${(note.width / visibleWidth) * 100}%`,
+                    height: `${(note.height / VIEWBOX_HEIGHT) * 100}%`,
+                    fontSize: `${note.fontSize}px`,
+                    ['--iceberg-line-clamp' as string]: String(note.lineClamp)
+                  }}
                 >
-                  <p className={localStyles.labelTitle}>{layer.copy.title}</p>
-                  <p className={localStyles.labelSubtitle}>{layer.copy.subtitle}</p>
-                </section>
-              );
-            })}
+                  <span>{note.text}</span>
+                </button>
+              ))
+            )}
           </div>
-        ) : null}
-
-        <div className={localStyles.noteLayer}>
-          {layerNotes.flatMap((layer, layerIndex) =>
-            layer.notes.map((note, noteIndex) => (
-              <button
-                key={`${layerIndex}-${noteIndex}-${note.text}`}
-                type="button"
-                className={localStyles.note}
-                data-iceberg-note="true"
-                data-layer-index={layerIndex}
-                aria-label={note.text}
-                aria-describedby={tooltip.visible && tooltip.text === note.text ? tooltipId : undefined}
-                onClick={stopClusterNavigation}
-                onMouseDown={stopClusterNavigation}
-                onMouseEnter={(event) => showTooltip(event, note.text)}
-                onMouseLeave={hideTooltip}
-                onFocus={(event) => showTooltip(event, note.text)}
-                onBlur={hideTooltip}
-                style={{
-                  left: `${((note.left - visibleX) / visibleWidth) * 100}%`,
-                  top: `${(note.top / VIEWBOX_HEIGHT) * 100}%`,
-                  width: `${(note.width / visibleWidth) * 100}%`,
-                  height: `${(note.height / VIEWBOX_HEIGHT) * 100}%`,
-                  fontSize: `${note.fontSize}px`,
-                  ['--iceberg-line-clamp' as string]: String(note.lineClamp)
-                }}
-              >
-                <span>{note.text}</span>
-              </button>
-            ))
-          )}
-        </div>
-        {noteTooltip}
+          {noteTooltip}
         </div>
       </div>
     </figure>
