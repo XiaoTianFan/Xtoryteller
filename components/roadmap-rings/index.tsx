@@ -145,6 +145,9 @@ interface ItemLayout {
   phaseIndex: number;
   fontSize: number;
   lineClamp: number;
+  /** When set, tangential relaxation keeps the chip center angle inside this arc (degrees). */
+  arcMinAngle?: number;
+  arcMaxAngle?: number;
 }
 
 /** Axis-aligned box for overlap checks (band titles, existing chips). */
@@ -191,8 +194,12 @@ const STRATEGY_ROW_GAP = 12;
 const STRATEGY_MIN_ROW_GAP = 6;
 const INNER_DISK_BOTTOM_PAD = 18;
 
-const ARC_RELAX_MAX_ITER = 48;
-const ARC_RELAX_OUT_STEP = 2.5;
+/** On-circle relaxation: tangential nudges + optional uniform radius bumps in layoutArcChips. */
+const ARC_RELAX_MAX_ITER = 96;
+const ARC_TANGENTIAL_STEP = 1.15;
+/** Radius bump per retry when overlaps remain at the nominal band radius. */
+const ARC_RADIUS_BUMP_PX = 3;
+const ARC_RADIUS_BUMP_MAX = 12;
 
 const SIZE_METRICS: Record<PhaseSize, PhaseMetrics> = {
   sm: {
@@ -863,7 +870,75 @@ function splitItemsAcrossRanges(items: NormalizedItem[], ranges: AngleRange[]) {
   });
 }
 
-function layoutArcRow(
+/**
+ * When the band title anchor sits inside an angular range, keep chips in the larger
+ * contiguous sub-range outside the exclusion wedge so labels and chips do not compete.
+ */
+function applyLabelExclusionToRange(range: AngleRange, labelAnchor: number, exclusion: number): AngleRange {
+  if (!(range.start <= labelAnchor && range.end >= labelAnchor)) {
+    return { ...range };
+  }
+
+  const leftEnd = labelAnchor - exclusion;
+  const rightStart = labelAnchor + exclusion;
+  const leftSpan = Math.max(0, leftEnd - range.start);
+  const rightSpan = Math.max(0, range.end - rightStart);
+
+  if (leftSpan <= 0 && rightSpan <= 0) {
+    return { ...range };
+  }
+
+  if (leftSpan >= rightSpan) {
+    return { start: range.start, end: leftEnd };
+  }
+
+  return { start: rightStart, end: range.end };
+}
+
+function itemAngleDeg(item: ItemLayout, geometry: PhaseGeometry): number {
+  return (Math.atan2(item.y - geometry.centerY, item.x - geometry.centerX) * 180) / Math.PI;
+}
+
+function setItemAtPolar(item: ItemLayout, geometry: PhaseGeometry, angleDeg: number, radius: number): ItemLayout {
+  const p = polarPoint(geometry.centerX, geometry.centerY, radius, angleDeg);
+  return { ...item, x: p.x, y: p.y };
+}
+
+function projectItemToRadius(item: ItemLayout, geometry: PhaseGeometry, radius: number): ItemLayout {
+  return setItemAtPolar(item, geometry, itemAngleDeg(item, geometry), radius);
+}
+
+function clampAngleDeg(deg: number, minA: number, maxA: number): number {
+  return Math.min(Math.max(deg, minA), maxA);
+}
+
+function pushTangentialFromObstacle(
+  item: ItemLayout,
+  geometry: PhaseGeometry,
+  obstacle: LayoutObstacle,
+  targetRadius: number,
+  minA: number,
+  maxA: number
+): ItemLayout {
+  const ang = itemAngleDeg(item, geometry);
+  const rad = degreesToRadians(ang);
+  const tcx = -Math.sin(rad);
+  const tcy = Math.cos(rad);
+  const dx = obstacle.x - item.x;
+  const dy = obstacle.y - item.y;
+  const dot = dx * tcx + dy * tcy;
+  const delta = dot > 0 ? -ARC_TANGENTIAL_STEP : ARC_TANGENTIAL_STEP;
+  const next = clampAngleDeg(ang + delta, minA, maxA);
+  return setItemAtPolar(item, geometry, next, targetRadius);
+}
+
+function stripArcBounds(item: ItemLayout): ItemLayout {
+  const { arcMinAngle: _min, arcMaxAngle: _max, ...rest } = item;
+  return rest;
+}
+
+/** Even angular spacing on one circle across the full usable arc (per disjoint range). */
+function layoutArcRowEven(
   rowItems: NormalizedItem[],
   range: AngleRange,
   rowRadius: number,
@@ -872,22 +947,23 @@ function layoutArcRow(
   section: Exclude<SectionKey, 'strategy'>,
   minDegreesPerItem: number
 ) {
-  if (!rowItems.length) {
+  if (!rowItems.length || range.end <= range.start) {
     return [];
   }
 
   const totalSpan = range.end - range.start;
-  const requiredSpan = Math.min(totalSpan, Math.max(minDegreesPerItem * Math.max(rowItems.length - 1, 1), totalSpan * 0.72));
-  const start = range.start + (totalSpan - requiredSpan) / 2;
-  const end = range.end - (totalSpan - requiredSpan) / 2;
-  const angles = distributeAngles(start, end, rowItems.length);
-  const step = rowItems.length <= 1 ? totalSpan : (end - start) / Math.max(rowItems.length - 1, 1);
+  const angles = distributeAngles(range.start, range.end, rowItems.length);
+  const step = rowItems.length <= 1 ? totalSpan : (range.end - range.start) / Math.max(rowItems.length - 1, 1);
+  /** Half-angle between neighbor centers; caps width so axis-aligned chip boxes can separate on the circle. */
+  const neighborHalfDeg = rowItems.length <= 1 ? totalSpan / 2 : step / 2;
+  const chordCap = 2 * rowRadius * Math.sin(degreesToRadians(neighborHalfDeg * 0.92));
 
   return rowItems.map((item, itemIndex) => {
     const angle = angles[itemIndex];
     const point = polarPoint(geometry.centerX, geometry.centerY, rowRadius, angle);
     const arcWidth = rowRadius * degreesToRadians(Math.max(step * 0.82, minDegreesPerItem - 1));
-    const width = clamp(arcWidth, 84, geometry.outerRadius >= 300 ? 136 : geometry.outerRadius <= 210 ? 112 : 124);
+    const maxChip = geometry.outerRadius >= 300 ? 136 : geometry.outerRadius <= 210 ? 112 : 124;
+    const width = clamp(Math.min(arcWidth, chordCap), 56, maxChip);
     const height = geometry.metrics.bandChipHeight + 4;
     const fontSize = fitChipFontSize(item.label, width - 18, height - 8, 2, 11.25, 7.5);
 
@@ -903,7 +979,9 @@ function layoutArcRow(
       section,
       phaseIndex,
       fontSize,
-      lineClamp: 2
+      lineClamp: 2,
+      arcMinAngle: range.start,
+      arcMaxAngle: range.end
     } satisfies ItemLayout;
   });
 }
@@ -964,59 +1042,74 @@ function anyOverlapsWithObstacles(layouts: ItemLayout[], obstacles: LayoutObstac
   return false;
 }
 
-function pushArcChipOutward(item: ItemLayout, geometry: PhaseGeometry, delta: number): ItemLayout {
-  const dx = item.x - geometry.centerX;
-  const dy = item.y - geometry.centerY;
-  const len = Math.hypot(dx, dy);
-  if (len < 0.5) {
-    return item;
-  }
-  const scale = (len + delta) / len;
-  return {
-    ...item,
-    x: geometry.centerX + dx * scale,
-    y: geometry.centerY + dy * scale
-  };
+function arcLayoutsPass(layouts: ItemLayout[], extraObstacles: LayoutObstacle[]) {
+  return !anyOverlaps(layouts) && !anyOverlapsWithObstacles(layouts, extraObstacles);
 }
 
 /**
- * Pushes chips radially to separate overlaps and clear static obstacles.
- * Bounded iterations; n is small per phase.
+ * Keeps all band chips on `targetRadius`, nudging tangentially to clear overlaps and static obstacles.
+ * Chips stay within their `arcMinAngle` / `arcMaxAngle` wedges (disjoint actor/support arcs per phase).
  */
-function relaxArcChipLayouts(
+function relaxArcChipLayoutsOnCircle(
   layouts: ItemLayout[],
   geometry: PhaseGeometry,
-  staticObstacles: LayoutObstacle[]
+  staticObstacles: LayoutObstacle[],
+  targetRadius: number
 ): ItemLayout[] {
-  const out = layouts.map((l) => ({ ...l }));
+  const boundsFor = (item: ItemLayout) => ({
+    min: item.arcMinAngle ?? -360,
+    max: item.arcMaxAngle ?? 360
+  });
+
+  let out = layouts.map((l) => projectItemToRadius(l, geometry, targetRadius));
+
   for (let iter = 0; iter < ARC_RELAX_MAX_ITER; iter += 1) {
     let changed = false;
 
+    out = out.map((l) => projectItemToRadius(l, geometry, targetRadius));
+
     for (let i = 0; i < out.length; i += 1) {
+      const b = boundsFor(out[i]!);
       for (const o of staticObstacles) {
-        if (boxesObstacleOverlap(out[i], o)) {
-          out[i] = pushArcChipOutward(out[i], geometry, ARC_RELAX_OUT_STEP);
+        if (boxesObstacleOverlap(out[i]!, o)) {
+          out[i] = pushTangentialFromObstacle(out[i]!, geometry, o, targetRadius, b.min, b.max);
           changed = true;
         }
       }
     }
+
+    out = out.map((l) => projectItemToRadius(l, geometry, targetRadius));
+
     for (let i = 0; i < out.length; i += 1) {
       for (let j = i + 1; j < out.length; j += 1) {
-        if (boxesOverlap(out[i], out[j])) {
-          out[j] = pushArcChipOutward(out[j], geometry, ARC_RELAX_OUT_STEP);
-          changed = true;
+        if (!boxesOverlap(out[i]!, out[j]!)) {
+          continue;
         }
+        const bi = boundsFor(out[i]!);
+        const bj = boundsFor(out[j]!);
+        const ai = itemAngleDeg(out[i]!, geometry);
+        const aj = itemAngleDeg(out[j]!, geometry);
+        if (ai <= aj) {
+          const ni = clampAngleDeg(ai - ARC_TANGENTIAL_STEP, bi.min, bi.max);
+          const nj = clampAngleDeg(aj + ARC_TANGENTIAL_STEP, bj.min, bj.max);
+          out[i] = setItemAtPolar(out[i]!, geometry, ni, targetRadius);
+          out[j] = setItemAtPolar(out[j]!, geometry, nj, targetRadius);
+        } else {
+          const ni = clampAngleDeg(ai + ARC_TANGENTIAL_STEP, bi.min, bi.max);
+          const nj = clampAngleDeg(aj - ARC_TANGENTIAL_STEP, bj.min, bj.max);
+          out[i] = setItemAtPolar(out[i]!, geometry, ni, targetRadius);
+          out[j] = setItemAtPolar(out[j]!, geometry, nj, targetRadius);
+        }
+        changed = true;
       }
     }
+
     if (!changed) {
       break;
     }
   }
-  return out;
-}
 
-function arcLayoutsPass(layouts: ItemLayout[], extraObstacles: LayoutObstacle[]) {
-  return !anyOverlaps(layouts) && !anyOverlapsWithObstacles(layouts, extraObstacles);
+  return out.map((l) => projectItemToRadius(l, geometry, targetRadius));
 }
 
 export function layoutArcChips(
@@ -1034,64 +1127,41 @@ export function layoutArcChips(
   const ringThickness = geometry.outerRadius - geometry.innerRadius;
   const baseRadius = geometry.innerRadius + ringThickness * config.ringFactor;
   const rangeGroups = splitItemsAcrossRanges(items, config.ranges);
+  const labelAnchor = config.label.anchorAngle;
+  const minR = geometry.innerRadius + 18;
+  const maxR = geometry.outerRadius - 14;
 
-  const perRange: ItemLayout[][] = [];
+  let lastCleaned: ItemLayout[] = [];
 
-  for (const { range, items: rangeItems } of rangeGroups) {
-    if (!rangeItems.length) {
-      continue;
-    }
+  for (let bump = 0; bump < ARC_RADIUS_BUMP_MAX; bump += 1) {
+    const rowRadius = clamp(baseRadius + bump * ARC_RADIUS_BUMP_PX, minR, maxR);
+    const perRange: ItemLayout[][] = [];
 
-    const labelAnchor = config.label.anchorAngle;
-    let adjustedRange = { ...range };
-    if (range.start <= labelAnchor && range.end >= labelAnchor) {
-      adjustedRange = {
-        start: range.start,
-        end: labelAnchor - BAND_LABEL_EXCLUSION
-      };
-    }
-
-    const span = Math.max(1, adjustedRange.end - adjustedRange.start);
-    const computedRows = Math.ceil((rangeItems.length * config.minDegreesPerItem) / span);
-    let rowCount = clamp(Math.max(config.preferredRows, computedRows), 1, 3);
-    let layouts: ItemLayout[] = [];
-
-    while (rowCount <= 3) {
-      const rows = splitIntoRows(rangeItems, rowCount);
-      const rowOffsets = rowCount === 1
-        ? [0]
-        : Array.from({ length: rowCount }, (_, index) => (index - (rowCount - 1) / 2) * config.rowSpacing);
-
-      layouts = rows.flatMap((rowItems, rowIndex) => {
-        const rowRadius = clamp(
-          baseRadius + rowOffsets[Math.min(rowIndex, rowOffsets.length - 1)],
-          geometry.innerRadius + 18,
-          geometry.outerRadius - 14
-        );
-
-        return layoutArcRow(
-          rowItems,
-          adjustedRange,
-          rowRadius,
-          geometry,
-          phaseIndex,
-          section,
-          config.minDegreesPerItem
-        );
-      });
-
-      if (arcLayoutsPass(layouts, extraObstacles)) {
-        break;
+    for (const { range, items: rangeItems } of rangeGroups) {
+      if (!rangeItems.length) {
+        continue;
       }
 
-      rowCount += 1;
+      let adjustedRange = applyLabelExclusionToRange(range, labelAnchor, BAND_LABEL_EXCLUSION);
+      if (adjustedRange.end <= adjustedRange.start) {
+        adjustedRange = { ...range };
+      }
+
+      perRange.push(
+        layoutArcRowEven(rangeItems, adjustedRange, rowRadius, geometry, phaseIndex, section, config.minDegreesPerItem)
+      );
     }
 
-    perRange.push(layouts);
+    const merged = perRange.flat();
+    const relaxed = relaxArcChipLayoutsOnCircle(merged, geometry, extraObstacles, rowRadius);
+    lastCleaned = relaxed.map(stripArcBounds);
+
+    if (arcLayoutsPass(lastCleaned, extraObstacles)) {
+      return lastCleaned;
+    }
   }
 
-  const merged = perRange.flat();
-  return relaxArcChipLayouts(merged, geometry, extraObstacles);
+  return lastCleaned;
 }
 
 /**

@@ -114,6 +114,10 @@ describe('roadmap-rings layout', () => {
     const all = [...strategyLayouts, ...actorLayouts, ...supportLayouts];
     for (let i = 0; i < all.length; i += 1) {
       for (let j = i + 1; j < all.length; j += 1) {
+        if (aabbOverlap(all[i]!, all[j]!)) {
+          // eslint-disable-next-line no-console -- debug overlap pairs
+          console.log('overlap', i, j, all[i], all[j]);
+        }
         expect(aabbOverlap(all[i]!, all[j]!)).toBe(false);
       }
     }
