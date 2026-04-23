@@ -108,6 +108,8 @@ interface TitleLayout {
   subtitleStartY: number;
   totalHeight: number;
   titleBottom: number;
+  /** Y below the last ink (baselines + descent); not the symmetric `centerY+totalH/2` box. Used for strategy chip Y. */
+  centerTextBlockBottom: number;
 }
 
 interface BandLabelPlacement {
@@ -185,10 +187,10 @@ const ACTOR_LABEL_ANGLE = 270;
 const SUPPORT_LABEL_ANGLE = 90;
 const BAND_LABEL_EXCLUSION = 16;
 
-/** Pixels between headline bottom and the strategy **band** (before first row). */
-const STRATEGY_BAND_TITLE_CLEARANCE_PHASE01 = 34;
-const STRATEGY_BAND_TITLE_CLEARANCE_PRACTICE = 24;
-const STRATEGY_FIRST_ROW_INSET = 6;
+/** EM units below the last line baseline; matches painted tail of the center SVG text. */
+const STRATEGY_TITLE_INK_DESCENT_EM = 0.36;
+/** Pixels from ink bottom to the top edge of the first strategy row (not scaled by ring size). */
+const STRATEGY_INK_TO_FIRST_CHIP_TOP = 6;
 /** Gap between strategy row centers (4+ items). */
 const STRATEGY_ROW_GAP = 12;
 const STRATEGY_MIN_ROW_GAP = 6;
@@ -488,7 +490,8 @@ function offsetTitleLayout(layout: TitleLayout, offsetY: number): TitleLayout {
     ...layout,
     titleStartY: layout.titleStartY + offsetY,
     subtitleStartY: layout.subtitleStartY + offsetY,
-    titleBottom: layout.titleBottom + offsetY
+    titleBottom: layout.titleBottom + offsetY,
+    centerTextBlockBottom: layout.centerTextBlockBottom + offsetY
   };
 }
 
@@ -630,6 +633,22 @@ function computeTitleLayout(phase: NormalizedPhase, geometry: PhaseGeometry): Ti
   const totalHeight = titleHeight + gap + subtitleHeight;
   const titleTop = geometry.centerY - totalHeight / 2;
   const subtitleTop = titleTop + titleHeight + gap;
+  const titleStartY = titleTop + titleFontSize * 0.88;
+  const subtitleStartY = subtitleTop + subtitleFontSize * 0.88;
+  const symmetricBoxBottom = geometry.centerY + totalHeight / 2;
+  const lastTitleBaselineY =
+    titleLines.length > 0 ? titleStartY + (titleLines.length - 1) * titleLineHeight : titleStartY;
+  const lastSubtitleBaselineY =
+    subtitleLines.length > 0
+      ? subtitleStartY + (subtitleLines.length - 1) * subtitleLineHeight
+      : lastTitleBaselineY;
+  const hasLines = titleLines.length > 0 || subtitleLines.length > 0;
+  const lastLineFontSize = subtitleLines.length > 0 ? subtitleFontSize : titleFontSize;
+  const lastBaselineY = subtitleLines.length > 0 ? lastSubtitleBaselineY : lastTitleBaselineY;
+  const inkBottom = hasLines ? lastBaselineY + lastLineFontSize * STRATEGY_TITLE_INK_DESCENT_EM : symmetricBoxBottom;
+  // Do not use `Math.max(…, symmetricBoxBottom)`: the centered layout leaves empty space under the
+  // last line; the symmetric box bottom is far below the ink and was creating a false gap to chips.
+  const centerTextBlockBottom = inkBottom;
 
   return {
     titleLines,
@@ -638,10 +657,11 @@ function computeTitleLayout(phase: NormalizedPhase, geometry: PhaseGeometry): Ti
     subtitleFontSize,
     titleLineHeight,
     subtitleLineHeight,
-    titleStartY: titleTop + titleFontSize * 0.88,
-    subtitleStartY: subtitleTop + subtitleFontSize * 0.88,
+    titleStartY,
+    subtitleStartY,
     totalHeight,
-    titleBottom: geometry.centerY + totalHeight / 2
+    titleBottom: symmetricBoxBottom,
+    centerTextBlockBottom
   };
 }
 
@@ -745,12 +765,12 @@ function resolveSectionArcConfig(phaseIndex: number, section: Exclude<SectionKey
   const label = section === 'actors'
     ? {
         anchorAngle: ACTOR_LABEL_ANGLE,
-        ringFactor: 0.55,
+        ringFactor: 0.53,
         radialOffset: 0
       }
     : {
         anchorAngle: SUPPORT_LABEL_ANGLE,
-        ringFactor: 0.53,
+        ringFactor: 0.51,
         radialOffset: 0
       };
 
@@ -763,7 +783,7 @@ function resolveSectionArcConfig(phaseIndex: number, section: Exclude<SectionKey
         ],
         label,
         preferredRows: 2,
-        ringFactor: 0.74,
+        ringFactor: 0.72,
         rowSpacing: 18,
         minDegreesPerItem: 23
       };
@@ -777,7 +797,7 @@ function resolveSectionArcConfig(phaseIndex: number, section: Exclude<SectionKey
         ],
         label,
         preferredRows: 2,
-        ringFactor: 0.72,
+        ringFactor: 0.7,
         rowSpacing: 20,
         minDegreesPerItem: 22
       };
@@ -790,7 +810,7 @@ function resolveSectionArcConfig(phaseIndex: number, section: Exclude<SectionKey
       ],
       label,
       preferredRows: 2,
-      ringFactor: 0.72,
+      ringFactor: 0.7,
       rowSpacing: 22,
       minDegreesPerItem: 21
     };
@@ -804,7 +824,7 @@ function resolveSectionArcConfig(phaseIndex: number, section: Exclude<SectionKey
       ],
       label,
       preferredRows: 2,
-      ringFactor: 0.68,
+      ringFactor: 0.66,
       rowSpacing: 16,
       minDegreesPerItem: 22
     };
@@ -818,7 +838,7 @@ function resolveSectionArcConfig(phaseIndex: number, section: Exclude<SectionKey
       ],
       label,
       preferredRows: 2,
-      ringFactor: 0.67,
+      ringFactor: 0.65,
       rowSpacing: 18,
       minDegreesPerItem: 21
     };
@@ -831,7 +851,7 @@ function resolveSectionArcConfig(phaseIndex: number, section: Exclude<SectionKey
     ],
     label,
     preferredRows: 2,
-    ringFactor: 0.66,
+    ringFactor: 0.64,
     rowSpacing: 20,
     minDegreesPerItem: 20
   };
@@ -1203,40 +1223,32 @@ export function layoutArcChips(
 
 /**
  * Row 0 = upper (smaller Y), row 1 = lower (larger Y). Y increases downward.
- * Uses a fixed inset from the strategy band top (below title + clearance), not scaled fractions of height.
+ * `centerTextBlockBottom` is ink bottom from `TitleLayout` (not the symmetric text box, not the ring center).
  */
 function computeStrategyRowCentersY(
   rowCount: 1 | 2,
-  titleBottom: number,
+  centerTextBlockBottom: number,
   geometry: PhaseGeometry,
-  phaseIndex: number,
   chipHeight: number
 ): number[] {
-  const titleClearance =
-    phaseIndex < 2 ? STRATEGY_BAND_TITLE_CLEARANCE_PHASE01 : STRATEGY_BAND_TITLE_CLEARANCE_PRACTICE;
-  const topBoundary = Math.max(geometry.centerY + 18, titleBottom + titleClearance);
   const bottomBoundary = geometry.centerY + geometry.innerRadius - INNER_DISK_BOTTOM_PAD;
   const maxLowerRowCenterY = bottomBoundary - chipHeight / 2;
-  const firstRowCenterY = topBoundary + STRATEGY_FIRST_ROW_INSET + chipHeight / 2;
+  const firstRowCenterY = centerTextBlockBottom + STRATEGY_INK_TO_FIRST_CHIP_TOP + chipHeight / 2;
   const minCenterSep = chipHeight + STRATEGY_MIN_ROW_GAP;
   const preferredSep = chipHeight + STRATEGY_ROW_GAP;
-  const maxUpperForTwoRows = maxLowerRowCenterY - minCenterSep;
 
   if (rowCount === 1) {
     return [Math.min(firstRowCenterY, maxLowerRowCenterY)];
   }
 
-  let upperCenter = Math.min(firstRowCenterY, maxUpperForTwoRows);
+  // Two rows: only the upper row is anchored to the center text (via `topBoundary` + first-row
+  // vertical metrics). The lower row is placed by spacing from `upperCenter`; it may extend below
+  // the inner disk — no `maxLowerRowCenterY` cap (4+ items always use two rows, never a single row).
+  const upperCenter = firstRowCenterY;
   let lowerCenter = upperCenter + preferredSep;
-  if (lowerCenter > maxLowerRowCenterY) {
-    lowerCenter = maxLowerRowCenterY;
-    upperCenter = lowerCenter - preferredSep;
-    if (upperCenter < firstRowCenterY) {
-      upperCenter = Math.min(firstRowCenterY, maxUpperForTwoRows);
-      lowerCenter = Math.min(upperCenter + minCenterSep, maxLowerRowCenterY);
-    }
+  if (lowerCenter < upperCenter + minCenterSep) {
+    lowerCenter = upperCenter + minCenterSep;
   }
-
   return [upperCenter, lowerCenter];
 }
 
@@ -1244,16 +1256,16 @@ export function layoutInnerStrategyChips(
   items: NormalizedItem[],
   geometry: PhaseGeometry,
   phaseIndex: number,
-  titleBottom: number
+  centerTextBlockBottom: number
 ) {
   if (!items.length) {
     return [];
   }
 
-  const rowCount: 1 | 2 = items.length >= 4 ? 2 : 1;
-  const rows = splitIntoRows(items, rowCount);
   const height = geometry.metrics.strategyChipHeight + 6;
-  const rowYs = computeStrategyRowCentersY(rowCount, titleBottom, geometry, phaseIndex, height);
+  const rowCount: 1 | 2 = items.length >= 4 ? 2 : 1;
+  const rowYs = computeStrategyRowCentersY(rowCount, centerTextBlockBottom, geometry, height);
+  const rows = splitIntoRows(items, rowCount);
 
   return rows.flatMap((rowItems, rowIndex) => {
     const y = rowYs[Math.min(rowIndex, rowYs.length - 1)];
@@ -1473,7 +1485,7 @@ export default function RoadmapRings({ props }: { props?: Record<string, unknown
       phase.strategy.items,
       geometry,
       index,
-      titleLayouts[index].titleBottom
+      titleLayouts[index].centerTextBlockBottom
     );
     const baseObstacles: LayoutObstacle[] = [
       ...strategyLayouts.map(itemToObstacle),
@@ -1528,7 +1540,7 @@ export default function RoadmapRings({ props }: { props?: Record<string, unknown
                   data-center-x={geometry.centerX}
                   data-center-y={geometry.centerY}
                   data-outer-radius={geometry.outerRadius}
-                  data-title-bottom={titleLayout.titleBottom}
+                  data-title-bottom={titleLayout.centerTextBlockBottom}
                   className={localStyles.phase}
                   style={{ ['--phase-color' as string]: geometry.color } as CSSProperties}
                 >
@@ -1635,7 +1647,7 @@ export default function RoadmapRings({ props }: { props?: Record<string, unknown
               <RoadmapChip
                 key={`${item.section}-${item.key}-${item.phaseIndex}`}
                 item={item}
-                titleBoundary={titleLayout.titleBottom}
+                titleBoundary={titleLayout.centerTextBlockBottom}
                 phaseCenterY={geometry.centerY}
                 viewBoxWidth={viewBoxWidth}
                 viewBoxHeight={viewBoxHeight}

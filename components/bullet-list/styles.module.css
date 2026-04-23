@@ -8,6 +8,12 @@
   line-height: 1.45;
 }
 
+.list :global(p) {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
 .item {
   opacity: 0.35;
   transition:

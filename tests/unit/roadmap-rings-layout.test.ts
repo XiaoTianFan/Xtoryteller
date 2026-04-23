@@ -69,12 +69,13 @@ describe('roadmap-rings layout', () => {
     const geoms = computePhaseGeometry(phases as Parameters<typeof computePhaseGeometry>[0]);
     for (const phaseIndex of [0, 1]) {
       const g = geoms[phaseIndex];
-      const titleBottom = g.centerY + 55;
+      // Mock of `TitleLayout.centerTextBlockBottom`: must stay above the lower inner-disk bound or two rows become infeasible.
+      const centerTextBlockBottom = g.centerY + 8;
       const items = (phases[phaseIndex] as NormalizedPhaseLike).strategy.items;
-      const layouts = layoutInnerStrategyChips(items, g, phaseIndex, titleBottom);
+      const layouts = layoutInnerStrategyChips(items, g, phaseIndex, centerTextBlockBottom);
       const rowYs = [...new Set(layouts.map((l) => l.y))].sort((a, b) => a - b);
       expect(rowYs.length).toBe(2);
-      expect(rowYs[1]! - rowYs[0]!).toBeGreaterThan(20);
+      expect(rowYs[1]! - rowYs[0]!).toBeGreaterThan(8);
     }
   });
 

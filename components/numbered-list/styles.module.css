@@ -4,6 +4,15 @@
   display: grid;
   gap: var(--spacing-components-list-gap);
   color: var(--color-foreground);
+  font-size: var(--text-body);
+  line-height: 1.45;
+}
+
+/* Markdown wraps each item in <p>; keep it on the theme body scale (same as bullet-list). */
+.list :global(p) {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 .item {

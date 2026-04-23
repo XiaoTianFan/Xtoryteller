@@ -58,8 +58,9 @@ If the user has not committed to art direction after Phase 1 or needs to compare
 - Prefer built-in primitives and theme tokens before inventing new code.
 - Prefer shared background presets via `presetRef` from the background registry before inventing a new reusable Paper Shader look.
 - When a Paper Shader background needs extra text legibility, prefer the built-in `background.filter` overlay before replacing the preset or flattening the background to CSS.
+- **Stage pitch / vision default (Paper Shader themes):** when the deck locks to a named `theme` that uses a Paper Shader `presetRef`, also set presentation-level `background` with the **same** `presetRef` and a **`filter` using `mode: linear-vertical-reverse`** so a vertical dark-gradient veil improves center readability (typical tuning: `opacity` ~0.64–0.72, `linearProportion` ~0.65–0.76). Canonical YAML: `presentations/human-ai-music-insight-brief/presentation.yaml`. Skip only if the brief explicitly wants a flat theme background or a different filter recipe.
 - Omit `theme` when the presentation should inherit the dashboard-selected global theme. Add `theme: <slug>` only when the deck must lock to a reusable theme.
-- Let the theme own the default background when possible. Add presentation-level `background` only for overrides that should not follow theme switching.
+- Let the theme own the default background when possible. Add presentation-level `background` only for overrides that should not follow theme switching—**except** follow the Stage pitch / vision default above when generating dense speaker-led decks.
 - Treat the shipped demos as canonical references: `simple-stage`, `simple-map`, `complex-stage`, `complex-map`.
 - For long Stage decks, treat structure as a first-class task: section resets, legible step purpose, usable navigation at scale.
 - For new presentation generation, use [presentation-storytelling-mode.md](references/guides/presentation-storytelling-mode.md) to capture speaking context, route the scenario, understand materials, create a story spine, and score narrative completeness before composing YAML unless the user explicitly skipped this prep.
@@ -147,6 +148,7 @@ Use these when repeated scaffolding would otherwise become manual and fragile.
 
 - Never treat Xtoryteller as a generic HTML deck generator when the runtime primitives can express the result.
 - Never hardcode a presentation `theme` or `background` in a canonical demo unless the point of that demo is specifically to prove local overrides.
+- For non-canonical, speaker-led Stage decks on Paper Shader themes, prefer the **insight-brief vertical gradient veil** (`background.filter.mode: linear-vertical-reverse` on the theme’s `presetRef`) as the default legibility move—see Phase 4 “Stage pitch / vision default.”
 - Never cram content into a layout; split steps or clusters instead.
 - Never rely on page growth, overflow, or scrolling to save a crowded Stage step.
 - Never solve repeated visual drift with scattered hardcoded CSS values when the design belongs in the theme token system.

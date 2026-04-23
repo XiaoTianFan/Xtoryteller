@@ -1,0 +1,1110 @@
+meta:
+  title: Pluralistic Music Infrastructure — Intervention Vision
+  slug: human-ai-music-intervention-vision
+  description: >-
+    Intervention vision for the AI music system transition: outcomes, four
+    parallel workstreams, and a phased path to 2040—with the operational detail
+    practitioners need.
+  author: Xtoryteller
+  tags:
+    - stage
+    - ai
+    - music
+    - systems
+    - intervention
+    - roadmap
+    - outcome-map
+  createdAt: '2026-04-23'
+  updatedAt: '2026-04-23'
+  thumbnail: ./assets/thumbnail.png
+mode: stage
+theme: electric-studio
+background:
+  type: paper-shader
+  presetRef: ember-truchet
+  filter:
+    mode: linear-vertical-reverse
+    opacity: 0.66
+    linearProportion: 0.72
+themeOverrides:
+  colors:
+    primary: '#ff6b2c'
+    secondary: '#18c3b0'
+  typography:
+    h1: clamp(3.1rem, 5.5vw, 5.9rem)
+    h2: clamp(2.3rem, 3.45vw, 3.7rem)
+    h3: clamp(1.55rem, 2.3vw, 2.25rem)
+    body: clamp(1.15rem, 1.32vw, 1.27rem)
+    small: clamp(0.92rem, 1.1vw, 1.06rem)
+    lead: clamp(1.27rem, 1.7vw, 1.5rem)
+    code: clamp(1rem, 1.15vw, 1.13rem)
+    components:
+      shell:
+        eyebrow: 0.92rem
+        hero: clamp(2.9rem, 5.75vw, 5.75rem)
+        lead: clamp(1.15rem, 1.73vw, 1.38rem)
+        meta: 1.06rem
+        card-title: 1.73rem
+        chip: 0.98rem
+        thumbnail: 2.3rem
+        cluster-title: 1.09rem
+        shortcut-key: 1.04rem
+      feature:
+        title: clamp(1.38rem, 2.3vw, 1.84rem)
+      stat:
+        value: clamp(2.3rem, 4.6vw, 3.68rem)
+      comparison:
+        divider: clamp(1.38rem, 2.3vw, 2.07rem)
+      diagram:
+        label: 16px
+      blockquote:
+        large: clamp(1.85rem, 3.45vw, 3.1rem)
+steps:
+  - id: opening
+    title: Opening
+    description: >-
+      Stakes of the transition: infrastructure, livelihoods, and cultural
+      pluralism—not a single-product story.
+    layout: title-center
+    transition: fade
+    components:
+      - type: label
+        content: Intervention vision · 2025–2040
+        props: { tone: primary }
+      - type: headline
+        content: Shape a pluralistic music system on purpose
+        props: { level: 1, align: center }
+        style:
+          maxWidth: 14ch
+          fontSize: clamp(3.7rem, 6vw, 6.2rem)
+          lineHeight: 0.95
+      - type: subtitle
+        content: |
+          An outcome map, four parallel approaches to action, and a phased roadmap
+          from pilots to regime—so human creativity and AI tools coexist under
+          transparent, democratic rules.
+        props: { align: center }
+        style:
+          maxWidth: 46rem
+          lineHeight: 1.35
+      - type: footnote
+        content: >-
+          Source: AI music system transition planning materials (outcomes and
+          sequencing).
+
+  - id: section-outcome-map
+    title: Section — Outcome Map
+    description: Outcome map — introduction.
+    layout: section-header
+    transition: slide-up
+    components:
+      - type: label
+        content: Part I
+        props: { tone: secondary }
+        style: { position: absolute, bottom: 'calc(50% + 2.5rem)' }
+      - type: headline
+        content: The Outcome Vision
+        props: { level: 1, align: left }
+
+  - id: tension-comparison
+    title: Structural Tension
+    description: >-
+      Default trajectory vs intervention intent for music AI infrastructure.
+    layout: comparison-layout
+    layoutProps:
+      divider: arrow
+    transition: slide-left
+    components:
+      - type: body-text
+        content: |
+          *Default drift — extraction, opacity, homogenization*
+
+          Training and distribution concentrate power in a few platforms and
+          model suppliers. Royalties dilute as synthetic supply explodes.
+          Representation skews Global North because data and capital skew the
+          same way—then models export that skew as “normal.”
+      - type: body-text
+        content: |
+          *Intervention intent — consent, pluralism, transparent value*
+
+          Treat music AI as shared infrastructure: verifiable consent for
+          training, cultural diversity by design, provenance consumers can trust,
+          and economics that reward context—not only volume.
+
+  - id: horizon-2040
+    title: Horizon 2040
+    description: >-
+      Long-range horizon for regenerative pluralism in global music systems.
+    layout: single-content
+    transition: blur
+    components:
+      - type: blockquote
+        content: >-
+          By 2040, global music systems embody regenerative pluralism: diverse
+          cultural traditions thrive, artists earn sustainable livelihoods
+          through transparent value systems, and human creativity coexists with
+          AI innovation under democratic governance.
+        props:
+          variant: large
+          attribution: '2040'
+
+  - id: strategic-outcomes-mindmap
+    title: Four Strategic Outcomes
+    description: >-
+      Four strategic outcomes that feed the sustaining purpose.
+    layout: content-left-media-right
+    transition: slide-left
+    components:
+      - type: body-text
+        content: |
+          **Four strategic outcomes**
+
+          **A.** Data sovereignty and consent infrastructure — rules and registries
+          that make training a negotiated use of creative work, not a silent default.
+
+          **B.** Cultural pluralism in AI systems — datasets, benchmarks, and
+          fine-tuning access that break homogenizing feedback loops.
+
+          **C.** Transparent value distribution — disclosure, provenance, and payout
+          logic listeners and artists can audit.
+
+          **D.** Regenerative cultural economy — public goods framing, meaning labor,
+          and climate-aligned compute as first-class costs.
+      - type: mind-map
+        props:
+          root: { label: Pluralistic ecosystem }
+          branches:
+            - { label: 'A · Consent infrastructure' }
+            - { label: 'B · Pluralism in models' }
+            - { label: 'C · Transparent value' }
+            - { label: 'D · Regenerative economics' }
+
+  - id: section-impacts
+    title: Section — Impacts
+    description: Six impacts on livelihoods, culture, governance, and climate.
+    layout: title-left
+    transition: slide-up
+    components:
+      - type: label
+        content: Part II
+        props: { tone: primary }
+      - type: headline
+        content: The six impacts
+        props: { level: 2 }
+      - type: subtitle
+        content: >-
+          Each is a measurable shift in lived experience—income, agency,
+          heritage, trust, well-being, and planetary boundaries.
+
+  - id: impact-cycle
+    title: Impact Momentum
+    description: >-
+      How resilience, autonomy, preservation, transparency, well-being, and
+      climate reinforce each other.
+    layout: media-left-content-right
+    transition: slide-left
+    components:
+      - type: cycle-diagram
+        props:
+          direction: clockwise
+          stages:
+            - { label: Economic resilience, icon: coins }
+            - { label: Creative autonomy, icon: pen-line }
+            - { label: Cultural preservation, icon: globe-2 }
+            - { label: Democratic transparency, icon: eye }
+            - { label: Collective well-being, icon: heart-pulse }
+            - { label: Net-zero infrastructure, icon: leaf }
+      - type: body-text
+        content: |
+          **Economic resilience** diversifies income: streaming, training
+          micro-royalties, patronage, meaning-labor markets, and public support
+          pilots—so artists are not trapped in infinite release volume.
+
+          **Creative autonomy** means artists steer vision and data; AI is
+          instrumented tooling with explicit permissions—not silent substitution.
+
+          **Cultural preservation** protects living traditions (especially Global
+          South and Indigenous repertoires) with governance over digitization and
+          reuse.
+
+          **Democratic transparency** gives listeners real choice and gives
+          regulators interoperable evidence chains.
+
+          **Psychological well-being** rises when extraction anxiety is replaced
+          by legible futures.
+
+          **Environmental sustainability** makes carbon and compute efficiency
+          non-optional design constraints.
+
+  - id: impact-detail-economic-cultural
+    title: Livelihoods And Cultural Equity
+    description: >-
+      Economic resilience, creative autonomy, and cultural preservation—in
+      practice.
+    layout: asymmetric-split
+    layoutProps:
+      ratio: 40-60
+      ornamentAnchor: top-right
+    transition: blur
+    components:
+      - type: numbered-list
+        props:
+          items:
+            - >-
+              **Economic resilience:** training-data micro-royalties flowing
+              through PROs and new registries; diversified income from
+              patronage, teaching, curation, and public pilot programs so
+              artists are not locked into infinite release volume; collective
+              bargaining through co-ops when consent infrastructure exists.
+            - >-
+              **Creative autonomy:** clear separation between research / PEFT
+              use and commercial deployment; artist veto or delay on sensitive
+              catalog uses; tools are instrumented with permissions—AI as
+              opted-in assist, not silent replacement of authorship.
+            - >-
+              **Cultural preservation:** community-led digitization with
+              governance and revenue-return clauses; cultural provenance in
+              metadata standards; published diversity scorecards for major
+              training corpora; indigenous and Global South repertoires archived
+              with consent, not scraped under extractive defaults.
+      - type: callout
+        props: { variant: important, title: Why these three stay together }
+        content: >-
+          Fair pay without pluralism still funds homogenization. Pluralism
+          without economics leaves archives and languages unfunded. Income,
+          agency, and living heritage have to advance together or the system
+          reverts to extraction.
+
+  - id: impact-detail-transparency-climate
+    title: Transparency To Climate
+    description: >-
+      Democratic transparency, well-being, and environmental sustainability—in
+      practice.
+    layout: asymmetric-split
+    layoutProps:
+      ratio: 40-60
+      ornamentAnchor: top-right
+    transition: slide-up
+    components:
+      - type: numbered-list
+        props:
+          items:
+            - >-
+              **Democratic transparency:** mandatory generation-method
+              disclosure in distribution metadata; human-certified listening
+              paths; C2PA-grade signing where fraud is material;
+              multi-stakeholder boards shaping “quality” and payout rules so
+              criteria are contestable, not private.
+            - >-
+              **Psychological well-being:** honest UX—listeners are not tricked
+              about origin; artists see payout and ranking logic in plain
+              language; reduced extraction anxiety when consent and income
+              floors are real; healthier artist–audience relationships when
+              context is valued.
+            - >-
+              **Environmental sustainability:** renewable procurement for
+              streaming and training clusters; gCO₂e labels where they inform
+              choices; efficiency tiers and incentives for smaller,
+              fit-for-purpose models; climate treated as infrastructure cost,
+              not an externality.
+      - type: callout
+        props: { variant: note, title: Why the second three matter }
+        content: >-
+          Legibility without well-being becomes surveillance theater. Well-being
+          without climate accountability passes the harm to the next decade.
+          Transparency, trust, and net-zero compute are one envelope for
+          legitimate scale.
+
+  - id: section-approaches
+    title: Section — Approaches
+    description: >-
+      Four parallel intervention approaches: consent, pluralism, value,
+      regeneration.
+    layout: section-header
+    transition: scale-out
+    components:
+      - type: label
+        content: Part III
+        props: { tone: secondary }
+        style: { position: absolute, bottom: 'calc(50% + 2.5rem)' }
+      - type: headline
+        content: Four approaches to intervention
+        props: { level: 1, align: left }
+
+  - id: approach-one-sovereignty
+    title: Approach 1 — Data Sovereignty
+    description: >-
+      Turn consent from principle into operating infrastructure with named
+      programs, owners, and proof points.
+    layout: grid-2x2
+    transition: slide-left
+    components:
+      - type: feature-card
+        props:
+          eyebrow: Registry layer
+          title: Federated consent registries
+        content: |
+          Public lookup APIs, opt-in / opt-out lifecycle controls, and PRO-linked
+          identity records let artists verify dataset presence instead of guessing.
+      - type: feature-card
+        props:
+          eyebrow: Legal layer
+          title: Training-rights templates
+        content: |
+          WIPO, EU, and US-aligned clauses define model training as a distinct
+          licensed use, so training moves out of the loophole zone.
+      - type: feature-card
+        props:
+          eyebrow: Payment layer
+          title: Micro-royalty distribution rails
+        content: |
+          PRO mandate extensions tie model-usage telemetry to transparent
+          statements, creating a new royalty line instead of silent extraction.
+      - type: feature-card
+        props:
+          eyebrow: Field capacity
+          title: Multilingual artist field schools
+        content: |
+          Practical workshops teach rights registration, revocation, licensing,
+          and collective bargaining so the infrastructure is usable outside elite circles.
+
+  - id: approach-one-proof
+    title: Approach 1 — Preconditions And First Proof
+    description: >-
+      What must be true for sovereignty infrastructure to stick, and what the
+      first successful cohort would show.
+    layout: comparison-layout
+    layoutProps:
+      divider: arrow
+    transition: blur
+    components:
+      - type: body-text
+        content: |
+          **Preconditions**
+
+          Court rulings or statute must clarify that training is
+          consent-governed. EU-US baseline alignment, ISO-style training-status
+          metadata, €50M+ seed infrastructure, and PRO governance reform are the
+          minimum stack for legitimacy.
+      - type: body-text
+        content: |
+          **First proof of success**
+
+          A 2027 pilot should let artists verify presence in datasets, force
+          commercial licensing or enforcement, show training-royalty lines on
+          statements, and give co-ops real bargaining power. The visible norm
+          shift is simple: consent-first stops feeling exceptional.
+
+  - id: approach-two-pluralism
+    title: Approach 2 — Cultural Pluralism
+    description: >-
+      Break homogenization with stewarded data expansion, local model access,
+      public benchmarks, and value routes back to source communities.
+    layout: grid-2x2
+    transition: blur
+    components:
+      - type: feature-card
+        props:
+          eyebrow: Archive strategy
+          title: Global South digitization funds
+        content: |
+          UNESCO and ministry-backed digitization programs should finance
+          community-led archives instead of extractive scraping tours by outsiders.
+      - type: feature-card
+        props:
+          eyebrow: Model access
+          title: Open PEFT toolkits + scholarships
+        content: |
+          Parameter-efficient fine-tuning resources, compute grants, and
+          technical training give smaller institutions a path to local model steering.
+      - type: feature-card
+        props:
+          eyebrow: Accountability
+          title: Diversity scorecards
+        content: |
+          Annual reporting on geography, tradition, and language mix makes
+          under-representation measurable and enforceable.
+      - type: feature-card
+        props:
+          eyebrow: Value return
+          title: Cultural provenance standards
+        content: |
+          Metadata should trace not only artists but traditions and source
+          communities, so commercial reuse can route credit and revenue back.
+
+  - id: approach-two-proof
+    title: Approach 2 — What Pluralism Looks Like In Practice
+    description: >-
+      The point is not symbolic inclusion; it is model competence, market
+      recognition, and governance power for underrepresented traditions.
+    layout: media-left-content-right
+    transition: slide-left
+    components:
+      - type: org-chart
+        props:
+          direction: top-bottom
+          root:
+            label: Stewarded pluralism
+            detail: Governance + access + recognition
+            children:
+              - label: Community archives
+                detail: Consent + legal control
+                children:
+                  - label: Model fluency
+                    detail: Maqam, Hindustani, polyrhythms
+                  - label: Market visibility
+                    detail: Discovery + payouts
+      - type: numbered-list
+        props:
+          items:
+            - >-
+              **Representation changes** — major datasets move toward **50/50
+              Global North-South balance** instead of reproducing current skew.
+            - >-
+              **Model competence expands** — systems become fluent in
+              repertoires such as Maqam, Hindustani classical, and West African
+              polyrhythms.
+            - >-
+              **Governance becomes visible** — communities publish digitization
+              rules and provenance pathways instead of being treated as raw
+              input.
+            - >-
+              **The epistemic default changes** — Western music theory stops
+              acting as the silent standard for what counts as legible or
+              valuable.
+
+  - id: approach-three-transparency
+    title: Approach 3 — Transparent Value
+    description: >-
+      Make value flows inspectable with interoperable labeling, listener choice,
+      payout redesign, and cryptographic provenance.
+    layout: grid-2x2
+    transition: slide-left
+    components:
+      - type: feature-card
+        props:
+          eyebrow: Metadata mandate
+          title: Generation-method disclosure
+        content: |
+          Regulatory and platform rules surface human, AI-assisted, and fully
+          AI-generated status in distribution metadata instead of burying origin.
+      - type: feature-card
+        props:
+          eyebrow: Listener UX
+          title: Human Certified filters
+        content: |
+          One-click filters and badges let listeners act on values the way
+          organic or fair-trade labels changed other markets.
+      - type: feature-card
+        props:
+          eyebrow: Payout redesign
+          title: Quality-weighted royalty pilots
+        content: |
+          Multi-stakeholder boards test cultural contribution metrics so value
+          can reward context, innovation, and stewardship rather than pure volume.
+      - type: feature-card
+        props:
+          eyebrow: Verification
+          title: C2PA provenance chains
+        content: |
+          Tamper-evident release signatures make provenance auditable where fraud,
+          spoofing, or synthetic impersonation are material risks.
+
+  - id: approach-three-enablers
+    title: Approach 3 — Adoption Tests And Payoffs
+    description: >-
+      Preconditions and observable results for transparent value distribution.
+    layout: comparison-layout
+    layoutProps:
+      divider: arrow
+    transition: slide-up
+    components:
+      - type: body-text
+        content: |
+          **Preconditions**
+
+          Regulatory mandate for transparency (EU DSA / AI Act-class enforcement
+          plus comparable US instruments). C2PA maturity beyond isolated pilots.
+          Platform adoption via competitive pressure or legal obligation.
+          Multi-stakeholder agreement processes for “quality” metrics. Market
+          signal that listeners will pay for human-certified experiences.
+      - type: body-text
+        content: |
+          **First proof of success**
+
+          Pilots should show a measurable **authenticity premium** or sustained
+          preference for labeled catalogs, reduced spoofing risk on signed
+          releases, and early platform evidence that culturally innovative work
+          can beat volume spam when payout logic changes. Trust returns only
+          when accounting becomes inspectable by artists and listeners alike.
+
+  - id: approach-four-regenerative
+    title: Approach 4 — Regenerative Economy
+    description: >-
+      Shift the system goal from extraction to care with income floors, context
+      labor, public narrative work, and climate constraints.
+    layout: grid-2x2
+    transition: fade
+    components:
+      - type: feature-card
+        props:
+          eyebrow: Income floor
+          title: Cultural UBI pilots
+        content: |
+          Baseline income experiments in music-heavy regions let artists refuse
+          the worst contracts and test whether security improves creative autonomy.
+      - type: feature-card
+        props:
+          eyebrow: New labor market
+          title: Meaning-labor contracts
+        content: |
+          Critics, educators, annotators, and cultural interpreters get paid
+          when platforms surface context, not just tracks.
+      - type: feature-card
+        props:
+          eyebrow: Narrative shift
+          title: Public education campaigns
+        content: |
+          School curricula and media projects such as **Know Your Music** reframe
+          music as relationship and public good instead of disposable feed.
+      - type: feature-card
+        props:
+          eyebrow: Climate boundary
+          title: Carbon accountability rules
+        content: |
+          Renewable hosting, gCO₂e labels where useful, and efficiency standards
+          make compute a governed cost instead of an ignored externality.
+
+  - id: approach-four-outcomes
+    title: Approach 4 — What Changes On The Ground
+    description: >-
+      Labor, economics of meaning, and climate-bound compute for music AI.
+    layout: comparison-layout
+    layoutProps:
+      divider: arrow
+    transition: blur
+    components:
+      - type: body-text
+        content: |
+          **Preconditions**
+
+          Political coalitions for redistribution, recognition of intangible
+          labor in policy, tighter climate regulation for digital
+          infrastructure, and a cultural shift away from “scarcity creates
+          value” are all required to make this durable.
+      - type: body-text
+        content: |
+          **Everyday proof**
+
+          Artists become less trapped by the release-volume treadmill. Public
+          budgets start financing music as infrastructure. Meaning, context,
+          live presence, and stewardship become paid work. Net-zero procurement
+          and efficiency tiers begin changing what counts as “state of the art.”
+
+  - id: intervention-coalition
+    title: Who Moves First
+    description: >-
+      The intervention is not owned by one product or one regulator; it needs a
+      coalition with different kinds of leverage.
+    layout: content-left-media-right
+    transition: slide-left
+    components:
+      - type: numbered-list
+        props:
+          items:
+            - >-
+              **Rule setters** such as WIPO, UNESCO, regulators, and standards
+              bodies create the legal and technical rails.
+            - >-
+              **System operators** such as DSPs, PROs, cloud actors, and trusted
+              indie platforms wire those rails into metadata, payouts, and user
+              experience.
+            - >-
+              **Counter-power actors** such as unions, artist co-ops,
+              digital-rights groups, and climate movements stop the system from
+              drifting back into convenience-first extraction.
+      - type: stakeholder-map
+        props:
+          center: Intervention coalition
+          rings:
+            - label:
+              stakeholders:
+                - { label: WIPO, angle: 20 }
+                - { label: UNESCO, angle: 95 }
+                - { label: ISO/C2PA, angle: 180 }
+                - { label: Regulators, angle: 285 }
+            - label:
+              stakeholders:
+                - { label: DSPs, angle: 15 }
+                - { label: PROs, angle: 120 }
+                - { label: Cloud, angle: 225 }
+                - { label: Indie platforms, angle: 320 }
+            - label:
+              stakeholders:
+                - { label: Artist co-ops, angle: 35 }
+                - { label: Unions, angle: 145 }
+                - { label: EFF, angle: 250 }
+                - { label: 350.org, angle: 330 }
+            - label:
+              stakeholders:
+                - { label: Artists, angle: 45 }
+                - { label: Fans, angle: 200 }
+
+  - id: intervention-interdependence
+    title: Why The Four Approaches Must Move Together
+    description: >-
+      Each approach unlocks the next; partial progress creates bottlenecks and
+      easy forms of co-optation.
+    layout: media-left-content-right
+    transition: blur
+    components:
+      - type: causal-diagram
+        props:
+          variables:
+            - { id: consent, label: Consent infrastructure }
+            - { id: pluralism, label: Cultural pluralism }
+            - { id: transparency, label: Transparent value }
+            - { id: regeneration, label: Regenerative economy }
+          edges:
+            - { from: consent, to: pluralism, polarity: '+' }
+            - { from: consent, to: transparency, polarity: '+' }
+            - { from: pluralism, to: transparency, polarity: '+' }
+            - { from: transparency, to: regeneration, polarity: '+' }
+            - { from: regeneration, to: consent, polarity: '+' }
+      - type: body-text
+        content: |
+          **The dependency chain**
+
+          Consent infrastructure keeps pluralism from becoming a new extraction
+          project. Pluralism keeps transparency and “quality” metrics from
+          encoding only Western defaults. Transparency makes meaning-labor and
+          regenerative markets legible. Regenerative economics removes the
+          desperation that would otherwise break the rest.
+
+  - id: section-roadmap
+    title: Section — Roadmap
+    description: Pilot, network scale, and embedded practice to 2040.
+    layout: title-left
+    transition: slide-up
+    components:
+      - type: label
+        content: Part IV
+        props: { tone: secondary }
+      - type: headline
+        content: Phased roadmap — pilots, network, regime
+        props: { level: 2 }
+      - type: subtitle
+        content: >-
+          Each phase combines strategy, participants, and system support.
+
+  - id: pilot-hypotheses
+    title: Pilot Phase — What Must Hold
+    description: >-
+      What early pilots must prove: transparency at human scale, willingness to
+      pay, income under data control.
+    layout: content-left-media-right
+    transition: fade
+    components:
+      - type: numbered-list
+        props:
+          items:
+            - >-
+              **Transparency tech works at human scale** — generation-method
+              disclosure, consent lookups, and dashboards integrate without
+              exhausting artists or listeners.
+            - >-
+              **Listeners pay for ethics** — pilots should show roughly a **15%
+              premium** or sustained preference for human-certified catalogs and
+              consented training chains.
+            - >-
+              **Income rises with data control** — registry-backed cohorts
+              should outperform matched controls, with early targets closer to a
+              **20% income uplift** than symbolic pennies.
+            - >-
+              **Evidence compounds monthly** — publish evidence packs and treat
+              failures as design inputs, not optics.
+      - type: callout
+        props:
+          variant: tip
+          title: Usability
+        content: >-
+          Artists and fans should not need blockchain literacy—they need clear
+          “you are in control” flows and honest accounting.
+
+  - id: pilot-operating-model
+    title: Pilot Operating Model
+    description: >-
+      A credible first pilot looks like a small but complete system, not a
+      generic awareness campaign.
+    layout: grid-2x2
+    transition: slide-left
+    components:
+      - type: feature-card
+        props:
+          eyebrow: Honest release stack
+          title: Provenance MVP
+        content: |
+          Human / AI-assisted / fully AI labels, C2PA signing on official
+          releases, and a listener toggle for human-certified catalogs make the
+          pilot legible from day one.
+      - type: feature-card
+        props:
+          eyebrow: Rights cohort
+          title: 1k artist consent registry
+        content: |
+          A public lookup API, explicit training permissions, and pilot-scale
+          micro-royalty statements prove that sovereignty can work without huge scale.
+      - type: feature-card
+        props:
+          eyebrow: Economic test
+          title: Quality-weighted payout pool
+        content: |
+          Replace pure pro-rata inside the pilot, publish the valuation rubric,
+          and show monthly dashboards for payouts, diversity, disputes, and take-home.
+      - type: feature-card
+        props:
+          eyebrow: Governance loop
+          title: Ethics, red-team, learning
+        content: |
+          Independent review with halt authority, red-team spoofing, accessibility
+          checks, and ethnographic interviews turn risk findings into design changes.
+
+  - id: roadmap-rings-detail
+    title: Roadmap Rings
+    description: >-
+      Pilot collective, federated network, and embedded regime—strategy, actors,
+      support.
+    layout: scattered
+    transition: fade
+    components:
+      - type: roadmap-rings
+        props:
+          phases:
+            - label: "PILOT: INCUBATING"
+              dateRange: 2025–2027
+              size: sm
+              strategy:
+                title: FairChain-style collective
+                subtitle: Prove economics + trust at human scale
+                items:
+                  - label: Transparent provenance MVP
+                    detail: |-
+                      - Human / AI-assisted / fully AI labels with honest UX
+                      - C2PA pilot on official releases; tamper-evident bundles
+                      - Listener toggle: prioritize human-certified catalogs
+                  - label: Consent registry cohort
+                    detail: |-
+                      - 1k artists with explicit training opt-in / opt-out
+                      - Verified permissions feed a public lookup API
+                      - Micro-royalty statements even at pilot scale
+                  - label: Quality-weighted payout experiment
+                    detail: |-
+                      - Replace pure pro-rata in the pilot pool
+                      - Publish valuation rubric co-authored with artists
+                      - Monthly dashboards: payouts, diversity, disputes
+                  - label: Carbon transparency
+                    detail: |-
+                      - Show gCO₂e per stream and per generation where reliable
+                      - Partner with a green host; document residual uncertainty
+                  - label: Field learning loops
+                    detail: |-
+                      - Monthly incident reviews; public changelog of policy
+                      - Ethnographic interviews to catch coercion dynamics
+              actors:
+                title: Who shows up first
+                items:
+                  - label: Early adopter artists
+                    detail: >-
+                      - Cross-genre and Global South cohorts with governance
+                      seats
+
+                      - Paid stipends for documentation burden
+                  - label: Values-first listeners
+                    detail: |-
+                      - 50–100k users stress-test filters and premiums
+                      - Willingness-to-pay studies on transparency
+                  - label: Indie platform + PRO ally
+                    detail: |-
+                      - Integration lane for metadata + payouts
+                      - Legal cover for experimental terms
+                  - label: Research + security
+                    detail: "- Red-team spoofing; audit trails; accessibility"
+              support:
+                title: System support
+                items:
+                  - label: Legal templates
+                    detail: Model clauses for training, likeness, and revocation
+                  - label: Open schemas
+                    detail: Generation-method fields; mapping to ID3 / DDEX / C2PA
+                  - label: Blended €1–1.5M budget
+                    detail: Foundations + partner + small public grants
+                  - label: Ethics review
+                    detail: Independent board with halt authority
+            - label: "SCALE: CONNECTING"
+              dateRange: 2028–2032
+              size: md
+              strategy:
+                title: Federated ethical network
+                subtitle: Shared standards across many platforms
+                items:
+                  - label: Cross-platform standards
+                    detail: |-
+                      - Portable consent verification across 10+ distributors
+                      - Shared human-certified badges with anti-washing rules
+                  - label: Cooperative ownership
+                    detail: "- 100k artists in federated co-ops; one-member one-vote on
+                      infrastructure changes"
+                  - label: PRO training royalties
+                    detail: |-
+                      - National pilots wiring usage telemetry to payouts
+                      - Dispute forums with fast arbitration
+                  - label: Global South digitization wave
+                    detail: |-
+                      - UNESCO-scale funding with community IP boards
+                      - PEFT scholarships + regional compute pools
+                  - label: Climate performance tiers
+                    detail: |-
+                      - Labeling rules; green procurement for streaming cores
+                      - Efficiency competitions for inference stacks
+              actors:
+                title: Coalition map
+                items:
+                  - label: Platform partners
+                    detail: "- Mix of indies and reluctant majors facing talent risk"
+                  - label: Unions + collectives
+                    detail: "- Bargaining templates; strike funds for lock-in fights"
+                  - label: Standards bodies
+                    detail: ISO / W3C / C2PA alignment; test suites
+                  - label: Impact + public capital
+                    detail: €40–60M blended for network costs
+              support:
+                title: Support infrastructure
+                items:
+                  - label: Coalition knowledge base
+                    detail: Multilingual playbooks; rotating convenings
+                  - label: Longitudinal evaluation
+                    detail: Annual State of Ethical Music report
+                  - label: Regional variants
+                    detail: EU, US, Global South, East Asia tracks with shared core
+            - label: "PRACTICE: EMBEDDED"
+              dateRange: 2038–2040
+              size: lg
+              strategy:
+                title: Regenerative regime
+                subtitle: Law, culture, and markets aligned
+                items:
+                  - label: Mandatory transparency
+                    detail: "- Generation-method disclosure as default regulatory requirement in
+                      major markets"
+                  - label: Consent as international expectation
+                    detail: "- Training without consent treated as infringement; micro-royalties
+                      routinized"
+                  - label: Quality-weighted payouts
+                    detail: "- Cultural contribution metrics audited like financials"
+                  - label: Cultural income floors
+                    detail: "- UBI-style supports in leading regions; portable benefits"
+                  - label: Net-zero infrastructure
+                    detail: "- Renewables + efficiency standards for streaming + AI"
+                  - label: Parity targets
+                    detail: "- Dataset balance goals; provenance routes value to communities"
+              actors:
+                title: Landscape actors
+                items:
+                  - label: Policymakers
+                    detail: Culture + telecom + climate + trade desks coordinated
+                  - label: Platforms at compliance equilibrium
+                    detail: Governance boards with artist veto on risk issues
+                  - label: Organized creators
+                    detail: Millions in collective bargaining structures
+                  - label: Civil society + press
+                    detail: Norm enforcement via reputation and litigation
+              support:
+                title: Embedded support
+                items:
+                  - label: Public cultural budgets
+                    detail: Line items for music-tech equity infrastructure
+                  - label: Professional ethics
+                    detail: Licensing for educators, producers, engineers
+                  - label: Investor ESG hooks
+                    detail: Disclosures on training ethics + carbon
+                  - label: Conscious listening identity
+                    detail: Human-certified consumption as visible cultural choice
+        position:
+          x: 0.019743
+          y: 0
+          width: 0.959446
+          height: 0.933217
+
+  - id: roadmap-timeline
+    title: Macro Timeline
+    description: >-
+      2025–2027 prove, 2028–2032 connect, 2038–2040 embed—milestones and forces.
+    layout: timeline-layout
+    transition: slide-up
+    components:
+      - type: timeline-item
+        content: >-
+          Pilot phase proves: transparency works at human scale, listeners pay a
+          premium for ethics, artist income rises when data is controlled, and a
+          1k-artist / 50-100k-listener cohort can operate without requiring
+          blockchain literacy from everyday users.
+        props:
+          date: '2025–2027'
+          title: Prove the possible
+          marker: number
+          markerValue: '1'
+      - type: timeline-item
+        content: >-
+          Network phase: 10+ platforms, 100k organized artists, €50M+ new
+          funding; PRO training royalties live; interoperability prevents
+          lock-in; annual State of Ethical Music reporting normalizes
+          evaluation; ~20% ethical market share forces mainstream adoption.
+        props:
+          date: '2028–2032'
+          title: Build the network
+          marker: number
+          markerValue: '2'
+      - type: timeline-item
+        content: >-
+          Regime phase: transparency and consent are baseline law;
+          quality-weighted payouts replace pro-rata for most listening; net-zero
+          rules bind; Global South parity targets approach 50/50; pluralism
+          feels like common sense rather than special pleading.
+        props:
+          date: '2038–2040'
+          title: Embed the practice
+          marker: number
+          markerValue: '3'
+
+  - id: roadmap-scorecard
+    title: What Success Looks Like By Phase
+    description: >-
+      A few thresholds make the roadmap memorable, testable, and easier to
+      challenge.
+    layout: grid-3x2
+    transition: fade
+    components:
+      - type: stat-card
+        props:
+          label: Pilot artist cohort
+          value: 1k
+          detail: Enough scale to test governance, rights lookups, and payment mechanics.
+      - type: stat-card
+        props:
+          label: Ethics premium
+          value: 15%
+          detail: Early willingness-to-pay signal for human-certified and consented
+            catalogs.
+      - type: stat-card
+        props:
+          label: Income target
+          value: +20%
+          detail: Ambition for registry-backed cohorts versus matched controls in early
+            pilots.
+      - type: stat-card
+        props:
+          label: Network reach
+          value: 10+
+          detail: Distributors or platforms sharing interoperable consent and provenance
+            standards.
+      - type: stat-card
+        props:
+          label: Organized creators
+          value: 100k
+          detail: Federated co-ops and unions strong enough to resist lock-in fights.
+      - type: stat-card
+        props:
+          label: Representation goal
+          value: 50/50
+          detail: Long-horizon Global North-South balance target for major training
+            datasets.
+
+  - id: roadmap-funnel
+    title: Scale Of Change
+    description: >-
+      Funnel reads top to bottom: macro regime (widest), meso network, micro
+      pilots (narrow tip)—full system scope narrowing to where experiments
+      start.
+    layout: scattered
+    transition: slide-left
+    components:
+      - type: funnel-diagram
+        props:
+          orientation: vertical
+          showValues: true
+          stages:
+            - label: Macro regime
+              value: Law + culture + climate
+              detail: Binding defaults · parity · net-zero
+            - label: Meso network
+              value: 100k artists · federated standards
+              detail: Interoperability · organizing power
+            - label: Micro pilots
+              value: 1k artists · 100k listeners
+              detail: Prove economics · learn safely
+        position:
+          x: 0.022946
+          y: 0.321801
+          width: 0.46935
+          height: 0.55327
+      - type: numbered-list
+        props:
+          items:
+            - "**Macro layer:** democratic governance in platforms; adaptive
+              standards as models shift; equity and climate as hard
+              requirements; consent and transparency as baseline law."
+            - "**Meso layer:** regulation and tipping markets follow
+              demonstrated harm; €100M-class sustained funding; global
+              coordination to avoid a race to the bottom; portable consent and
+              human-certified norms."
+            - "**Micro layer:** prove economic viability, not only ethics;
+              co-ownership to prevent co-optation; monthly public evidence;
+              small cohorts before scale."
+        position:
+          x: 0.505036
+          y: 0.368415
+          width: 0.46935
+          height: 0.263151
+
+  - id: synthesis
+    title: Closing
+    description: >-
+      Parallel approaches, one sustaining purpose, and the cost of partial
+      progress.
+    layout: title-center
+    transition: scale-out
+    components:
+      - type: label
+        content: Closing
+        props: { tone: secondary }
+      - type: headline
+        content: Parallel approaches, one sustaining purpose
+        props: { level: 2, align: center }
+      - type: body-text
+        content: |
+          Strategic outcomes A–D, six lived impacts, and **2040 regenerative
+          pluralism** define the horizon. The path runs **pilot → network →
+          embedded regime**—through concrete pilots, interoperability,
+          organizing, and public evidence until better defaults hold.
+        props: { align: center }
+        style:
+          maxWidth: 52rem
+      - type: body-text
+        content: >-
+          Skip any approach and the others bottleneck; accelerate one without
+          the others and you get brittle wins that collapse under extraction
+          pressure. The test is whether we can show real cohorts, real metrics,
+          and real governance before defaults harden.
+        props: { align: center }
+        style:
+          maxWidth: 52rem
+      - type: divider
+        props: { variant: ornamental }
+      - type: blockquote
+        content: >-
+          This is not a forecast—it is buildable infrastructure. The question is
+          whether we assemble consent, pluralism, transparent value, and
+          regeneration **in parallel**, or let defaults harden into another era
+          of opacity.
+        props:
+          variant: large
