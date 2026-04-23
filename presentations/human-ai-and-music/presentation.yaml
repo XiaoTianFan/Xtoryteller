@@ -178,8 +178,8 @@ clusters:
     group: method
     layout: stack
     anchor:
-      x: 753
-      y: 520
+      x: 767
+      y: 541
     frame:
       width: 896
       height: 483
@@ -211,13 +211,13 @@ clusters:
     description: The method descends from visible events into hidden structures,
       value systems, and deep metaphors.
     group: method
-    layout: single-content
+    layout: scattered
     anchor:
-      x: 745
-      y: 1037
+      x: 750
+      y: 1065
     frame:
-      width: 912
-      height: 1249
+      width: 904
+      height: 1289
     components:
       - type: iceberg-diagram
         props:
@@ -300,6 +300,11 @@ clusters:
                 - If music becomes post-scarce, infinitely abundant at near-zero
                   cost, what does that reveal about the nature of art, labor,
                   and meaning?
+        position:
+          x: 0.021202
+          y: 0
+          width: 0.962024
+          height: 0.943092
   - id: system-dynamics
     title: System Dynamics
     description: The diagnosis reads the merged graph as an interacting system of
@@ -308,11 +313,11 @@ clusters:
     group: diagnosis
     layout: two-column
     anchor:
-      x: 1693
-      y: 595
+      x: 1700
+      y: 572
     frame:
-      width: 1311
-      height: 632
+      width: 1268
+      height: 729
     components:
       - type: body-text
         content: |
@@ -365,9 +370,9 @@ clusters:
     layout: single-content
     anchor:
       x: 802
-      y: -155
+      y: -87
     frame:
-      width: 2227
+      width: 2160
       height: 756
     components:
       - type: causal-diagram
@@ -835,13 +840,13 @@ clusters:
     description: The Three Horizons frame translates diagnosis into a strategic
       transition between 2025 and 2040.
     group: transition
-    layout: single-content
+    layout: scattered
     anchor:
       x: 2986
       y: 390
     frame:
-      width: 1822
-      height: 1167
+      width: 1422
+      height: 857
     components:
       - type: three-horizons
         props:
@@ -1103,6 +1108,11 @@ clusters:
             start: 2025
             mid: 2030
             end: 2040
+        position:
+          x: 0.011961
+          y: 0.034165
+          width: 0.976078
+          height: 0.965835
   - id: h1-under-pressure
     title: Horizon 1
     description: The current regime remains dominant, but its legitimacy and
@@ -1110,10 +1120,10 @@ clusters:
     group: transition
     layout: stack
     anchor:
-      x: 3026
-      y: 39
+      x: 2929
+      y: 66
     frame:
-      width: 560
+      width: 528
       height: 280
     components:
       - type: bullet-list
@@ -1132,10 +1142,10 @@ clusters:
     group: transition
     layout: stack
     anchor:
-      x: 3631
-      y: 18
+      x: 3462
+      y: 43
     frame:
-      width: 560
+      width: 530
       height: 330
     components:
       - type: body-text
@@ -1163,10 +1173,10 @@ clusters:
     group: transition
     layout: stack
     anchor:
-      x: 4229
-      y: 13
+      x: 4000
+      y: 50
     frame:
-      width: 560
+      width: 475
       height: 320
     components:
       - type: bullet-list
@@ -1188,11 +1198,11 @@ clusters:
     group: action
     layout: two-column
     anchor:
-      x: 1719
-      y: 1290
+      x: 1693
+      y: 1310
     frame:
-      width: 1246
-      height: 233
+      width: 1076
+      height: 293
     components:
       - type: bullet-list
         props:
@@ -1224,11 +1234,11 @@ clusters:
     labelPosition: bottom-left
     layout: single-content
     anchor:
-      x: 1714
-      y: 1508
+      x: 1877
+      y: 1262
     frame:
-      width: 2520
-      height: 1305
+      width: 2523
+      height: 1149
     components:
       - type: roadmap-rings
         props:

@@ -147,11 +147,26 @@ interface ItemLayout {
   lineClamp: number;
 }
 
+/** Axis-aligned box for overlap checks (band titles, existing chips). */
+interface LayoutObstacle {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 interface HorizontalBounds {
   minX: number;
   maxX: number;
   width: number;
   offsetX: number;
+}
+
+interface VerticalBounds {
+  minY: number;
+  maxY: number;
+  height: number;
+  offsetY: number;
 }
 
 const VIEWBOX_HEIGHT = 920;
@@ -162,11 +177,22 @@ const DEFAULT_PHASE_LABELS = ['Pilot: Incubating', 'Scale: Connecting', 'Practic
 export const ROADMAP_TOP_PADDING = 40;
 
 const PRACTICE_CENTER_X = 1416;
-const PRACTICE_TO_SCALE_DY = 150;
-const SCALE_TO_PILOT_DY = 140;
+const ROADMAP_BOTTOM_PADDING = 65;
 const ACTOR_LABEL_ANGLE = 270;
 const SUPPORT_LABEL_ANGLE = 90;
 const BAND_LABEL_EXCLUSION = 16;
+
+/** Pixels between headline bottom and the strategy **band** (before first row). */
+const STRATEGY_BAND_TITLE_CLEARANCE_PHASE01 = 34;
+const STRATEGY_BAND_TITLE_CLEARANCE_PRACTICE = 24;
+const STRATEGY_FIRST_ROW_INSET = 6;
+/** Gap between strategy row centers (4+ items). */
+const STRATEGY_ROW_GAP = 12;
+const STRATEGY_MIN_ROW_GAP = 6;
+const INNER_DISK_BOTTOM_PAD = 18;
+
+const ARC_RELAX_MAX_ITER = 48;
+const ARC_RELAX_OUT_STEP = 2.5;
 
 const SIZE_METRICS: Record<PhaseSize, PhaseMetrics> = {
   sm: {
@@ -435,24 +461,49 @@ function normalizeHorizontalBounds(minX: number, maxX: number): HorizontalBounds
   };
 }
 
-function offsetBandLabelPlacement(placement: BandLabelPlacement, offsetX: number): BandLabelPlacement {
+function normalizeVerticalBounds(minY: number, maxY: number): VerticalBounds {
+  const height = Math.max(1, maxY - minY + ROADMAP_TOP_PADDING * 2);
+
   return {
-    ...placement,
-    x: placement.x + offsetX
+    minY,
+    maxY,
+    height,
+    offsetY: ROADMAP_TOP_PADDING - minY
   };
 }
 
-function offsetPhaseBadgeLayout(layout: PhaseBadgeLayout, offsetX: number): PhaseBadgeLayout {
+function offsetTitleLayout(layout: TitleLayout, offsetY: number): TitleLayout {
   return {
     ...layout,
-    x: layout.x + offsetX
+    titleStartY: layout.titleStartY + offsetY,
+    subtitleStartY: layout.subtitleStartY + offsetY,
+    titleBottom: layout.titleBottom + offsetY
   };
 }
 
-function offsetItemLayout(item: ItemLayout, offsetX: number): ItemLayout {
+function offsetBandLabelPlacement(placement: BandLabelPlacement, offsetX: number, offsetY = 0): BandLabelPlacement {
+  return {
+    ...placement,
+    x: placement.x + offsetX,
+    y: placement.y + offsetY
+  };
+}
+
+function offsetPhaseBadgeLayout(layout: PhaseBadgeLayout, offsetX: number, offsetY = 0): PhaseBadgeLayout {
+  return {
+    ...layout,
+    x: layout.x + offsetX,
+    y: layout.y + offsetY,
+    dateY: layout.dateY + offsetY,
+    labelY: layout.labelY + offsetY
+  };
+}
+
+function offsetItemLayout(item: ItemLayout, offsetX: number, offsetY = 0): ItemLayout {
   return {
     ...item,
-    x: item.x + offsetX
+    x: item.x + offsetX,
+    y: item.y + offsetY
   };
 }
 
@@ -492,6 +543,44 @@ function computeHorizontalBounds(
   });
 
   return normalizeHorizontalBounds(minX, maxX);
+}
+
+function computeVerticalBounds(
+  geometries: PhaseGeometry[],
+  actorPlacements: BandLabelPlacement[],
+  supportPlacements: BandLabelPlacement[],
+  phaseBadges: PhaseBadgeLayout[],
+  items: ItemLayout[]
+) {
+  let minY = Number.POSITIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+
+  const includeRange = (start: number, end: number) => {
+    minY = Math.min(minY, start);
+    maxY = Math.max(maxY, end);
+  };
+
+  geometries.forEach((geometry) => {
+    includeRange(geometry.centerY - geometry.outerRadius, geometry.centerY + geometry.outerRadius);
+  });
+
+  actorPlacements.forEach((placement) => {
+    includeRange(placement.y - placement.height / 2, placement.y + placement.height / 2);
+  });
+
+  supportPlacements.forEach((placement) => {
+    includeRange(placement.y - placement.height / 2, placement.y + placement.height / 2);
+  });
+
+  phaseBadges.forEach((badge) => {
+    includeRange(badge.y - badge.height / 2, badge.y + badge.height / 2);
+  });
+
+  items.forEach((item) => {
+    includeRange(item.y - item.height / 2, item.y + item.height / 2);
+  });
+
+  return normalizeVerticalBounds(minY, maxY);
 }
 
 function distributeAngles(start: number, end: number, count: number) {
@@ -562,10 +651,11 @@ export function computePhaseGeometry(phases: NormalizedPhase[]) {
   const practiceMetrics = metricsByPhase[2];
   const scaleMetrics = metricsByPhase[1];
   const pilotMetrics = metricsByPhase[0];
+  const circleBottomY = VIEWBOX_HEIGHT - ROADMAP_BOTTOM_PADDING;
 
   const practice = {
     centerX: PRACTICE_CENTER_X,
-    centerY: ROADMAP_TOP_PADDING + practiceMetrics.outerRadius,
+    centerY: circleBottomY - practiceMetrics.outerRadius,
     outerRadius: practiceMetrics.outerRadius,
     innerRadius: practiceMetrics.innerRadius,
     color: PHASE_COLORS[2],
@@ -574,24 +664,24 @@ export function computePhaseGeometry(phases: NormalizedPhase[]) {
 
   const scale = {
     centerX: 0,
-    centerY: practice.centerY + PRACTICE_TO_SCALE_DY,
+    centerY: circleBottomY - scaleMetrics.outerRadius,
     outerRadius: scaleMetrics.outerRadius,
     innerRadius: scaleMetrics.innerRadius,
     color: PHASE_COLORS[1],
     metrics: scaleMetrics
   };
-  const scaleDx = tangentDx(scale.outerRadius, practice.outerRadius, PRACTICE_TO_SCALE_DY);
+  const scaleDx = tangentDx(scale.outerRadius, practice.outerRadius, Math.abs(scale.centerY - practice.centerY));
   scale.centerX = practice.centerX - scaleDx;
 
   const pilot = {
     centerX: 0,
-    centerY: scale.centerY + SCALE_TO_PILOT_DY,
+    centerY: circleBottomY - pilotMetrics.outerRadius,
     outerRadius: pilotMetrics.outerRadius,
     innerRadius: pilotMetrics.innerRadius,
     color: PHASE_COLORS[0],
     metrics: pilotMetrics
   };
-  const pilotDx = tangentDx(pilot.outerRadius, scale.outerRadius, SCALE_TO_PILOT_DY);
+  const pilotDx = tangentDx(pilot.outerRadius, scale.outerRadius, Math.abs(pilot.centerY - scale.centerY));
   pilot.centerX = scale.centerX - pilotDx;
 
   return [pilot, scale, practice] as PhaseGeometry[];
@@ -843,11 +933,98 @@ function anyOverlaps(layouts: ItemLayout[]) {
   return false;
 }
 
+function itemToObstacle(item: ItemLayout): LayoutObstacle {
+  return { x: item.x, y: item.y, width: item.width, height: item.height };
+}
+
+function bandPlacementToObstacle(placement: BandLabelPlacement): LayoutObstacle {
+  return { x: placement.x, y: placement.y, width: placement.width, height: placement.height };
+}
+
+function boxesObstacleOverlap(item: ItemLayout, o: LayoutObstacle): boolean {
+  const ax1 = item.x - item.width / 2;
+  const ax2 = item.x + item.width / 2;
+  const ay1 = item.y - item.height / 2;
+  const ay2 = item.y + item.height / 2;
+  const bx1 = o.x - o.width / 2;
+  const bx2 = o.x + o.width / 2;
+  const by1 = o.y - o.height / 2;
+  const by2 = o.y + o.height / 2;
+  return ax1 < bx2 && ax2 > bx1 && ay1 < by2 && ay2 > by1;
+}
+
+function anyOverlapsWithObstacles(layouts: ItemLayout[], obstacles: LayoutObstacle[]): boolean {
+  for (const layout of layouts) {
+    for (const o of obstacles) {
+      if (boxesObstacleOverlap(layout, o)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function pushArcChipOutward(item: ItemLayout, geometry: PhaseGeometry, delta: number): ItemLayout {
+  const dx = item.x - geometry.centerX;
+  const dy = item.y - geometry.centerY;
+  const len = Math.hypot(dx, dy);
+  if (len < 0.5) {
+    return item;
+  }
+  const scale = (len + delta) / len;
+  return {
+    ...item,
+    x: geometry.centerX + dx * scale,
+    y: geometry.centerY + dy * scale
+  };
+}
+
+/**
+ * Pushes chips radially to separate overlaps and clear static obstacles.
+ * Bounded iterations; n is small per phase.
+ */
+function relaxArcChipLayouts(
+  layouts: ItemLayout[],
+  geometry: PhaseGeometry,
+  staticObstacles: LayoutObstacle[]
+): ItemLayout[] {
+  const out = layouts.map((l) => ({ ...l }));
+  for (let iter = 0; iter < ARC_RELAX_MAX_ITER; iter += 1) {
+    let changed = false;
+
+    for (let i = 0; i < out.length; i += 1) {
+      for (const o of staticObstacles) {
+        if (boxesObstacleOverlap(out[i], o)) {
+          out[i] = pushArcChipOutward(out[i], geometry, ARC_RELAX_OUT_STEP);
+          changed = true;
+        }
+      }
+    }
+    for (let i = 0; i < out.length; i += 1) {
+      for (let j = i + 1; j < out.length; j += 1) {
+        if (boxesOverlap(out[i], out[j])) {
+          out[j] = pushArcChipOutward(out[j], geometry, ARC_RELAX_OUT_STEP);
+          changed = true;
+        }
+      }
+    }
+    if (!changed) {
+      break;
+    }
+  }
+  return out;
+}
+
+function arcLayoutsPass(layouts: ItemLayout[], extraObstacles: LayoutObstacle[]) {
+  return !anyOverlaps(layouts) && !anyOverlapsWithObstacles(layouts, extraObstacles);
+}
+
 export function layoutArcChips(
   section: Exclude<SectionKey, 'strategy'>,
   items: NormalizedItem[],
   geometry: PhaseGeometry,
-  phaseIndex: number
+  phaseIndex: number,
+  extraObstacles: LayoutObstacle[] = []
 ) {
   if (!items.length) {
     return [];
@@ -858,9 +1035,11 @@ export function layoutArcChips(
   const baseRadius = geometry.innerRadius + ringThickness * config.ringFactor;
   const rangeGroups = splitItemsAcrossRanges(items, config.ranges);
 
-  return rangeGroups.flatMap(({ range, items: rangeItems }) => {
+  const perRange: ItemLayout[][] = [];
+
+  for (const { range, items: rangeItems } of rangeGroups) {
     if (!rangeItems.length) {
-      return [];
+      continue;
     }
 
     const labelAnchor = config.label.anchorAngle;
@@ -901,15 +1080,57 @@ export function layoutArcChips(
         );
       });
 
-      if (!anyOverlaps(layouts)) {
-        return layouts;
+      if (arcLayoutsPass(layouts, extraObstacles)) {
+        break;
       }
 
       rowCount += 1;
     }
 
-    return layouts;
-  });
+    perRange.push(layouts);
+  }
+
+  const merged = perRange.flat();
+  return relaxArcChipLayouts(merged, geometry, extraObstacles);
+}
+
+/**
+ * Row 0 = upper (smaller Y), row 1 = lower (larger Y). Y increases downward.
+ * Uses a fixed inset from the strategy band top (below title + clearance), not scaled fractions of height.
+ */
+function computeStrategyRowCentersY(
+  rowCount: 1 | 2,
+  titleBottom: number,
+  geometry: PhaseGeometry,
+  phaseIndex: number,
+  chipHeight: number
+): number[] {
+  const titleClearance =
+    phaseIndex < 2 ? STRATEGY_BAND_TITLE_CLEARANCE_PHASE01 : STRATEGY_BAND_TITLE_CLEARANCE_PRACTICE;
+  const topBoundary = Math.max(geometry.centerY + 18, titleBottom + titleClearance);
+  const bottomBoundary = geometry.centerY + geometry.innerRadius - INNER_DISK_BOTTOM_PAD;
+  const maxLowerRowCenterY = bottomBoundary - chipHeight / 2;
+  const firstRowCenterY = topBoundary + STRATEGY_FIRST_ROW_INSET + chipHeight / 2;
+  const minCenterSep = chipHeight + STRATEGY_MIN_ROW_GAP;
+  const preferredSep = chipHeight + STRATEGY_ROW_GAP;
+  const maxUpperForTwoRows = maxLowerRowCenterY - minCenterSep;
+
+  if (rowCount === 1) {
+    return [Math.min(firstRowCenterY, maxLowerRowCenterY)];
+  }
+
+  let upperCenter = Math.min(firstRowCenterY, maxUpperForTwoRows);
+  let lowerCenter = upperCenter + preferredSep;
+  if (lowerCenter > maxLowerRowCenterY) {
+    lowerCenter = maxLowerRowCenterY;
+    upperCenter = lowerCenter - preferredSep;
+    if (upperCenter < firstRowCenterY) {
+      upperCenter = Math.min(firstRowCenterY, maxUpperForTwoRows);
+      lowerCenter = Math.min(upperCenter + minCenterSep, maxLowerRowCenterY);
+    }
+  }
+
+  return [upperCenter, lowerCenter];
 }
 
 export function layoutInnerStrategyChips(
@@ -922,16 +1143,10 @@ export function layoutInnerStrategyChips(
     return [];
   }
 
-  const rowCount = items.length >= 4 ? 2 : 1;
+  const rowCount: 1 | 2 = items.length >= 4 ? 2 : 1;
   const rows = splitIntoRows(items, rowCount);
-  const topBoundary = Math.max(geometry.centerY + 18, titleBottom + (phaseIndex < 2 ? 34 : 24));
-  const bottomBoundary = geometry.centerY + geometry.innerRadius - 18;
-  const availableHeight = Math.max(20, bottomBoundary - topBoundary);
-  const rowYs = rowCount === 1
-    ? [topBoundary + availableHeight * 0.6]
-    : phaseIndex < 2
-      ? [topBoundary + availableHeight * 0.36, topBoundary + availableHeight * 0.8]
-      : [topBoundary + availableHeight * 0.3, topBoundary + availableHeight * 0.74];
+  const height = geometry.metrics.strategyChipHeight + 6;
+  const rowYs = computeStrategyRowCentersY(rowCount, titleBottom, geometry, phaseIndex, height);
 
   return rows.flatMap((rowItems, rowIndex) => {
     const y = rowYs[Math.min(rowIndex, rowYs.length - 1)];
@@ -946,7 +1161,6 @@ export function layoutInnerStrategyChips(
     );
     const rowWidth = rowItems.length * width + gap * Math.max(rowItems.length - 1, 0);
     const startX = geometry.centerX - rowWidth / 2 + width / 2;
-    const height = geometry.metrics.strategyChipHeight + 6;
 
     return rowItems.map((item, itemIndex) => {
       const x = startX + itemIndex * (width + gap);
@@ -974,12 +1188,14 @@ function RoadmapChip({
   item,
   titleBoundary,
   phaseCenterY,
-  viewBoxWidth
+  viewBoxWidth,
+  viewBoxHeight
 }: {
   item: ItemLayout;
   titleBoundary: number;
   phaseCenterY: number;
   viewBoxWidth: number;
+  viewBoxHeight: number;
 }) {
   const tooltipId = useId().replace(/[:]/g, '-');
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -1115,9 +1331,9 @@ function RoadmapChip({
         onBlur={() => setFocused(false)}
         style={{
           left: percent(item.x, viewBoxWidth),
-          top: percent(item.y, VIEWBOX_HEIGHT),
+          top: percent(item.y, viewBoxHeight),
           width: percent(item.width, viewBoxWidth),
-          height: percent(item.height, VIEWBOX_HEIGHT),
+          height: percent(item.height, viewBoxHeight),
           ['--roadmap-accent' as string]: item.color,
           ['--roadmap-chip-font-size' as string]: `${item.fontSize}px`
         } as CSSProperties}
@@ -1146,32 +1362,52 @@ export default function RoadmapRings({ props }: { props?: Record<string, unknown
 
   const rawItems = phases.flatMap((phase, index) => {
     const geometry = rawGeometries[index];
-    return [
-      ...layoutInnerStrategyChips(phase.strategy.items, geometry, index, titleLayouts[index].titleBottom),
-      ...layoutArcChips('actors', phase.actors.items, geometry, index),
-      ...layoutArcChips('support', phase.support.items, geometry, index)
+    const strategyLayouts = layoutInnerStrategyChips(
+      phase.strategy.items,
+      geometry,
+      index,
+      titleLayouts[index].titleBottom
+    );
+    const baseObstacles: LayoutObstacle[] = [
+      ...strategyLayouts.map(itemToObstacle),
+      bandPlacementToObstacle(actorPlacements[index]),
+      bandPlacementToObstacle(supportPlacements[index])
     ];
+    const actorLayouts = layoutArcChips('actors', phase.actors.items, geometry, index, baseObstacles);
+    const supportObstacles: LayoutObstacle[] = [...baseObstacles, ...actorLayouts.map(itemToObstacle)];
+    const supportLayouts = layoutArcChips('support', phase.support.items, geometry, index, supportObstacles);
+    return [...strategyLayouts, ...actorLayouts, ...supportLayouts];
   });
 
   const horizontalBounds = computeHorizontalBounds(rawGeometries, actorPlacements, supportPlacements, phaseBadges, rawItems);
+  const verticalBounds = computeVerticalBounds(rawGeometries, actorPlacements, supportPlacements, phaseBadges, rawItems);
   const viewBoxWidth = horizontalBounds.width;
+  const viewBoxHeight = verticalBounds.height;
+  const titleLayoutsOffset = titleLayouts.map((layout) => offsetTitleLayout(layout, verticalBounds.offsetY));
   const geometries = rawGeometries.map((geometry) => ({
     ...geometry,
-    centerX: geometry.centerX + horizontalBounds.offsetX
+    centerX: geometry.centerX + horizontalBounds.offsetX,
+    centerY: geometry.centerY + verticalBounds.offsetY
   }));
-  const normalizedActorPlacements = actorPlacements.map((placement) => offsetBandLabelPlacement(placement, horizontalBounds.offsetX));
-  const normalizedSupportPlacements = supportPlacements.map((placement) => offsetBandLabelPlacement(placement, horizontalBounds.offsetX));
-  const normalizedPhaseBadges = phaseBadges.map((badge) => offsetPhaseBadgeLayout(badge, horizontalBounds.offsetX));
-  const items = rawItems.map((item) => offsetItemLayout(item, horizontalBounds.offsetX));
+  const normalizedActorPlacements = actorPlacements.map((placement) =>
+    offsetBandLabelPlacement(placement, horizontalBounds.offsetX, verticalBounds.offsetY)
+  );
+  const normalizedSupportPlacements = supportPlacements.map((placement) =>
+    offsetBandLabelPlacement(placement, horizontalBounds.offsetX, verticalBounds.offsetY)
+  );
+  const normalizedPhaseBadges = phaseBadges.map((badge) =>
+    offsetPhaseBadgeLayout(badge, horizontalBounds.offsetX, verticalBounds.offsetY)
+  );
+  const items = rawItems.map((item) => offsetItemLayout(item, horizontalBounds.offsetX, verticalBounds.offsetY));
 
   return (
     <figure className={localStyles.figure} data-variant={styleVariant}>
       <div className={localStyles.canvas}>
         <div className={localStyles.svgShell} data-roadmap-shell="true">
-          <svg viewBox={`0 0 ${viewBoxWidth} ${VIEWBOX_HEIGHT}`} role="img" aria-label="Roadmap transition graph">
+          <svg viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} role="img" aria-label="Roadmap transition graph">
             {phases.map((phase, index) => {
               const geometry = geometries[index];
-              const titleLayout = titleLayouts[index];
+              const titleLayout = titleLayoutsOffset[index];
               const actorTitle = (phase.actors.title || 'Actors / Stakeholders').toUpperCase();
               const supportTitle = (phase.support.title || 'System Support').toUpperCase();
               const actorPlacement = normalizedActorPlacements[index];
@@ -1201,6 +1437,7 @@ export default function RoadmapRings({ props }: { props?: Record<string, unknown
                     data-x={actorPlacement.x}
                     data-y={actorPlacement.y}
                     data-width={actorPlacement.width}
+                    data-height={actorPlacement.height}
                     transform={`translate(${actorPlacement.x} ${actorPlacement.y})`}
                   >
                     <text
@@ -1220,6 +1457,7 @@ export default function RoadmapRings({ props }: { props?: Record<string, unknown
                     data-x={supportPlacement.x}
                     data-y={supportPlacement.y}
                     data-width={supportPlacement.width}
+                    data-height={supportPlacement.height}
                     transform={`translate(${supportPlacement.x} ${supportPlacement.y})`}
                   >
                     <text
@@ -1255,6 +1493,7 @@ export default function RoadmapRings({ props }: { props?: Record<string, unknown
                     data-x={phaseBadge.x}
                     data-y={phaseBadge.y}
                     data-width={phaseBadge.width}
+                    data-height={phaseBadge.height}
                     transform={`translate(${phaseBadge.x} ${phaseBadge.y})`}
                   >
                     <text
@@ -1284,7 +1523,7 @@ export default function RoadmapRings({ props }: { props?: Record<string, unknown
         <div className={localStyles.overlay}>
           {items.map((item) => {
             const geometry = geometries[item.phaseIndex];
-            const titleLayout = titleLayouts[item.phaseIndex];
+            const titleLayout = titleLayoutsOffset[item.phaseIndex];
             return (
               <RoadmapChip
                 key={`${item.section}-${item.key}-${item.phaseIndex}`}
@@ -1292,6 +1531,7 @@ export default function RoadmapRings({ props }: { props?: Record<string, unknown
                 titleBoundary={titleLayout.titleBottom}
                 phaseCenterY={geometry.centerY}
                 viewBoxWidth={viewBoxWidth}
+                viewBoxHeight={viewBoxHeight}
               />
             );
           })}

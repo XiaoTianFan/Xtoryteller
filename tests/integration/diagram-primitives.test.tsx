@@ -357,8 +357,10 @@ describe('diagram primitives', () => {
 
     const pilotScaleDistance = Math.hypot(phaseGeometry[1].x - phaseGeometry[0].x, phaseGeometry[1].y - phaseGeometry[0].y);
     const scalePracticeDistance = Math.hypot(phaseGeometry[2].x - phaseGeometry[1].x, phaseGeometry[2].y - phaseGeometry[1].y);
+    const phaseBottoms = phaseGeometry.map((phase) => phase.y + phase.r);
     expect(Math.abs(pilotScaleDistance - (phaseGeometry[0].r + phaseGeometry[1].r))).toBeLessThan(0.5);
     expect(Math.abs(scalePracticeDistance - (phaseGeometry[1].r + phaseGeometry[2].r))).toBeLessThan(0.5);
+    expect(Math.max(...phaseBottoms) - Math.min(...phaseBottoms)).toBeLessThan(0.5);
     expect(phaseGeometry[2].y - phaseGeometry[2].r).toBeGreaterThanOrEqual(ROADMAP_TOP_PADDING);
 
     const actorBands = Array.from(container.querySelectorAll('[data-roadmap-band="actors"]'));
@@ -373,7 +375,9 @@ describe('diagram primitives', () => {
     const svg = container.querySelector('svg');
     expect(svg).toBeTruthy();
     const viewBoxWidth = Number(svg?.getAttribute('viewBox')?.split(/\s+/)[2]);
+    const viewBoxHeight = Number(svg?.getAttribute('viewBox')?.split(/\s+/)[3]);
     expect(viewBoxWidth).toBeGreaterThan(0);
+    expect(viewBoxHeight).toBeGreaterThan(0);
 
     actorBands.forEach((band, index) => {
       expect(Number(band.getAttribute('data-x'))).toBeCloseTo(phaseGeometry[index].x, 1);
@@ -421,6 +425,18 @@ describe('diagram primitives', () => {
     );
     expect(leftmostContent).toBeCloseTo(24, 1);
     expect(leftmostContent).toBeLessThan(viewBoxWidth / 4);
+
+    const topmostContent = Math.min(
+      ...phaseGeometry.map((phase) => phase.y - phase.r),
+      ...actorBands.map((band) => Number(band.getAttribute('data-y')) - Number(band.getAttribute('data-height')) / 2),
+      ...supportBands.map((band) => Number(band.getAttribute('data-y')) - Number(band.getAttribute('data-height')) / 2),
+      ...phaseBadges.map((badge) => Number(badge.getAttribute('data-y')) - Number(badge.getAttribute('data-height')) / 2),
+      ...[...actorChips, ...supportChips, ...strategyChips].map(
+        (chip) => Number(chip.getAttribute('data-center-y')) - Number(chip.getAttribute('data-height')) / 2
+      )
+    );
+    expect(topmostContent).toBeCloseTo(ROADMAP_TOP_PADDING, 1);
+    expect(topmostContent).toBeLessThan(viewBoxHeight / 4);
 
     for (const phaseIndex of ['1', '2']) {
       const phaseActors = actorChips

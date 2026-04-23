@@ -37,8 +37,6 @@ interface TooltipState {
 }
 
 interface IcebergFit {
-  containerWidth: number;
-  containerHeight: number;
   renderWidth: number;
   renderHeight: number;
   left: number;
@@ -284,8 +282,6 @@ export function computeIcebergContainFit({
 
   if (safeContainerWidth === 0 || safeContainerHeight === 0 || visibleWidth <= 0 || visibleHeight <= 0) {
     return {
-      containerWidth: safeContainerWidth,
-      containerHeight: safeContainerHeight,
       renderWidth: 0,
       renderHeight: 0,
       left: 0,
@@ -297,8 +293,6 @@ export function computeIcebergContainFit({
   const scale = Math.min(safeContainerWidth / visibleWidth, safeContainerHeight / visibleHeight);
 
   return {
-    containerWidth: safeContainerWidth,
-    containerHeight: safeContainerHeight,
     renderWidth: visibleWidth * scale,
     renderHeight: visibleHeight * scale,
     left: 0,
@@ -369,39 +363,39 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
       return;
     }
 
-    let frame = 0;
+    const updateSize = (width: number, height: number) => {
+      setBoardSize((current) =>
+        Math.abs(current.width - width) > 0.5 || Math.abs(current.height - height) > 0.5
+          ? { width, height }
+          : current
+      );
+    };
 
-    const updateSize = () => {
+    const measureBoard = () => {
       const rect = board.getBoundingClientRect();
-      const width = Math.max(rect.width, board.clientWidth, 0);
-      const height = Math.max(rect.height, board.clientHeight, 0);
-
-      startTransition(() => {
-        setBoardSize((current) =>
-          Math.abs(current.width - width) > 0.5 || Math.abs(current.height - height) > 0.5
-            ? { width, height }
-            : current
-        );
-      });
+      updateSize(Math.max(rect.width, board.clientWidth, 0), Math.max(rect.height, board.clientHeight, 0));
     };
 
-    const scheduleUpdate = () => {
-      cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(updateSize);
-    };
+    measureBoard();
 
-    scheduleUpdate();
-    window.addEventListener('resize', scheduleUpdate);
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries.find((item) => item.target === board);
+      if (!entry) {
+        measureBoard();
+        return;
+      }
 
-    const observer = new ResizeObserver(scheduleUpdate);
+      updateSize(
+        Math.max(entry.contentRect.width, board.clientWidth, 0),
+        Math.max(entry.contentRect.height, board.clientHeight, 0)
+      );
+    });
     observer.observe(board);
 
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener('resize', scheduleUpdate);
       observer.disconnect();
     };
-  }, []);
+  }, [visibleWidth]);
 
   useEffect(() => {
     if (!tooltip.visible || !tooltip.text) {
@@ -532,8 +526,9 @@ export default function IcebergDiagram({ props }: { props?: Record<string, unkno
             {
               left: `${fit.left}px`,
               top: `${fit.top}px`,
-              width: `${fit.renderWidth}px`,
-              height: `${fit.renderHeight}px`
+              width: `${visibleWidth}px`,
+              height: `${VIEWBOX_HEIGHT}px`,
+              transform: `scale(${fit.scale})`
             } as CSSProperties
           }
         >
