@@ -140,7 +140,7 @@ Use these when repeated scaffolding would otherwise become manual and fragile.
 - `node skills/xtoryteller/scripts/init-layout.mjs --name spotlight-split`
 - `node skills/xtoryteller/scripts/create-style-previews.mjs --mood calm --topic "Systems Story" --force`
 - `node skills/xtoryteller/scripts/print-preview-urls.mjs` — prints dev-server viewer URLs for the default preview slugs after style previews are generated.
-- `npm run presentation:pdf -- --slug <slug> [--raster-scale 1-4]` — exports `exports/<slug>.pdf` through the dedicated PDF route; plain Stage decks use the DOM/SVG/text print path, while shader/WebGL-heavy Stage decks and Map decks rasterize browser-rendered pages for visual fidelity. `--raster-scale` controls raster sharpness and file size. This is not a semantic PowerPoint object model.
+- `npm run presentation:pdf -- --slug <slug> [--raster-scale 1-4]` — exports `exports/<slug>.pdf` through the dedicated PDF route; plain Stage decks use the DOM/SVG/text print path, while shader/WebGL-heavy Stage decks and Map decks rasterize browser-rendered pages for visual fidelity. `--raster-scale` controls raster sharpness and file size; Stage defaults to 1x and Map defaults to 2x. This is not a semantic PowerPoint object model.
 
 ---
 

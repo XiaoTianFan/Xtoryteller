@@ -42,7 +42,9 @@ function parseArgs(argv) {
   let slug = '';
   let output = path.join(ROOT, 'exports');
   let baseUrl = process.env.BASE_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? 'http://127.0.0.1:3000';
-  let rasterScale = Number(process.env.PDF_RASTER_SCALE ?? process.env.PDF_MAP_SCALE ?? 2);
+  const envRasterScale = process.env.PDF_RASTER_SCALE ?? process.env.PDF_MAP_SCALE;
+  let rasterScale = envRasterScale == null ? undefined : Number(envRasterScale);
+  let rasterScaleExplicit = envRasterScale != null;
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -64,6 +66,7 @@ function parseArgs(argv) {
 
     if ((arg === '--raster-scale' || arg === '--map-scale') && args[index + 1]) {
       rasterScale = Number(args[++index]);
+      rasterScaleExplicit = true;
       continue;
     }
 
@@ -76,7 +79,8 @@ function parseArgs(argv) {
     slug,
     output: path.resolve(output),
     baseUrl: baseUrl.replace(/\/$/, ''),
-    rasterScale: Math.min(4, Math.max(1, Number.isFinite(rasterScale) ? rasterScale : 2))
+    rasterScale: Number.isFinite(rasterScale) ? Math.min(4, Math.max(1, rasterScale)) : undefined,
+    rasterScaleExplicit
   };
 }
 
@@ -359,7 +363,7 @@ async function exportRenderedPagesPdf(page, pdfPath, { pageUrlFactory, fitStageP
 }
 
 async function main() {
-  const { slug, output, baseUrl, rasterScale } = parseArgs(process.argv);
+  const { slug, output, baseUrl, rasterScale, rasterScaleExplicit } = parseArgs(process.argv);
   if (!slug) {
     console.error('Usage: node scripts/export-pdf.mjs --slug <slug> [--output exports] [--base-url <url>] [--raster-scale 1-4]');
     process.exit(1);
@@ -379,7 +383,10 @@ async function main() {
   await fs.mkdir(output, { recursive: true });
 
   const presentationMode = await readPresentationMode(yamlPath);
-  const captureScale = rasterScale;
+  const captureScale = rasterScale ?? (presentationMode === 'stage' ? 1 : 2);
+  if (presentationMode === 'stage' && !rasterScaleExplicit) {
+    console.warn('[pdf:raster-scale] Stage raster export defaults to 1x screen resolution; pass --raster-scale 2-4 for sharper, larger PDFs.');
+  }
   const targetUrl = presentationPdfUrl(baseUrl, slug);
   const initialUrl = presentationMode === 'stage' ? presentationPdfUrl(baseUrl, slug, 1) : targetUrl;
   const pdfPath = path.join(output, `${slug}.pdf`);
