@@ -1724,7 +1724,7 @@ body::-webkit-scrollbar-thumb,
 }
 
 .pdfExportShell {
-  width: 1280px;
+  width: 1920px;
   background: var(--color-background);
   color: var(--color-foreground);
   -webkit-print-color-adjust: exact;
@@ -1733,8 +1733,8 @@ body::-webkit-scrollbar-thumb,
 
 .pdfPage {
   position: relative;
-  width: 1280px;
-  height: 720px;
+  width: 1920px;
+  height: 1080px;
   overflow: hidden;
   isolation: isolate;
   break-after: page;
@@ -1833,12 +1833,12 @@ body::-webkit-scrollbar-thumb,
 @media print {
   html,
   body {
-    width: 1280px;
+    width: 1920px;
     margin: 0;
     background: var(--color-background);
   }
 
   .pdfExportShell {
-    width: 1280px;
+    width: 1920px;
   }
 }

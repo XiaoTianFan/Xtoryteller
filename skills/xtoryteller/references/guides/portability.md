@@ -30,6 +30,7 @@ What it does:
 - writes `exports/<slug>.pdf`
 - exports Stage mode as one fully revealed page per step
 - exports Map mode as one full-map overview page
+- Stage pages lay out on a 1920x1080 CSS canvas at default `--raster-scale 1`, then fit into the 16:9 PDF page
 - `--raster-scale` controls rasterized export resolution for Map decks and shader/WebGL-heavy Stage decks; default is `1` for Stage and `2` for Map, and `4` is the sharpest/largest output
 - shader-heavy Stage decks use one-page-at-a-time browser capture so each slide keeps its real Paper Shader canvas alive during rasterization
 - `--map-scale` remains accepted as a backwards-compatible alias for `--raster-scale`

@@ -27,6 +27,8 @@ const PRESENTATIONS_DIR = path.join(ROOT, 'presentations');
 const READY_SELECTOR = 'main.pdfExportShell[data-pdf-ready="true"]';
 const PDF_WIDTH = '13.333in';
 const PDF_HEIGHT = '7.5in';
+const STAGE_VIEWPORT = { width: 1920, height: 1080 };
+const MAP_VIEWPORT = { width: 1280, height: 720 };
 
 const PAGE_PDF_OPTIONS = {
   width: PDF_WIDTH,
@@ -117,7 +119,8 @@ async function settleRenderedPage(page) {
 
 async function fitRasterizedStagePages(page) {
   await page.evaluate(() => {
-    const minScale = 0.72;
+    const pageMinScale = 0.72;
+    const frameMinScale = 0.5;
     const pageInset = 16;
 
     const toPixels = (value) => {
@@ -125,10 +128,29 @@ async function fitRasterizedStagePages(page) {
       return Number.isFinite(parsed) ? parsed : 0;
     };
 
-    const fitNode = (container, node, pageElement) => {
+    const getDescendantBounds = (node) => {
+      const rects = Array.from(node.querySelectorAll('*'))
+        .map((element) => element.getBoundingClientRect())
+        .filter((rect) => rect.width > 0 && rect.height > 0);
+      if (!rects.length) {
+        return null;
+      }
+
+      return {
+        left: Math.min(...rects.map((rect) => rect.left)),
+        right: Math.max(...rects.map((rect) => rect.right)),
+        top: Math.min(...rects.map((rect) => rect.top)),
+        bottom: Math.max(...rects.map((rect) => rect.bottom))
+      };
+    };
+
+    const fitNode = (container, node, pageElement, options = {}) => {
       if (!container || !node || !pageElement) {
         return;
       }
+
+      const minScale = options.minScale ?? pageMinScale;
+      const includeDescendants = Boolean(options.includeDescendants);
 
       node.style.removeProperty('transform');
       node.style.removeProperty('transform-origin');
@@ -142,14 +164,31 @@ async function fitRasterizedStagePages(page) {
         toPixels(containerStyles.paddingBottom) +
         toPixels(nodeStyles.marginTop) +
         toPixels(nodeStyles.marginBottom);
+      const horizontalPadding =
+        toPixels(containerStyles.paddingLeft) +
+        toPixels(containerStyles.paddingRight) +
+        toPixels(nodeStyles.marginLeft) +
+        toPixels(nodeStyles.marginRight);
       const availableHeight = Math.max(1, container.clientHeight - verticalPadding - pageInset);
-      const requiredHeight = Math.max(node.scrollHeight, node.getBoundingClientRect().height);
+      const availableWidth = Math.max(1, container.clientWidth - horizontalPadding - pageInset);
+      const nodeRect = node.getBoundingClientRect();
+      const descendantBounds = includeDescendants ? getDescendantBounds(node) : null;
+      const requiredHeight = Math.max(
+        node.scrollHeight,
+        nodeRect.height,
+        descendantBounds ? descendantBounds.bottom - nodeRect.top : 0
+      );
+      const requiredWidth = Math.max(
+        node.scrollWidth,
+        nodeRect.width,
+        descendantBounds ? descendantBounds.right - nodeRect.left : 0
+      );
 
-      if (requiredHeight <= availableHeight) {
+      if (requiredHeight <= availableHeight && requiredWidth <= availableWidth) {
         return;
       }
 
-      const scale = Math.max(minScale, Math.min(1, availableHeight / requiredHeight));
+      const scale = Math.max(minScale, Math.min(1, availableHeight / requiredHeight, availableWidth / requiredWidth));
       node.style.transform = `scale(${scale})`;
       node.style.transformOrigin = 'center top';
       node.style.width = `${100 / scale}%`;
@@ -157,9 +196,9 @@ async function fitRasterizedStagePages(page) {
       node.dataset.pdfFitScale = scale.toFixed(3);
 
       const pageRect = pageElement.getBoundingClientRect();
-      const nodeRect = node.getBoundingClientRect();
-      if (nodeRect.bottom > pageRect.bottom - pageInset && scale > minScale) {
-        const nextScale = Math.max(minScale, scale * ((pageRect.bottom - pageInset - nodeRect.top) / nodeRect.height));
+      const scaledRect = node.getBoundingClientRect();
+      if (scaledRect.bottom > pageRect.bottom - pageInset && scale > minScale) {
+        const nextScale = Math.max(minScale, scale * ((pageRect.bottom - pageInset - scaledRect.top) / scaledRect.height));
         node.style.transform = `scale(${nextScale})`;
         node.style.width = `${100 / nextScale}%`;
         node.style.marginLeft = `${(100 - 100 / nextScale) / 2}%`;
@@ -171,6 +210,23 @@ async function fitRasterizedStagePages(page) {
       const scene = pageElement.querySelector('.pdfStepScene');
       const body = pageElement.querySelector('.pdfStepSceneBody');
       const layout = body?.firstElementChild;
+      const framedItems = Array.from(body?.querySelectorAll('*') ?? []).filter((element) => {
+        const style = window.getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        return (
+          style.position === 'absolute' &&
+          element.children.length === 1 &&
+          rect.width > 40 &&
+          rect.height > 30 &&
+          rect.width < pageElement.clientWidth &&
+          rect.height < pageElement.clientHeight
+        );
+      });
+
+      for (const frame of framedItems) {
+        frame.style.overflow = 'visible';
+        fitNode(frame, frame.firstElementChild, pageElement, { includeDescendants: true, minScale: frameMinScale });
+      }
 
       fitNode(body, layout, pageElement);
 
@@ -394,8 +450,9 @@ async function main() {
 
   try {
     browser = await chromium.launch({ headless: true });
+    const viewport = presentationMode === 'stage' ? STAGE_VIEWPORT : MAP_VIEWPORT;
     const context = await browser.newContext({
-      viewport: { width: 1280, height: 720 },
+      viewport,
       deviceScaleFactor: captureScale
     });
     const page = await context.newPage();

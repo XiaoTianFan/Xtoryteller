@@ -9,8 +9,8 @@ import type {
   StepDefinition
 } from '@/lib/types/presentation';
 
-export const PDF_PAGE_WIDTH = 1280;
-export const PDF_PAGE_HEIGHT = 720;
+export const PDF_PAGE_WIDTH = 1920;
+export const PDF_PAGE_HEIGHT = 1080;
 export const PDF_MAP_PADDING = 160;
 export const PDF_REVEAL_ALL = Number.MAX_SAFE_INTEGER;
 
