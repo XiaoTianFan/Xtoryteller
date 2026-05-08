@@ -19,7 +19,7 @@ Target time: 1:10
 
 The central claim is that the future of music in an AI era will not be determined only by model quality, startup speed, or copyright litigation. It will be determined by what kinds of rules, institutions, and public expectations we build around those tools.
 
-I’m going to walk through the desriable outcomes, the concrete approaches that could get us there, and the phased path from early pilots to something that becomes normal practice.
+I’m going to walk through the desirable outcomes, the concrete approaches that could get us there, and the phased path from early pilots to something that becomes normal practice.
 
 **Switch to next slide.**
 
@@ -47,7 +47,7 @@ That tension matters because the future is not “AI or no AI.” The real choic
 
 Target time: 0:55
 
-In the long run, as a ultimate objective. By 2040, music systems should be able to support both human creativity and AI-assisted production without reducing culture to a raw-material pipeline. Artists should be able to earn, communities should be able to govern reuse, and listeners should be able to understand what they are encountering.
+At the horizon, this is the condition we are trying to reach. By 2040, music systems should be able to support both human creativity and AI-assisted production without reducing culture to a raw-material pipeline. Artists should be able to earn, communities should be able to govern reuse, and listeners should be able to understand what they are encountering.
 
 **Switch to next slide.**
 
@@ -91,7 +91,7 @@ So the intervention is successful only if it changes both institutions and felt 
 
 Target time: 1:20
 
-This slide focuses on the first three impacts together because they reinforce each other. Better pay without cultural pluralism can still fund a homogenized market. Cultural preservation without economic support turns living traditions into underfunded archives. And autonomy without governance usually collapses back into platform dependence.
+The first three impacts belong together because they reinforce each other. Better pay without cultural pluralism can still fund a homogenized market. Cultural preservation without economic support turns living traditions into underfunded archives. And autonomy without governance usually collapses back into platform dependence.
 
 The key idea here is that income, agency, and living heritage have to move together. If they don’t, one of them becomes cosmetic while the system continues to centralize underneath.
 
@@ -181,7 +181,7 @@ Target time: 1:10
 
 The fourth approach pushes beyond harm reduction. It asks what kind of cultural economy we are actually trying to build. If we leave music inside a pure extraction frame, then even good transparency and consent systems will operate under severe pressure.
 
-That is why this slide includes income floors, meaning-labor, public education, and carbon accountability together. They are all mechanisms for changing what the system treats as valuable and who gets supported in sustaining that value.
+That is why income floors, meaning-labor, public education, and carbon accountability sit together here. They are all mechanisms for changing what the system treats as valuable and who gets supported in sustaining that value.
 
 **Switch to next slide.**
 
@@ -189,7 +189,7 @@ That is why this slide includes income floors, meaning-labor, public education, 
 
 Target time: 1:00
 
-This is where the paradigm shift becomes visible in ordinary practice. Artists are less dominated by release pressure. Interpretation, education, and context become compensated work. Public institutions start behaving as if music is infrastructure rather than mere commodity output.
+The paradigm shift becomes visible in ordinary practice here. Artists are less dominated by release pressure. Interpretation, education, and context become compensated work. Public institutions start behaving as if music is infrastructure rather than mere commodity output.
 
 And just as importantly, the system becomes climate-bounded. Innovation is still possible, but not by pretending compute cost does not count.
 
@@ -201,7 +201,7 @@ Target time: 1:15
 
 At this point the obvious question is: who actually does this? The answer is not “one heroic platform.” It takes a coalition with different kinds of leverage. Rule setters create the rails, operators embed those rails in working systems, and counter-power actors stop the whole thing from being diluted into PR language.
 
-I like this slide because it makes the intervention legible as governance design. It is not just a better app. It is a negotiated ecosystem.
+What matters here is that the intervention becomes legible as governance design. It is not just a better app. It is a negotiated ecosystem.
 
 **Switch to next slide.**
 
@@ -209,7 +209,7 @@ I like this slide because it makes the intervention legible as governance design
 
 Target time: 1:15
 
-This is the systems slide. Data sovereignty prevents pluralism from becoming a new form of extraction. Pluralism prevents transparency metrics from hard-coding Western defaults. Transparency makes regenerative markets and meaning-labor visible enough to function. And regenerative economics reduces the desperation that would otherwise undermine all the other reforms.
+What matters most at the system level is the way these approaches lock into each other. Data sovereignty prevents pluralism from becoming a new form of extraction. Pluralism prevents transparency metrics from hard-coding Western defaults. Transparency makes regenerative markets and meaning-labor visible enough to function. And regenerative economics reduces the desperation that would otherwise undermine all the other reforms.
 
 So when I say these approaches must move in parallel, I mean that literally. Partial progress creates bottlenecks. Sometimes it even creates new legitimacy for the old system.
 
@@ -237,9 +237,9 @@ Those are hard tests, and they should be. If we cannot meet them early, we shoul
 
 Target time: 1:15
 
-This is my preferred answer to the question, “what do we launch first?” We do not launch a vague values campaign. We launch a small, complete stack: provenance labeling, a rights cohort, a different payout pool, and a governance-and-learning loop that can stop or adapt the experiment.
+So if the question is, “what do we launch first?”, my answer is: not a vague values campaign. We launch a small, complete stack: provenance labeling, a rights cohort, a different payout pool, and a governance-and-learning loop that can stop or adapt the experiment.
 
-What makes this powerful is that each piece creates evidence for the others. The pilot is not a prototype screen. It is a miniature institution.
+What makes this powerful is that each piece creates evidence for the others. Rather than a prototype screen, the pilot becomes a miniature system.
 
 **Switch to next slide.**
 
@@ -247,9 +247,15 @@ What makes this powerful is that each piece creates evidence for the others. The
 
 Target time: 1:40
 
-This slide shows the whole transition arc. In the pilot phase, the goal is credibility. We prove that the economics and trust mechanisms work. In the scale phase, the problem changes: now it is about interoperability, federation, organizing power, and shared standards across many actors. In the embedded phase, the transition becomes legal, cultural, and infrastructural common sense.
+You can read the whole transition arc through these three rings. 
 
-What I want you to notice is that each ring adds new actors and new support structures. The transition scales not just by adding users, but by adding governance, funding, standards, and public legitimacy.
+In the pilot phase, the goal is credibility. We prove that the economics and trust mechanisms work. 
+
+In the scale phase, the problem changes: now it is about interoperability, federation, organizing power, and shared standards across many actors. 
+
+In the embedded phase, the transition becomes legal, cultural, and infrastructural common sense.
+
+Each ring adds new actors and new support structures. The transition scales not just by adding users, but by adding governance, funding, standards, and public legitimacy.
 
 **Switch to next slide.**
 
@@ -263,27 +269,7 @@ That middle step is crucial. Many ethical alternatives fail because they prove s
 
 **Switch to next slide.**
 
-## Slide 26. What Success Looks Like By Phase
-
-Target time: 0:50
-
-These numbers are there to keep the vision honest. A thousand artists is a cohort you can actually study. Fifteen percent willingness to pay is a market signal. Twenty percent income uplift is meaningful enough to matter. Ten-plus interoperable platforms and a hundred thousand organized creators start to look like system pressure, not boutique experimentation.
-
-The point of the scorecard is not precision fetishism. It is to make the transition contestable, measurable, and easier to steer.
-
-**Switch to next slide.**
-
-## Slide 27. Scale Of Change
-
-Target time: 0:45
-
-This funnel is a reminder that we start at the narrow end but we are aiming at the wide end. Pilots are small because they must be learnable. Networks are bigger because they must be durable. Regime change is widest because ultimately the goal is to reshape defaults across law, markets, and culture.
-
-So we should not confuse the starting point with the ambition.
-
-**Switch to next slide.**
-
-## Slide 28. Closing
+## Slide 26. Closing
 
 Target time: 0:45
 

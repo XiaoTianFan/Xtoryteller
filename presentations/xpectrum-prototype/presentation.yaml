@@ -1,0 +1,401 @@
+meta:
+  title: Xpectrum Prototype
+  slug: xpectrum-prototype
+  description: >-
+    A 10-minute stage deck positioning Xpectrum as an infrastructure prototype
+    for audio provenance, accountability, and the Micro-to-Meso transition in AI
+    music systems.
+  author: Xtoryteller
+  tags:
+    - stage
+    - xpectrum
+    - ai-music
+    - provenance
+    - systems
+    - transition
+  createdAt: '2026-05-07'
+  updatedAt: '2026-05-07'
+mode: stage
+theme: creative-voltage
+background:
+  type: paper-shader
+  presetRef: voltage-warp
+  filter:
+    mode: linear-vertical-reverse
+    opacity: 0.68
+    linearProportion: 0.72
+themeOverrides:
+  typography:
+    h1: clamp(3.15rem, 5.2vw, 5.6rem)
+    h2: clamp(2.2rem, 3.4vw, 3.55rem)
+    body: clamp(1.05rem, 1.22vw, 1.2rem)
+    lead: clamp(1.2rem, 1.6vw, 1.42rem)
+steps:
+  - id: opening
+    title: Opening
+    description: One-line concept and vision introduction for Xpectrum.
+    layout: title-center
+    transition: fade
+    components:
+      - type: label
+        content: Xpectrum prototype
+        props: { tone: primary }
+      - type: headline
+        content: Xpectrum makes music provenance visible, verifiable, and artist-owned.
+        props: { level: 1, align: center }
+        style:
+          maxWidth: 15ch
+          lineHeight: 0.94
+
+  - id: roadmap-positioning
+    title: Positioning In The Roadmap
+    description: >-
+      Xpectrum enters during the foundation-building years as the bridge from
+      individual proof-of-concept tooling to shared provenance infrastructure.
+    layout: scattered
+    transition: fade
+    components:
+      - type: label
+        content: Slide 2 / 2 min
+        props:
+          tone: primary
+        position:
+          x: 0.039996
+          y: 0.079994
+          width: 0.339998
+          height: 0.092195
+      - type: headline
+        content: Xpectrum is the Micro -> Meso bridge
+        props:
+          level: 2
+        style:
+          maxWidth: 12ch
+          lineHeight: 0.96
+        position:
+          x: 0.039996
+          y: 0.159988
+          width: 0.379994
+          height: 0.219993
+      - type: numbered-list
+        props:
+          items:
+            - "**Micro, 2025-2027:** artists watermark releases; researchers
+              audit platforms; provenance becomes technically accessible."
+            - "**Meso, 2028-2032:** platforms integrate upload verification;
+              standards bodies get an open reference implementation."
+            - "**Macro, 2033-2040:** fingerprinting becomes embedded
+              infrastructure - closer to HTTPS than a standalone app."
+        position:
+          x: 0.039996
+          y: 0.419997
+          width: 0.39
+          height: 0.319995
+      - type: callout
+        props:
+          variant: important
+          title: Key insight
+        content: "The tool is designed to make itself obsolete: success means its
+          approach becomes normal infrastructure."
+        position:
+          x: 0.038253
+          y: 0.716928
+          width: 0.359992
+          height: 0.159988
+      - type: roadmap-rings
+        props:
+          phases:
+            - label: MICRO
+              dateRange: 2025-2027
+              size: sm
+              strategy:
+                title: Proof-of-concept tool
+                subtitle: Accessible provenance for individual creators
+                items: []
+              actors:
+                title: Micro actors
+                items: []
+              support:
+                title: Foundation support
+                items: []
+            - label: MESO
+              dateRange: 2028-2032
+              size: md
+              strategy:
+                title: Reference implementation
+                subtitle: Platforms and standards reuse the approach
+                items: []
+              actors:
+                title: Meso actors
+                items: []
+              support:
+                title: Standards support
+                items: []
+            - label: MACRO
+              dateRange: 2033-2040
+              size: lg
+              strategy:
+                title: Embedded infrastructure
+                subtitle: Verification is a baseline requirement
+                items: []
+              actors:
+                title: Macro actors
+                items: []
+              support:
+                title: Infrastructure support
+                items: []
+        position:
+          x: 0.399997
+          y: 0.06999
+          width: 0.579993
+          height: 0.839993
+
+  - id: information-flows
+    title: The Leverage Point
+    description: >-
+      Xpectrum works on Meadows leverage point #6: information flows. It
+      restores feedback that the current music platform system suppresses.
+    layout: scattered
+    transition: slide-left
+    components:
+      - type: label
+        content: Before / information asymmetry
+        props: { tone: secondary }
+        position: { x: 0.05, y: 0.08, width: 0.4, height: 0.07 }
+      - type: bullet-list
+        props:
+          items:
+            - Listener hears music but cannot verify human, AI, or hybrid origin.
+            - Artist uploads work but has no durable proof of authorship.
+            - Platform can say "we did not know" when AI content spreads.
+            - Researchers cannot measure actual AI share against platform claims.
+        position: { x: 0.06, y: 0.2, width: 0.38, height: 0.39 }
+      - type: callout
+        props:
+          variant: warning
+          title: Missing feedback
+        content: >-
+          Artists cannot prove authorship, listeners cannot verify origin, and
+          platforms can claim they did not know.
+        position: { x: 0.06, y: 0.72, width: 0.38, height: 0.15 }
+      - type: divider
+        props: { variant: gradient }
+        position: { x: 0.485, y: 0.12, width: 0.03, height: 0.76 }
+      - type: label
+        content: After / verifiable provenance
+        props: { tone: primary }
+        position: { x: 0.55, y: 0.08, width: 0.4, height: 0.07 }
+      - type: bullet-list
+        props:
+          items:
+            - Artist embeds cryptographic fingerprint through Xpectrum.
+            - Platform detects origin and must disclose human, AI, or hybrid
+              status.
+            - Listener sees a provenance label and can make an informed choice.
+            - Researcher audits platform claims with verifiable evidence.
+        position: { x: 0.56, y: 0.2, width: 0.37, height: 0.39 }
+      - type: callout
+        props:
+          variant: tip
+          title: Feedback restored
+        content: >-
+          Provenance becomes a first-class signal that platforms, regulators,
+          researchers, and listeners can act on.
+        position: { x: 0.56, y: 0.72, width: 0.37, height: 0.15 }
+
+  - id: adoption-journey
+    title: Actors And Adoption Journey
+    description: >-
+      Adoption expands from motivated artists and researchers toward platforms,
+      standards bodies, courts, and public verification.
+    layout: scattered
+    transition: slide-up
+    components:
+      - type: stakeholder-map
+        props:
+          center: Xpectrum
+          rings:
+            - label: Micro / year 1-3
+              stakeholders:
+                - { label: Artists, angle: 20 }
+                - { label: MIR, angle: 140 }
+                - { label: OSS, angle: 260 }
+            - label: Meso / year 3-7
+              stakeholders:
+                - { label: Collectives, angle: 40 }
+                - { label: Platforms, angle: 145 }
+                - { label: ISO/W3C, angle: 255 }
+                - { label: PROs, angle: 330 }
+            - label: Macro / year 7-15
+              stakeholders:
+                - { label: Courts, angle: 20 }
+                - { label: Copyright offices, angle: 110 }
+                - { label: Major DSPs, angle: 210 }
+                - { label: Public, angle: 310 }
+        position: { x: 0.03, y: 0.09, width: 0.52, height: 0.78 }
+      - type: label
+        content: Slide 4 / 2 min
+        props: { tone: primary }
+        position: { x: 0.58, y: 0.1, width: 0.36, height: 0.07 }
+      - type: headline
+        content: Each phase generates proof for the next
+        props: { level: 2 }
+        style:
+          maxWidth: 13ch
+        position: { x: 0.58, y: 0.18, width: 0.36, height: 0.22 }
+      - type: numbered-list
+        props:
+          items:
+            - >-
+              **Early adopters:** 10,000 fingerprinted tracks and 3
+              peer-reviewed studies prove feasibility.
+            - >-
+              **Network effects:** 500,000 tracks, 10 platform APIs, and a draft
+              standard prove viability.
+            - >-
+              **Regulatory embedding:** origin verification becomes a baseline
+              requirement, not an optional ethics badge.
+        position: { x: 0.57, y: 0.44, width: 0.38, height: 0.29 }
+      - type: callout
+        props:
+          variant: note
+          title: Open source matters
+        content: >-
+          No single company should own provenance. Forkability is the guard
+          against capture.
+        position: { x: 0.6, y: 0.76, width: 0.33, height: 0.14 }
+
+  - id: system-effects
+    title: Outcomes And System Effects
+    description: >-
+      Xpectrum interrupts the reinforcing opacity loop and introduces a
+      balancing loop where transparency creates accountability.
+    layout: scattered
+    transition: blur
+    components:
+      - type: label
+        content: R3 / opacity enables extraction
+        props: { tone: secondary }
+        position: { x: 0.06, y: 0.08, width: 0.38, height: 0.07 }
+      - type: cycle-diagram
+        props:
+          direction: clockwise
+          stages:
+            - { label: No tools, icon: circle-slash }
+            - { label: No proof, icon: file-question }
+            - { label: No verification, icon: eye-off }
+            - { label: Scraping continues, icon: database }
+            - { label: Denial protects, icon: shield }
+            - { label: No incentive, icon: repeat }
+        position: { x: 0.04, y: 0.17, width: 0.43, height: 0.6 }
+      - type: footnote
+        content: The extractive system persists because ignorance remains useful.
+        position: { x: 0.07, y: 0.8, width: 0.36, height: 0.08 }
+      - type: label
+        content: B3 / transparency enforces accountability
+        props: { tone: primary }
+        position: { x: 0.55, y: 0.08, width: 0.4, height: 0.07 }
+      - type: cycle-diagram
+        props:
+          direction: clockwise
+          stages:
+            - { label: Xpectrum exists, icon: badge-check }
+            - { label: Fingerprint work, icon: fingerprint }
+            - { label: Verify origin, icon: scan-search }
+            - { label: Publish audits, icon: file-search }
+            - { label: Pressure mounts, icon: megaphone }
+            - { label: Platforms adopt, icon: network }
+        position: { x: 0.53, y: 0.17, width: 0.43, height: 0.6 }
+      - type: footnote
+        content: Once origin is visible, consent, certification, litigation, and bias
+          audits become actionable.
+        position: { x: 0.55, y: 0.8, width: 0.4, height: 0.08 }
+
+  - id: next-steps-vision
+    title: Next Steps And Vision Integration
+    description: >-
+      Xpectrum is one node in the larger H3 ecosystem: consent registries,
+      platform APIs, human-certified labels, royalties, and legal evidence.
+    layout: scattered
+    transition: scale-out
+    components:
+      - type: mind-map
+        props:
+          root:
+            label: Xpectrum
+          branches:
+            - label: Consent registries
+              children:
+                - label: Who trained on what
+            - label: Platform APIs
+              children:
+                - label: Upload verification
+            - label: Legal systems
+              children:
+                - label: Forensic evidence
+            - label: Human Certified UI
+              children:
+                - label: Listener trust
+            - label: Royalty systems
+              children:
+                - label: Human labor signals
+        position:
+          x: 0.023062
+          y: 0.01725
+          width: 0.489995
+          height: 0.749991
+      - type: label
+        content: Slide 6 / 0.5 min
+        props:
+          tone: primary
+        position:
+          x: 0.557331
+          y: 0
+          width: 0.359992
+          height: 0.089583
+      - type: headline
+        content: Provenance becomes infrastructure when other systems can depend on it
+        props:
+          level: 2
+        style:
+          maxWidth: 14ch
+        position:
+          x: 0.550927
+          y: 0.096656
+          width: 0.344643
+          height: 0.287317
+      - type: bullet-list
+        props:
+          items:
+            - Transparency by default
+            - Artist ownership of provenance data
+            - Browser-based accessibility
+            - Interoperability with willing platforms
+            - Future-proofing through standards alignment
+        position:
+          x: 0.550252
+          y: 0.399455
+          width: 0.359325
+          height: 0.219999
+      - type: callout
+        props:
+          variant: tip
+          title: Six-month ask
+        content: Recruit 100 beta artists, secure 1 indie platform pilot, and align with
+          ISO/C2PA working groups.
+        position:
+          x: 0.110018
+          y: 0.727669
+          width: 0.359992
+          height: 0.129988
+      - type: blockquote
+        props:
+          variant: minimal
+          attribution: Closing frame
+        content: 'In 10 years, asking "Is this human or AI?" should feel like asking
+          whether a website is secure: the answer is built into the
+          infrastructure.'
+        position:
+          x: 0.550394
+          y: 0.659379
+          width: 0.381595
+          height: 0.231964
