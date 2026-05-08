@@ -20,18 +20,24 @@ What it does:
 Use the PDF export script when the user wants a shareable PDF rather than a portable Xtoryteller package.
 
 Command:
-`npm run presentation:pdf -- --slug <slug> [--output exports] [--base-url http://127.0.0.1:3000]`
+`npm run presentation:pdf -- --slug <slug> [--output exports] [--base-url http://127.0.0.1:3000] [--raster-scale 1-4]`
 
 What it does:
 - loads the dedicated `/<slug>/export/pdf` route from a running Next server
-- uses Chromium `page.pdf()`, not screenshot capture
+- uses Chromium `page.pdf()` for plain Stage decks
+- uses high-resolution captures of browser-rendered pages for shader/WebGL-heavy Stage decks and Map decks so visual appearance survives Chromium's print pipeline
+- shader-heavy Stage capture uses the theme's static background surface when the Paper Shader canvas is unstable in headless capture
 - writes `exports/<slug>.pdf`
 - exports Stage mode as one fully revealed page per step
 - exports Map mode as one full-map overview page
+- `--raster-scale` controls rasterized export resolution for Map decks and shader/WebGL-heavy Stage decks; default is `2`, and `4` is the sharpest/largest output
+- shader-heavy Stage decks use a static theme background fallback before browser-rendered page capture so Paper Shader surfaces do not fail under high-DPI capture
+- `--map-scale` remains accepted as a backwards-compatible alias for `--raster-scale`
 
 Fidelity boundary:
-- foreground text, SVG diagrams, CSS shapes, and links stay distinct/selectable where Chromium's PDF pipeline preserves them
-- decorative Paper Shader/WebGL backgrounds and media fallbacks may rasterize
+- Plain Stage foreground text, SVG diagrams, CSS shapes, and links stay distinct/selectable where Chromium's PDF pipeline preserves them
+- Rasterized exports prioritize visual fidelity over selectable text
+- decorative Paper Shader/WebGL backgrounds and media fallbacks are rasterized when the exporter detects them
 - PDF export is not a semantic PowerPoint object model, even though it is not a scanned-image PDF
 
 ## Import

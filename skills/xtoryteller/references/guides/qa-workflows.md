@@ -16,8 +16,8 @@ Read this file when the task changes authoring data, runtime behavior, manifests
   `npm run validate:skill` (also runs automatically at the end of `npm run validate:all`)
 - Dashboard thumbnail (viewer screenshot → `presentations/<slug>/assets/thumbnail.png` and `meta.thumbnail`; requires dev server):
   `npm run thumbnail -- --slug <slug> [--base-url http://127.0.0.1:3000]`
-- PDF export (DOM/SVG/text print route → `exports/<slug>.pdf`; requires a running Next server):
-  `npm run presentation:pdf -- --slug <slug> [--base-url http://127.0.0.1:3000]`
+- PDF export (dedicated PDF route → `exports/<slug>.pdf`; plain Stage uses DOM/SVG/text print, shader/WebGL-heavy exports rasterize rendered pages; requires a running Next server):
+  `npm run presentation:pdf -- --slug <slug> [--base-url http://127.0.0.1:3000] [--raster-scale 1-4]`
 
 ## Test Layers
 
