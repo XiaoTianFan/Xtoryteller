@@ -29,11 +29,15 @@ export async function generateMetadata({
 }
 
 export default async function PresentationPdfExportPage({
-  params
+  params,
+  searchParams
 }: {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ pdfPage?: string }>;
 }) {
   const { slug } = await params;
+  const pageParam = (await searchParams)?.pdfPage;
+  const pdfPage = typeof pageParam === 'string' ? Number.parseInt(pageParam, 10) : undefined;
 
   try {
     const [cookieStore, presentation] = await Promise.all([
@@ -47,7 +51,7 @@ export default async function PresentationPdfExportPage({
 
     return (
       <ThemeProvider theme={theme} overrides={presentation.themeOverrides}>
-        <PdfExportRenderer presentation={presentation} theme={theme} />
+        <PdfExportRenderer presentation={presentation} theme={theme} pdfPage={Number.isFinite(pdfPage) ? pdfPage : undefined} />
       </ThemeProvider>
     );
   } catch {

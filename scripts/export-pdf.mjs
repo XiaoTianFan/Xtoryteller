@@ -37,15 +37,6 @@ const PAGE_PDF_OPTIONS = {
   outline: true
 };
 
-const STATIC_STAGE_SHADER_BACKGROUND = `
-  radial-gradient(circle at 18% 22%, rgba(100, 122, 255, 0.18), transparent 34%),
-  radial-gradient(circle at 82% 72%, rgba(86, 214, 197, 0.13), transparent 38%),
-  radial-gradient(circle at 48% 18%, rgba(255, 103, 36, 0.09), transparent 30%),
-  repeating-linear-gradient(90deg, rgba(121, 142, 255, 0.045) 0 1px, transparent 1px 96px),
-  repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 72px),
-  linear-gradient(120deg, #0b101b 0%, #090d14 42%, #06080c 100%)
-`;
-
 function parseArgs(argv) {
   const args = argv.slice(2);
   let slug = '';
@@ -89,8 +80,9 @@ function parseArgs(argv) {
   };
 }
 
-function presentationPdfUrl(baseUrl, slug) {
-  return `${baseUrl}/${encodeURIComponent(slug)}/export/pdf`;
+function presentationPdfUrl(baseUrl, slug, pdfPage) {
+  const url = `${baseUrl}/${encodeURIComponent(slug)}/export/pdf`;
+  return typeof pdfPage === 'number' ? `${url}?pdfPage=${pdfPage}` : url;
 }
 
 async function readPdfWarnings(page) {
@@ -190,7 +182,7 @@ async function fitRasterizedStagePages(page) {
   await settleRenderedPage(page);
 }
 
-async function prepareRenderedCapture(page, { useStaticStageShaderFallback = false } = {}) {
+async function prepareRenderedCapture(page, { fitStagePages = false } = {}) {
   await page.addStyleTag({
     content: `
       nextjs-portal,
@@ -207,44 +199,17 @@ async function prepareRenderedCapture(page, { useStaticStageShaderFallback = fal
         pointer-events: none !important;
       }
 
-      ${
-        useStaticStageShaderFallback
-          ? `
-      .pdfStagePage .paperShaderCanvas {
-        display: none !important;
-      }
-
-      .pdfStagePage .backgroundSurfaceShader {
-        background: ${STATIC_STAGE_SHADER_BACKGROUND} !important;
-      }
-
       .pdfStagePage .pdfStepSceneBody,
       .pdfStagePage .pdfStepSceneBody > * {
         overflow: visible !important;
       }
 
-      .pdfStagePage .pdfBackgroundLayer::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background:
-          radial-gradient(rgba(255, 255, 255, 0.055) 0.6px, transparent 0.8px),
-          linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 28%, rgba(0, 0, 0, 0.16));
-        background-size: 9px 9px, 100% 100%;
-        mix-blend-mode: screen;
-        opacity: 0.46;
-      }
-
       .pdfStagePage [data-pdf-fit-scale] {
         will-change: transform;
       }
-      `
-          : ''
-      }
     `
   });
-  if (useStaticStageShaderFallback) {
+  if (fitStagePages) {
     await fitRasterizedStagePages(page);
   }
   await settleRenderedPage(page);
@@ -257,9 +222,44 @@ function shouldRasterizePdf(exportMode, warnings) {
   );
 }
 
-async function exportRenderedPagesPdf(page, pdfPath) {
-  const pageLocator = page.locator('.pdfPage');
-  const pageCount = await pageLocator.count();
+async function getPdfPageCount(page) {
+  const total = await page.locator(READY_SELECTOR).getAttribute('data-pdf-total-pages');
+  const parsed = Number.parseInt(total ?? '', 10);
+  if (Number.isFinite(parsed) && parsed > 0) {
+    return parsed;
+  }
+
+  return page.locator('.pdfPage').count();
+}
+
+async function waitForPaintedPaperShader(page) {
+  await page.waitForFunction(
+    () =>
+      Array.from(document.querySelectorAll('.pdfPage .paperShaderCanvas canvas')).every((canvas) => {
+        const box = canvas.getBoundingClientRect();
+        return box.width > 0 && box.height > 0 && canvas.width > 0 && canvas.height > 0;
+      }),
+    undefined,
+    { timeout: 10_000 }
+  ).catch(() => undefined);
+  await settleRenderedPage(page);
+}
+
+async function captureRenderedPage(page, imagePath) {
+  const pdfPage = page.locator('.pdfPage').first();
+  await pdfPage.waitFor({ state: 'visible', timeout: 60_000 });
+  await pdfPage.scrollIntoViewIfNeeded();
+  await waitForPaintedPaperShader(page);
+  await settleRenderedPage(page);
+  const screenshot = await pdfPage.screenshot({
+    type: 'png',
+    animations: 'disabled'
+  });
+  await fs.writeFile(imagePath, screenshot);
+}
+
+async function exportRenderedPagesPdf(page, pdfPath, { pageUrlFactory, fitStagePages = false } = {}) {
+  const pageCount = await getPdfPageCount(page);
   if (pageCount < 1) {
     throw new Error('PDF route did not render any .pdfPage elements.');
   }
@@ -269,16 +269,17 @@ async function exportRenderedPagesPdf(page, pdfPath) {
   try {
     const imageUrls = [];
     for (let index = 0; index < pageCount; index += 1) {
-      const pdfPage = pageLocator.nth(index);
-      await pdfPage.waitFor({ state: 'visible', timeout: 60_000 });
-      await pdfPage.scrollIntoViewIfNeeded();
-      await settleRenderedPage(page);
-      const screenshot = await pdfPage.screenshot({
-        type: 'png',
-        animations: 'disabled'
-      });
+      if (pageUrlFactory && index > 0) {
+        await page.goto(pageUrlFactory(index + 1), { waitUntil: 'load', timeout: 120_000 });
+        await page.waitForSelector(READY_SELECTOR, { timeout: 60_000 });
+        await page.evaluate(async () => {
+          await document.fonts?.ready;
+        });
+        await prepareRenderedCapture(page, { fitStagePages });
+      }
+
       const imagePath = path.join(tempDir, `page-${String(index + 1).padStart(3, '0')}.png`);
-      await fs.writeFile(imagePath, screenshot);
+      await captureRenderedPage(page, imagePath);
       imageUrls.push(pathToFileURL(imagePath).href);
     }
 
@@ -380,6 +381,7 @@ async function main() {
   const presentationMode = await readPresentationMode(yamlPath);
   const captureScale = rasterScale;
   const targetUrl = presentationPdfUrl(baseUrl, slug);
+  const initialUrl = presentationMode === 'stage' ? presentationPdfUrl(baseUrl, slug, 1) : targetUrl;
   const pdfPath = path.join(output, `${slug}.pdf`);
   let browser;
 
@@ -391,7 +393,7 @@ async function main() {
     });
     const page = await context.newPage();
     await page.emulateMedia({ media: 'screen', reducedMotion: 'reduce' });
-    await page.goto(targetUrl, { waitUntil: 'load', timeout: 120_000 });
+    await page.goto(initialUrl, { waitUntil: 'load', timeout: 120_000 });
     await page.waitForSelector(READY_SELECTOR, { timeout: 60_000 });
     await page.evaluate(async () => {
       await document.fonts?.ready;
@@ -406,12 +408,12 @@ async function main() {
 
     const exportMode = await page.locator(READY_SELECTOR).getAttribute('data-pdf-mode');
     if (shouldRasterizePdf(exportMode, warnings)) {
-      if (presentationMode === 'stage') {
-        console.warn('[pdf:stage-shader-fallback] Shader-heavy Stage export uses a static theme background fallback because the shader canvas is unstable in headless page capture.');
-      }
       console.warn(`[pdf:rendered-raster] Export uses browser-rendered pages as ${captureScale}x raster pages to preserve spatial layout and visual appearance.`);
-      await prepareRenderedCapture(page, { useStaticStageShaderFallback: presentationMode === 'stage' });
-      await exportRenderedPagesPdf(page, pdfPath);
+      await prepareRenderedCapture(page, { fitStagePages: presentationMode === 'stage' });
+      await exportRenderedPagesPdf(page, pdfPath, {
+        pageUrlFactory: presentationMode === 'stage' ? (pageNumber) => presentationPdfUrl(baseUrl, slug, pageNumber) : undefined,
+        fitStagePages: presentationMode === 'stage'
+      });
     } else {
       await page.pdf({
         path: pdfPath,

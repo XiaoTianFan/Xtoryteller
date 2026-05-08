@@ -362,17 +362,29 @@ function PdfWarningList({ warnings }: { warnings: PdfExportWarning[] }) {
 
 export function PdfExportRenderer({
   presentation,
-  theme
+  theme,
+  pdfPage
 }: {
   presentation: PresentationConfig;
   theme: ThemeConfig;
+  pdfPage?: number;
 }) {
   const warnings = collectPdfExportWarnings(presentation);
+  const stagePages = presentation.mode === 'map' ? [] : buildStagePdfPages(presentation);
+  const selectedStagePage =
+    typeof pdfPage === 'number' && pdfPage >= 1 && pdfPage <= stagePages.length ? stagePages[pdfPage - 1] : null;
   const pages: ReactNode =
     presentation.mode === 'map' ? (
       <PdfMapPageView presentation={presentation} theme={theme} page={buildMapPdfPage(presentation)} />
+    ) : selectedStagePage ? (
+      <PdfStagePageView
+        key={selectedStagePage.step.id ?? selectedStagePage.stepIndex}
+        presentation={presentation}
+        theme={theme}
+        page={selectedStagePage}
+      />
     ) : (
-      buildStagePdfPages(presentation).map((page) => (
+      stagePages.map((page) => (
         <PdfStagePageView key={page.step.id ?? page.stepIndex} presentation={presentation} theme={theme} page={page} />
       ))
     );
@@ -384,6 +396,8 @@ export function PdfExportRenderer({
       data-pdf-mode={presentation.mode}
       data-pdf-page-width={PDF_PAGE_WIDTH}
       data-pdf-page-height={PDF_PAGE_HEIGHT}
+      data-pdf-total-pages={presentation.mode === 'map' ? 1 : stagePages.length}
+      data-pdf-selected-page={selectedStagePage ? selectedStagePage.pageIndex + 1 : ''}
     >
       {pages}
       <PdfWarningList warnings={warnings} />

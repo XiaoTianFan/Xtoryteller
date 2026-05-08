@@ -26,12 +26,12 @@ What it does:
 - loads the dedicated `/<slug>/export/pdf` route from a running Next server
 - uses Chromium `page.pdf()` for plain Stage decks
 - uses high-resolution captures of browser-rendered pages for shader/WebGL-heavy Stage decks and Map decks so visual appearance survives Chromium's print pipeline
-- shader-heavy Stage capture uses the theme's static background surface when the Paper Shader canvas is unstable in headless capture
+- shader/WebGL-heavy Stage export captures one slide per route load to avoid exhausting Chromium's active WebGL context limit
 - writes `exports/<slug>.pdf`
 - exports Stage mode as one fully revealed page per step
 - exports Map mode as one full-map overview page
 - `--raster-scale` controls rasterized export resolution for Map decks and shader/WebGL-heavy Stage decks; default is `2`, and `4` is the sharpest/largest output
-- shader-heavy Stage decks use a static theme background fallback before browser-rendered page capture so Paper Shader surfaces do not fail under high-DPI capture
+- shader-heavy Stage decks use one-page-at-a-time browser capture so each slide keeps its real Paper Shader canvas alive during rasterization
 - `--map-scale` remains accepted as a backwards-compatible alias for `--raster-scale`
 
 Fidelity boundary:
